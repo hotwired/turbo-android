@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">TurboFood</string>
+    <string name="section_food">Food</string>
+    <string name="section_orders">Orders</string>
+    <string name="section_me">Me</string>
+    <string name="me_edit_profile">Edit Profile</string>
+    <string name="form_submit">Save</string>
+    <string name="form_close">Close</string>
+    <string name="server_ip_warning">Configure your IP Address</string>
+    <string name="server_ip_warning_message">The IP Address for the demo TurboFood web app has not been configured. View the README for more details and set your local machine\'s IP Address in the Constants file.</string>
+    <string name="server_ip_warning_button">OK</string>
+</resources>

@@ -1,0 +1,172 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: "androidx.navigation.safeargs"
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'kotlin-android-extensions'
+
+buildscript {
+    ext.libVersionName = '1.0.6'
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
+    }
+}
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 8
+        versionName "$libVersionName"
+
+        // Define ProGuard rules for this android library project. These rules will be applied when
+        // a consumer of this library sets 'minifyEnabled true'.
+        consumerProguardFiles 'proguard-consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        debug.java.srcDirs += 'src/debug/kotlin'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.core:core-ktx:1.0.1'
+    implementation "androidx.constraintlayout:constraintlayout:2.0.0-alpha3"
+    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha09'
+    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha09'
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    testImplementation 'org.assertj:assertj-core:3.9.0'
+    testImplementation 'org.robolectric:robolectric:3.6.1'
+    testImplementation 'org.mockito:mockito-core:2.13.0'
+    testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
+    testImplementation 'junit:junit:4.12'
+}
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'turbolinks-android'
+
+    publishedGroupId = 'com.basecamp'
+    artifact = 'turbolinks'
+
+    libraryName = 'Turbolinks Android'
+    libraryDescription = 'Turbolinks for Android'
+    libraryVersion = "$libVersionName"
+
+    siteUrl = 'https://github.com/basecamp/turbolinks-android'
+    gitUrl = 'https://github.com/basecamp/turbolinks-android.git'
+
+    developerId = 'basecamp'
+    developerName = 'Basecamp'
+    developerEmail = 'support@basecamp.com'
+}
+
+// Maven
+group = publishedGroupId
+version = libraryVersion
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                groupId publishedGroupId
+                artifactId artifact
+
+                // Add your description here
+                name libraryName
+                description libraryDescription
+
+                developers {
+                    developer {
+                        id developerId
+                        name developerName
+                        email developerEmail
+                    }
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+// Bintray
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    google()
+}
+
+dependencyUpdates.resolutionStrategy = {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+            }
+            if (rejected) {
+                selection.reject('Release candidate')
+            }
+        }
+    }
+}

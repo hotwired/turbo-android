@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_section_me"
+    app:startDestination="@id/me_home_fragment">
+
+    <fragment
+        android:id="@+id/me_home_fragment"
+        android:name="com.basecamp.turbolinks.demo.MeFragment"
+        android:label=""
+        tools:layout="@layout/fragment_me">
+
+        <action
+            android:id="@+id/action_home_to_form"
+            app:destination="@id/form_fragment"
+            app:enterAnim="@anim/nav_enter_anim"
+            app:exitAnim="@anim/nav_exit_anim"
+            app:popEnterAnim="@anim/nav_pop_enter_anim"
+            app:popExitAnim="@anim/nav_pop_exit_anim"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/form_fragment"
+        android:name="com.basecamp.turbolinks.demo.FormFragment"
+        android:label=""
+        tools:layout="@layout/fragment_form"/>
+
+</navigation>

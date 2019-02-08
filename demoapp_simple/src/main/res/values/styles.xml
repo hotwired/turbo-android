@@ -1,0 +1,25 @@
+<resources>
+
+    <style name="ToolbarStyle" parent="Theme.AppCompat.Light">
+        <item name="android:background">@color/white</item>
+        <item name="android:theme">@style/ToolbarTheme</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+    <style name="ToolbarTheme">
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <item name="colorControlNormal">@color/black</item>
+    </style>
+
+    <style name="TextViewStyle"/>
+
+    <style name="TextViewStyle.Title">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+</resources>

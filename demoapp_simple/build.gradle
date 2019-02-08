@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+
+    defaultConfig {
+        applicationId "com.basecamp.turbolinks.demosimple"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        debug.java.srcDirs += 'src/debug/kotlin'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.core:core-ktx:1.0.1'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation "androidx.constraintlayout:constraintlayout:2.0.0-alpha3"
+    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha09'
+    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha09'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+
+    implementation project(':turbolinks')
+}
+
+repositories {
+    mavenCentral()
+    google()
+}
