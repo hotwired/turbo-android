@@ -8,11 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
+import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_ADVANCE
 import kotlinx.android.synthetic.main.turbolinks_default.view.*
 
 private const val ARG_LOCATION = "location"
 
-abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
+abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksScrollUpCallback {
     private lateinit var location: String
     private var isInitialVisit = true
     private var screenshot: Bitmap? = null
@@ -22,6 +23,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
     private val turbolinksErrorPlaceholder: ViewGroup?
         get() = view?.findViewById(R.id.turbolinks_error_placeholder)
 
+    protected open val pullToRefreshEnabled = true
     protected var listener: OnFragmentListener? = null
     protected val webView: WebView?
         get() = session()?.webView
@@ -46,6 +48,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return createView().apply {
+            initializePullToRefresh(turbolinks_view)
             showScreenshotIfAvailable(turbolinks_view)
             screenshot = null
             screenshotOrientation = 0
@@ -65,6 +68,10 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    override fun canChildScrollUp(): Boolean {
+        return webView?.scrollY ?: 0 > 0
     }
 
     fun title(): String {
@@ -163,6 +170,16 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
         turbolinksView?.addProgressView(progressView)
     }
 
+    private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
+        turbolinksView.refreshLayout.apply {
+            isEnabled = pullToRefreshEnabled
+            callback = this@TurbolinksFragment
+            setOnRefreshListener {
+                session()?.visitLocationWithAction(location, ACTION_ADVANCE)
+            }
+        }
+    }
+
     private fun showScreenshotIfAvailable(turbolinksView: TurbolinksView) {
         if (screenshotOrientation == turbolinksView.screenshotOrientation()) {
             screenshot?.let { turbolinksView.addScreenshotView(it) }
@@ -170,6 +187,8 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
     }
 
     private fun removeTransitionalViews() {
+        turbolinksView?.refreshLayout?.isRefreshing = false
+
         // TODO: This delay shouldn't be necessary, but visitRendered() is being called early.
         delay(200) {
             turbolinksView?.removeProgressView()

@@ -20,7 +20,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
  *   > Screenshot View
  */
 
-class TurbolinksView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr) {
+class TurbolinksView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+        FrameLayout(context, attrs, defStyleAttr) {
+
     internal val refreshLayout by lazy { addRefreshLayout() }
 
     private var progressView: View? = null
@@ -111,13 +113,13 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         return remaining > .10
     }
 
-    internal class TurbolinksSwipeRefreshLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : SwipeRefreshLayout(context, attrs) {
+    internal class TurbolinksSwipeRefreshLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+            SwipeRefreshLayout(context, attrs) {
+
         internal var callback: TurbolinksScrollUpCallback? = null
 
         override fun canChildScrollUp(): Boolean {
-            callback?.let { return it.canChildScrollUp() }
-
-            return super.canChildScrollUp()
+            return callback?.canChildScrollUp() ?: super.canChildScrollUp()
         }
     }
 }

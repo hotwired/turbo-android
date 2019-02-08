@@ -15,7 +15,7 @@ import java.io.IOException
 import java.util.*
 
 @Suppress("unused")
-class TurbolinksSession private constructor(val activity: Activity, val webView: TurbolinksWebView) : TurbolinksScrollUpCallback {
+class TurbolinksSession private constructor(val activity: Activity, val webView: TurbolinksWebView) {
     internal val JS_RESERVED_INTERFACE_NAME = "TurbolinksSession"
     internal val JS_BRIDGE_LOADER = "(function(){" +
             "var parent = document.getElementsByTagName('head').item(0);" +
@@ -66,11 +66,6 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     }
 
 
-    // Overrides
-
-    override fun canChildScrollUp() = webView.scrollY > 0
-
-
     // Required
 
     fun fragment(fragment: TurbolinksFragment): TurbolinksSession {
@@ -85,15 +80,8 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
         return this
     }
 
-    fun view(tlView: TurbolinksView, enablePullToRefresh: Boolean = true, pullToRefreshLocation: String? = null): TurbolinksSession {
+    fun view(tlView: TurbolinksView): TurbolinksSession {
         this.tlView = tlView
-
-        tlView.refreshLayout.callback = this
-        tlView.refreshLayout.setOnRefreshListener {
-            visitLocationWithAction(pullToRefreshLocation ?: location, ACTION_ADVANCE)
-        }
-        tlView.refreshLayout.isEnabled = enablePullToRefresh
-
         isWebViewAddedToNewParent = tlView.addWebView(webView)
 
         return this
@@ -211,7 +199,6 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
         if (visitIdentifier == currentVisitIdentifier) {
             context.runOnUiThread {
                 tlCallback.visitCompleted()
-                tlView.refreshLayout.isRefreshing = false
             }
         }
     }
