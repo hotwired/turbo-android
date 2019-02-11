@@ -56,8 +56,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.core:core-ktx:1.0.1'
     implementation "androidx.constraintlayout:constraintlayout:2.0.0-alpha3"
-    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha09'
-    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha09'
+    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-beta01'
+    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-beta01'
     implementation 'com.google.code.gson:gson:2.8.5'
 
     testImplementation 'org.assertj:assertj-core:3.9.0'
