@@ -252,7 +252,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     private fun action() = if (restoreWithCachedSnapshot) ACTION_RESTORE else ACTION_ADVANCE
 
     private fun destinationIdentifier(): Int {
-        return requireNotNull(tlCallback).identifier()
+        return tlCallback.identifier()
     }
 
     private fun validateRequiredParams() {
