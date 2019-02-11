@@ -33,7 +33,7 @@ class TurbolinksViewTest {
     }
 
     @Test fun webviewAttachedToRefreshLayout() {
-        tlView.attachWebView(webView, false)
+        tlView.attachWebView(webView)
 
         assertThat(tlView.refreshLayout.getChildAt(1)).isEqualTo(webView) // Child at 0 is CircleImageView
     }
