@@ -10,7 +10,7 @@ interface TurbolinksCallback {
     fun requestFailedWithStatusCode(statusCode: Int)
     fun visitRendered()
     fun visitCompleted()
-    fun visitLocationWithNewDestinationStarted(location: String)
+    fun visitLocationStarted(location: String)
     fun visitProposedToLocationWithAction(location: String, action: String)
 }
 

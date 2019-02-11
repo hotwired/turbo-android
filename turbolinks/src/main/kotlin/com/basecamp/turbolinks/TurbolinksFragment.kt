@@ -18,6 +18,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     private lateinit var location: String
     private var identifier = generateIdentifier()
     private var isInitialVisit = true
+    private var isWebViewAttachedToNewDestination = false
     private var screenshot: Bitmap? = null
     private var screenshotOrientation = 0
     private val turbolinksView: TurbolinksView?
@@ -60,6 +61,9 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     override fun onStart() {
         super.onStart()
 
+        // Attempt to attach the WebView. It may already be attached to the current instance.
+        isWebViewAttachedToNewDestination = attachWebView()
+
         // Visit every time the Fragment is attached to the Activity
         // or started again after visiting another Activity outside
         // of the main single-Activity architecture.
@@ -78,6 +82,10 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
 
     fun title(): String {
         return webView?.title ?: ""
+    }
+
+    fun attachWebView(): Boolean {
+        return turbolinksView?.attachWebView(requireNotNull(webView)) ?: false
     }
 
     fun detachWebView(onDetached: () -> Unit) {
@@ -134,8 +142,10 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         removeTransitionalViews()
     }
 
-    override fun visitLocationWithNewDestinationStarted(location: String) {
-        showProgressView(location)
+    override fun visitLocationStarted(location: String) {
+        if (isWebViewAttachedToNewDestination) {
+            showProgressView(location)
+        }
     }
 
     override fun visitProposedToLocationWithAction(location: String, action: String) {
@@ -156,7 +166,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         turbolinksSession
                 .callback(this)
                 .restoreWithCachedSnapshot(restoreWithCachedSnapshot)
-                .view(requireNotNull(turbolinksView))
                 .visit(location)
     }
 

@@ -39,12 +39,9 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
     internal lateinit var location: String
     internal lateinit var tlCallback: TurbolinksCallback
-    internal lateinit var tlView: TurbolinksView
-
-    var turbolinksSessionId: Int = Random().nextInt()
-        private set
 
     // User accessible
+    val turbolinksSessionId: Int = Random().nextInt()
     var enableDebugLogging: Boolean = false
         set(value) {
             TurbolinksLog.enableDebugLogging = value
@@ -68,13 +65,6 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
     fun callback(tlCallback: TurbolinksCallback): TurbolinksSession {
         this.tlCallback = tlCallback
-
-        return this
-    }
-
-    fun view(tlView: TurbolinksView): TurbolinksSession {
-        this.tlView = tlView
-        isWebViewAddedToNewParent = tlView.addWebView(webView)
 
         return this
     }
@@ -267,18 +257,19 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
     private fun validateRequiredParams() {
         requireNotNull(tlCallback) { "TurbolinksSession.callback(callback) must be called with a non-null object." }
-        requireNotNull(tlView) { "TurbolinksSession.view(view) must be called with a non-null object." }
         requireNotNull(location) { "TurbolinksSession.visit(location) location value must not be null." }
     }
 
     private fun visitLocation(reload: Boolean = false) {
-        if (!isReady || isWebViewAddedToNewParent) {
-            tlCallback.visitLocationWithNewDestinationStarted(location)
+        tlCallback.visitLocationStarted(location)
+
+        if (isColdBooting) {
+            visits.add(location)
         }
 
-        if (isColdBooting) visits.add(location)
-
-        if (isReady) visitLocationWithAction(location, action())
+        if (isReady) {
+            visitLocationWithAction(location, action())
+        }
 
         if (!isReady && !isColdBooting) {
             TurbolinksLog.d("visit cold: [location: $location]")

@@ -28,7 +28,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     private var progressView: View? = null
     private var screenshotView: ImageView? = null
 
-    internal fun addWebView(webView: WebView): Boolean {
+    internal fun attachWebView(webView: WebView): Boolean {
         if (webView.parent === refreshLayout) return false
 
         if (background is ColorDrawable) {
