@@ -30,7 +30,6 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     internal var currentVisitIdentifier: String = ""
     internal var isLoadingBridge: Boolean = false
     internal var isWebViewAddedToNewParent: Boolean = false
-    internal var javascriptInterfaces = HashMap<String, Any>()
     internal var previousTime: Long = 0
     internal var restoreWithCachedSnapshot: Boolean = false
     internal var restorationIdentifiers = SparseArray<String>()
@@ -235,17 +234,6 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
             tlCallback.onReceivedError(-1)
         }
     }
-
-    @SuppressLint("JavascriptInterface")
-    fun addJavascriptInterface(jsInterface: Any, name: String) {
-        if (name == JS_RESERVED_INTERFACE_NAME) throw IllegalArgumentException("$JS_RESERVED_INTERFACE_NAME is a reserved Javascript Interface name.")
-
-        if (javascriptInterfaces[name] == null) {
-            javascriptInterfaces[name] = jsInterface
-            webView.addJavascriptInterface(jsInterface, name)
-        }
-    }
-
 
     // Private
 
