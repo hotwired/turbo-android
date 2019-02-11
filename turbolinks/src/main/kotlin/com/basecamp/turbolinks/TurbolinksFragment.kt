@@ -10,11 +10,13 @@ import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_ADVANCE
 import kotlinx.android.synthetic.main.turbolinks_default.view.*
+import kotlin.random.Random
 
 private const val ARG_LOCATION = "location"
 
 abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksScrollUpCallback {
     private lateinit var location: String
+    private var identifier = generateIdentifier()
     private var isInitialVisit = true
     private var screenshot: Bitmap? = null
     private var screenshotOrientation = 0
@@ -100,6 +102,10 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     // TurbolinksCallback interface
     // -----------------------------------------------------------------------
 
+    override fun identifier(): Int {
+        return identifier
+    }
+
     override fun onPageStarted(location: String) {}
 
     override fun onPageFinished(location: String) {}
@@ -148,7 +154,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         listener?.onDestinationTitleChanged(this, "")
 
         turbolinksSession
-                .fragment(this)
                 .callback(this)
                 .restoreWithCachedSnapshot(restoreWithCachedSnapshot)
                 .view(requireNotNull(turbolinksView))
@@ -205,5 +210,9 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
 
         turbolinksErrorPlaceholder?.removeAllViews()
         turbolinksErrorPlaceholder?.addView(errorView)
+    }
+
+    private fun generateIdentifier(): Int {
+        return Random.nextInt(0, 999999999)
     }
 }

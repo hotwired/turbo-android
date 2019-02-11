@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 interface TurbolinksCallback {
+    fun identifier(): Int
     fun onPageStarted(location: String)
     fun onPageFinished(location: String)
     fun shouldOverrideUrl(location: String)

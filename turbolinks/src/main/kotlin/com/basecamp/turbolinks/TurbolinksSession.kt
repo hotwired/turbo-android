@@ -45,8 +45,6 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
         private set
 
     // User accessible
-    var fragment: TurbolinksFragment? = null
-        internal set
     var enableDebugLogging: Boolean = false
         set(value) {
             TurbolinksLog.enableDebugLogging = value
@@ -67,12 +65,6 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
 
     // Required
-
-    fun fragment(fragment: TurbolinksFragment): TurbolinksSession {
-        this.fragment = fragment
-
-        return this
-    }
 
     fun callback(tlCallback: TurbolinksCallback): TurbolinksSession {
         this.tlCallback = tlCallback
@@ -116,7 +108,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     }
 
     fun visitLocationWithAction(location: String, action: String) {
-        val restorationIdentifier = restorationIdentifiers[fragmentIdentifier()] ?: ""
+        val restorationIdentifier = restorationIdentifiers[destinationIdentifier()] ?: ""
         this.location = location
         val params = commaDelimitedJson(location.urlEncode(), action, restorationIdentifier)
 
@@ -140,7 +132,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String, restorationIdentifier: String) {
         TurbolinksLog.d("visitStarted: [location: $location, visitIdentifier: $visitIdentifier, visitHasCachedSnapshot: $visitHasCachedSnapshot, restorationIdentifier: $restorationIdentifier]")
 
-        restorationIdentifiers.put(fragmentIdentifier(), restorationIdentifier)
+        restorationIdentifiers.put(destinationIdentifier(), restorationIdentifier)
         currentVisitIdentifier = visitIdentifier
         visits.add(location)
 
@@ -175,7 +167,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun pageLoaded(restorationIdentifier: String) {
         TurbolinksLog.d("pageLoaded: [restorationIdentifier: $restorationIdentifier]")
 
-        restorationIdentifiers.put(fragmentIdentifier(), restorationIdentifier)
+        restorationIdentifiers.put(destinationIdentifier(), restorationIdentifier)
     }
 
     @JavascriptInterface
@@ -269,10 +261,11 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
     private fun action() = if (restoreWithCachedSnapshot) ACTION_RESTORE else ACTION_ADVANCE
 
-    private fun fragmentIdentifier() = requireNotNull(fragment).hashCode()
+    private fun destinationIdentifier(): Int {
+        return requireNotNull(tlCallback).identifier()
+    }
 
     private fun validateRequiredParams() {
-        requireNotNull(fragment) { "TurbolinksSession.fragment(fragment) must be called with a non-null object." }
         requireNotNull(tlCallback) { "TurbolinksSession.callback(callback) must be called with a non-null object." }
         requireNotNull(tlView) { "TurbolinksSession.view(view) must be called with a non-null object." }
         requireNotNull(location) { "TurbolinksSession.visit(location) location value must not be null." }
