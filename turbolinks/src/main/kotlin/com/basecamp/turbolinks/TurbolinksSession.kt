@@ -15,7 +15,7 @@ import java.io.IOException
 import java.util.*
 
 @Suppress("unused")
-class TurbolinksSession private constructor(val activity: Activity, val webView: TurbolinksWebView) : TurbolinksScrollUpCallback {
+class TurbolinksSession private constructor(val activity: Activity, val webView: TurbolinksWebView) {
     internal val JS_RESERVED_INTERFACE_NAME = "TurbolinksSession"
     internal val JS_BRIDGE_LOADER = "(function(){" +
             "var parent = document.getElementsByTagName('head').item(0);" +
@@ -39,14 +39,9 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
     internal lateinit var location: String
     internal lateinit var tlCallback: TurbolinksCallback
-    internal lateinit var tlView: TurbolinksView
-
-    var turbolinksSessionId: Int = Random().nextInt()
-        private set
 
     // User accessible
-    var fragment: TurbolinksFragment? = null
-        internal set
+    val turbolinksSessionId: Int = Random().nextInt()
     var enableDebugLogging: Boolean = false
         set(value) {
             TurbolinksLog.enableDebugLogging = value
@@ -66,35 +61,10 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     }
 
 
-    // Overrides
-
-    override fun canChildScrollUp() = webView.scrollY > 0
-
-
     // Required
-
-    fun fragment(fragment: TurbolinksFragment): TurbolinksSession {
-        this.fragment = fragment
-
-        return this
-    }
 
     fun callback(tlCallback: TurbolinksCallback): TurbolinksSession {
         this.tlCallback = tlCallback
-
-        return this
-    }
-
-    fun view(tlView: TurbolinksView, enablePullToRefresh: Boolean = true, pullToRefreshLocation: String? = null): TurbolinksSession {
-        this.tlView = tlView
-
-        tlView.refreshLayout.callback = this
-        tlView.refreshLayout.setOnRefreshListener {
-            visitLocationWithAction(pullToRefreshLocation ?: location, ACTION_ADVANCE)
-        }
-        tlView.refreshLayout.isEnabled = enablePullToRefresh
-
-        isWebViewAddedToNewParent = tlView.addWebView(webView)
 
         return this
     }
@@ -128,7 +98,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     }
 
     fun visitLocationWithAction(location: String, action: String) {
-        val restorationIdentifier = restorationIdentifiers[fragmentIdentifier()] ?: ""
+        val restorationIdentifier = restorationIdentifiers[destinationIdentifier()] ?: ""
         this.location = location
         val params = commaDelimitedJson(location.urlEncode(), action, restorationIdentifier)
 
@@ -152,7 +122,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String, restorationIdentifier: String) {
         TurbolinksLog.d("visitStarted: [location: $location, visitIdentifier: $visitIdentifier, visitHasCachedSnapshot: $visitHasCachedSnapshot, restorationIdentifier: $restorationIdentifier]")
 
-        restorationIdentifiers.put(fragmentIdentifier(), restorationIdentifier)
+        restorationIdentifiers.put(destinationIdentifier(), restorationIdentifier)
         currentVisitIdentifier = visitIdentifier
         visits.add(location)
 
@@ -187,7 +157,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun pageLoaded(restorationIdentifier: String) {
         TurbolinksLog.d("pageLoaded: [restorationIdentifier: $restorationIdentifier]")
 
-        restorationIdentifiers.put(fragmentIdentifier(), restorationIdentifier)
+        restorationIdentifiers.put(destinationIdentifier(), restorationIdentifier)
     }
 
     @JavascriptInterface
@@ -211,7 +181,6 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
         if (visitIdentifier == currentVisitIdentifier) {
             context.runOnUiThread {
                 tlCallback.visitCompleted()
-                tlView.refreshLayout.isRefreshing = false
             }
         }
     }
@@ -282,23 +251,25 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
     private fun action() = if (restoreWithCachedSnapshot) ACTION_RESTORE else ACTION_ADVANCE
 
-    private fun fragmentIdentifier() = requireNotNull(fragment).hashCode()
+    private fun destinationIdentifier(): Int {
+        return tlCallback.identifier()
+    }
 
     private fun validateRequiredParams() {
-        requireNotNull(fragment) { "TurbolinksSession.fragment(fragment) must be called with a non-null object." }
         requireNotNull(tlCallback) { "TurbolinksSession.callback(callback) must be called with a non-null object." }
-        requireNotNull(tlView) { "TurbolinksSession.view(view) must be called with a non-null object." }
         requireNotNull(location) { "TurbolinksSession.visit(location) location value must not be null." }
     }
 
     private fun visitLocation(reload: Boolean = false) {
-        if (!isReady || isWebViewAddedToNewParent) {
-            tlCallback.visitLocationWithNewDestinationStarted(location)
+        tlCallback.visitLocationStarted(location)
+
+        if (isColdBooting) {
+            visits.add(location)
         }
 
-        if (isColdBooting) visits.add(location)
-
-        if (isReady) visitLocationWithAction(location, action())
+        if (isReady) {
+            visitLocationWithAction(location, action())
+        }
 
         if (!isReady && !isColdBooting) {
             TurbolinksLog.d("visit cold: [location: $location]")

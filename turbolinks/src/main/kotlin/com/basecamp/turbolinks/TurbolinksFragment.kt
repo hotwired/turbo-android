@@ -8,13 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
+import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_ADVANCE
 import kotlinx.android.synthetic.main.turbolinks_default.view.*
+import kotlin.random.Random
 
 private const val ARG_LOCATION = "location"
 
-abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
+abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksScrollUpCallback {
     private lateinit var location: String
+    private var identifier = generateIdentifier()
     private var isInitialVisit = true
+    private var isWebViewAttachedToNewDestination = false
     private var screenshot: Bitmap? = null
     private var screenshotOrientation = 0
     private val turbolinksView: TurbolinksView?
@@ -22,6 +26,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
     private val turbolinksErrorPlaceholder: ViewGroup?
         get() = view?.findViewById(R.id.turbolinks_error_placeholder)
 
+    protected open val pullToRefreshEnabled = true
     protected var listener: OnFragmentListener? = null
     protected val webView: WebView?
         get() = session()?.webView
@@ -46,6 +51,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return createView().apply {
+            initializePullToRefresh(turbolinks_view)
             showScreenshotIfAvailable(turbolinks_view)
             screenshot = null
             screenshotOrientation = 0
@@ -54,6 +60,9 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
 
     override fun onStart() {
         super.onStart()
+
+        // Attempt to attach the WebView. It may already be attached to the current instance.
+        isWebViewAttachedToNewDestination = attachWebView()
 
         // Visit every time the Fragment is attached to the Activity
         // or started again after visiting another Activity outside
@@ -67,8 +76,16 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
         listener = null
     }
 
+    override fun canChildScrollUp(): Boolean {
+        return webView?.scrollY ?: 0 > 0
+    }
+
     fun title(): String {
         return webView?.title ?: ""
+    }
+
+    fun attachWebView(): Boolean {
+        return turbolinksView?.attachWebView(requireNotNull(webView)) ?: false
     }
 
     fun detachWebView(onDetached: () -> Unit) {
@@ -92,6 +109,10 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
     // -----------------------------------------------------------------------
     // TurbolinksCallback interface
     // -----------------------------------------------------------------------
+
+    override fun identifier(): Int {
+        return identifier
+    }
 
     override fun onPageStarted(location: String) {}
 
@@ -121,8 +142,10 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
         removeTransitionalViews()
     }
 
-    override fun visitLocationWithNewDestinationStarted(location: String) {
-        showProgressView(location)
+    override fun visitLocationStarted(location: String) {
+        if (isWebViewAttachedToNewDestination) {
+            showProgressView(location)
+        }
     }
 
     override fun visitProposedToLocationWithAction(location: String, action: String) {
@@ -141,10 +164,8 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
         listener?.onDestinationTitleChanged(this, "")
 
         turbolinksSession
-                .fragment(this)
                 .callback(this)
                 .restoreWithCachedSnapshot(restoreWithCachedSnapshot)
-                .view(requireNotNull(turbolinksView))
                 .visit(location)
     }
 
@@ -163,6 +184,16 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
         turbolinksView?.addProgressView(progressView)
     }
 
+    private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
+        turbolinksView.refreshLayout.apply {
+            isEnabled = pullToRefreshEnabled
+            callback = this@TurbolinksFragment
+            setOnRefreshListener {
+                session()?.visitLocationWithAction(location, ACTION_ADVANCE)
+            }
+        }
+    }
+
     private fun showScreenshotIfAvailable(turbolinksView: TurbolinksView) {
         if (screenshotOrientation == turbolinksView.screenshotOrientation()) {
             screenshot?.let { turbolinksView.addScreenshotView(it) }
@@ -170,6 +201,8 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
     }
 
     private fun removeTransitionalViews() {
+        turbolinksView?.refreshLayout?.isRefreshing = false
+
         // TODO: This delay shouldn't be necessary, but visitRendered() is being called early.
         delay(200) {
             turbolinksView?.removeProgressView()
@@ -186,5 +219,9 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
 
         turbolinksErrorPlaceholder?.removeAllViews()
         turbolinksErrorPlaceholder?.addView(errorView)
+    }
+
+    private fun generateIdentifier(): Int {
+        return Random.nextInt(0, 999999999)
     }
 }

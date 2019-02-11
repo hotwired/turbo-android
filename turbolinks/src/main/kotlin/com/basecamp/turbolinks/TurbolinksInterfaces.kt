@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 interface TurbolinksCallback {
+    fun identifier(): Int
     fun onPageStarted(location: String)
     fun onPageFinished(location: String)
     fun shouldOverrideUrl(location: String)
@@ -9,7 +10,7 @@ interface TurbolinksCallback {
     fun requestFailedWithStatusCode(statusCode: Int)
     fun visitRendered()
     fun visitCompleted()
-    fun visitLocationWithNewDestinationStarted(location: String)
+    fun visitLocationStarted(location: String)
     fun visitProposedToLocationWithAction(location: String, action: String)
 }
 

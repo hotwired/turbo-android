@@ -7,6 +7,8 @@ import com.basecamp.turbolinks.TurbolinksFragment
 import kotlinx.android.synthetic.main.fragment_form.*
 
 class FormFragment : TurbolinksFragment(), NavigationFragment {
+    override val pullToRefreshEnabled = false
+
     override fun createView(): View {
         return layoutInflater.inflate(R.layout.fragment_form, null)
     }
