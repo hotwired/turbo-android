@@ -6,7 +6,7 @@ import android.view.View
 import com.basecamp.turbolinks.TurbolinksFragment
 import kotlinx.android.synthetic.main.fragment_form.*
 
-class FormFragment : TurbolinksFragment(), NavigationFragment {
+class FormFragment : WebFragment() {
     override val pullToRefreshEnabled = false
 
     override fun createView(): View {
@@ -26,14 +26,6 @@ class FormFragment : TurbolinksFragment(), NavigationFragment {
     override fun onDetach() {
         listener?.onRequestExitFullscreen()
         super.onDetach()
-    }
-
-    override fun initialUrl(): String {
-        throw IllegalStateException("A location parameter must be provided")
-    }
-
-    override fun provideTitle(): String {
-        return title()
     }
 
     private fun initView() {

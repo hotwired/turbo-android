@@ -8,7 +8,7 @@
 
     <action
         android:id="@+id/action_turbolinks"
-        app:destination="@id/turbolinks_fragment"
+        app:destination="@id/web_fragment"
         app:enterAnim="@anim/nav_enter_anim"
         app:exitAnim="@anim/nav_exit_anim"
         app:popEnterAnim="@anim/nav_pop_enter_anim"
@@ -37,8 +37,8 @@
         tools:layout="@layout/fragment_web"/>
 
     <fragment
-        android:id="@+id/turbolinks_fragment"
-        android:name="com.basecamp.turbolinks.demo.MeFragment"
+        android:id="@+id/web_fragment"
+        android:name="com.basecamp.turbolinks.demo.WebFragment"
         android:label=""
         tools:layout="@layout/fragment_web"/>
 
