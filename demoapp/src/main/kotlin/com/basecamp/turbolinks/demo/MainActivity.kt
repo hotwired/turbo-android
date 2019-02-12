@@ -64,7 +64,7 @@ class MainActivity : TurbolinksActivity() {
                     null
                 }
                 RouteCommand.NAVIGATE -> {
-                    Router.getRouteAction(location, isAtStartDestination())
+                    Router.getRouteAction(location)
                 }
             }
         }

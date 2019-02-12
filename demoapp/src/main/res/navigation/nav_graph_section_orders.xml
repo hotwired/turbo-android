@@ -4,38 +4,52 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_section_orders"
-    app:startDestination="@id/orders_home_fragment">
+    app:startDestination="@id/home_fragment">
+
+    <action
+        android:id="@+id/action_turbolinks"
+        app:destination="@id/turbolinks_fragment"
+        app:enterAnim="@anim/nav_enter_anim"
+        app:exitAnim="@anim/nav_exit_anim"
+        app:popEnterAnim="@anim/nav_pop_enter_anim"
+        app:popExitAnim="@anim/nav_pop_exit_anim"/>
+
+    <action
+        android:id="@+id/action_turbolinks_form"
+        app:destination="@id/form_fragment"
+        app:enterAnim="@anim/nav_enter_anim"
+        app:exitAnim="@anim/nav_exit_anim"
+        app:popEnterAnim="@anim/nav_pop_enter_anim"
+        app:popExitAnim="@anim/nav_pop_exit_anim"/>
+
+    <action
+        android:id="@+id/action_image_viewer"
+        app:destination="@id/image_viewer_activity"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
 
     <fragment
-        android:id="@+id/orders_home_fragment"
+        android:id="@+id/home_fragment"
         android:name="com.basecamp.turbolinks.demo.OrdersFragment"
         android:label=""
-        tools:layout="@layout/fragment_web">
-
-        <action
-            android:id="@+id/action_home_to_turbolinks"
-            app:destination="@id/orders_fragment"
-            app:enterAnim="@anim/nav_enter_anim"
-            app:exitAnim="@anim/nav_exit_anim"
-            app:popEnterAnim="@anim/nav_pop_enter_anim"
-            app:popExitAnim="@anim/nav_pop_exit_anim"/>
-
-    </fragment>
+        tools:layout="@layout/fragment_web"/>
 
     <fragment
-        android:id="@+id/orders_fragment"
+        android:id="@+id/turbolinks_fragment"
         android:name="com.basecamp.turbolinks.demo.OrdersFragment"
         android:label=""
-        tools:layout="@layout/fragment_web">
+        tools:layout="@layout/fragment_web"/>
 
-        <action
-            android:id="@+id/action_turbolinks_to_turbolinks"
-            app:destination="@id/orders_fragment"
-            app:enterAnim="@anim/nav_enter_anim"
-            app:exitAnim="@anim/nav_exit_anim"
-            app:popEnterAnim="@anim/nav_pop_enter_anim"
-            app:popExitAnim="@anim/nav_pop_exit_anim"/>
+    <fragment
+        android:id="@+id/form_fragment"
+        android:name="com.basecamp.turbolinks.demo.FormFragment"
+        android:label=""
+        tools:layout="@layout/fragment_form"/>
 
-    </fragment>
+    <activity
+        android:id="@+id/image_viewer_activity"
+        android:name="com.basecamp.turbolinks.demo.ImageViewerActivity" />
 
 </navigation>

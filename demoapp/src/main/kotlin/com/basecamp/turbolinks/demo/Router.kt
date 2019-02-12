@@ -21,17 +21,11 @@ class Router {
             }
         }
 
-        fun getRouteAction(location: String, isAtStartDestination: Boolean): Int {
+        fun getRouteAction(location: String): Int {
             return when (getRouteDestination(location)) {
-                RouteDestination.IMAGE -> R.id.action_turbolinks_to_image_viewer
-                RouteDestination.WEB_FORM -> R.id.action_home_to_form
-                RouteDestination.WEB -> {
-                    // Distinct actions on home vs other destinations are necessary
-                    // so the Navigation Component knows when to properly display
-                    // the Up navigation arrow in the toolbar.
-                    if (isAtStartDestination) R.id.action_home_to_turbolinks
-                    else R.id.action_turbolinks_to_turbolinks
-                }
+                RouteDestination.IMAGE -> R.id.action_image_viewer
+                RouteDestination.WEB_FORM -> R.id.action_turbolinks_form
+                RouteDestination.WEB -> R.id.action_turbolinks
             }
         }
 
