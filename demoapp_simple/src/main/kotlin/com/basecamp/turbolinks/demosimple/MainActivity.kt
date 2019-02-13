@@ -1,12 +1,11 @@
 package com.basecamp.turbolinks.demosimple
 
-import android.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -25,10 +24,10 @@ class MainActivity : TurbolinksActivity() {
 
     override val listener = object : Listener {
         override fun onActivityCreated() {
+            initControllerGraph()
             initWebView()
             setupToolbar()
-            initDebugLogging()
-            verifyServerIpAddress()
+            verifyServerIpAddress(this@MainActivity)
         }
 
         override fun onProvideView(): ViewGroup {
@@ -60,7 +59,7 @@ class MainActivity : TurbolinksActivity() {
                     null
                 }
                 RouteCommand.NAVIGATE -> {
-                    Router.getRouteAction(location, isAtStartDestination())
+                    Router.getRouteAction(location)
                 }
             }
         }
@@ -107,10 +106,18 @@ class MainActivity : TurbolinksActivity() {
         return host?.childFragmentManager?.fragments?.lastOrNull()
     }
 
+    private fun initControllerGraph() {
+        val controller = activeNavController()
+        val startLocation = NavArgument.Builder().setDefaultValue(Constants.FOOD_URL).build()
+
+        controller.graph = controller.navInflater.inflate(R.navigation.nav_graph).apply {
+            addArgument("location", startLocation)
+            startDestination = R.id.food_fragment
+        }
+    }
+
     private fun initWebView() {
-        // Clear the WebView cache so assets aren't cached between
-        // app launches during development on the server.
-        WebView(this).clearCache(true)
+        session.applyWebViewDefaults()
     }
 
     private fun setupToolbar() {
@@ -128,23 +135,5 @@ class MainActivity : TurbolinksActivity() {
     private fun toggleFullScreen(enabled: Boolean) {
         TransitionManager.beginDelayedTransition(view, ChangeBounds().apply { duration = 150 })
         app_bar.isVisible = !enabled
-    }
-
-    private fun initDebugLogging() {
-        if (BuildConfig.DEBUG) {
-            session.enableDebugLogging = true
-            WebView.setWebContentsDebuggingEnabled(true)
-        }
-    }
-
-    @Suppress("ConstantConditionIf")
-    private fun verifyServerIpAddress() {
-        if (Constants.IP_ADDRESS == "x.x.x.x") {
-            AlertDialog.Builder(this).apply {
-                setTitle(context.getString(R.string.server_ip_warning))
-                setMessage(context.getString(R.string.server_ip_warning_message))
-                setPositiveButton(R.string.server_ip_warning_button) { _, _ -> }
-            }.create().show()
-        }
     }
 }

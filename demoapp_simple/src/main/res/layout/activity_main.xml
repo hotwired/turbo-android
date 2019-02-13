@@ -56,8 +56,7 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:defaultNavHost="false"
-            app:navGraph="@navigation/nav_graph_section_food" />
+            app:defaultNavHost="false" />
 
     </FrameLayout>
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    tools:ignore="InvalidNavigation">
+
+    <action
+        android:id="@+id/action_turbolinks"
+        app:destination="@id/web_fragment"
+        app:enterAnim="@anim/nav_enter_anim"
+        app:exitAnim="@anim/nav_exit_anim"
+        app:popEnterAnim="@anim/nav_pop_enter_anim"
+        app:popExitAnim="@anim/nav_pop_exit_anim"/>
+
+    <action
+        android:id="@+id/action_image_viewer"
+        app:destination="@id/image_viewer_activity"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+
+    <fragment
+        android:id="@+id/food_fragment"
+        android:name="com.basecamp.turbolinks.demosimple.WebFragment"
+        android:label=""
+        tools:layout="@layout/fragment_web"/>
+
+    <fragment
+        android:id="@+id/web_fragment"
+        android:name="com.basecamp.turbolinks.demosimple.WebFragment"
+        android:label=""
+        tools:layout="@layout/fragment_web"/>
+
+    <activity
+        android:id="@+id/image_viewer_activity"
+        android:name="com.basecamp.turbolinks.demosimple.ImageViewerActivity" />
+
+</navigation>
