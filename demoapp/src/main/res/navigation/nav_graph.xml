@@ -32,13 +32,13 @@
 
     <fragment
         android:id="@+id/food_fragment"
-        android:name="com.basecamp.turbolinks.demo.FoodFragment"
+        android:name="com.basecamp.turbolinks.demo.WebFragment"
         android:label=""
         tools:layout="@layout/fragment_web"/>
 
     <fragment
         android:id="@+id/orders_fragment"
-        android:name="com.basecamp.turbolinks.demo.OrdersFragment"
+        android:name="com.basecamp.turbolinks.demo.WebFragment"
         android:label=""
         tools:layout="@layout/fragment_web"/>
 

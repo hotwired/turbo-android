@@ -23,6 +23,7 @@ class MainActivity : TurbolinksActivity() {
     private val foodTab by lazy { NavigationTab(
             session = TurbolinksSession.getNew(this),
             controller = findNavController(R.id.section_food_nav),
+            startLocation = Constants.FOOD_URL,
             startDestination = R.id.food_fragment,
             menuId = R.id.section_food_nav,
             section = section_food
@@ -31,6 +32,7 @@ class MainActivity : TurbolinksActivity() {
     private val ordersTab by lazy { NavigationTab(
             session = TurbolinksSession.getNew(this),
             controller = findNavController(R.id.section_orders_nav),
+            startLocation = Constants.ORDERS_URL,
             startDestination = R.id.orders_fragment,
             menuId = R.id.section_orders_nav,
             section = section_orders
@@ -39,6 +41,7 @@ class MainActivity : TurbolinksActivity() {
     private val meTab by lazy { NavigationTab(
             session = TurbolinksSession.getNew(this),
             controller = findNavController(R.id.section_me_nav),
+            startLocation = null,
             startDestination = R.id.me_fragment,
             menuId = R.id.section_me_nav,
             section = section_me

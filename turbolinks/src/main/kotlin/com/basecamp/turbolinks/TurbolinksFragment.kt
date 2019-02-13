@@ -31,8 +31,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     protected val webView: WebView?
         get() = session()?.webView
 
-    abstract fun initialUrl(): String
-
     abstract fun createView(): View
 
     override fun onAttach(context: Context) {
@@ -46,7 +44,8 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        location = arguments?.getString(ARG_LOCATION) ?: initialUrl()
+        location = arguments?.getString(ARG_LOCATION) ?:
+                throw IllegalArgumentException("A location argument must be provided")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
