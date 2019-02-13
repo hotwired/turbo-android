@@ -20,12 +20,36 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.error.view.*
 
 class MainActivity : TurbolinksActivity() {
-    private val navMenuIds = arrayOf(R.id.section_food_nav, R.id.section_orders_nav, R.id.section_me_nav)
-    private val controllers by lazy { navMenuIds.map { findNavController(it) } }
-    private val sessions by lazy { Array(3) { TurbolinksSession.getNew(this) } }
-    private val sections by lazy { arrayOf(section_food, section_orders, section_me) }
+    private val foodTab by lazy { NavigationTab(
+            session = TurbolinksSession.getNew(this),
+            controller = findNavController(R.id.section_food_nav),
+            startLocation = Constants.FOOD_URL,
+            startDestination = R.id.food_fragment,
+            menuId = R.id.section_food_nav,
+            section = section_food
+    )}
 
-    private var selectionPosition = 0
+    private val ordersTab by lazy { NavigationTab(
+            session = TurbolinksSession.getNew(this),
+            controller = findNavController(R.id.section_orders_nav),
+            startLocation = Constants.ORDERS_URL,
+            startDestination = R.id.orders_fragment,
+            menuId = R.id.section_orders_nav,
+            section = section_orders
+    )}
+
+    private val meTab by lazy { NavigationTab(
+            session = TurbolinksSession.getNew(this),
+            controller = findNavController(R.id.section_me_nav),
+            startLocation = null,
+            startDestination = R.id.me_fragment,
+            menuId = R.id.section_me_nav,
+            section = section_me
+    )}
+
+    private val tabs by lazy { arrayOf(foodTab, ordersTab, meTab) }
+    private val selectedTab get() = tabs[selectedPosition]
+    private var selectedPosition = 0
 
     override val listener = object : Listener {
         override fun onActivityCreated() {
@@ -64,7 +88,7 @@ class MainActivity : TurbolinksActivity() {
                     null
                 }
                 RouteCommand.NAVIGATE -> {
-                    Router.getRouteAction(location, isAtStartDestination())
+                    Router.getRouteAction(location)
                 }
             }
         }
@@ -104,15 +128,15 @@ class MainActivity : TurbolinksActivity() {
 
     private fun initBottomTabsListener() {
         bottom_nav.setOnNavigationItemSelectedListener { item ->
-            val newPosition = navMenuIds.indexOfFirst { it == item.itemId }
-            if (newPosition == selectionPosition) {
+            val tab = tabs.first { it.menuId == item.itemId }
+            if (tab == selectedTab) {
                 clearBackStack()
                 return@setOnNavigationItemSelectedListener true
             }
 
-            selectionPosition = newPosition
-            sections.forEachIndexed { index, view ->
-                view.isInvisible = index != selectionPosition
+            selectedPosition = tabs.indexOf(tab)
+            tabs.forEach {
+                it.section.isInvisible = it != selectedTab
             }
 
             setupToolbar()
@@ -127,23 +151,22 @@ class MainActivity : TurbolinksActivity() {
     }
 
     private fun activeNavController(): NavController {
-        return controllers[selectionPosition]
+        return selectedTab.controller
     }
 
     private fun activeDestination(): Fragment? {
-        val fragmentId = navMenuIds[selectionPosition]
+        val fragmentId = selectedTab.menuId
         val host = supportFragmentManager.findFragmentById(fragmentId)
         return host?.childFragmentManager?.fragments?.lastOrNull()
     }
 
     private fun activeSession(fragment: TurbolinksFragment): TurbolinksSession {
         val controller = fragment.findNavController()
-        val position = controllers.indexOfFirst { it == controller }
-        return sessions[position]
+        return tabs.first { it.controller == controller }.session
     }
 
     private fun initWebViews() {
-        sessions.forEach { it.applyWebViewDefaults() }
+        tabs.forEach { it.session.applyWebViewDefaults() }
     }
 
     private fun setupToolbar() {
