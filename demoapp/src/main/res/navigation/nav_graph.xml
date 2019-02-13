@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph_section_me"
-    app:startDestination="@id/home_fragment">
+    android:id="@+id/nav_graph"
+    tools:ignore="InvalidNavigation">
 
     <action
         android:id="@+id/action_turbolinks"
@@ -31,7 +31,19 @@
         app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
 
     <fragment
-        android:id="@+id/home_fragment"
+        android:id="@+id/food_fragment"
+        android:name="com.basecamp.turbolinks.demo.FoodFragment"
+        android:label=""
+        tools:layout="@layout/fragment_web"/>
+
+    <fragment
+        android:id="@+id/orders_fragment"
+        android:name="com.basecamp.turbolinks.demo.OrdersFragment"
+        android:label=""
+        tools:layout="@layout/fragment_web"/>
+
+    <fragment
+        android:id="@+id/me_fragment"
         android:name="com.basecamp.turbolinks.demo.MeFragment"
         android:label=""
         tools:layout="@layout/fragment_web"/>

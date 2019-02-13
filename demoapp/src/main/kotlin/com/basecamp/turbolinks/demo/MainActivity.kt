@@ -29,6 +29,7 @@ class MainActivity : TurbolinksActivity() {
 
     override val listener = object : Listener {
         override fun onActivityCreated() {
+            initControllerGraphs()
             initWebViews()
             setupToolbar()
             initBottomTabsListener()
@@ -140,6 +141,18 @@ class MainActivity : TurbolinksActivity() {
         val controller = fragment.findNavController()
         val position = controllers.indexOfFirst { it == controller }
         return sessions[position]
+    }
+
+    private fun initControllerGraphs() {
+        // Dynamically set the controller graphs and start destinations,
+        // so we can use a shared, common navigation graph between tabs.
+        val startDestinations = listOf(R.id.food_fragment, R.id.orders_fragment, R.id.me_fragment)
+
+        controllers.forEachIndexed { index, controller ->
+            controller.graph = controller.navInflater.inflate(R.navigation.nav_graph).apply {
+                startDestination = startDestinations[index]
+            }
+        }
     }
 
     private fun initWebViews() {
