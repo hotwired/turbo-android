@@ -11,19 +11,19 @@
 
         <ImageButton
             style="@style/ButtonStyle.Close"
-            android:id="@+id/form_close"
+            android:id="@+id/modal_close"
             android:layout_gravity="center_vertical|start"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:contentDescription="@string/form_close"
+            android:contentDescription="@string/modal_close"
             app:srcCompat="@drawable/ic_close" />
 
         <Button
             style="@style/ButtonStyle"
-            android:id="@+id/form_submit"
+            android:id="@+id/modal_submit"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical|end"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:text="@string/form_submit" />
+            android:text="@string/modal_submit" />
 
     </FrameLayout>
 

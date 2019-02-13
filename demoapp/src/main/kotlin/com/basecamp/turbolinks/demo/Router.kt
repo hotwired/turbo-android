@@ -16,7 +16,7 @@ class Router {
         fun getRouteDestination(location: String): RouteDestination {
             return when {
                 location.endsWith(".png") -> RouteDestination.IMAGE
-                location.endsWith("/edit") -> RouteDestination.WEB_FORM
+                location.endsWith("/edit") -> RouteDestination.WEB_MODAL
                 else -> RouteDestination.WEB
             }
         }
@@ -24,7 +24,7 @@ class Router {
         fun getRouteAction(location: String): Int {
             return when (getRouteDestination(location)) {
                 RouteDestination.IMAGE -> R.id.action_image_viewer
-                RouteDestination.WEB_FORM -> R.id.action_turbolinks_form
+                RouteDestination.WEB_MODAL -> R.id.action_turbolinks_modal
                 RouteDestination.WEB -> R.id.action_turbolinks
             }
         }
@@ -50,5 +50,5 @@ enum class RouteCommand {
 enum class RouteDestination {
     IMAGE,
     WEB,
-    WEB_FORM
+    WEB_MODAL
 }

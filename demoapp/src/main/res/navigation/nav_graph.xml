@@ -15,8 +15,8 @@
         app:popExitAnim="@anim/nav_pop_exit_anim"/>
 
     <action
-        android:id="@+id/action_turbolinks_form"
-        app:destination="@id/form_fragment"
+        android:id="@+id/action_turbolinks_modal"
+        app:destination="@id/modal_fragment"
         app:enterAnim="@anim/nav_enter_anim"
         app:exitAnim="@anim/nav_exit_anim"
         app:popEnterAnim="@anim/nav_pop_enter_anim"
@@ -55,10 +55,10 @@
         tools:layout="@layout/fragment_web"/>
 
     <fragment
-        android:id="@+id/form_fragment"
-        android:name="com.basecamp.turbolinks.demo.FormFragment"
+        android:id="@+id/modal_fragment"
+        android:name="com.basecamp.turbolinks.demo.ModalFragment"
         android:label=""
-        tools:layout="@layout/fragment_form"/>
+        tools:layout="@layout/fragment_modal"/>
 
     <activity
         android:id="@+id/image_viewer_activity"

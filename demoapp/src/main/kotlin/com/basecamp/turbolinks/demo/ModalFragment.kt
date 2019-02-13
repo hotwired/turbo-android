@@ -3,14 +3,13 @@ package com.basecamp.turbolinks.demo
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import com.basecamp.turbolinks.TurbolinksFragment
-import kotlinx.android.synthetic.main.fragment_form.*
+import kotlinx.android.synthetic.main.fragment_modal.*
 
-class FormFragment : WebFragment() {
+class ModalFragment : WebFragment() {
     override val pullToRefreshEnabled = false
 
     override fun createView(): View {
-        return layoutInflater.inflate(R.layout.fragment_form, null)
+        return layoutInflater.inflate(R.layout.fragment_modal, null)
     }
 
     override fun onAttach(context: Context) {
@@ -29,7 +28,7 @@ class FormFragment : WebFragment() {
     }
 
     private fun initView() {
-        form_close.setOnClickListener { listener?.popBackStack() }
-        form_submit.setOnClickListener { listener?.popBackStack() }
+        modal_close.setOnClickListener { listener?.popBackStack() }
+        modal_submit.setOnClickListener { listener?.popBackStack() }
     }
 }
