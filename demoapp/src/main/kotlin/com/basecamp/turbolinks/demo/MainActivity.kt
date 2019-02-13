@@ -1,6 +1,5 @@
 package com.basecamp.turbolinks.demo
 
-import android.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
@@ -56,7 +55,7 @@ class MainActivity : TurbolinksActivity() {
             initWebViews()
             setupToolbar()
             initBottomTabsListener()
-            verifyServerIpAddress()
+            verifyServerIpAddress(this@MainActivity)
         }
 
         override fun onProvideView(): ViewGroup {
@@ -135,10 +134,7 @@ class MainActivity : TurbolinksActivity() {
             }
 
             selectedPosition = tabs.indexOf(tab)
-            tabs.forEach {
-                it.section.isInvisible = it != selectedTab
-            }
-
+            toggleTabVisibility()
             setupToolbar()
             updateToolbarTitle(activeDestinationTitle())
             true
@@ -181,20 +177,15 @@ class MainActivity : TurbolinksActivity() {
         toolbar.title = if (isAtStartDestination()) "" else title
     }
 
+    private fun toggleTabVisibility() {
+        tabs.forEach {
+            it.section.isInvisible = it != selectedTab
+        }
+    }
+
     private fun toggleFullScreen(enabled: Boolean) {
         TransitionManager.beginDelayedTransition(view, ChangeBounds().apply { duration = 150 })
         app_bar.isVisible = !enabled
         bottom_nav.isVisible = !enabled
-    }
-
-    @Suppress("ConstantConditionIf")
-    private fun verifyServerIpAddress() {
-        if (Constants.IP_ADDRESS == "x.x.x.x") {
-            AlertDialog.Builder(this).apply {
-                setTitle(context.getString(R.string.server_ip_warning))
-                setMessage(context.getString(R.string.server_ip_warning_message))
-                setPositiveButton(R.string.server_ip_warning_button) { _, _ -> }
-            }.create().show()
-        }
     }
 }
