@@ -3,11 +3,13 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 
 abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFragmentListener {
     final override fun onSupportNavigateUp(): Boolean {
         detachWebViewFromCurrentDestination()
-        return onProvideNavController().navigateUp()
+        return currentController().navigateUp()
     }
 
     final override fun onBackPressed() {
@@ -17,7 +19,7 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
     final override fun navigate(location: String, action: String) {
         detachWebViewFromCurrentDestination {
             val bundle = Bundle().apply { putString("location", location) }
-            val controller = onProvideNavController()
+            val controller = currentController()
 
             if (action == "replace") {
                 controller.popBackStack()
@@ -31,14 +33,14 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
 
     final override fun popBackStack() {
         detachWebViewFromCurrentDestination {
-            if (!onProvideNavController().popBackStack()) {
+            if (!currentController().popBackStack()) {
                 finish()
             }
         }
     }
 
     fun isAtStartDestination(): Boolean {
-        val controller = onProvideNavController()
+        val controller = currentController()
         return controller.graph.startDestination == controller.currentDestination?.id
     }
 
@@ -46,7 +48,7 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
         if (isAtStartDestination()) return
 
         detachWebViewFromCurrentDestination {
-            val controller = onProvideNavController()
+            val controller = currentController()
             controller.popBackStack(controller.graph.startDestination, false)
         }
     }
@@ -67,6 +69,10 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
     }
 
     private fun currentDestinationAction(action: (Fragment) -> Unit) {
-        onProvideCurrentDestination()?.let(action)
+        onProvideCurrentDestination().let(action)
+    }
+
+    private fun currentController(): NavController {
+        return onProvideCurrentDestination().findNavController()
     }
 }

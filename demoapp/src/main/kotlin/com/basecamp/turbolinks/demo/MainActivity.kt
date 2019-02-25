@@ -3,7 +3,6 @@ package com.basecamp.turbolinks.demo
 import android.os.Bundle
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.basecamp.turbolinks.TurbolinksActivity
@@ -52,14 +51,10 @@ class MainActivity : TurbolinksActivity() {
         verifyServerIpAddress(this)
     }
 
-    override fun onProvideNavController(): NavController {
-        return selectedTab.controller
-    }
-
-    override fun onProvideCurrentDestination(): Fragment? {
-        val fragmentId = selectedTab.menuId
-        val host = supportFragmentManager.findFragmentById(fragmentId)
-        return host?.childFragmentManager?.fragments?.lastOrNull()
+    override fun onProvideCurrentDestination(): Fragment {
+        val host = supportFragmentManager.findFragmentById(selectedTab.menuId)
+        return host?.childFragmentManager?.primaryNavigationFragment ?:
+                throw IllegalStateException("No current destination found")
     }
 
     override fun onProvideNavigationAction(location: String): Int? {
