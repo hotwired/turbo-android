@@ -1,7 +1,6 @@
 package com.basecamp.turbolinks.demo
 
 import android.os.Bundle
-import android.view.View
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -11,7 +10,6 @@ import com.basecamp.turbolinks.TurbolinksActivity
 import com.basecamp.turbolinks.TurbolinksFragment
 import com.basecamp.turbolinks.TurbolinksSession
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.error.view.*
 
 class MainActivity : TurbolinksActivity() {
     private val foodTab by lazy { NavigationTab(
@@ -52,16 +50,6 @@ class MainActivity : TurbolinksActivity() {
         initWebViews()
         initBottomTabsListener()
         verifyServerIpAddress(this)
-    }
-
-    override fun onProvideProgressView(location: String): View {
-        return layoutInflater.inflate(R.layout.progress, null)
-    }
-
-    override fun onProvideErrorView(statusCode: Int): View {
-        return layoutInflater.inflate(R.layout.error, null).apply {
-            error_message.text = Error.getMessage(statusCode)
-        }
     }
 
     override fun onProvideNavController(): NavController {

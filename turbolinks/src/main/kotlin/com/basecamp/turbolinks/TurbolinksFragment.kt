@@ -33,6 +33,8 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         get() = session()?.webView
 
     abstract fun createView(): View
+    abstract fun createErrorView(statusCode: Int): View
+    abstract fun createProgressView(location: String): View
     abstract fun onDestinationTitleChanged(title: String)
 
     override fun onAttach(context: Context) {
@@ -102,8 +104,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         fun onProvideNavController(): NavController
         fun onProvideNavigationAction(location: String): Int?
         fun onProvideCurrentDestination(): Fragment?
-        fun onProvideProgressView(location: String): View
-        fun onProvideErrorView(statusCode : Int): View
         fun onRequestEnterModalPresentation()
         fun onRequestExitModalPresentation()
         fun navigate(location: String, action: String)
@@ -184,7 +184,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     }
 
     private fun showProgressView(location: String) {
-        val progressView = listener?.onProvideProgressView(location) ?: return
+        val progressView = createProgressView(location)
         turbolinksView?.addProgressView(progressView)
     }
 
@@ -219,7 +219,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     }
 
     private fun handleError(code: Int) {
-        val errorView = listener?.onProvideErrorView(code) ?: return
+        val errorView = createErrorView(code)
 
         turbolinksErrorPlaceholder?.removeAllViews()
         turbolinksErrorPlaceholder?.addView(errorView)
