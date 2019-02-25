@@ -100,8 +100,8 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
         fun onProvideProgressView(location: String): View
         fun onProvideErrorView(errorStatusCode : Int): View
-        fun onRequestFullscreen()
-        fun onRequestExitFullscreen()
+        fun onRequestEnterModalPresentation()
+        fun onRequestExitModalPresentation()
         fun navigate(location: String, action: String)
         fun popBackStack()
     }

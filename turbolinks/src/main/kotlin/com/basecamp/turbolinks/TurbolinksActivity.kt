@@ -20,8 +20,8 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
         fun onProvideCurrentDestination(): Fragment?
         fun onProvideNavigationAction(location: String): Int?
         fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
-        fun onRequestFullscreen()
-        fun onRequestExitFullscreen()
+        fun onRequestEnterModalPresentation()
+        fun onRequestExitModalPresentation()
     }
 
     final override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,12 +51,12 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
         return listener.onProvideErrorView(errorStatusCode)
     }
 
-    final override fun onRequestFullscreen() {
-        listener.onRequestFullscreen()
+    final override fun onRequestEnterModalPresentation() {
+        listener.onRequestEnterModalPresentation()
     }
 
-    final override fun onRequestExitFullscreen() {
-        listener.onRequestExitFullscreen()
+    final override fun onRequestExitModalPresentation() {
+        listener.onRequestExitModalPresentation()
     }
 
     final override fun navigate(location: String, action: String) {

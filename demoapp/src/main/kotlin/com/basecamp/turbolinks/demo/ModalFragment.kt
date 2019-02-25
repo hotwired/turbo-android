@@ -14,7 +14,7 @@ class ModalFragment : WebFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        listener?.onRequestFullscreen()
+        listener?.onRequestEnterModalPresentation()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -23,7 +23,7 @@ class ModalFragment : WebFragment() {
     }
 
     override fun onDetach() {
-        listener?.onRequestExitFullscreen()
+        listener?.onRequestExitModalPresentation()
         super.onDetach()
     }
 

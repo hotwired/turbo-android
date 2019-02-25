@@ -3,13 +3,10 @@ package com.basecamp.turbolinks.demo
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.transition.ChangeBounds
-import androidx.transition.TransitionManager
 import com.basecamp.turbolinks.TurbolinksActivity
 import com.basecamp.turbolinks.TurbolinksFragment
 import com.basecamp.turbolinks.TurbolinksSession
@@ -70,11 +67,13 @@ class MainActivity : TurbolinksActivity() {
         }
 
         override fun onProvideNavController(): NavController {
-            return activeNavController()
+            return selectedTab.controller
         }
 
         override fun onProvideCurrentDestination(): Fragment? {
-            return activeDestination()
+            val fragmentId = selectedTab.menuId
+            val host = supportFragmentManager.findFragmentById(fragmentId)
+            return host?.childFragmentManager?.fragments?.lastOrNull()
         }
 
         override fun onProvideNavigationAction(location: String): Int? {
@@ -90,15 +89,16 @@ class MainActivity : TurbolinksActivity() {
         }
 
         override fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession {
-            return activeSession(fragment)
+            val controller = fragment.findNavController()
+            return tabs.first { it.controller == controller }.session
         }
 
-        override fun onRequestFullscreen() {
-            toggleFullScreen(true)
+        override fun onRequestEnterModalPresentation() {
+            toggleModalPresentation(true)
         }
 
-        override fun onRequestExitFullscreen() {
-            toggleFullScreen(false)
+        override fun onRequestExitModalPresentation() {
+            toggleModalPresentation(false)
         }
     }
 
@@ -116,21 +116,6 @@ class MainActivity : TurbolinksActivity() {
         }
     }
 
-    private fun activeNavController(): NavController {
-        return selectedTab.controller
-    }
-
-    private fun activeDestination(): Fragment? {
-        val fragmentId = selectedTab.menuId
-        val host = supportFragmentManager.findFragmentById(fragmentId)
-        return host?.childFragmentManager?.fragments?.lastOrNull()
-    }
-
-    private fun activeSession(fragment: TurbolinksFragment): TurbolinksSession {
-        val controller = fragment.findNavController()
-        return tabs.first { it.controller == controller }.session
-    }
-
     private fun initWebViews() {
         tabs.forEach { it.session.applyWebViewDefaults() }
     }
@@ -141,8 +126,14 @@ class MainActivity : TurbolinksActivity() {
         }
     }
 
-    private fun toggleFullScreen(enabled: Boolean) {
-        TransitionManager.beginDelayedTransition(view, ChangeBounds().apply { duration = 150 })
-        bottom_nav.isVisible = !enabled
+    private fun toggleModalPresentation(modal: Boolean) {
+        val startY = if (modal) 0 else bottom_nav.height
+        val endY = if (modal) bottom_nav.height else 0
+
+        bottom_nav.translationYAnimator(
+                startY = startY.toFloat(),
+                endY = endY.toFloat(),
+                duration = 200
+        ).start()
     }
 }
