@@ -13,7 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.fragment_me.*
 import kotlinx.android.synthetic.main.fragment_me.view.*
 
-class MeFragment : Fragment(), NavigationFragment {
+class MeFragment : Fragment() {
     private var listener: OnFragmentListener? = null
 
     override fun onAttach(context: Context) {
@@ -33,16 +33,11 @@ class MeFragment : Fragment(), NavigationFragment {
         super.onActivityCreated(savedInstanceState)
         initView()
         loadAvatar()
-        listener?.onDestinationTitleChanged(this, provideTitle())
     }
 
     override fun onDetach() {
         super.onDetach()
         listener = null
-    }
-
-    override fun provideTitle(): String {
-        return context?.getString(R.string.section_me) ?: ""
     }
 
     private fun initView() {
