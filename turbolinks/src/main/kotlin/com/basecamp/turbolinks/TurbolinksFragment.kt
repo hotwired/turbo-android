@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_ADVANCE
 import kotlinx.android.synthetic.main.turbolinks_default.view.*
 import kotlin.random.Random
@@ -98,8 +99,11 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
 
     interface OnFragmentListener {
         fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
+        fun onProvideNavController(): NavController
+        fun onProvideNavigationAction(location: String): Int?
+        fun onProvideCurrentDestination(): Fragment?
         fun onProvideProgressView(location: String): View
-        fun onProvideErrorView(errorStatusCode : Int): View
+        fun onProvideErrorView(statusCode : Int): View
         fun onRequestEnterModalPresentation()
         fun onRequestExitModalPresentation()
         fun navigate(location: String, action: String)

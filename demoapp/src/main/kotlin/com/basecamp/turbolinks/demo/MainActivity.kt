@@ -54,51 +54,49 @@ class MainActivity : TurbolinksActivity() {
         verifyServerIpAddress(this)
     }
 
-    override val listener = object : Listener {
-        override fun onProvideProgressView(location: String): View {
-            return layoutInflater.inflate(R.layout.progress, null)
-        }
+    override fun onProvideProgressView(location: String): View {
+        return layoutInflater.inflate(R.layout.progress, null)
+    }
 
-        override fun onProvideErrorView(statusCode: Int): View {
-            return layoutInflater.inflate(R.layout.error, null).apply {
-                error_message.text = Error.getMessage(statusCode)
+    override fun onProvideErrorView(statusCode: Int): View {
+        return layoutInflater.inflate(R.layout.error, null).apply {
+            error_message.text = Error.getMessage(statusCode)
+        }
+    }
+
+    override fun onProvideNavController(): NavController {
+        return selectedTab.controller
+    }
+
+    override fun onProvideCurrentDestination(): Fragment? {
+        val fragmentId = selectedTab.menuId
+        val host = supportFragmentManager.findFragmentById(fragmentId)
+        return host?.childFragmentManager?.fragments?.lastOrNull()
+    }
+
+    override fun onProvideNavigationAction(location: String): Int? {
+        return when (Router.getRouteCommand(location)) {
+            RouteCommand.OPEN_EXTERNAL -> {
+                Router.launchChromeCustomTab(this@MainActivity, location)
+                null
+            }
+            RouteCommand.NAVIGATE -> {
+                Router.getRouteAction(location)
             }
         }
+    }
 
-        override fun onProvideNavController(): NavController {
-            return selectedTab.controller
-        }
+    override fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession {
+        val controller = fragment.findNavController()
+        return tabs.first { it.controller == controller }.session
+    }
 
-        override fun onProvideCurrentDestination(): Fragment? {
-            val fragmentId = selectedTab.menuId
-            val host = supportFragmentManager.findFragmentById(fragmentId)
-            return host?.childFragmentManager?.fragments?.lastOrNull()
-        }
+    override fun onRequestEnterModalPresentation() {
+        toggleModalPresentation(true)
+    }
 
-        override fun onProvideNavigationAction(location: String): Int? {
-            return when (Router.getRouteCommand(location)) {
-                RouteCommand.OPEN_EXTERNAL -> {
-                    Router.launchChromeCustomTab(this@MainActivity, location)
-                    null
-                }
-                RouteCommand.NAVIGATE -> {
-                    Router.getRouteAction(location)
-                }
-            }
-        }
-
-        override fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession {
-            val controller = fragment.findNavController()
-            return tabs.first { it.controller == controller }.session
-        }
-
-        override fun onRequestEnterModalPresentation() {
-            toggleModalPresentation(true)
-        }
-
-        override fun onRequestExitModalPresentation() {
-            toggleModalPresentation(false)
-        }
+    override fun onRequestExitModalPresentation() {
+        toggleModalPresentation(false)
     }
 
     private fun initBottomTabsListener() {

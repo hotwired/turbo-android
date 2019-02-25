@@ -1,64 +1,29 @@
 package com.basecamp.turbolinks
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 
 abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFragmentListener {
-    abstract val listener: Listener
-
-    interface Listener {
-        fun onProvideProgressView(location: String): View
-        fun onProvideErrorView(statusCode: Int): View
-        fun onProvideNavController(): NavController
-        fun onProvideCurrentDestination(): Fragment?
-        fun onProvideNavigationAction(location: String): Int?
-        fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
-        fun onRequestEnterModalPresentation()
-        fun onRequestExitModalPresentation()
-    }
-
     final override fun onSupportNavigateUp(): Boolean {
         detachWebViewFromCurrentDestination()
-        return listener.onProvideNavController().navigateUp()
+        return onProvideNavController().navigateUp()
     }
 
     final override fun onBackPressed() {
         popBackStack()
     }
 
-    final override fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession {
-        return listener.onProvideSession(fragment)
-    }
-
-    final override fun onProvideProgressView(location: String): View {
-        return listener.onProvideProgressView(location)
-    }
-
-    final override fun onProvideErrorView(errorStatusCode : Int): View {
-        return listener.onProvideErrorView(errorStatusCode)
-    }
-
-    final override fun onRequestEnterModalPresentation() {
-        listener.onRequestEnterModalPresentation()
-    }
-
-    final override fun onRequestExitModalPresentation() {
-        listener.onRequestExitModalPresentation()
-    }
-
     final override fun navigate(location: String, action: String) {
         detachWebViewFromCurrentDestination {
             val bundle = Bundle().apply { putString("location", location) }
-            val controller = listener.onProvideNavController()
+            val controller = onProvideNavController()
 
             if (action == "replace") {
                 controller.popBackStack()
             }
 
-            listener.onProvideNavigationAction(location)?.let { actionId ->
+            onProvideNavigationAction(location)?.let { actionId ->
                 controller.navigate(actionId, bundle)
             }
         }
@@ -66,14 +31,14 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
 
     final override fun popBackStack() {
         detachWebViewFromCurrentDestination {
-            if (!listener.onProvideNavController().popBackStack()) {
+            if (!onProvideNavController().popBackStack()) {
                 finish()
             }
         }
     }
 
     fun isAtStartDestination(): Boolean {
-        val controller = listener.onProvideNavController()
+        val controller = onProvideNavController()
         return controller.graph.startDestination == controller.currentDestination?.id
     }
 
@@ -81,7 +46,7 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
         if (isAtStartDestination()) return
 
         detachWebViewFromCurrentDestination {
-            val controller = listener.onProvideNavController()
+            val controller = onProvideNavController()
             controller.popBackStack(controller.graph.startDestination, false)
         }
     }
@@ -102,6 +67,6 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
     }
 
     private fun currentDestinationAction(action: (Fragment) -> Unit) {
-        listener.onProvideCurrentDestination()?.let(action)
+        onProvideCurrentDestination()?.let(action)
     }
 }
