@@ -32,6 +32,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         get() = session()?.webView
 
     abstract fun createView(): View
+    abstract fun onDestinationTitleChanged(title: String)
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -89,6 +90,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
 
     fun detachWebView(onDetached: () -> Unit) {
         val view = webView ?: return
+        onDestinationTitleChanged("")
         screenshotView()
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onDetached() }
@@ -98,7 +100,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
         fun onProvideProgressView(location: String): View
         fun onProvideErrorView(errorStatusCode : Int): View
-        fun onDestinationTitleChanged(fragment: Fragment, title: String)
         fun onRequestFullscreen()
         fun onRequestExitFullscreen()
         fun navigate(location: String, action: String)
@@ -122,12 +123,12 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     override fun pageInvalidated() {}
 
     override fun visitRendered() {
-        listener?.onDestinationTitleChanged(this, title())
+        onDestinationTitleChanged(title())
         removeTransitionalViews()
     }
 
     override fun visitCompleted() {
-        listener?.onDestinationTitleChanged(this, title())
+        onDestinationTitleChanged(title())
         removeTransitionalViews()
     }
 
@@ -148,7 +149,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     }
 
     override fun visitProposedToLocationWithAction(location: String, action: String) {
-        listener?.onDestinationTitleChanged(this, "")
+        onDestinationTitleChanged("")
         listener?.navigate(location, action)
     }
 
@@ -160,7 +161,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         val turbolinksSession = session() ?: return
 
         // Update the toolbar title while loading the next visit
-        listener?.onDestinationTitleChanged(this, "")
+        onDestinationTitleChanged("")
 
         turbolinksSession
                 .callback(this)

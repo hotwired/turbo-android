@@ -32,21 +32,21 @@
 
     <fragment
         android:id="@+id/food_fragment"
-        android:name="com.basecamp.turbolinks.demo.WebFragment"
+        android:name="com.basecamp.turbolinks.demo.WebHomeFragment"
         android:label=""
-        tools:layout="@layout/fragment_web"/>
+        tools:layout="@layout/fragment_web_home"/>
 
     <fragment
         android:id="@+id/orders_fragment"
-        android:name="com.basecamp.turbolinks.demo.WebFragment"
+        android:name="com.basecamp.turbolinks.demo.WebHomeFragment"
         android:label=""
-        tools:layout="@layout/fragment_web"/>
+        tools:layout="@layout/fragment_web_home"/>
 
     <fragment
         android:id="@+id/me_fragment"
         android:name="com.basecamp.turbolinks.demo.MeFragment"
         android:label=""
-        tools:layout="@layout/fragment_web"/>
+        tools:layout="@layout/fragment_me"/>
 
     <fragment
         android:id="@+id/web_fragment"

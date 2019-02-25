@@ -20,11 +20,6 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
         fun onProvideCurrentDestination(): Fragment?
         fun onProvideNavigationAction(location: String): Int?
         fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
-        fun onDestinationTitleChanged(title: String)
-        fun onDestinationReplaced()
-        fun onNavigatedForward()
-        fun onNavigatedBackward()
-        fun onBackStackCleared()
         fun onRequestFullscreen()
         fun onRequestExitFullscreen()
     }
@@ -37,9 +32,7 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
 
     final override fun onSupportNavigateUp(): Boolean {
         detachWebViewFromCurrentDestination()
-        return listener.onProvideNavController().navigateUp().also {
-            listener.onNavigatedBackward()
-        }
+        return listener.onProvideNavController().navigateUp()
     }
 
     final override fun onBackPressed() {
@@ -56,12 +49,6 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
 
     final override fun onProvideErrorView(errorStatusCode : Int): View {
         return listener.onProvideErrorView(errorStatusCode)
-    }
-
-    final override fun onDestinationTitleChanged(fragment: Fragment, title: String) {
-        if (fragment == listener.onProvideCurrentDestination()) {
-            listener.onDestinationTitleChanged(title)
-        }
     }
 
     final override fun onRequestFullscreen() {
@@ -83,20 +70,14 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
 
             listener.onProvideNavigationAction(location)?.let { actionId ->
                 controller.navigate(actionId, bundle)
-
-                when (action) {
-                    "replace" -> listener.onDestinationReplaced()
-                    "advance" -> listener.onNavigatedForward()
-                }
             }
         }
     }
 
     final override fun popBackStack() {
         detachWebViewFromCurrentDestination {
-            when (listener.onProvideNavController().popBackStack()) {
-                true -> listener.onNavigatedBackward()
-                else -> finish()
+            if (!listener.onProvideNavController().popBackStack()) {
+                finish()
             }
         }
     }
@@ -112,7 +93,6 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
         detachWebViewFromCurrentDestination {
             val controller = listener.onProvideNavController()
             controller.popBackStack(controller.graph.startDestination, false)
-            listener.onBackStackCleared()
         }
     }
 
@@ -123,7 +103,6 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
      * new view hierarchy, it needs to already be detached from the previous screen.
      */
     private fun detachWebViewFromCurrentDestination(onDetached: () -> Unit = {}) {
-        listener.onDestinationTitleChanged("")
         currentDestinationAction {
             when (it) {
                 is TurbolinksFragment -> it.detachWebView(onDetached)

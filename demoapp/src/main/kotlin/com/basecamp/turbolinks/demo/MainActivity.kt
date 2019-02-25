@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import com.basecamp.turbolinks.TurbolinksActivity
@@ -53,7 +51,6 @@ class MainActivity : TurbolinksActivity() {
     override val listener = object : Listener {
         override fun onActivityCreated() {
             initWebViews()
-            setupToolbar()
             initBottomTabsListener()
             verifyServerIpAddress(this@MainActivity)
         }
@@ -96,26 +93,6 @@ class MainActivity : TurbolinksActivity() {
             return activeSession(fragment)
         }
 
-        override fun onDestinationTitleChanged(title: String) {
-            updateToolbarTitle(title)
-        }
-
-        override fun onDestinationReplaced() {
-            setupToolbar()
-        }
-
-        override fun onNavigatedForward() {
-            setupToolbar()
-        }
-
-        override fun onNavigatedBackward() {
-            setupToolbar()
-        }
-
-        override fun onBackStackCleared() {
-            setupToolbar()
-        }
-
         override fun onRequestFullscreen() {
             toggleFullScreen(true)
         }
@@ -135,15 +112,8 @@ class MainActivity : TurbolinksActivity() {
 
             selectedPosition = tabs.indexOf(tab)
             toggleTabVisibility()
-            setupToolbar()
-            updateToolbarTitle(activeDestinationTitle())
             true
         }
-    }
-
-    private fun activeDestinationTitle(): String {
-        val fragment = activeDestination()
-        return (fragment as NavigationFragment?)?.provideTitle() ?: ""
     }
 
     private fun activeNavController(): NavController {
@@ -165,18 +135,6 @@ class MainActivity : TurbolinksActivity() {
         tabs.forEach { it.session.applyWebViewDefaults() }
     }
 
-    private fun setupToolbar() {
-        val controller = activeNavController()
-        setSupportActionBar(toolbar)
-        setupActionBarWithNavController(controller, AppBarConfiguration(controller.graph))
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        app_bar_logo.isInvisible = !isAtStartDestination()
-    }
-
-    private fun updateToolbarTitle(title: String) {
-        toolbar.title = if (isAtStartDestination()) "" else title
-    }
-
     private fun toggleTabVisibility() {
         tabs.forEach {
             it.section.isInvisible = it != selectedTab
@@ -185,7 +143,6 @@ class MainActivity : TurbolinksActivity() {
 
     private fun toggleFullScreen(enabled: Boolean) {
         TransitionManager.beginDelayedTransition(view, ChangeBounds().apply { duration = 150 })
-        app_bar.isVisible = !enabled
         bottom_nav.isVisible = !enabled
     }
 }
