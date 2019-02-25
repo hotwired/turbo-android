@@ -2,18 +2,14 @@ package com.basecamp.turbolinks
 
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 
 abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFragmentListener {
     abstract val listener: Listener
-    protected val view: ViewGroup by lazy { listener.onProvideView() }
 
     interface Listener {
-        fun onActivityCreated()
-        fun onProvideView(): ViewGroup
         fun onProvideProgressView(location: String): View
         fun onProvideErrorView(statusCode: Int): View
         fun onProvideNavController(): NavController
@@ -22,12 +18,6 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
         fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
         fun onRequestEnterModalPresentation()
         fun onRequestExitModalPresentation()
-    }
-
-    final override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(view)
-        listener.onActivityCreated()
     }
 
     final override fun onSupportNavigateUp(): Boolean {

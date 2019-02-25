@@ -1,7 +1,7 @@
 package com.basecamp.turbolinks.demo
 
+import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -41,21 +41,20 @@ class MainActivity : TurbolinksActivity() {
             section = section_me
     )}
 
+    private val view by lazy { layoutInflater.inflate(R.layout.activity_main, null) }
     private val tabs by lazy { arrayOf(foodTab, ordersTab, meTab) }
     private val selectedTab get() = tabs[selectedPosition]
     private var selectedPosition = 0
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(view)
+        initWebViews()
+        initBottomTabsListener()
+        verifyServerIpAddress(this)
+    }
+
     override val listener = object : Listener {
-        override fun onActivityCreated() {
-            initWebViews()
-            initBottomTabsListener()
-            verifyServerIpAddress(this@MainActivity)
-        }
-
-        override fun onProvideView(): ViewGroup {
-            return layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup
-        }
-
         override fun onProvideProgressView(location: String): View {
             return layoutInflater.inflate(R.layout.progress, null)
         }
@@ -121,9 +120,7 @@ class MainActivity : TurbolinksActivity() {
     }
 
     private fun toggleTabVisibility() {
-        tabs.forEach {
-            it.section.isInvisible = it != selectedTab
-        }
+        tabs.forEach { it.section.isInvisible = it != selectedTab }
     }
 
     private fun toggleModalPresentation(modal: Boolean) {
