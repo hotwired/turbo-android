@@ -20,12 +20,13 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
         detachWebViewFromCurrentDestination {
             val bundle = Bundle().apply { putString("location", location) }
             val controller = currentController()
+            val router = onProvideRouter()
 
             if (action == "replace") {
                 controller.popBackStack()
             }
 
-            onProvideNavigationAction(location)?.let { actionId ->
+            router.getNavigationAction(location)?.let { actionId ->
                 controller.navigate(actionId, bundle)
             }
         }

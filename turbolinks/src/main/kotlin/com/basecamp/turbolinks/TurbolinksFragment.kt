@@ -100,7 +100,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
 
     interface OnFragmentListener {
         fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
-        fun onProvideNavigationAction(location: String): Int?
+        fun onProvideRouter(): TurbolinksRouter
         fun onProvideCurrentDestination(): Fragment
         fun onRequestEnterModalPresentation()
         fun onRequestExitModalPresentation()

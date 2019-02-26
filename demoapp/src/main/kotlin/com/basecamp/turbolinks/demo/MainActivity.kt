@@ -7,6 +7,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.basecamp.turbolinks.TurbolinksActivity
 import com.basecamp.turbolinks.TurbolinksFragment
+import com.basecamp.turbolinks.TurbolinksRouter
 import com.basecamp.turbolinks.TurbolinksSession
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -40,6 +41,7 @@ class MainActivity : TurbolinksActivity() {
 
     private val view by lazy { layoutInflater.inflate(R.layout.activity_main, null) }
     private val tabs by lazy { arrayOf(foodTab, ordersTab, meTab) }
+    private val router by lazy { Router(this) }
     private val selectedTab get() = tabs[selectedPosition]
     private var selectedPosition = 0
 
@@ -51,27 +53,19 @@ class MainActivity : TurbolinksActivity() {
         verifyServerIpAddress(this)
     }
 
+    override fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession {
+        val controller = fragment.findNavController()
+        return tabs.first { it.controller == controller }.session
+    }
+
+    override fun onProvideRouter(): TurbolinksRouter {
+        return router
+    }
+
     override fun onProvideCurrentDestination(): Fragment {
         val host = supportFragmentManager.findFragmentById(selectedTab.menuId)
         return host?.childFragmentManager?.primaryNavigationFragment ?:
                 throw IllegalStateException("No current destination found")
-    }
-
-    override fun onProvideNavigationAction(location: String): Int? {
-        return when (Router.getRouteCommand(location)) {
-            RouteCommand.OPEN_EXTERNAL -> {
-                Router.launchChromeCustomTab(this@MainActivity, location)
-                null
-            }
-            RouteCommand.NAVIGATE -> {
-                Router.getRouteAction(location)
-            }
-        }
-    }
-
-    override fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession {
-        val controller = fragment.findNavController()
-        return tabs.first { it.controller == controller }.session
     }
 
     override fun onRequestEnterModalPresentation() {
