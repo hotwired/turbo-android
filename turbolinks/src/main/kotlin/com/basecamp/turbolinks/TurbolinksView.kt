@@ -9,6 +9,7 @@ import android.view.View
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.core.view.children
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 /* Internal view hierarchy:
@@ -116,10 +117,9 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     internal class TurbolinksSwipeRefreshLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
             SwipeRefreshLayout(context, attrs) {
 
-        internal var callback: TurbolinksScrollUpCallback? = null
-
         override fun canChildScrollUp(): Boolean {
-            return callback?.canChildScrollUp() ?: super.canChildScrollUp()
+            val webView = children.firstOrNull() as? WebView
+            return webView?.scrollY ?: 0 > 0
         }
     }
 }

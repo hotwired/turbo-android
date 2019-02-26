@@ -16,10 +16,6 @@ interface TurbolinksCallback {
     fun visitProposedToLocationWithAction(location: String, action: String)
 }
 
-internal interface TurbolinksScrollUpCallback {
-    fun canChildScrollUp(): Boolean
-}
-
 interface TurbolinksActivity {
     fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
     fun onProvideRouter(): TurbolinksRouter

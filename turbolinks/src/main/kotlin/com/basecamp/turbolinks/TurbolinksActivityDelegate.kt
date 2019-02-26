@@ -6,6 +6,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 
 class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActivity by activity {
+
+    // ----------------------------------------------------------------------------
+    // TurbolinksActivity interface
+    // ----------------------------------------------------------------------------
+
     override fun navigate(location: String, action: String) {
         detachWebViewFromCurrentDestination {
             val bundle = Bundle().apply { putString("location", location) }
@@ -40,6 +45,27 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
         }
     }
 
+    // ----------------------------------------------------------------------------
+    // Private
+    // ----------------------------------------------------------------------------
+
+    private fun currentController(): NavController {
+        return onProvideCurrentDestination().findNavController()
+    }
+
+    private fun popBackStack() {
+        detachWebViewFromCurrentDestination {
+            if (!currentController().popBackStack()) {
+                onRequestFinish()
+            }
+        }
+    }
+
+    private fun isAtStartDestination(): Boolean {
+        val controller = currentController()
+        return controller.graph.startDestination == controller.currentDestination?.id
+    }
+
     /**
      * It's necessary to detach the shared WebView from a screen *before* it is hidden or exits and
      * the navigation animations run. The framework animator expects that the View hierarchy will
@@ -57,22 +83,5 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
 
     private fun currentDestinationAction(action: (Fragment) -> Unit) {
         onProvideCurrentDestination().let(action)
-    }
-
-    private fun currentController(): NavController {
-        return onProvideCurrentDestination().findNavController()
-    }
-
-    private fun popBackStack() {
-        detachWebViewFromCurrentDestination {
-            if (!currentController().popBackStack()) {
-                onRequestFinish()
-            }
-        }
-    }
-
-    private fun isAtStartDestination(): Boolean {
-        val controller = currentController()
-        return controller.graph.startDestination == controller.currentDestination?.id
     }
 }

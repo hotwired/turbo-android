@@ -14,7 +14,7 @@ import kotlin.random.Random
 
 private const val ARG_LOCATION = "location"
 
-abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksScrollUpCallback {
+abstract class TurbolinksFragment : Fragment(), TurbolinksCallback {
     private lateinit var location: String
     private var identifier = generateIdentifier()
     private var isInitialVisit = true
@@ -76,10 +76,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     override fun onDetach() {
         super.onDetach()
         listener = null
-    }
-
-    override fun canChildScrollUp(): Boolean {
-        return webView?.scrollY ?: 0 > 0
     }
 
     fun title(): String {
@@ -179,7 +175,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
         turbolinksView.refreshLayout.apply {
             isEnabled = pullToRefreshEnabled
-            callback = this@TurbolinksFragment
             setOnRefreshListener {
                 session()?.visitLocationWithAction(location, ACTION_ADVANCE)
             }
