@@ -1,5 +1,7 @@
 package com.basecamp.turbolinks
 
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 interface TurbolinksCallback {
@@ -17,7 +19,7 @@ interface TurbolinksCallback {
 }
 
 interface TurbolinksActivity {
-    fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
+    fun onProvideSession(fragment: Fragment): TurbolinksSession
     fun onProvideRouter(): TurbolinksRouter
     fun onProvideCurrentDestination(): Fragment
     fun onRequestFinish()
@@ -25,4 +27,17 @@ interface TurbolinksActivity {
     fun navigateUp(): Boolean
     fun navigateBack()
     fun clearBackStack()
+}
+
+interface TurbolinksFragment {
+    fun onProvideSession(): TurbolinksSession?
+    fun onProvideTurbolinksView(): TurbolinksView?
+    fun onProvideErrorPlaceholder(): ViewGroup?
+    fun onSetupToolbar()
+    fun createErrorView(statusCode: Int): View
+    fun createProgressView(location: String): View
+    fun shouldEnablePullToRefresh(): Boolean
+    fun onTitleChanged(title: String)
+    fun attachWebView(): Boolean
+    fun detachWebView(onDetached: () -> Unit)
 }

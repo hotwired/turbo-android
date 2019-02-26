@@ -2,14 +2,16 @@ package com.basecamp.turbolinks.demo
 
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_modal.*
 
 class ModalFragment : WebFragment() {
-    override val pullToRefreshEnabled = false
-
-    override fun createView(): View {
-        return layoutInflater.inflate(R.layout.fragment_modal, null)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_modal, null).also {
+            delegate.createView(it)
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -27,9 +29,13 @@ class ModalFragment : WebFragment() {
         super.onDetach()
     }
 
+    override fun shouldEnablePullToRefresh(): Boolean {
+        return false
+    }
+
     private fun initView() {
-        modal_close.setOnClickListener { listener?.navigateBack() }
-        modal_submit.setOnClickListener { listener?.navigateBack() }
+        modal_close.setOnClickListener { delegate.activity?.navigateBack() }
+        modal_submit.setOnClickListener { delegate.activity?.navigateBack() }
     }
 
     private fun toggleModalPresentation(modal: Boolean) {

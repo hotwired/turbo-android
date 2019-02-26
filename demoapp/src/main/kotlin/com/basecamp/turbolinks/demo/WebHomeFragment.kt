@@ -1,13 +1,18 @@
 package com.basecamp.turbolinks.demo
 
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 
-open class WebHomeFragment : WebFragment() {
-    override fun onDestinationTitleChanged(title: String) {
+class WebHomeFragment : WebFragment() {
+    override fun onTitleChanged(title: String) {
         // Do nothing, we don't want to display the title
     }
 
-    override fun createView(): View {
-        return layoutInflater.inflate(R.layout.fragment_web_home, null)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_web_home, null).also {
+            delegate.createView(it)
+        }
     }
 }

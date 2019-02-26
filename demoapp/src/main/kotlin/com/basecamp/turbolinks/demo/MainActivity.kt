@@ -6,7 +6,10 @@ import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.basecamp.turbolinks.*
+import com.basecamp.turbolinks.TurbolinksActivity
+import com.basecamp.turbolinks.TurbolinksActivityDelegate
+import com.basecamp.turbolinks.TurbolinksRouter
+import com.basecamp.turbolinks.TurbolinksSession
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
@@ -68,7 +71,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     // TurbolinksActivity interface
     // ----------------------------------------------------------------------------
 
-    override fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession {
+    override fun onProvideSession(fragment: Fragment): TurbolinksSession {
         val controller = fragment.findNavController()
         return tabs.first { it.controller == controller }.session
     }
