@@ -1,85 +1,63 @@
 package com.basecamp.turbolinks
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.turbolinks_default.view.*
+import androidx.lifecycle.Lifecycle.Event.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import kotlin.random.Random
 
-open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment) : TurbolinksFragment by fragment, TurbolinksCallback {
+open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
+        TurbolinksFragment by fragment, TurbolinksCallback, LifecycleObserver {
+
     private lateinit var location: String
     private val identifier = generateIdentifier()
     private var isInitialVisit = true
     private var isWebViewAttachedToNewDestination = false
     private var screenshot: Bitmap? = null
     private var screenshotOrientation = 0
+    private var activity: TurbolinksActivity? = null
     private val turbolinksView: TurbolinksView?
         get() = onProvideTurbolinksView()
     private val turbolinksErrorPlaceholder: ViewGroup?
         get() = onProvideErrorPlaceholder()
+    private val fragment = fragment as? Fragment ?:
+        throw IllegalArgumentException("fragment must be a Fragment")
     protected val webView: WebView?
         get() = session()?.webView
-    var activity: TurbolinksActivity? = null
 
     // ----------------------------------------------------------------------------
-    // TurbolinksFragmentDelegate
+    // TurbolinksFragmentObserver
     // ----------------------------------------------------------------------------
 
     open fun onWebViewAttached() {}
 
     open fun onWebViewDetached() {}
 
-    fun create(arguments: Bundle?) {
-        location = arguments?.getString("location") ?:
+    @OnLifecycleEvent(ON_CREATE)
+    private fun create() {
+        location = fragment.arguments?.getString("location") ?:
                 throw IllegalArgumentException("A location argument must be provided")
     }
 
-    fun attach(context: Context) {
-        when (context) {
-            is TurbolinksActivity -> activity = context
-            else -> throw RuntimeException("$context must implement TurbolinksActivity")
-        }
+    @OnLifecycleEvent(ON_START)
+    private fun start() {
+        activity = fragment.context as? TurbolinksActivity ?:
+                throw RuntimeException("The fragment Activity must implement TurbolinksActivity")
+
+        initView()
+        attachWebViewAndVisit()
     }
 
-    fun detach() {
+    @OnLifecycleEvent(ON_STOP)
+    private fun stop() {
         activity = null
     }
 
-    fun createView(view: View) {
-        view.apply {
-            initializePullToRefresh(turbolinks_view)
-            showScreenshotIfAvailable(turbolinks_view)
-            screenshot = null
-            screenshotOrientation = 0
-        }
-    }
-
-    fun start() {
-        onSetupToolbar()
-
-        // Attempt to attach the WebView. It may already be attached to the current instance.
-        isWebViewAttachedToNewDestination = attachWebView()
-
-        // Visit every time the Fragment is attached to the Activity
-        // or started again after visiting another Activity outside
-        // of the main single-Activity architecture.
-        visit(location, restoreWithCachedSnapshot = !isInitialVisit)
-        isInitialVisit = false
-    }
-
-    fun title(): String {
-        return webView?.title ?: ""
-    }
-
     fun session(): TurbolinksSession? {
-        return when (fragment) {
-            is Fragment -> activity?.onProvideSession(fragment)
-            else -> null
-        }
+        return activity?.onProvideSession(fragment)
     }
 
     fun attachWebView(): Boolean {
@@ -96,6 +74,10 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment) : Turbol
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onDetached() }
         onWebViewDetached()
+    }
+
+    fun navigateBack() {
+        activity?.navigateBack()
     }
 
     // -----------------------------------------------------------------------
@@ -148,6 +130,31 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment) : Turbol
     // -----------------------------------------------------------------------
     // Private
     // -----------------------------------------------------------------------
+
+    private fun initView() {
+        onSetupToolbar()
+        onProvideTurbolinksView()?.apply {
+            initializePullToRefresh(this)
+            showScreenshotIfAvailable(this)
+            screenshot = null
+            screenshotOrientation = 0
+        }
+    }
+
+    private fun attachWebViewAndVisit() {
+        // Attempt to attach the WebView. It may already be attached to the current instance.
+        isWebViewAttachedToNewDestination = attachWebView()
+
+        // Visit every time the Fragment is attached to the Activity
+        // or started again after visiting another Activity outside
+        // of the main single-Activity architecture.
+        visit(location, restoreWithCachedSnapshot = !isInitialVisit)
+        isInitialVisit = false
+    }
+
+    private fun title(): String {
+        return webView?.title ?: ""
+    }
 
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean = false) {
         val turbolinksSession = session() ?: return

@@ -3,9 +3,9 @@ package com.basecamp.turbolinks.demo
 import android.util.Log
 import android.webkit.WebView
 import com.basecamp.turbolinks.TurbolinksFragment
-import com.basecamp.turbolinks.TurbolinksFragmentDelegate
+import com.basecamp.turbolinks.TurbolinksFragmentObserver
 
-class BridgeFragmentDelegate(fragment: TurbolinksFragment) : TurbolinksFragmentDelegate(fragment) {
+class BridgeFragmentObserver(fragment: TurbolinksFragment) : TurbolinksFragmentObserver(fragment) {
     private var bridge: NativeBridge? = null
 
     override fun onWebViewAttached() {

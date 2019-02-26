@@ -9,9 +9,7 @@ import kotlinx.android.synthetic.main.fragment_modal.*
 
 class ModalFragment : WebFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_modal, container, false).also {
-            delegate.createView(it)
-        }
+        return inflater.inflate(R.layout.fragment_modal, container, false)
     }
 
     override fun onAttach(context: Context) {
@@ -34,8 +32,8 @@ class ModalFragment : WebFragment() {
     }
 
     private fun initView() {
-        modal_close.setOnClickListener { delegate.activity?.navigateBack() }
-        modal_submit.setOnClickListener { delegate.activity?.navigateBack() }
+        modal_close.setOnClickListener { observer.navigateBack() }
+        modal_submit.setOnClickListener { observer.navigateBack() }
     }
 
     private fun toggleModalPresentation(modal: Boolean) {

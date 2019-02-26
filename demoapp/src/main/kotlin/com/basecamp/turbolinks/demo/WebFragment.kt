@@ -1,6 +1,5 @@
 package com.basecamp.turbolinks.demo
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,46 +8,29 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.basecamp.turbolinks.TurbolinksFragment
-import com.basecamp.turbolinks.TurbolinksFragmentDelegate
+import com.basecamp.turbolinks.TurbolinksFragmentObserver
 import com.basecamp.turbolinks.TurbolinksView
 import kotlinx.android.synthetic.main.error.view.*
 import kotlinx.android.synthetic.main.fragment_web.*
 
 open class WebFragment : Fragment(), TurbolinksFragment {
-    protected val delegate by lazy { BridgeFragmentDelegate(this) }
+    protected val observer by lazy { BridgeFragmentObserver(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        delegate.create(arguments)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        delegate.attach(context)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        delegate.detach()
+        lifecycle.addObserver(observer)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_web, container, false).also {
-            delegate.createView(it)
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        delegate.start()
+        return inflater.inflate(R.layout.fragment_web, container, false)
     }
 
     // ----------------------------------------------------------------------------
     // TurbolinksFragment interface
     // ----------------------------------------------------------------------------
 
-    override fun onProvideDelegate(): TurbolinksFragmentDelegate {
-        return delegate
+    override fun onProvideObserver(): TurbolinksFragmentObserver {
+        return observer
     }
 
     override fun onProvideTurbolinksView(): TurbolinksView? {
