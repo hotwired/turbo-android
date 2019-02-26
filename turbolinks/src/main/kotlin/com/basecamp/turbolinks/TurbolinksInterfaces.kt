@@ -28,4 +28,5 @@ interface TurbolinksActivity {
     fun navigate(location: String, action: String)
     fun navigateUp(): Boolean
     fun navigateBack()
+    fun clearBackStack()
 }

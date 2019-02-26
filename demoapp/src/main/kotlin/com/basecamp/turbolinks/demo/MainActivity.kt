@@ -99,6 +99,10 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         delegate.navigateBack()
     }
 
+    override fun clearBackStack() {
+        delegate.clearBackStack()
+    }
+
     // ----------------------------------------------------------------------------
     // Private
     // ----------------------------------------------------------------------------
@@ -107,7 +111,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         bottom_nav.setOnNavigationItemSelectedListener { item ->
             val tab = tabs.first { it.menuId == item.itemId }
             if (tab == selectedTab) {
-                delegate.clearBackStack()
+                clearBackStack()
                 return@setOnNavigationItemSelectedListener true
             }
 

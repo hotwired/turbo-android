@@ -31,7 +31,7 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
         popBackStack()
     }
 
-    fun clearBackStack() {
+    override fun clearBackStack() {
         if (isAtStartDestination()) return
 
         detachWebViewFromCurrentDestination {
