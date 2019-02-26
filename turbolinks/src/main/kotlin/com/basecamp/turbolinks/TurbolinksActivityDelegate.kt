@@ -75,7 +75,7 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     private fun detachWebViewFromCurrentDestination(onDetached: () -> Unit = {}) {
         currentDestinationAction {
             when (it) {
-                is TurbolinksFragment -> it.detachWebView(onDetached)
+                is TurbolinksFragment -> it.onProvideDelegate().detachWebView(onDetached)
                 else -> onDetached()
             }
         }

@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.basecamp.turbolinks.TurbolinksFragment
-import com.basecamp.turbolinks.TurbolinksSession
+import com.basecamp.turbolinks.TurbolinksFragmentDelegate
 import com.basecamp.turbolinks.TurbolinksView
 import kotlinx.android.synthetic.main.error.view.*
 import kotlinx.android.synthetic.main.fragment_web.*
@@ -47,8 +47,8 @@ open class WebFragment : Fragment(), TurbolinksFragment {
     // TurbolinksFragment interface
     // ----------------------------------------------------------------------------
 
-    override fun onProvideSession(): TurbolinksSession? {
-        return delegate.onProvideSession(this)
+    override fun onProvideDelegate(): TurbolinksFragmentDelegate {
+        return delegate
     }
 
     override fun onProvideTurbolinksView(): TurbolinksView? {
@@ -81,13 +81,5 @@ open class WebFragment : Fragment(), TurbolinksFragment {
 
     override fun onTitleChanged(title: String) {
         toolbar?.title = title
-    }
-
-    override fun attachWebView(): Boolean {
-        return delegate.attachWebView()
-    }
-
-    override fun detachWebView(onDetached: () -> Unit) {
-        delegate.detachWebView(onDetached)
     }
 }

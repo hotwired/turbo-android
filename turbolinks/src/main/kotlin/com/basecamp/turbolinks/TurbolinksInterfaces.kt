@@ -30,7 +30,7 @@ interface TurbolinksActivity {
 }
 
 interface TurbolinksFragment {
-    fun onProvideSession(): TurbolinksSession?
+    fun onProvideDelegate(): TurbolinksFragmentDelegate
     fun onProvideTurbolinksView(): TurbolinksView?
     fun onProvideErrorPlaceholder(): ViewGroup?
     fun onSetupToolbar()
@@ -38,6 +38,4 @@ interface TurbolinksFragment {
     fun createProgressView(location: String): View
     fun shouldEnablePullToRefresh(): Boolean
     fun onTitleChanged(title: String)
-    fun attachWebView(): Boolean
-    fun detachWebView(onDetached: () -> Unit)
 }

@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.turbolinks_default.view.*
 import kotlin.random.Random
 
-open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : TurbolinksFragment by fragment, TurbolinksCallback {
+open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment) : TurbolinksFragment by fragment, TurbolinksCallback {
     private lateinit var location: String
     private val identifier = generateIdentifier()
     private var isInitialVisit = true
@@ -22,7 +22,7 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : Turbolinks
     private val turbolinksErrorPlaceholder: ViewGroup?
         get() = onProvideErrorPlaceholder()
     protected val webView: WebView?
-        get() = onProvideSession()?.webView
+        get() = session()?.webView
     var activity: TurbolinksActivity? = null
 
     // ----------------------------------------------------------------------------
@@ -75,22 +75,21 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : Turbolinks
         return webView?.title ?: ""
     }
 
-    fun onProvideSession(fragment: Fragment): TurbolinksSession? {
-        return activity?.onProvideSession(fragment)
+    fun session(): TurbolinksSession? {
+        return when (fragment) {
+            is Fragment -> activity?.onProvideSession(fragment)
+            else -> null
+        }
     }
 
-    // ----------------------------------------------------------------------------
-    // TurbolinksFragment interface
-    // ----------------------------------------------------------------------------
-
-    override fun attachWebView(): Boolean {
+    fun attachWebView(): Boolean {
         val view = turbolinksView ?: return false
         return view.attachWebView(requireNotNull(webView)).also {
             if (it) onWebViewAttached()
         }
     }
 
-    override fun detachWebView(onDetached: () -> Unit) {
+    fun detachWebView(onDetached: () -> Unit) {
         val view = webView ?: return
         onTitleChanged("")
         screenshotView()
@@ -151,7 +150,7 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : Turbolinks
     // -----------------------------------------------------------------------
 
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean = false) {
-        val turbolinksSession = onProvideSession() ?: return
+        val turbolinksSession = session() ?: return
 
         // Update the toolbar title while loading the next visit
         onTitleChanged("")
@@ -163,7 +162,7 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : Turbolinks
     }
 
     private fun screenshotView() {
-        if (onProvideSession()?.enableScreenshots != true) return
+        if (session()?.enableScreenshots != true) return
 
         turbolinksView?.let {
             screenshot = it.createScreenshot()
@@ -181,7 +180,7 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : Turbolinks
         turbolinksView.refreshLayout.apply {
             isEnabled = shouldEnablePullToRefresh()
             setOnRefreshListener {
-                onProvideSession()?.visitLocationWithAction(location, TurbolinksSession.ACTION_ADVANCE)
+                session()?.visitLocationWithAction(location, TurbolinksSession.ACTION_ADVANCE)
             }
         }
     }
