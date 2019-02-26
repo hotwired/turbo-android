@@ -29,23 +29,27 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : Turbolinks
     // TurbolinksFragmentDelegate
     // ----------------------------------------------------------------------------
 
-    open fun create(arguments: Bundle?) {
+    open fun onWebViewAttached() {}
+
+    open fun onWebViewDetached() {}
+
+    fun create(arguments: Bundle?) {
         location = arguments?.getString("location") ?:
                 throw IllegalArgumentException("A location argument must be provided")
     }
 
-    open fun attach(context: Context) {
+    fun attach(context: Context) {
         when (context) {
             is TurbolinksActivity -> activity = context
             else -> throw RuntimeException("$context must implement TurbolinksActivity")
         }
     }
 
-    open fun detach() {
+    fun detach() {
         activity = null
     }
 
-    open fun createView(view: View) {
+    fun createView(view: View) {
         view.apply {
             initializePullToRefresh(turbolinks_view)
             showScreenshotIfAvailable(turbolinks_view)
@@ -54,7 +58,7 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : Turbolinks
         }
     }
 
-    open fun start() {
+    fun start() {
         onSetupToolbar()
 
         // Attempt to attach the WebView. It may already be attached to the current instance.
@@ -80,7 +84,10 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : Turbolinks
     // ----------------------------------------------------------------------------
 
     override fun attachWebView(): Boolean {
-        return turbolinksView?.attachWebView(requireNotNull(webView)) ?: false
+        val view = turbolinksView ?: return false
+        return view.attachWebView(requireNotNull(webView)).also {
+            if (it) onWebViewAttached()
+        }
     }
 
     override fun detachWebView(onDetached: () -> Unit) {
@@ -89,6 +96,7 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) : Turbolinks
         screenshotView()
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onDetached() }
+        onWebViewDetached()
     }
 
     // -----------------------------------------------------------------------

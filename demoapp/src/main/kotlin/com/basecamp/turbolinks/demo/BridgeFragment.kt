@@ -1,6 +1,5 @@
 package com.basecamp.turbolinks.demo
 
-import android.content.Context
 import android.util.Log
 import android.webkit.WebView
 import com.basecamp.turbolinks.TurbolinksFragment
@@ -9,16 +8,14 @@ import com.basecamp.turbolinks.TurbolinksFragmentDelegate
 class BridgeFragmentDelegate(fragment: TurbolinksFragment) : TurbolinksFragmentDelegate(fragment) {
     private var bridge: NativeBridge? = null
 
-    override fun attach(context: Context) {
-        super.attach(context)
-        // TODO move to onWebViewAttached()
+    override fun onWebViewAttached() {
+        super.onWebViewAttached()
         bridge = webView?.tag as NativeBridge?
         bridge?.listener = bridgeListener
     }
 
-    override fun detach() {
-        super.detach()
-        // TODO move to onWebViewDetached()
+    override fun onWebViewDetached() {
+        super.onWebViewDetached()
         bridge?.listener = null
         bridge = null
     }
