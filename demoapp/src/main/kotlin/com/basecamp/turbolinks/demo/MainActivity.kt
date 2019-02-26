@@ -1,17 +1,15 @@
 package com.basecamp.turbolinks.demo
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.basecamp.turbolinks.TurbolinksActivity
-import com.basecamp.turbolinks.TurbolinksFragment
-import com.basecamp.turbolinks.TurbolinksRouter
-import com.basecamp.turbolinks.TurbolinksSession
+import com.basecamp.turbolinks.*
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : TurbolinksActivity() {
+class MainActivity : AppCompatActivity(), TurbolinksActivity {
     private val foodTab by lazy { NavigationTab(
             session = TurbolinksSession.getNew(this),
             controller = findNavController(R.id.section_food_nav),
@@ -42,8 +40,13 @@ class MainActivity : TurbolinksActivity() {
     private val view by lazy { layoutInflater.inflate(R.layout.activity_main, null) }
     private val tabs by lazy { arrayOf(foodTab, ordersTab, meTab) }
     private val router by lazy { Router(this) }
+    private val delegate by lazy { TurbolinksActivityDelegate(this) }
     private val selectedTab get() = tabs[selectedPosition]
     private var selectedPosition = 0
+
+    // ----------------------------------------------------------------------------
+    // AppCompatActivity
+    // ----------------------------------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +55,18 @@ class MainActivity : TurbolinksActivity() {
         initBottomTabsListener()
         verifyServerIpAddress(this)
     }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navigateUp()
+    }
+
+    override fun onBackPressed() {
+        navigateBack()
+    }
+
+    // ----------------------------------------------------------------------------
+    // TurbolinksActivity interface
+    // ----------------------------------------------------------------------------
 
     override fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession {
         val controller = fragment.findNavController()
@@ -68,11 +83,31 @@ class MainActivity : TurbolinksActivity() {
                 throw IllegalStateException("No current destination found")
     }
 
+    override fun onRequestFinish() {
+        finish()
+    }
+
+    override fun navigate(location: String, action: String) {
+        delegate.navigate(location, action)
+    }
+
+    override fun navigateUp(): Boolean {
+        return delegate.navigateUp()
+    }
+
+    override fun navigateBack() {
+        delegate.navigateBack()
+    }
+
+    // ----------------------------------------------------------------------------
+    // Private
+    // ----------------------------------------------------------------------------
+
     private fun initBottomTabsListener() {
         bottom_nav.setOnNavigationItemSelectedListener { item ->
             val tab = tabs.first { it.menuId == item.itemId }
             if (tab == selectedTab) {
-                clearBackStack()
+                delegate.clearBackStack()
                 return@setOnNavigationItemSelectedListener true
             }
 

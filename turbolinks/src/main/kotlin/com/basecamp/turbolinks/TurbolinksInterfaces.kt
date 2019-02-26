@@ -1,5 +1,7 @@
 package com.basecamp.turbolinks
 
+import androidx.fragment.app.Fragment
+
 interface TurbolinksCallback {
     fun identifier(): Int
     fun onPageStarted(location: String)
@@ -16,4 +18,14 @@ interface TurbolinksCallback {
 
 internal interface TurbolinksScrollUpCallback {
     fun canChildScrollUp(): Boolean
+}
+
+interface TurbolinksActivity {
+    fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
+    fun onProvideRouter(): TurbolinksRouter
+    fun onProvideCurrentDestination(): Fragment
+    fun onRequestFinish()
+    fun navigate(location: String, action: String)
+    fun navigateUp(): Boolean
+    fun navigateBack()
 }

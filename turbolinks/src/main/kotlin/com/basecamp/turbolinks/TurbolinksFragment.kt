@@ -27,7 +27,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         get() = view?.findViewById(R.id.turbolinks_error_placeholder)
 
     protected open val pullToRefreshEnabled = true
-    protected var listener: OnFragmentListener? = null
+    protected var listener: TurbolinksActivity? = null
     protected val webView: WebView?
         get() = session()?.webView
 
@@ -40,7 +40,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         super.onAttach(context)
 
         when (context) {
-            is OnFragmentListener -> listener = context
+            is TurbolinksActivity -> listener = context
             else -> throw RuntimeException("$context must implement OnFragmentListener")
         }
     }
@@ -96,14 +96,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         screenshotView()
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onDetached() }
-    }
-
-    interface OnFragmentListener {
-        fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
-        fun onProvideRouter(): TurbolinksRouter
-        fun onProvideCurrentDestination(): Fragment
-        fun navigate(location: String, action: String)
-        fun popBackStack()
     }
 
     // -----------------------------------------------------------------------

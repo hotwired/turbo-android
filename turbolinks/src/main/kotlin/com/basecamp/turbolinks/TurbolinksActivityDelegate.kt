@@ -1,22 +1,12 @@
 package com.basecamp.turbolinks
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 
-abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFragmentListener {
-    final override fun onSupportNavigateUp(): Boolean {
-        detachWebViewFromCurrentDestination()
-        return currentController().navigateUp()
-    }
-
-    final override fun onBackPressed() {
-        popBackStack()
-    }
-
-    final override fun navigate(location: String, action: String) {
+class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActivity by activity {
+    override fun navigate(location: String, action: String) {
         detachWebViewFromCurrentDestination {
             val bundle = Bundle().apply { putString("location", location) }
             val controller = currentController()
@@ -32,17 +22,13 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
         }
     }
 
-    final override fun popBackStack() {
-        detachWebViewFromCurrentDestination {
-            if (!currentController().popBackStack()) {
-                finish()
-            }
-        }
+    override fun navigateUp(): Boolean {
+        detachWebViewFromCurrentDestination()
+        return currentController().navigateUp()
     }
 
-    fun isAtStartDestination(): Boolean {
-        val controller = currentController()
-        return controller.graph.startDestination == controller.currentDestination?.id
+    override fun navigateBack() {
+        popBackStack()
     }
 
     fun clearBackStack() {
@@ -75,5 +61,18 @@ abstract class TurbolinksActivity : AppCompatActivity(), TurbolinksFragment.OnFr
 
     private fun currentController(): NavController {
         return onProvideCurrentDestination().findNavController()
+    }
+
+    private fun popBackStack() {
+        detachWebViewFromCurrentDestination {
+            if (!currentController().popBackStack()) {
+                onRequestFinish()
+            }
+        }
+    }
+
+    private fun isAtStartDestination(): Boolean {
+        val controller = currentController()
+        return controller.graph.startDestination == controller.currentDestination?.id
     }
 }
