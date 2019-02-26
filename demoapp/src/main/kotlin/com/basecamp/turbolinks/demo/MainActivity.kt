@@ -68,14 +68,6 @@ class MainActivity : TurbolinksActivity() {
                 throw IllegalStateException("No current destination found")
     }
 
-    override fun onRequestEnterModalPresentation() {
-        toggleModalPresentation(true)
-    }
-
-    override fun onRequestExitModalPresentation() {
-        toggleModalPresentation(false)
-    }
-
     private fun initBottomTabsListener() {
         bottom_nav.setOnNavigationItemSelectedListener { item ->
             val tab = tabs.first { it.menuId == item.itemId }
@@ -96,16 +88,5 @@ class MainActivity : TurbolinksActivity() {
 
     private fun toggleTabVisibility() {
         tabs.forEach { it.section.isInvisible = it != selectedTab }
-    }
-
-    private fun toggleModalPresentation(modal: Boolean) {
-        val startY = if (modal) 0 else bottom_nav.height
-        val endY = if (modal) bottom_nav.height else 0
-
-        bottom_nav.translationYAnimator(
-                startY = startY.toFloat(),
-                endY = endY.toFloat(),
-                duration = 200
-        ).start()
     }
 }

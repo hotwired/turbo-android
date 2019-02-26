@@ -14,7 +14,7 @@ class ModalFragment : WebFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        listener?.onRequestEnterModalPresentation()
+        toggleModalPresentation(true)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -23,12 +23,24 @@ class ModalFragment : WebFragment() {
     }
 
     override fun onDetach() {
-        listener?.onRequestExitModalPresentation()
+        toggleModalPresentation(false)
         super.onDetach()
     }
 
     private fun initView() {
         modal_close.setOnClickListener { listener?.popBackStack() }
         modal_submit.setOnClickListener { listener?.popBackStack() }
+    }
+
+    private fun toggleModalPresentation(modal: Boolean) {
+        val view = activity?.findViewById<View>(R.id.bottom_nav) ?: return
+        val startY = if (modal) 0 else view.height
+        val endY = if (modal) view.height else 0
+
+        view.translationYAnimator(
+                startY = startY.toFloat(),
+                endY = endY.toFloat(),
+                duration = 200
+        ).start()
     }
 }

@@ -102,8 +102,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
         fun onProvideRouter(): TurbolinksRouter
         fun onProvideCurrentDestination(): Fragment
-        fun onRequestEnterModalPresentation()
-        fun onRequestExitModalPresentation()
         fun navigate(location: String, action: String)
         fun popBackStack()
     }
