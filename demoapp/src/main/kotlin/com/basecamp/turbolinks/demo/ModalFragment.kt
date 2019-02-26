@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.fragment_modal.*
 
 class ModalFragment : WebFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_modal, null).also {
+        return inflater.inflate(R.layout.fragment_modal, container, false).also {
             delegate.createView(it)
         }
     }

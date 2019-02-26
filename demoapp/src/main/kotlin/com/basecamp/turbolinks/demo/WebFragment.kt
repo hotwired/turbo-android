@@ -33,7 +33,7 @@ open class WebFragment : Fragment(), TurbolinksFragment {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_web, null).also {
+        return inflater.inflate(R.layout.fragment_web, container, false).also {
             delegate.createView(it)
         }
     }
