@@ -110,22 +110,26 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     // Private
     // ----------------------------------------------------------------------------
 
+    private fun initWebViews() {
+        tabs.forEach { it.session.applyWebViewDefaults() }
+    }
+
     private fun initBottomTabsListener() {
         bottom_nav.setOnNavigationItemSelectedListener { item ->
             val tab = tabs.first { it.menuId == item.itemId }
-            if (tab == selectedTab) {
-                clearBackStack()
-                return@setOnNavigationItemSelectedListener true
-            }
-
-            selectedPosition = tabs.indexOf(tab)
-            toggleTabVisibility()
+            switchTab(tab)
             true
         }
     }
 
-    private fun initWebViews() {
-        tabs.forEach { it.session.applyWebViewDefaults() }
+    private fun switchTab(tab: NavigationTab) {
+        if (tab == selectedTab) {
+            clearBackStack()
+            return
+        }
+
+        selectedPosition = tabs.indexOf(tab)
+        toggleTabVisibility()
     }
 
     private fun toggleTabVisibility() {
