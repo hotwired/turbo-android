@@ -34,11 +34,11 @@ open class WebFragment : Fragment(), TurbolinksFragment {
     }
 
     override fun onProvideTurbolinksView(): TurbolinksView? {
-        return view?.findViewById(com.basecamp.turbolinks.R.id.turbolinks_view)
+        return view?.findViewById(R.id.turbolinks_view)
     }
 
     override fun onProvideErrorPlaceholder(): ViewGroup? {
-        return view?.findViewById(com.basecamp.turbolinks.R.id.turbolinks_error_placeholder)
+        return view?.findViewById(R.id.turbolinks_error_placeholder)
     }
 
     override fun onSetupToolbar() {
