@@ -37,7 +37,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     internal val context: Context
 
     internal lateinit var location: String
-    internal lateinit var tlCallback: TurbolinksCallback
+    internal lateinit var tlCallback: TurbolinksSessionCallback
 
     // User accessible
     val turbolinksSessionId: Int = Random().nextInt()
@@ -62,7 +62,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
     // Required
 
-    fun callback(tlCallback: TurbolinksCallback): TurbolinksSession {
+    fun callback(tlCallback: TurbolinksSessionCallback): TurbolinksSession {
         this.tlCallback = tlCallback
 
         return this

@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
-interface TurbolinksCallback {
+interface TurbolinksSessionCallback {
     fun identifier(): Int
     fun onPageStarted(location: String)
     fun onPageFinished(location: String)

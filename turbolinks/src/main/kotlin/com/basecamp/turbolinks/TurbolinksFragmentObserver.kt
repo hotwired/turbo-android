@@ -10,7 +10,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import kotlin.random.Random
 
 open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
-        TurbolinksFragment by fragment, TurbolinksCallback, LifecycleObserver {
+        TurbolinksFragment by fragment, TurbolinksSessionCallback, LifecycleObserver {
 
     private lateinit var location: String
     private val identifier = generateIdentifier()
