@@ -24,9 +24,9 @@
 
     <fragment
         android:id="@+id/food_fragment"
-        android:name="com.basecamp.turbolinks.demosimple.WebFragment"
+        android:name="com.basecamp.turbolinks.demosimple.WebHomeFragment"
         android:label=""
-        tools:layout="@layout/fragment_web"/>
+        tools:layout="@layout/fragment_web_home"/>
 
     <fragment
         android:id="@+id/web_fragment"

@@ -1,6 +1,10 @@
 package com.basecamp.turbolinks
 
-interface TurbolinksCallback {
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+
+interface TurbolinksSessionCallback {
     fun identifier(): Int
     fun onPageStarted(location: String)
     fun onPageFinished(location: String)
@@ -14,6 +18,24 @@ interface TurbolinksCallback {
     fun visitProposedToLocationWithAction(location: String, action: String)
 }
 
-internal interface TurbolinksScrollUpCallback {
-    fun canChildScrollUp(): Boolean
+interface TurbolinksActivity {
+    fun onProvideSession(fragment: Fragment): TurbolinksSession
+    fun onProvideRouter(): TurbolinksRouter
+    fun onProvideCurrentDestination(): Fragment
+    fun onRequestFinish()
+    fun navigate(location: String, action: String)
+    fun navigateUp(): Boolean
+    fun navigateBack()
+    fun clearBackStack()
+}
+
+interface TurbolinksFragment {
+    fun onProvideObserver(): TurbolinksFragmentObserver
+    fun onProvideTurbolinksView(): TurbolinksView?
+    fun onProvideErrorPlaceholder(): ViewGroup?
+    fun onSetupToolbar()
+    fun createErrorView(statusCode: Int): View
+    fun createProgressView(location: String): View
+    fun shouldEnablePullToRefresh(): Boolean
+    fun onTitleChanged(title: String)
 }

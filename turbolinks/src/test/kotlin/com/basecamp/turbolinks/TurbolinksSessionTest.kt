@@ -15,7 +15,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = TestBuildConfig::class)
 class TurbolinksSessionTest {
-    @Mock private lateinit var callback: TurbolinksCallback
+    @Mock private lateinit var callback: TurbolinksSessionCallback
     private lateinit var activity: Activity
     private lateinit var tlSession: TurbolinksSession
 

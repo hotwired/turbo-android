@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.demo
+package com.basecamp.turbolinks.demosimple
 
 import android.os.Bundle
 import android.view.LayoutInflater

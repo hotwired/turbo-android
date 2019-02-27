@@ -1,109 +1,86 @@
 package com.basecamp.turbolinks
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
-import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_ADVANCE
-import kotlinx.android.synthetic.main.turbolinks_default.view.*
+import androidx.lifecycle.Lifecycle.Event.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import kotlin.random.Random
 
-private const val ARG_LOCATION = "location"
+open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
+        TurbolinksFragment by fragment, TurbolinksSessionCallback, LifecycleObserver {
 
-abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksScrollUpCallback {
     private lateinit var location: String
-    private var identifier = generateIdentifier()
+    private val identifier = generateIdentifier()
     private var isInitialVisit = true
     private var isWebViewAttachedToNewDestination = false
     private var screenshot: Bitmap? = null
     private var screenshotOrientation = 0
+    private var activity: TurbolinksActivity? = null
     private val turbolinksView: TurbolinksView?
-        get() = view?.findViewById(R.id.turbolinks_view)
+        get() = onProvideTurbolinksView()
     private val turbolinksErrorPlaceholder: ViewGroup?
-        get() = view?.findViewById(R.id.turbolinks_error_placeholder)
-
-    protected open val pullToRefreshEnabled = true
-    protected var listener: OnFragmentListener? = null
+        get() = onProvideErrorPlaceholder()
+    private val fragment = fragment as? Fragment ?:
+        throw IllegalArgumentException("fragment must be a Fragment")
     protected val webView: WebView?
         get() = session()?.webView
 
-    abstract fun createView(): View
-    abstract fun onDestinationTitleChanged(title: String)
+    // ----------------------------------------------------------------------------
+    // TurbolinksFragmentObserver
+    // ----------------------------------------------------------------------------
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    open fun onWebViewAttached() {}
 
-        when (context) {
-            is OnFragmentListener -> listener = context
-            else -> throw RuntimeException("$context must implement OnFragmentListener")
-        }
-    }
+    open fun onWebViewDetached() {}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        location = arguments?.getString(ARG_LOCATION) ?:
+    @OnLifecycleEvent(ON_CREATE)
+    private fun create() {
+        location = fragment.arguments?.getString("location") ?:
                 throw IllegalArgumentException("A location argument must be provided")
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return createView().apply {
-            initializePullToRefresh(turbolinks_view)
-            showScreenshotIfAvailable(turbolinks_view)
-            screenshot = null
-            screenshotOrientation = 0
-        }
+    @OnLifecycleEvent(ON_START)
+    private fun start() {
+        activity = fragment.context as? TurbolinksActivity ?:
+                throw RuntimeException("The fragment Activity must implement TurbolinksActivity")
+
+        initView()
+        attachWebViewAndVisit()
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        // Attempt to attach the WebView. It may already be attached to the current instance.
-        isWebViewAttachedToNewDestination = attachWebView()
-
-        // Visit every time the Fragment is attached to the Activity
-        // or started again after visiting another Activity outside
-        // of the main single-Activity architecture.
-        visit(location, restoreWithCachedSnapshot = !isInitialVisit)
-        isInitialVisit = false
+    @OnLifecycleEvent(ON_STOP)
+    private fun stop() {
+        activity = null
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-    override fun canChildScrollUp(): Boolean {
-        return webView?.scrollY ?: 0 > 0
-    }
-
-    fun title(): String {
-        return webView?.title ?: ""
+    fun session(): TurbolinksSession? {
+        return activity?.onProvideSession(fragment)
     }
 
     fun attachWebView(): Boolean {
-        return turbolinksView?.attachWebView(requireNotNull(webView)) ?: false
+        val view = turbolinksView ?: return false
+        return view.attachWebView(requireNotNull(webView)).also {
+            if (it) onWebViewAttached()
+        }
     }
 
-    fun detachWebView(onDetached: () -> Unit) {
+    fun detachWebView(destinationIsFinishing: Boolean, onDetached: () -> Unit) {
         val view = webView ?: return
-        onDestinationTitleChanged("")
-        screenshotView()
+        if (!destinationIsFinishing) {
+            screenshotView()
+        }
+
+        onTitleChanged("")
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onDetached() }
+        onWebViewDetached()
     }
 
-    interface OnFragmentListener {
-        fun onProvideSession(fragment: TurbolinksFragment): TurbolinksSession
-        fun onProvideProgressView(location: String): View
-        fun onProvideErrorView(errorStatusCode : Int): View
-        fun onRequestEnterModalPresentation()
-        fun onRequestExitModalPresentation()
-        fun navigate(location: String, action: String)
-        fun popBackStack()
+    fun navigateBack() {
+        activity?.navigateBack()
     }
 
     // -----------------------------------------------------------------------
@@ -123,12 +100,12 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     override fun pageInvalidated() {}
 
     override fun visitRendered() {
-        onDestinationTitleChanged(title())
+        onTitleChanged(title())
         removeTransitionalViews()
     }
 
     override fun visitCompleted() {
-        onDestinationTitleChanged(title())
+        onTitleChanged(title())
         removeTransitionalViews()
     }
 
@@ -149,19 +126,44 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     }
 
     override fun visitProposedToLocationWithAction(location: String, action: String) {
-        onDestinationTitleChanged("")
-        listener?.navigate(location, action)
+        onTitleChanged("")
+        activity?.navigate(location, action)
     }
 
     // -----------------------------------------------------------------------
     // Private
     // -----------------------------------------------------------------------
 
+    private fun initView() {
+        onSetupToolbar()
+        turbolinksView?.apply {
+            initializePullToRefresh(this)
+            showScreenshotIfAvailable(this)
+            screenshot = null
+            screenshotOrientation = 0
+        }
+    }
+
+    private fun attachWebViewAndVisit() {
+        // Attempt to attach the WebView. It may already be attached to the current instance.
+        isWebViewAttachedToNewDestination = attachWebView()
+
+        // Visit every time the Fragment is attached to the Activity
+        // or started again after visiting another Activity outside
+        // of the main single-Activity architecture.
+        visit(location, restoreWithCachedSnapshot = !isInitialVisit)
+        isInitialVisit = false
+    }
+
+    private fun title(): String {
+        return webView?.title ?: ""
+    }
+
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean = false) {
         val turbolinksSession = session() ?: return
 
         // Update the toolbar title while loading the next visit
-        onDestinationTitleChanged("")
+        onTitleChanged("")
 
         turbolinksSession
                 .callback(this)
@@ -180,16 +182,15 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
     }
 
     private fun showProgressView(location: String) {
-        val progressView = listener?.onProvideProgressView(location) ?: return
+        val progressView = createProgressView(location)
         turbolinksView?.addProgressView(progressView)
     }
 
     private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
         turbolinksView.refreshLayout.apply {
-            isEnabled = pullToRefreshEnabled
-            callback = this@TurbolinksFragment
+            isEnabled = shouldEnablePullToRefresh()
             setOnRefreshListener {
-                session()?.visitLocationWithAction(location, ACTION_ADVANCE)
+                session()?.visitLocationWithAction(location, TurbolinksSession.ACTION_ADVANCE)
             }
         }
     }
@@ -210,12 +211,8 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksCallback, TurbolinksSc
         }
     }
 
-    private fun session(): TurbolinksSession? {
-        return listener?.onProvideSession(this)
-    }
-
     private fun handleError(code: Int) {
-        val errorView = listener?.onProvideErrorView(code) ?: return
+        val errorView = createErrorView(code)
 
         turbolinksErrorPlaceholder?.removeAllViews()
         turbolinksErrorPlaceholder?.addView(errorView)

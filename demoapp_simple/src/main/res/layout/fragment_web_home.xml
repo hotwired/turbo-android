@@ -15,11 +15,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.Toolbar
-            style="@style/ToolbarStyle"
-            android:id="@+id/toolbar"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/app_bar_logo"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_turbofood_logo" />
+
+        </FrameLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
