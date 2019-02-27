@@ -12,7 +12,7 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     // ----------------------------------------------------------------------------
 
     override fun navigate(location: String, action: String) {
-        detachWebViewFromCurrentDestination {
+        detachWebViewFromCurrentDestination(destinationIsFinishing = false) {
             val bundle = Bundle().apply { putString("location", location) }
             val controller = currentController()
             val router = onProvideRouter()
@@ -28,7 +28,7 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     }
 
     override fun navigateUp(): Boolean {
-        detachWebViewFromCurrentDestination()
+        detachWebViewFromCurrentDestination(destinationIsFinishing = true)
         return currentController().navigateUp()
     }
 
@@ -39,7 +39,7 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     override fun clearBackStack() {
         if (isAtStartDestination()) return
 
-        detachWebViewFromCurrentDestination {
+        detachWebViewFromCurrentDestination(destinationIsFinishing = true) {
             val controller = currentController()
             controller.popBackStack(controller.graph.startDestination, false)
         }
@@ -54,7 +54,7 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     }
 
     private fun popBackStack() {
-        detachWebViewFromCurrentDestination {
+        detachWebViewFromCurrentDestination(destinationIsFinishing = true) {
             if (!currentController().popBackStack()) {
                 onRequestFinish()
             }
@@ -72,10 +72,10 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
      * not change during the transition. Because the incoming screen will attach the WebView to the
      * new view hierarchy, it needs to already be detached from the previous screen.
      */
-    private fun detachWebViewFromCurrentDestination(onDetached: () -> Unit = {}) {
+    private fun detachWebViewFromCurrentDestination(destinationIsFinishing: Boolean, onDetached: () -> Unit = {}) {
         currentDestinationAction {
             when (it) {
-                is TurbolinksFragment -> it.onProvideObserver().detachWebView(onDetached)
+                is TurbolinksFragment -> it.onProvideObserver().detachWebView(destinationIsFinishing, onDetached)
                 else -> onDetached()
             }
         }

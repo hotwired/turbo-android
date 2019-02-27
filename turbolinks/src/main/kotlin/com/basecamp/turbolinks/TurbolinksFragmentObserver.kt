@@ -67,10 +67,13 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         }
     }
 
-    fun detachWebView(onDetached: () -> Unit) {
+    fun detachWebView(destinationIsFinishing: Boolean, onDetached: () -> Unit) {
         val view = webView ?: return
+        if (!destinationIsFinishing) {
+            screenshotView()
+        }
+
         onTitleChanged("")
-        screenshotView()
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onDetached() }
         onWebViewDetached()
@@ -133,7 +136,7 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
 
     private fun initView() {
         onSetupToolbar()
-        onProvideTurbolinksView()?.apply {
+        turbolinksView?.apply {
             initializePullToRefresh(this)
             showScreenshotIfAvailable(this)
             screenshot = null

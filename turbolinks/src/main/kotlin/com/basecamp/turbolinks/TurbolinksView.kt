@@ -61,6 +61,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     internal fun addScreenshotView(screenshot: Bitmap?) {
         if (screenshot == null) return
 
+        removeScreenshotView()
         screenshotView = ImageView(context).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             isClickable = true
