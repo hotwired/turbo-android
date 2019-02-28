@@ -309,16 +309,23 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
         override fun onPageStarted(view: WebView, location: String, favicon: Bitmap?) {
             TurbolinksLog.d("onPageStarted: [location: $location]")
             tlCallback.onPageStarted(location)
-            currentVisitIdentifier = location.hashCode().toString()
+            coldBootVisitIdentifier = ""
+            currentVisitIdentifier = location.identifier()
         }
 
         override fun onPageFinished(view: WebView, location: String) {
             TurbolinksLog.d("onPageFinished: [location: $location, progress: ${view.progress}]")
 
-            if (view.progress < 100) return
+            if (coldBootVisitIdentifier == location.identifier()) {
+                // If we got here, onPageFinished() has already been called for
+                // this location so bail. It's common for onPageFinished()
+                // to be called multiple times when the document has initially
+                // loaded and then when resources like images finish loading.
+                return
+            }
 
             TurbolinksLog.d("onPageFinished: [location: $location]")
-            coldBootVisitIdentifier = location.hashCode().toString()
+            coldBootVisitIdentifier = location.identifier()
             val expression = "window.webView == null"
             webView.evaluateJavascript(expression) { s ->
                 if (s?.toBoolean() == true && !isLoadingBridge) {
@@ -371,6 +378,10 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
                 reset()
                 tlCallback.onReceivedError(errorResponse.statusCode)
             }
+        }
+
+        private fun String.identifier(): String {
+            return hashCode().toString()
         }
     }
 
