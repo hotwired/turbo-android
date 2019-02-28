@@ -197,7 +197,7 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
 
     private fun showScreenshotIfAvailable(turbolinksView: TurbolinksView) {
         if (screenshotOrientation == turbolinksView.screenshotOrientation()) {
-            screenshot?.let { turbolinksView.addScreenshotView(it) }
+            screenshot?.let { turbolinksView.addScreenshot(it) }
         }
     }
 
@@ -207,7 +207,7 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         // TODO: This delay shouldn't be necessary, but visitRendered() is being called early.
         delay(200) {
             turbolinksView?.removeProgressView()
-            turbolinksView?.removeScreenshotView()
+            turbolinksView?.removeScreenshot()
         }
     }
 
