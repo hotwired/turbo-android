@@ -1,14 +1,13 @@
 package com.basecamp.turbolinks
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
-import androidx.annotation.ColorRes
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
+import androidx.annotation.ColorRes
 import java.net.URI
 import java.net.URL
 
@@ -16,11 +15,8 @@ internal fun WebView.executeJavascript(jsFunction: String) {
     context.runOnUiThread { loadUrl("javascript: $jsFunction") }
 }
 
-@SuppressLint("NewApi")
-@Suppress("DEPRECATION")
-internal fun Context.color(@ColorRes id: Int) = when {
-    isAtLeastMarshmallow() -> resources.getColor(id, null)
-    else -> resources.getColor(id)
+internal fun Context.color(@ColorRes id: Int): Int {
+    return resources.getColor(id, null)
 }
 
 internal fun Context.runOnUiThread(func: () -> Unit) {

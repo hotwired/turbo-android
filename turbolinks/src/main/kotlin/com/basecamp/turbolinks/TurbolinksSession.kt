@@ -339,33 +339,33 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
             }
         }
 
-        @Suppress("OverridingDeprecatedMember")
-        override fun shouldOverrideUrlLoading(view: WebView, location: String): Boolean {
-            TurbolinksLog.d("Overriding load: [location: $location]")
+        /**
+         * Turbolinks will not call adapter.visitProposedToLocationWithAction in some cases,
+         * like target=_blank or when the domain doesn't match. We still route those here.
+         * This is only called when links within a webView are clicked and not during loadUrl.
+         * So this is safely ignored for the first cold boot.
+         * http://stackoverflow.com/a/6739042/3280911
+         */
+        override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+            val newLocation = request.url.toString()
+            TurbolinksLog.d("Overriding load: [location: $newLocation]")
 
-            tlCallback.shouldOverrideUrl(location)
+            tlCallback.shouldOverrideUrl(newLocation)
 
             if (!isReady || isColdBooting) return false
 
+            // Prevents firing twice in a row within a few milliseconds of each other, which
+            // happens sometimes. So we check for a slight delay between requests, which is
+            // plenty of time to allow for a user to click the same link again.
             val currentTime = Date().time
             if (currentTime - previousTime > 500) {
-                TurbolinksLog.d("Overriding load: [location: $location]")
+                TurbolinksLog.d("Overriding load: [location: $newLocation]")
 
                 previousTime = currentTime
-                visitProposedToLocationWithAction(location, ACTION_ADVANCE)
+                visitProposedToLocationWithAction(newLocation, ACTION_ADVANCE)
             }
 
             return true
-        }
-
-        @Suppress("OverridingDeprecatedMember", "DEPRECATION")
-        override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
-            TurbolinksLog.d("onReceivedError: [errorCode: $errorCode]")
-
-            super.onReceivedError(view, errorCode, description, failingUrl)
-            reset()
-
-            tlCallback.onReceivedError(errorCode)
         }
 
         @TargetApi(Build.VERSION_CODES.M)
