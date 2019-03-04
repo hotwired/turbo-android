@@ -48,7 +48,17 @@
     }
   }
 
-  window.appBridge = new AppBridge()
-  window.Bridge.setAdapter(appBridge)
-  window.appBridge.log("AppBridge initialized...")
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    initializeBridge()
+  } else {
+    document.addEventListener("DOMContentLoaded", () => {
+      initializeBridge()
+    })
+  }
+
+  function initializeBridge() {
+    window.appBridge = new AppBridge()
+    window.Bridge.setAdapter(appBridge)
+    window.appBridge.log("AppBridge initialized...")
+  }
 })()

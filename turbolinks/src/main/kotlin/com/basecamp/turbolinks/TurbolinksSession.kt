@@ -15,7 +15,7 @@ import java.io.IOException
 import java.util.*
 
 @Suppress("unused")
-class TurbolinksSession private constructor(val activity: Activity, val webView: TurbolinksWebView) {
+class TurbolinksSession private constructor(val context: Context, val webView: TurbolinksWebView) {
     internal val JS_RESERVED_INTERFACE_NAME = "TurbolinksSession"
     internal val JS_BRIDGE_LOADER = "(function(){" +
             "var parent = document.getElementsByTagName('head').item(0);" +
@@ -29,22 +29,18 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     internal var coldBootVisitIdentifier = ""
     internal var currentVisitIdentifier: String = ""
     internal var isLoadingBridge: Boolean = false
-    internal var isWebViewAddedToNewParent: Boolean = false
     internal var previousTime: Long = 0
-    internal var restoreWithCachedSnapshot: Boolean = false
     internal var restorationIdentifiers = SparseArray<String>()
-    internal var visits = ArrayList<String>()
-    internal val context: Context
+    internal var pendingVisits = ArrayList<String>()
 
-    internal lateinit var location: String
-    internal lateinit var tlCallback: TurbolinksSessionCallback
+    internal lateinit var currentVisit: TurbolinksVisit
+    internal val destinationIdentifier: Int
+        get() = currentVisit.destinationIdentifier
+    internal val callback: TurbolinksSessionCallback
+        get() = currentVisit.callback
 
     // User accessible
     val turbolinksSessionId: Int = Random().nextInt()
-    var enableDebugLogging: Boolean = false
-        set(value) {
-            TurbolinksLog.enableDebugLogging = value
-        }
     var enableScreenshots: Boolean = true
     var isColdBooting: Boolean = false
         internal set
@@ -52,35 +48,15 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
         internal set
 
     init {
-        @Suppress("SENSELESS_COMPARISON") // Java could send null
-        if (activity == null) throw IllegalArgumentException("Activity must not be null.")
-
-        this.context = activity
         initializeWebView()
     }
 
 
     // Required
 
-    fun callback(tlCallback: TurbolinksSessionCallback): TurbolinksSession {
-        this.tlCallback = tlCallback
-
-        return this
-    }
-
-    fun visit(location: String) {
-        this.location = location
-
-        validateRequiredParams()
-        visitLocation()
-    }
-
-
-    // Optional
-
-    fun restoreWithCachedSnapshot(restoreWithCachedSnapshot: Boolean): TurbolinksSession {
-        this.restoreWithCachedSnapshot = restoreWithCachedSnapshot
-        return this
+    fun visit(visit: TurbolinksVisit) {
+        this.currentVisit = visit
+        visitLocation(reload = visit.reload)
     }
 
 
@@ -90,20 +66,14 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
         coldBootVisitIdentifier = ""
         currentVisitIdentifier = ""
         restorationIdentifiers.clear()
-        visits.clear()
+        pendingVisits.clear()
         isLoadingBridge = false
         isReady = false
         isColdBooting = false
     }
 
-    fun visitLocationWithAction(location: String, action: String) {
-        val restorationIdentifier = restorationIdentifiers[destinationIdentifier()] ?: ""
-        this.location = location
-        val params = commaDelimitedJson(location.urlEncode(), action, restorationIdentifier)
-
-        TurbolinksLog.d("visitLocationWithAction: [location: $location, action: $action, restorationIdentifier: $restorationIdentifier]")
-
-        webView.executeJavascript("webView.visitLocationWithActionAndRestorationIdentifier($params)")
+    fun setDebugLoggingEnabled(enabled: Boolean) {
+        TurbolinksLog.enableDebugLogging = enabled
     }
 
 
@@ -113,7 +83,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun visitProposedToLocationWithAction(location: String, action: String) {
         TurbolinksLog.d("visitProposedToLocationWithAction: [location: $location, action: $action]")
 
-        context.runOnUiThread { tlCallback.visitProposedToLocationWithAction(location, action) }
+        context.runOnUiThread { callback.visitProposedToLocationWithAction(location, action) }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -121,9 +91,9 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String, restorationIdentifier: String) {
         TurbolinksLog.d("visitStarted: [location: $location, visitIdentifier: $visitIdentifier, visitHasCachedSnapshot: $visitHasCachedSnapshot, restorationIdentifier: $restorationIdentifier]")
 
-        restorationIdentifiers.put(destinationIdentifier(), restorationIdentifier)
+        restorationIdentifiers.put(destinationIdentifier, restorationIdentifier)
         currentVisitIdentifier = visitIdentifier
-        visits.add(location)
+        pendingVisits.add(location)
 
         val params = commaDelimitedJson(visitIdentifier)
         webView.executeJavascript("webView.changeHistoryForVisitWithIdentifier($params)")
@@ -145,10 +115,10 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun visitRequestFailedWithStatusCode(visitIdentifier: String, statusCode: Int) {
         TurbolinksLog.d("visitRequestFailedWithStatusCode: [visitIdentifier: $visitIdentifier], statusCode: $statusCode")
 
-        restoreWithCachedSnapshot = false
+        currentVisit.restoreWithCachedSnapshot = false
 
         if (visitIdentifier == currentVisitIdentifier) {
-            context.runOnUiThread { tlCallback.requestFailedWithStatusCode(statusCode) }
+            context.runOnUiThread { callback.requestFailedWithStatusCode(statusCode) }
         }
     }
 
@@ -156,7 +126,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun pageLoaded(restorationIdentifier: String) {
         TurbolinksLog.d("pageLoaded: [restorationIdentifier: $restorationIdentifier]")
 
-        restorationIdentifiers.put(destinationIdentifier(), restorationIdentifier)
+        restorationIdentifiers.put(destinationIdentifier, restorationIdentifier)
     }
 
     @JavascriptInterface
@@ -165,7 +135,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
         if (visitIdentifier == currentVisitIdentifier) {
             context.runOnUiThread {
-                tlCallback.visitRendered()
+                callback.visitRendered()
             }
         }
     }
@@ -174,12 +144,12 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun visitCompleted(visitIdentifier: String) {
         TurbolinksLog.d("visitCompleted: [visitIdentifier: $visitIdentifier]")
 
-        visits.clear()
-        restoreWithCachedSnapshot = false
+        pendingVisits.clear()
+        currentVisit.restoreWithCachedSnapshot = false
 
         if (visitIdentifier == currentVisitIdentifier) {
             context.runOnUiThread {
-                tlCallback.visitCompleted()
+                callback.visitCompleted()
             }
         }
     }
@@ -188,11 +158,8 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     fun pageInvalidated() {
         TurbolinksLog.d("pageInvalidated")
 
-        reset()
-        restoreWithCachedSnapshot = false
-
         context.runOnUiThread {
-            tlCallback.pageInvalidated()
+            callback.pageInvalidated()
             visitLocation(reload = true)
         }
     }
@@ -200,22 +167,23 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     @JavascriptInterface
     fun turbolinksIsReady(isReady: Boolean) {
         this.isReady = isReady
+        val location = currentVisit.location
 
         if (isReady) {
             isLoadingBridge = false
             isColdBooting = false
 
             // Pending visits were queued while cold booting -- visit the current location
-            if (visits.size > 0) {
+            if (pendingVisits.size > 0) {
                 TurbolinksLog.d("setTurbolinksIsReady pending visit: [location: $location]")
 
-                visitLocationWithAction(location, action())
-                visits.clear()
+                visitLocationWithAction(currentVisit, action())
+                pendingVisits.clear()
             } else {
                 TurbolinksLog.d("setTurbolinksIsReady calling visitRendered")
 
                 webView.executeJavascript("window.webView.afterNextRepaint(function() { TurbolinksSession.visitRendered('$coldBootVisitIdentifier') })")
-                context.runOnUiThread { tlCallback.visitCompleted() }
+                context.runOnUiThread { callback.visitCompleted() }
             }
         } else {
             TurbolinksLog.d("TurbolinksSession is not ready. Resetting and throw error.")
@@ -231,48 +199,56 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
             TurbolinksLog.d("turbolinksFailedToLoad")
 
             reset()
-            tlCallback.onReceivedError(-1)
+            callback.onReceivedError(-1)
         }
     }
 
     // Private
 
-    private fun action() = if (restoreWithCachedSnapshot) ACTION_RESTORE else ACTION_ADVANCE
+    private fun action() = if (currentVisit.restoreWithCachedSnapshot) ACTION_RESTORE else ACTION_ADVANCE
 
-    private fun destinationIdentifier(): Int {
-        return tlCallback.identifier()
-    }
+    private fun visitLocationWithAction(visit: TurbolinksVisit, action: String) {
+        val location = visit.location
+        val restorationIdentifier = when (visit.restoreWithCachedSnapshot) {
+            true -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
+            else -> ""
+        }
 
-    private fun validateRequiredParams() {
-        requireNotNull(tlCallback) { "TurbolinksSession.callback(callback) must be called with a non-null object." }
-        requireNotNull(location) { "TurbolinksSession.visit(location) location value must not be null." }
+        TurbolinksLog.d("visitLocationWithAction: [location: $location, action: $action, restorationIdentifier: $restorationIdentifier]")
+
+        val params = commaDelimitedJson(location.urlEncode(), action, restorationIdentifier)
+        webView.executeJavascript("webView.visitLocationWithActionAndRestorationIdentifier($params)")
     }
 
     private fun visitLocation(reload: Boolean = false) {
-        tlCallback.visitLocationStarted(location)
+        val location = currentVisit.location
+        callback.visitLocationStarted(location)
+
+        if (reload) {
+            reset()
+        }
 
         if (isColdBooting) {
-            visits.add(location)
+            pendingVisits.add(location)
+            return
         }
 
         if (isReady) {
-            visitLocationWithAction(location, action())
+            visitLocationWithAction(currentVisit, action())
+            return
         }
 
-        if (!isReady && !isColdBooting) {
-            TurbolinksLog.d("visit cold: [location: $location]")
+        TurbolinksLog.d("visit cold: [location: $location]")
+        isColdBooting = true
 
-            isColdBooting = true
-
-            // When a page is invalidated by Turbolinks, we need to reload the
-            // same URL in the WebView. For a URL with an anchor, the WebView
-            // sees a WebView.loadUrl() request as a same-page visit instead of
-            // requesting a full page reload. To work around this, we call
-            // WebView.reload(), which fully reloads the page for all URLs.
-            when (reload) {
-                true -> webView.reload()
-                else -> webView.loadUrl(location)
-            }
+        // When a page is invalidated by Turbolinks, we need to reload the
+        // same URL in the WebView. For a URL with an anchor, the WebView
+        // sees a WebView.loadUrl() request as a same-page visit instead of
+        // requesting a full page reload. To work around this, we call
+        // WebView.reload(), which fully reloads the page for all URLs.
+        when (reload) {
+            true -> webView.reload()
+            else -> webView.loadUrl(location)
         }
     }
 
@@ -308,7 +284,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
     inner class TurbolinksWebViewClient : WebViewClient() {
         override fun onPageStarted(view: WebView, location: String, favicon: Bitmap?) {
             TurbolinksLog.d("onPageStarted: [location: $location]")
-            tlCallback.onPageStarted(location)
+            callback.onPageStarted(location)
             coldBootVisitIdentifier = ""
             currentVisitIdentifier = location.identifier()
         }
@@ -334,7 +310,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
 
                     TurbolinksLog.d("Bridge loaded")
 
-                    tlCallback.onPageFinished(location)
+                    callback.onPageFinished(location)
                 }
             }
         }
@@ -350,7 +326,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
             val newLocation = request.url.toString()
             TurbolinksLog.d("Overriding load: [location: $newLocation]")
 
-            tlCallback.shouldOverrideUrl(newLocation)
+            callback.shouldOverrideUrl(newLocation)
 
             if (!isReady || isColdBooting) return false
 
@@ -376,7 +352,7 @@ class TurbolinksSession private constructor(val activity: Activity, val webView:
                 TurbolinksLog.d("onReceivedHttpError: [statusCode: ${errorResponse.statusCode}]")
 
                 reset()
-                tlCallback.onReceivedError(errorResponse.statusCode)
+                callback.onReceivedError(errorResponse.statusCode)
             }
         }
 
