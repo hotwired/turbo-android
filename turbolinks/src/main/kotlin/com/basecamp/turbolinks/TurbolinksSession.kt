@@ -18,7 +18,6 @@ import kotlin.random.Random
 class TurbolinksSession private constructor(val context: Context, val webView: TurbolinksWebView) {
     // Internal state management
     internal var coldBootVisitIdentifier = ""
-    internal var isLoadingBridge: Boolean = false
     internal var previousTime: Long = 0
     internal var restorationIdentifiers = SparseArray<String>()
     internal var pendingVisits = ArrayList<String>()
@@ -57,7 +56,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         coldBootVisitIdentifier = ""
         restorationIdentifiers.clear()
         pendingVisits.clear()
-        isLoadingBridge = false
         isReady = false
         isColdBooting = false
     }
@@ -160,7 +158,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
         if (isReady) {
             logEvent("turbolinksIsReady")
-            isLoadingBridge = false
             isColdBooting = false
 
             // Pending visits were queued while cold booting -- visit the current location
