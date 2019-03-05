@@ -169,8 +169,9 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 visitLocationWithAction(currentVisit)
                 pendingVisits.clear()
             } else {
-                logEvent("turbolinksIsReady calling visitRendered")
-                webView.runJavascript("window.webView.afterNextRepaint(function() { TurbolinksSession.visitRendered('$coldBootVisitIdentifier') })")
+                logEvent("turbolinksIsReady")
+                logEvent("visitRenderedForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
+                webView.runJavascript("webView.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
                 context.runOnUiThread { callback.visitCompleted() }
             }
         } else {

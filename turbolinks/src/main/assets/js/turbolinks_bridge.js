@@ -86,6 +86,12 @@
             })
         },
 
+        visitRenderedForColdBoot: function(visitIdentifier) {
+            this.afterNextRepaint(function() {
+                TurbolinksSession.visitRendered(visitIdentifier)
+            })
+        },
+
         visitCompleted: function(visit) {
             this.afterNextRepaint(function() {
                 TurbolinksSession.visitCompleted(visit.identifier)
