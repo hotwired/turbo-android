@@ -11,21 +11,11 @@ import android.util.SparseArray
 import android.view.ViewGroup
 import android.webkit.*
 import android.widget.FrameLayout
-import java.io.IOException
 import java.util.*
 import kotlin.random.Random
 
 @Suppress("unused")
 class TurbolinksSession private constructor(val context: Context, val webView: TurbolinksWebView) {
-    internal val JS_RESERVED_INTERFACE_NAME = "TurbolinksSession"
-    internal val JS_BRIDGE_LOADER = "(function(){" +
-            "var parent = document.getElementsByTagName('head').item(0);" +
-            "var script = document.createElement('script');" +
-            "script.type = 'text/javascript';" +
-            "script.innerHTML = window.atob('%s');" +
-            "parent.appendChild(script);" +
-            "return true;})()"
-
     // Internal state management
     internal var coldBootVisitIdentifier = ""
     internal var currentVisitIdentifier: String = ""
@@ -99,9 +89,9 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         pendingVisits.add(location)
 
         val params = commaDelimitedJson(visitIdentifier)
-        webView.executeJavascript("webView.changeHistoryForVisitWithIdentifier($params)")
-        webView.executeJavascript("webView.issueRequestForVisitWithIdentifier($params)")
-        webView.executeJavascript("webView.loadCachedSnapshotForVisitWithIdentifier($params)")
+        webView.runJavascript("webView.changeHistoryForVisitWithIdentifier($params)")
+        webView.runJavascript("webView.issueRequestForVisitWithIdentifier($params)")
+        webView.runJavascript("webView.loadCachedSnapshotForVisitWithIdentifier($params)")
     }
 
     @JavascriptInterface
@@ -110,7 +100,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
         if (visitIdentifier == currentVisitIdentifier) {
             val params = commaDelimitedJson(visitIdentifier)
-            webView.executeJavascript("webView.loadResponseForVisitWithIdentifier($params)")
+            webView.runJavascript("webView.loadResponseForVisitWithIdentifier($params)")
         }
     }
 
@@ -180,7 +170,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 pendingVisits.clear()
             } else {
                 logEvent("turbolinksIsReady calling visitRendered")
-                webView.executeJavascript("window.webView.afterNextRepaint(function() { TurbolinksSession.visitRendered('$coldBootVisitIdentifier') })")
+                webView.runJavascript("window.webView.afterNextRepaint(function() { TurbolinksSession.visitRendered('$coldBootVisitIdentifier') })")
                 context.runOnUiThread { callback.visitCompleted() }
             }
         } else {
@@ -215,7 +205,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 "restorationIdentifier" to restorationIdentifier)
 
         val params = commaDelimitedJson(location.urlEncode(), action, restorationIdentifier)
-        webView.executeJavascript("webView.visitLocationWithActionAndRestorationIdentifier($params)")
+        webView.runJavascript("webView.visitLocationWithActionAndRestorationIdentifier($params)")
     }
 
     private fun visitLocation(reload: Boolean = false) {
@@ -260,20 +250,21 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             }
 
             layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            addJavascriptInterface(this@TurbolinksSession, JS_RESERVED_INTERFACE_NAME)
+            addJavascriptInterface(this@TurbolinksSession, "TurbolinksSession")
             webChromeClient = WebChromeClient()
             webViewClient = TurbolinksWebViewClient()
         }
     }
 
-    private fun loadJavascriptBridge(context: Context, webView: WebView) {
-        try {
-            logEvent("loadJavascriptBridge")
-            val jsFunction = JS_BRIDGE_LOADER.format(context.contentFromAsset("js/turbolinks_bridge.js"))
-            webView.executeJavascript(jsFunction)
-        } catch (e: IOException) {
-            TurbolinksLog.e("Failed to load bridge: $e")
+    private fun installBridge(onBridgeInstalled: () -> Unit) {
+        logEvent("installBridge")
+        webView.evaluateJavascript(bridgeScript()) {
+            onBridgeInstalled()
         }
+    }
+
+    private fun bridgeScript(): String {
+        return context.contentFromAsset("js/turbolinks_bridge.js")
     }
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
@@ -307,12 +298,11 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             logEvent("onPageFinished", "location" to location, "progress" to view.progress)
             coldBootVisitIdentifier = location.identifier()
 
-            val expression = "window.webView == null"
-            webView.evaluateJavascript(expression) { s ->
-                if (s?.toBoolean() == true && !isLoadingBridge) {
-                    isLoadingBridge = true
-                    loadJavascriptBridge(context, webView)
-                    callback.onPageFinished(location)
+            webView.evaluateJavascript("window.webView == null") { s ->
+                if (s?.toBoolean() == true) {
+                    installBridge {
+                        callback.onPageFinished(location)
+                    }
                 }
             }
         }

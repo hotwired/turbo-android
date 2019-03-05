@@ -2,7 +2,6 @@ package com.basecamp.turbolinks
 
 import android.content.Context
 import android.os.Handler
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,10 @@ import androidx.annotation.ColorRes
 import java.net.URI
 import java.net.URL
 
-internal fun WebView.executeJavascript(jsFunction: String) {
-    context.runOnUiThread { loadUrl("javascript: $jsFunction") }
+internal fun WebView.runJavascript(javascript: String) {
+    context.runOnUiThread {
+        evaluateJavascript(javascript) {}
+    }
 }
 
 internal fun Context.color(@ColorRes id: Int): Int {
@@ -25,7 +26,7 @@ internal fun Context.runOnUiThread(func: () -> Unit) {
 
 internal fun Context.contentFromAsset(filePath: String): String {
     return assets.open(filePath).use {
-        Base64.encodeToString(it.readBytes(), Base64.NO_WRAP)
+        String(it.readBytes())
     }
 }
 
