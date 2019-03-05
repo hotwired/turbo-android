@@ -17,14 +17,11 @@ import kotlin.random.Random
 @Suppress("unused")
 class TurbolinksSession private constructor(val context: Context, val webView: TurbolinksWebView) {
     // Internal state management
+    internal lateinit var currentVisit: TurbolinksVisit
     internal var coldBootVisitIdentifier = ""
     internal var previousTime: Long = 0
     internal var restorationIdentifiers = SparseArray<String>()
     internal var pendingVisits = ArrayList<String>()
-
-    internal lateinit var currentVisit: TurbolinksVisit
-    internal val destinationIdentifier: Int
-        get() = currentVisit.destinationIdentifier
     internal val callback: TurbolinksSessionCallback
         get() = currentVisit.callback
 
@@ -95,7 +92,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 "visitHasCachedSnapshot" to visitHasCachedSnapshot,
                 "restorationIdentifier" to restorationIdentifier)
 
-        restorationIdentifiers.put(destinationIdentifier, restorationIdentifier)
+        restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
         currentVisit.identifier = visitIdentifier
         pendingVisits.add(location)
 
@@ -135,7 +132,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     @JavascriptInterface
     fun pageLoaded(restorationIdentifier: String) {
         logEvent("pageLoaded", "restorationIdentifier" to restorationIdentifier)
-        restorationIdentifiers.put(destinationIdentifier, restorationIdentifier)
+        restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
     }
 
     @JavascriptInterface
@@ -173,29 +170,21 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     @JavascriptInterface
     fun turbolinksIsReady(isReady: Boolean) {
+        logEvent("turbolinksIsReady", "isReady" to isReady)
         this.isReady = isReady
-        val location = currentVisit.location
+        this.isColdBooting = false
 
-        if (isReady) {
-            logEvent("turbolinksIsReady")
-            isColdBooting = false
-
-            // Pending visits were queued while cold booting -- visit the current location
-            if (pendingVisits.size > 0) {
-                logEvent("pending visit", "location" to location)
-                visitLocation(currentVisit)
-                pendingVisits.clear()
-            } else {
-                logEvent("visitRenderedForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
-                webView.runJavascript("webView.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
-                context.runOnUiThread {
-                    callback.visitCompleted()
-                }
-            }
-        } else {
-            logEvent("TurbolinksSession is not ready. Resetting and passing error.")
+        if (!isReady) {
             reset()
             visitRequestFailedWithStatusCode(currentVisit.identifier, 500)
+            return
+        }
+
+        // Check if pending visits were queued while cold booting.
+        // If so, visit the most recent current location.
+        when (pendingVisits.size > 0) {
+            true -> visitPendingLocation(currentVisit)
+            else -> renderVisitForColdBoot()
         }
     }
 
@@ -238,6 +227,20 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         when (visit.reload) {
             true -> webView.reload()
             else -> webView.loadUrl(visit.location)
+        }
+    }
+
+    private fun visitPendingLocation(visit: TurbolinksVisit) {
+        logEvent("visitPendingLocation", "location" to visit.location)
+        visitLocation(visit)
+        pendingVisits.clear()
+    }
+
+    private fun renderVisitForColdBoot() {
+        logEvent("renderVisitForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
+        webView.runJavascript("webView.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
+        context.runOnUiThread {
+            callback.visitCompleted()
         }
     }
 
