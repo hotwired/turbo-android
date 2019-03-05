@@ -82,7 +82,9 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     @JavascriptInterface
     fun visitProposedToLocationWithAction(location: String, action: String) {
         logEvent("visitProposedToLocationWithAction", "location" to location, "action" to action)
-        context.runOnUiThread { callback.visitProposedToLocationWithAction(location, action) }
+        context.runOnUiThread {
+            callback.visitProposedToLocationWithAction(location, action)
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -98,9 +100,13 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         pendingVisits.add(location)
 
         val params = commaDelimitedJson(visitIdentifier)
-        webView.runJavascript("webView.changeHistoryForVisitWithIdentifier($params)")
-        webView.runJavascript("webView.issueRequestForVisitWithIdentifier($params)")
-        webView.runJavascript("webView.loadCachedSnapshotForVisitWithIdentifier($params)")
+        val script = """
+            webView.changeHistoryForVisitWithIdentifier($params);
+            webView.issueRequestForVisitWithIdentifier($params);
+            webView.loadCachedSnapshotForVisitWithIdentifier($params);
+        """.trimIndent()
+
+        webView.runJavascript(script)
     }
 
     @JavascriptInterface
@@ -120,7 +126,9 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 "statusCode" to statusCode)
 
         if (visitIdentifier == currentVisit.identifier) {
-            context.runOnUiThread { callback.requestFailedWithStatusCode(statusCode) }
+            context.runOnUiThread {
+                callback.requestFailedWithStatusCode(statusCode)
+            }
         }
     }
 
@@ -180,7 +188,9 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             } else {
                 logEvent("visitRenderedForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
                 webView.runJavascript("webView.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
-                context.runOnUiThread { callback.visitCompleted() }
+                context.runOnUiThread {
+                    callback.visitCompleted()
+                }
             }
         } else {
             logEvent("TurbolinksSession is not ready. Resetting and passing error.")
@@ -248,13 +258,11 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     private fun installBridge(onBridgeInstalled: () -> Unit) {
         logEvent("installBridge")
-        webView.evaluateJavascript(bridgeScript()) {
+
+        val script = context.contentFromAsset("js/turbolinks_bridge.js")
+        webView.evaluateJavascript(script) {
             onBridgeInstalled()
         }
-    }
-
-    private fun bridgeScript(): String {
-        return context.contentFromAsset("js/turbolinks_bridge.js")
     }
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
