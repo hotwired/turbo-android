@@ -218,6 +218,9 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
     private fun handleError(code: Int) {
         val errorView = createErrorView(code)
 
+        // Make sure the underlying WebView isn't clickable.
+        errorView.isClickable = true
+
         turbolinksErrorPlaceholder?.removeAllViews()
         turbolinksErrorPlaceholder?.addView(errorView)
     }
