@@ -40,7 +40,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         get() = currentVisit.callback
 
     // User accessible
-    val turbolinksSessionId: Int = Random().nextInt()
+    val sessionId: Int = Random().nextInt()
     var enableScreenshots: Boolean = true
     var isColdBooting: Boolean = false
         internal set
@@ -115,8 +115,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     fun visitRequestFailedWithStatusCode(visitIdentifier: String, statusCode: Int) {
         TurbolinksLog.d("visitRequestFailedWithStatusCode: [visitIdentifier: $visitIdentifier], statusCode: $statusCode")
 
-        currentVisit.restoreWithCachedSnapshot = false
-
         if (visitIdentifier == currentVisitIdentifier) {
             context.runOnUiThread { callback.requestFailedWithStatusCode(statusCode) }
         }
@@ -145,7 +143,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         TurbolinksLog.d("visitCompleted: [visitIdentifier: $visitIdentifier]")
 
         pendingVisits.clear()
-        currentVisit.restoreWithCachedSnapshot = false
 
         if (visitIdentifier == currentVisitIdentifier) {
             context.runOnUiThread {
@@ -177,7 +174,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             if (pendingVisits.size > 0) {
                 TurbolinksLog.d("setTurbolinksIsReady pending visit: [location: $location]")
 
-                visitLocationWithAction(currentVisit, action())
+                visitLocationWithAction(currentVisit)
                 pendingVisits.clear()
             } else {
                 TurbolinksLog.d("setTurbolinksIsReady calling visitRendered")
@@ -205,12 +202,12 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     // Private
 
-    private fun action() = if (currentVisit.restoreWithCachedSnapshot) ACTION_RESTORE else ACTION_ADVANCE
-
-    private fun visitLocationWithAction(visit: TurbolinksVisit, action: String) {
+    private fun visitLocationWithAction(visit: TurbolinksVisit) {
         val location = visit.location
-        val restorationIdentifier = when (visit.restoreWithCachedSnapshot) {
-            true -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
+        val action = visit.action
+        val restorationIdentifier = when (action) {
+            ACTION_RESTORE -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
+            ACTION_ADVANCE -> ""
             else -> ""
         }
 
@@ -234,7 +231,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         }
 
         if (isReady) {
-            visitLocationWithAction(currentVisit, action())
+            visitLocationWithAction(currentVisit)
             return
         }
 
