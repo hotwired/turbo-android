@@ -243,7 +243,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             with(settings) {
                 javaScriptEnabled = true
                 domStorageEnabled = true
-                databaseEnabled = true
             }
 
             layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)

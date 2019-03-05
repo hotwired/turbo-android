@@ -215,7 +215,6 @@ By default the library sets some minimally intrusive WebSettings on the shared W
 
 - `setJavaScriptEnabled(true)` (required)
 - `setDomStorageEnabled(true)`
-- `setDatabaseEnabled(true)`
 
 If however these are not to your liking, you can always override them. The `WebView` is always available to you via `getWebView()`, and you can update the `WebSettings` to your liking:
 

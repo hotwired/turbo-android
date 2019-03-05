@@ -113,7 +113,6 @@ class TurbolinksSessionTest {
         with(tlSession.webView.settings) {
             assertThat(javaScriptEnabled).isTrue()
             assertThat(domStorageEnabled).isTrue()
-            assertThat(databaseEnabled).isTrue()
         }
     }
 
