@@ -19,7 +19,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     // Internal state management
     internal lateinit var currentVisit: TurbolinksVisit
     internal var coldBootVisitIdentifier = ""
-    internal var previousTime: Long = 0
+    internal var previousOverrideUrlTime: Long = 0
     internal var visitPending = false
     internal var restorationIdentifiers = SparseArray<String>()
     internal val callback: TurbolinksSessionCallback
@@ -328,8 +328,8 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             // happens sometimes. So we check for a slight delay between requests, which is
             // plenty of time to allow for a user to click the same link again.
             val currentTime = Date().time
-            if (currentTime - previousTime > 500) {
-                previousTime = currentTime
+            if (currentTime - previousOverrideUrlTime > 500) {
+                previousOverrideUrlTime = currentTime
                 visitProposedToLocationWithAction(newLocation, ACTION_ADVANCE)
             }
 
