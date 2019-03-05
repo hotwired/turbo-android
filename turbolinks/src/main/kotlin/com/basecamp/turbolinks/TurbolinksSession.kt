@@ -20,8 +20,8 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     internal lateinit var currentVisit: TurbolinksVisit
     internal var coldBootVisitIdentifier = ""
     internal var previousTime: Long = 0
+    internal var visitPending = false
     internal var restorationIdentifiers = SparseArray<String>()
-    internal var pendingVisits = ArrayList<String>()
     internal val callback: TurbolinksSessionCallback
         get() = currentVisit.callback
 
@@ -49,7 +49,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         }
 
         if (isColdBooting) {
-            pendingVisits.add(visit.location)
+            visitPending = true
             return
         }
 
@@ -64,7 +64,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         currentVisit.identifier = ""
         coldBootVisitIdentifier = ""
         restorationIdentifiers.clear()
-        pendingVisits.clear()
+        visitPending = false
         isReady = false
         isColdBooting = false
     }
@@ -94,7 +94,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
         restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
         currentVisit.identifier = visitIdentifier
-        pendingVisits.add(location)
 
         val params = commaDelimitedJson(visitIdentifier)
         val script = """
@@ -149,7 +148,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     @JavascriptInterface
     fun visitCompleted(visitIdentifier: String) {
         logEvent("visitCompleted", "visitIdentifier" to visitIdentifier)
-        pendingVisits.clear()
 
         if (visitIdentifier == currentVisit.identifier) {
             context.runOnUiThread {
@@ -182,7 +180,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
         // Check if pending visits were queued while cold booting.
         // If so, visit the most recent current location.
-        when (pendingVisits.size > 0) {
+        when (visitPending) {
             true -> visitPendingLocation(currentVisit)
             else -> renderVisitForColdBoot()
         }
@@ -233,7 +231,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     private fun visitPendingLocation(visit: TurbolinksVisit) {
         logEvent("visitPendingLocation", "location" to visit.location)
         visitLocation(visit)
-        pendingVisits.clear()
+        visitPending = false
     }
 
     private fun renderVisitForColdBoot() {
