@@ -8,7 +8,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.util.AttributeSet
 import android.util.SparseArray
-import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams
 import android.webkit.*
 import android.widget.FrameLayout
 import java.util.*
@@ -41,17 +41,29 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     }
 
 
-    // Required
+    // Public
 
     fun visit(visit: TurbolinksVisit) {
         this.currentVisit = visit
-        visitLocation(reload = visit.reload)
+        callback.visitLocationStarted(visit.location)
+
+        if (visit.reload) {
+            reset()
+        }
+
+        if (isColdBooting) {
+            pendingVisits.add(visit.location)
+            return
+        }
+
+        when (isReady) {
+            true -> visitLocation(currentVisit)
+            else -> visitLocationAsColdBoot(currentVisit)
+        }
     }
 
-
-    // Public
-
     fun reset() {
+        logEvent("reset")
         currentVisit.identifier = ""
         coldBootVisitIdentifier = ""
         restorationIdentifiers.clear()
@@ -147,7 +159,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
         context.runOnUiThread {
             callback.pageInvalidated()
-            visitLocation(reload = true)
+            visit(currentVisit.copy(reload = true))
         }
     }
 
@@ -163,7 +175,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             // Pending visits were queued while cold booting -- visit the current location
             if (pendingVisits.size > 0) {
                 logEvent("pending visit", "location" to location)
-                visitLocationWithAction(currentVisit)
+                visitLocation(currentVisit)
                 pendingVisits.clear()
             } else {
                 logEvent("visitRenderedForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
@@ -188,42 +200,24 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     // Private
 
-    private fun visitLocationWithAction(visit: TurbolinksVisit) {
-        val location = visit.location
-        val action = visit.action
-        val restorationIdentifier = when (action) {
+    private fun visitLocation(visit: TurbolinksVisit) {
+        val restorationIdentifier = when (visit.action) {
             ACTION_RESTORE -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
             ACTION_ADVANCE -> ""
             else -> ""
         }
 
-        logEvent("visitLocationWithAction",
-                "location" to location, "action" to action,
+        logEvent("visitLocation",
+                "location" to visit.location,
+                "action" to visit.action,
                 "restorationIdentifier" to restorationIdentifier)
 
-        val params = commaDelimitedJson(location.urlEncode(), action, restorationIdentifier)
+        val params = commaDelimitedJson(visit.location.urlEncode(), visit.action, restorationIdentifier)
         webView.runJavascript("webView.visitLocationWithActionAndRestorationIdentifier($params)")
     }
 
-    private fun visitLocation(reload: Boolean = false) {
-        val location = currentVisit.location
-        callback.visitLocationStarted(location)
-
-        if (reload) {
-            reset()
-        }
-
-        if (isColdBooting) {
-            pendingVisits.add(location)
-            return
-        }
-
-        if (isReady) {
-            visitLocationWithAction(currentVisit)
-            return
-        }
-
-        logEvent("visit cold", "location" to location)
+    private fun visitLocationAsColdBoot(visit: TurbolinksVisit) {
+        logEvent("visitLocationAsColdBoot", "location" to visit.location)
         isColdBooting = true
 
         // When a page is invalidated by Turbolinks, we need to reload the
@@ -231,9 +225,9 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         // sees a WebView.loadUrl() request as a same-page visit instead of
         // requesting a full page reload. To work around this, we call
         // WebView.reload(), which fully reloads the page for all URLs.
-        when (reload) {
+        when (visit.reload) {
             true -> webView.reload()
-            else -> webView.loadUrl(location)
+            else -> webView.loadUrl(visit.location)
         }
     }
 
@@ -245,7 +239,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 domStorageEnabled = true
             }
 
-            layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            layoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             addJavascriptInterface(this@TurbolinksSession, "TurbolinksSession")
             webChromeClient = WebChromeClient()
             webViewClient = TurbolinksWebViewClient()
