@@ -18,7 +18,6 @@ import kotlin.random.Random
 class TurbolinksSession private constructor(val context: Context, val webView: TurbolinksWebView) {
     // Internal state management
     internal var coldBootVisitIdentifier = ""
-    internal var currentVisitIdentifier: String = ""
     internal var isLoadingBridge: Boolean = false
     internal var previousTime: Long = 0
     internal var restorationIdentifiers = SparseArray<String>()
@@ -54,8 +53,8 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     // Public
 
     fun reset() {
+        currentVisit.identifier = ""
         coldBootVisitIdentifier = ""
-        currentVisitIdentifier = ""
         restorationIdentifiers.clear()
         pendingVisits.clear()
         isLoadingBridge = false
@@ -85,7 +84,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 "restorationIdentifier" to restorationIdentifier)
 
         restorationIdentifiers.put(destinationIdentifier, restorationIdentifier)
-        currentVisitIdentifier = visitIdentifier
+        currentVisit.identifier = visitIdentifier
         pendingVisits.add(location)
 
         val params = commaDelimitedJson(visitIdentifier)
@@ -98,7 +97,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     fun visitRequestCompleted(visitIdentifier: String) {
         logEvent("visitRequestCompleted", "visitIdentifier" to visitIdentifier)
 
-        if (visitIdentifier == currentVisitIdentifier) {
+        if (visitIdentifier == currentVisit.identifier) {
             val params = commaDelimitedJson(visitIdentifier)
             webView.runJavascript("webView.loadResponseForVisitWithIdentifier($params)")
         }
@@ -110,7 +109,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 "visitIdentifier" to visitIdentifier,
                 "statusCode" to statusCode)
 
-        if (visitIdentifier == currentVisitIdentifier) {
+        if (visitIdentifier == currentVisit.identifier) {
             context.runOnUiThread { callback.requestFailedWithStatusCode(statusCode) }
         }
     }
@@ -125,7 +124,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     fun visitRendered(visitIdentifier: String) {
         logEvent("visitRendered", "visitIdentifier" to visitIdentifier)
 
-        if (visitIdentifier == currentVisitIdentifier) {
+        if (visitIdentifier == currentVisit.identifier) {
             context.runOnUiThread {
                 callback.visitRendered()
             }
@@ -137,7 +136,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         logEvent("visitCompleted", "visitIdentifier" to visitIdentifier)
         pendingVisits.clear()
 
-        if (visitIdentifier == currentVisitIdentifier) {
+        if (visitIdentifier == currentVisit.identifier) {
             context.runOnUiThread {
                 callback.visitCompleted()
             }
@@ -160,16 +159,16 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         val location = currentVisit.location
 
         if (isReady) {
+            logEvent("turbolinksIsReady")
             isLoadingBridge = false
             isColdBooting = false
 
             // Pending visits were queued while cold booting -- visit the current location
             if (pendingVisits.size > 0) {
-                logEvent("turbolinksIsReady pending visit", "location" to location)
+                logEvent("pending visit", "location" to location)
                 visitLocationWithAction(currentVisit)
                 pendingVisits.clear()
             } else {
-                logEvent("turbolinksIsReady")
                 logEvent("visitRenderedForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
                 webView.runJavascript("webView.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
                 context.runOnUiThread { callback.visitCompleted() }
@@ -177,7 +176,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         } else {
             logEvent("TurbolinksSession is not ready. Resetting and passing error.")
             reset()
-            visitRequestFailedWithStatusCode(currentVisitIdentifier, 500)
+            visitRequestFailedWithStatusCode(currentVisit.identifier, 500)
         }
     }
 
@@ -284,7 +283,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             logEvent("onPageStarted", "location" to location)
             callback.onPageStarted(location)
             coldBootVisitIdentifier = ""
-            currentVisitIdentifier = location.identifier()
         }
 
         override fun onPageFinished(view: WebView, location: String) {
