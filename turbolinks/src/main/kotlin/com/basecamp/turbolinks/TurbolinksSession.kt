@@ -314,16 +314,19 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             val newLocation = request.url.toString()
             logEvent("shouldOverrideUrlLoading", "location" to newLocation)
 
-            callback.shouldOverrideUrl(newLocation)
+            if (!isReady || isColdBooting) {
+                return false
+            }
 
-            if (!isReady || isColdBooting) return false
+            if (callback.shouldOverrideUrl(newLocation)) {
+                return true
+            }
 
             // Prevents firing twice in a row within a few milliseconds of each other, which
             // happens sometimes. So we check for a slight delay between requests, which is
             // plenty of time to allow for a user to click the same link again.
             val currentTime = Date().time
             if (currentTime - previousTime > 500) {
-                logEvent("Overriding load", "location" to newLocation)
                 previousTime = currentTime
                 visitProposedToLocationWithAction(newLocation, ACTION_ADVANCE)
             }

@@ -91,9 +91,11 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
 
     override fun onPageFinished(location: String) {}
 
-    override fun shouldOverrideUrl(location: String) {}
-
     override fun pageInvalidated() {}
+
+    override fun shouldOverrideUrl(location: String): Boolean {
+        return false
+    }
 
     override fun visitRendered() {
         onTitleChanged(title())

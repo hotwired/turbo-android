@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 interface TurbolinksSessionCallback {
     fun onPageStarted(location: String)
     fun onPageFinished(location: String)
-    fun shouldOverrideUrl(location: String)
+    fun shouldOverrideUrl(location: String): Boolean
     fun onReceivedError(errorCode: Int)
     fun pageInvalidated()
     fun requestFailedWithStatusCode(statusCode: Int)
