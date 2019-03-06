@@ -15,7 +15,7 @@ fun TurbolinksSession.applyWebViewDefaults(): TurbolinksSession {
             // app launches during development on the server.
             WebView(webView.context).clearCache(true)
             WebView.setWebContentsDebuggingEnabled(true)
-            enableDebugLogging = true
+            setDebugLoggingEnabled(true)
         }
     }
 }

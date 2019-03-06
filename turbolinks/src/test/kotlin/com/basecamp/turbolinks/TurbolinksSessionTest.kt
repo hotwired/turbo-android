@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 import android.app.Activity
+import android.os.Build
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -13,18 +14,26 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = TestBuildConfig::class)
+@Config(sdk = [Build.VERSION_CODES.O])
 class TurbolinksSessionTest {
     @Mock private lateinit var callback: TurbolinksSessionCallback
     private lateinit var activity: Activity
-    private lateinit var tlSession: TurbolinksSession
+    private lateinit var session: TurbolinksSession
+    private lateinit var visit: TurbolinksVisit
 
     @Before fun setup() {
         MockitoAnnotations.initMocks(this)
 
         activity = Robolectric.setupActivity(TurbolinksTestActivity::class.java)
-        tlSession = TurbolinksSession.getNew(activity)
-        tlSession.callback(callback)
+        session = TurbolinksSession.getNew(activity)
+        visit = TurbolinksVisit(
+                location = "https://basecamp.com",
+                destinationIdentifier = 1,
+                restoreWithCachedSnapshot = false,
+                reload = false,
+                callback = callback,
+                identifier = ""
+        )
     }
 
     @Test fun getNewIsAlwaysNewInstance() {
@@ -33,87 +42,84 @@ class TurbolinksSessionTest {
         assertThat(session).isNotEqualTo(TurbolinksSession.getNew(activity))
     }
 
-    @Test fun visitProposedToLocationWithActionFiresCallback() {
-        tlSession.visitProposedToLocationWithAction("https://basecamp.com", TurbolinksSession.ACTION_ADVANCE)
+    @Test fun sessionIdIsPositive() {
+        assertThat(session.sessionId > 0).isTrue()
+    }
 
-        verify(callback).visitProposedToLocationWithAction("https://basecamp.com", TurbolinksSession.ACTION_ADVANCE)
+    @Test fun visitProposedToLocationWithActionFiresCallback() {
+        session.currentVisit = visit
+        session.visitProposedToLocationWithAction(visit.location, TurbolinksSession.ACTION_ADVANCE)
+
+        verify(callback).visitProposedToLocationWithAction(visit.location, TurbolinksSession.ACTION_ADVANCE)
     }
 
     @Test
     fun visitStartedSavesCurrentVisitIdentifier() {
         val visitIdentifier = "12345"
+        session.currentVisit = visit
+        session.visitStarted(visitIdentifier, true, "https://basecamp.com", visitIdentifier)
 
-        tlSession.currentVisitIdentifier = ""
-
-        assertThat(tlSession.currentVisitIdentifier).isNotEqualTo(visitIdentifier)
-
-        tlSession.visitStarted(visitIdentifier, true, "https://basecamp.com", visitIdentifier)
-
-        assertThat(tlSession.currentVisitIdentifier).isEqualTo(visitIdentifier)
+        assertThat(session.currentVisit.identifier).isEqualTo(visitIdentifier)
     }
 
     @Test fun visitRequestFailedWithStatusCodeCallsAdapter() {
-        tlSession.currentVisitIdentifier = ""
-        tlSession.visitRequestFailedWithStatusCode("", 500)
+        session.currentVisit = visit
+        session.visitRequestFailedWithStatusCode("", 500)
 
         verify(callback).requestFailedWithStatusCode(500)
     }
 
     @Test fun visitCompletedCallsAdapter() {
-        tlSession.currentVisitIdentifier = "0"
-        tlSession.visitCompleted("0")
+        session.currentVisit = visit.copy(identifier = "0")
+        session.visitCompleted("0")
 
         verify(callback).visitCompleted()
     }
 
     @Test fun visitStartedSavesRestorationIdentifier() {
-        assertThat(tlSession.restorationIdentifiers.size()).isEqualTo(0)
+        assertThat(session.restorationIdentifiers.size()).isEqualTo(0)
 
-        tlSession.visitStarted("0", false, "https://basecamp.com", "0")
+        session.currentVisit = visit
+        session.visitStarted("0", false, "https://basecamp.com", "0")
 
-        assertThat(tlSession.restorationIdentifiers.size()).isEqualTo(1)
+        assertThat(session.restorationIdentifiers.size()).isEqualTo(1)
+    }
+
+    @Test fun pendingVisitIsVisitedWhenReady() {
+        session.currentVisit = visit
+        session.visitPending = true
+
+        session.turbolinksIsReady(true)
+        assertThat(session.visitPending).isFalse()
     }
 
     @Test fun resetToColdBoot() {
-        tlSession.isLoadingBridge = true
-        tlSession.isReady = true
-        tlSession.isColdBooting = false
-        tlSession.reset()
+        session.currentVisit = visit
+        session.isReady = true
+        session.isColdBooting = false
+        session.reset()
 
-        assertThat(tlSession.isLoadingBridge).isFalse()
-        assertThat(tlSession.isReady).isFalse()
-        assertThat(tlSession.isColdBooting).isFalse()
+        assertThat(session.isReady).isFalse()
+        assertThat(session.isColdBooting).isFalse()
     }
 
     @Test fun resetToColdBootClearsIdentifiers() {
-        tlSession.coldBootVisitIdentifier = "0"
-        tlSession.currentVisitIdentifier = "1"
-        tlSession.reset()
+        session.currentVisit = visit.copy(identifier = "1")
+        session.coldBootVisitIdentifier = "0"
+        session.reset()
 
-        assertThat(tlSession.coldBootVisitIdentifier).isEmpty()
-        assertThat(tlSession.currentVisitIdentifier).isEmpty()
-    }
-
-    @Test fun resetToColdBootClearsVisits() {
-        val visitIdentifier = "12345"
-
-        tlSession.visitStarted(visitIdentifier, true, "https://basecamp.com", visitIdentifier)
-
-        assertThat(tlSession.currentVisitIdentifier).isEqualTo(visitIdentifier)
-        assertThat(tlSession.visits.size).isEqualTo(1)
-        tlSession.reset()
-        assertThat(tlSession.visits.size).isEqualTo(0)
+        assertThat(session.coldBootVisitIdentifier).isEmpty()
+        assertThat(session.currentVisit.identifier).isEmpty()
     }
 
     @Test fun webViewIsNotNull() {
-        assertThat(tlSession.webView).isNotNull()
+        assertThat(session.webView).isNotNull
     }
 
     @Test fun webViewHasCorrectSettings() {
-        with(tlSession.webView.settings) {
+        with(session.webView.settings) {
             assertThat(javaScriptEnabled).isTrue()
             assertThat(domStorageEnabled).isTrue()
-            assertThat(databaseEnabled).isTrue()
         }
     }
 

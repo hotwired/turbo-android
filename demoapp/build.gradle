@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.basecamp.turbolinks.demo"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"

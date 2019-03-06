@@ -1,26 +1,23 @@
 package com.basecamp.turbolinks
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
-import androidx.annotation.ColorRes
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
+import androidx.annotation.ColorRes
 import java.net.URI
 import java.net.URL
 
-internal fun WebView.executeJavascript(jsFunction: String) {
-    context.runOnUiThread { loadUrl("javascript: $jsFunction") }
+internal fun WebView.runJavascript(javascript: String) {
+    context.runOnUiThread {
+        evaluateJavascript(javascript) {}
+    }
 }
 
-@SuppressLint("NewApi")
-@Suppress("DEPRECATION")
-internal fun Context.color(@ColorRes id: Int) = when {
-    isAtLeastMarshmallow() -> resources.getColor(id, null)
-    else -> resources.getColor(id)
+internal fun Context.color(@ColorRes id: Int): Int {
+    return resources.getColor(id, null)
 }
 
 internal fun Context.runOnUiThread(func: () -> Unit) {
@@ -29,7 +26,7 @@ internal fun Context.runOnUiThread(func: () -> Unit) {
 
 internal fun Context.contentFromAsset(filePath: String): String {
     return assets.open(filePath).use {
-        Base64.encodeToString(it.readBytes(), Base64.NO_WRAP)
+        String(it.readBytes())
     }
 }
 

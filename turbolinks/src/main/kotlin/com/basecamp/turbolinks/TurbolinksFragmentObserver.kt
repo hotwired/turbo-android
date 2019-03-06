@@ -87,15 +87,9 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
     // TurbolinksCallback interface
     // -----------------------------------------------------------------------
 
-    override fun identifier(): Int {
-        return identifier
-    }
-
     override fun onPageStarted(location: String) {}
 
     override fun onPageFinished(location: String) {}
-
-    override fun shouldOverrideUrl(location: String) {}
 
     override fun pageInvalidated() {}
 
@@ -151,7 +145,7 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         // Visit every time the Fragment is attached to the Activity
         // or started again after visiting another Activity outside
         // of the main single-Activity architecture.
-        visit(location, restoreWithCachedSnapshot = !isInitialVisit)
+        visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
         isInitialVisit = false
     }
 
@@ -159,16 +153,21 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         return webView?.title ?: ""
     }
 
-    private fun visit(location: String, restoreWithCachedSnapshot: Boolean = false) {
+    private fun visit(location: String, restoreWithCachedSnapshot: Boolean, reload: Boolean) {
         val turbolinksSession = session() ?: return
 
         // Update the toolbar title while loading the next visit
-        onTitleChanged("")
+        if (!reload) {
+            onTitleChanged("")
+        }
 
-        turbolinksSession
-                .callback(this)
-                .restoreWithCachedSnapshot(restoreWithCachedSnapshot)
-                .visit(location)
+        turbolinksSession.visit(TurbolinksVisit(
+                location = location,
+                destinationIdentifier = identifier,
+                restoreWithCachedSnapshot = restoreWithCachedSnapshot,
+                reload = reload,
+                callback = this
+        ))
     }
 
     private fun screenshotView() {
@@ -190,7 +189,8 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         turbolinksView.refreshLayout.apply {
             isEnabled = shouldEnablePullToRefresh()
             setOnRefreshListener {
-                session()?.visitLocationWithAction(location, TurbolinksSession.ACTION_ADVANCE)
+                isWebViewAttachedToNewDestination = false
+                visit(location, restoreWithCachedSnapshot = false, reload = true)
             }
         }
     }
@@ -213,6 +213,9 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
 
     private fun handleError(code: Int) {
         val errorView = createErrorView(code)
+
+        // Make sure the underlying WebView isn't clickable.
+        errorView.isClickable = true
 
         turbolinksErrorPlaceholder?.removeAllViews()
         turbolinksErrorPlaceholder?.addView(errorView)
