@@ -16,21 +16,21 @@ import kotlin.random.Random
 
 @Suppress("unused")
 class TurbolinksSession private constructor(val context: Context, val webView: TurbolinksWebView) {
-    // Internal state management
+    // Internal state
     internal lateinit var currentVisit: TurbolinksVisit
     internal var coldBootVisitIdentifier = ""
-    internal var previousOverrideUrlTime: Long = 0
+    internal var previousOverrideUrlTime = 0L
     internal var visitPending = false
     internal var restorationIdentifiers = SparseArray<String>()
     internal val callback: TurbolinksSessionCallback
         get() = currentVisit.callback
 
     // User accessible
-    val sessionId: Int = Random.nextInt(0, 99999)
-    var enableScreenshots: Boolean = true
-    var isColdBooting: Boolean = false
+    val sessionId = Random.nextInt(1, 99999)
+    var enableScreenshots = true
+    var isColdBooting = false
         internal set
-    var isReady: Boolean = false
+    var isReady = false
         internal set
 
     init {
