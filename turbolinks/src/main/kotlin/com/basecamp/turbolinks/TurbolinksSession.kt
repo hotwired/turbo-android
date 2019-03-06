@@ -79,7 +79,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
     @JavascriptInterface
     fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String, restorationIdentifier: String) {
         logEvent("visitStarted", "location" to location,
@@ -173,8 +172,8 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             return
         }
 
-        // Check if pending visits were queued while cold booting.
-        // If so, visit the most recent current location.
+        // Check if a visit was requested while cold
+        // booting. If so, visit the pending location.
         when (visitPending) {
             true -> visitPendingLocation(currentVisit)
             else -> renderVisitForColdBoot()
@@ -240,10 +239,8 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     @SuppressLint("SetJavaScriptEnabled")
     private fun initializeWebView() {
         webView.apply {
-            with(settings) {
-                javaScriptEnabled = true
-                domStorageEnabled = true
-            }
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
 
             layoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             addJavascriptInterface(this@TurbolinksSession, "TurbolinksSession")
@@ -272,13 +269,13 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         val description = attributes.joinToString(prefix = "[", postfix = "]", separator = ", ") {
             "${it.first}: ${it.second}"
         }
-        TurbolinksLog.d("$event: $description")
+        TurbolinksLog.d("$event ".padEnd(35, '.') + " $description")
     }
 
 
     // Classes and objects
 
-    inner class TurbolinksWebViewClient : WebViewClient() {
+    private inner class TurbolinksWebViewClient : WebViewClient() {
         override fun onPageStarted(view: WebView, location: String, favicon: Bitmap?) {
             logEvent("onPageStarted", "location" to location)
             callback.onPageStarted(location)
@@ -309,24 +306,19 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
          * http://stackoverflow.com/a/6739042/3280911
          */
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-            val newLocation = request.url.toString()
-            logEvent("shouldOverrideUrlLoading", "location" to newLocation)
+            val location = request.url.toString()
+            logEvent("shouldOverrideUrlLoading", "location" to location)
 
             if (!isReady || isColdBooting) {
                 return false
             }
 
-            if (callback.shouldOverrideUrl(newLocation)) {
+            if (callback.shouldOverrideUrl(location)) {
                 return true
             }
 
-            // Prevents firing twice in a row within a few milliseconds of each other, which
-            // happens sometimes. So we check for a slight delay between requests, which is
-            // plenty of time to allow for a user to click the same link again.
-            val currentTime = Date().time
-            if (currentTime - previousOverrideUrlTime > 500) {
-                previousOverrideUrlTime = currentTime
-                visitProposedToLocationWithAction(newLocation, ACTION_ADVANCE)
+            if (shouldProposeThrottledVisit()) {
+                visitProposedToLocationWithAction(location, ACTION_ADVANCE)
             }
 
             return true
@@ -340,6 +332,20 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 logEvent("onReceivedHttpError", "statusCode" to errorResponse.statusCode)
                 reset()
                 callback.onReceivedError(errorResponse.statusCode)
+            }
+        }
+
+        /**
+         * Prevents firing twice in a row within a few milliseconds of each other, which
+         * happens sometimes. So we check for a slight delay between requests, which is
+         * plenty of time to allow for a user to click the same link again.
+         */
+        private fun shouldProposeThrottledVisit(): Boolean {
+            val limit = 500
+            val currentTime = Date().time
+
+            return (currentTime - previousOverrideUrlTime > limit).also {
+                previousOverrideUrlTime = currentTime
             }
         }
 
