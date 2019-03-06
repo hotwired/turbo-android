@@ -48,14 +48,10 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             reset()
         }
 
-        if (isColdBooting) {
-            visitPending = true
-            return
-        }
-
-        when (isReady) {
-            true -> visitLocation(currentVisit)
-            else -> visitLocationAsColdBoot(currentVisit)
+        when {
+            isColdBooting -> visitPending = true
+            isReady -> visitLocation(visit)
+            else -> visitLocationAsColdBoot(visit)
         }
     }
 
