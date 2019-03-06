@@ -15,7 +15,6 @@ import java.util.*
 
 @Suppress("unused")
 class TurbolinksSession private constructor(val context: Context, val webView: TurbolinksWebView) {
-    // Internal state
     internal lateinit var currentVisit: TurbolinksVisit
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
@@ -23,6 +22,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     internal var restorationIdentifiers = SparseArray<String>()
 
     // User accessible
+
     val sessionId = generateSessionId()
     var enableScreenshots = true
     var isColdBooting = false
