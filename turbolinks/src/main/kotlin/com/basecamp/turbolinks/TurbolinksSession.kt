@@ -12,7 +12,6 @@ import android.view.ViewGroup.LayoutParams
 import android.webkit.*
 import android.widget.FrameLayout
 import java.util.*
-import kotlin.random.Random
 
 @Suppress("unused")
 class TurbolinksSession private constructor(val context: Context, val webView: TurbolinksWebView) {
@@ -26,7 +25,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         get() = currentVisit.callback
 
     // User accessible
-    val sessionId = Random.nextInt(1, 99999)
+    val sessionId = generateSessionId()
     var enableScreenshots = true
     var isColdBooting = false
         internal set
@@ -356,6 +355,12 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         const val ACTION_ADVANCE = "advance"
         const val ACTION_RESTORE = "restore"
         const val ACTION_REPLACE = "replace"
+
+        private var sessionCount = 0
+
+        private fun generateSessionId(): Int {
+            return ++sessionCount
+        }
 
         fun getNew(activity: Activity, webView: TurbolinksWebView = DefaultTurbolinksWebView(activity)): TurbolinksSession {
             return TurbolinksSession(activity, webView)
