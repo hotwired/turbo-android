@@ -260,9 +260,15 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     private fun installBridge(onBridgeInstalled: () -> Unit) {
         logEvent("installBridge")
 
-        val script = context.contentFromAsset("js/turbolinks_bridge.js")
-        webView.evaluateJavascript(script) {
-            onBridgeInstalled()
+        val script = "window.webView == null"
+        val bridge = context.contentFromAsset("js/turbolinks_bridge.js")
+
+        webView.evaluateJavascript(script) { s ->
+            if (s?.toBoolean() == true) {
+                webView.evaluateJavascript(bridge) {
+                    onBridgeInstalled()
+                }
+            }
         }
     }
 
@@ -295,13 +301,8 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
             logEvent("onPageFinished", "location" to location, "progress" to view.progress)
             coldBootVisitIdentifier = location.identifier()
-
-            webView.evaluateJavascript("window.webView == null") { s ->
-                if (s?.toBoolean() == true) {
-                    installBridge {
-                        callback.onPageFinished(location)
-                    }
-                }
+            installBridge {
+                callback.onPageFinished(location)
             }
         }
 
