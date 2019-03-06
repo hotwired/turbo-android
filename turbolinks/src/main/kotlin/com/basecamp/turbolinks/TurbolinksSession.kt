@@ -21,8 +21,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     internal var previousOverrideUrlTime = 0L
     internal var visitPending = false
     internal var restorationIdentifiers = SparseArray<String>()
-    internal val callback: TurbolinksSessionCallback
-        get() = currentVisit.callback
 
     // User accessible
     val sessionId = generateSessionId()
@@ -41,7 +39,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     fun visit(visit: TurbolinksVisit) {
         this.currentVisit = visit
-        callback.visitLocationStarted(visit.location)
+        callback { it.visitLocationStarted(visit.location) }
 
         if (visit.reload) {
             reset()
@@ -74,9 +72,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     @JavascriptInterface
     fun visitProposedToLocationWithAction(location: String, action: String) {
         logEvent("visitProposedToLocationWithAction", "location" to location, "action" to action)
-        context.runOnUiThread {
-            callback.visitProposedToLocationWithAction(location, action)
-        }
+        callback { it.visitProposedToLocationWithAction(location, action) }
     }
 
     @JavascriptInterface
@@ -116,9 +112,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 "statusCode" to statusCode)
 
         if (visitIdentifier == currentVisit.identifier) {
-            context.runOnUiThread {
-                callback.requestFailedWithStatusCode(statusCode)
-            }
+            callback { it.requestFailedWithStatusCode(statusCode) }
         }
     }
 
@@ -133,9 +127,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         logEvent("visitRendered", "visitIdentifier" to visitIdentifier)
 
         if (visitIdentifier == currentVisit.identifier) {
-            context.runOnUiThread {
-                callback.visitRendered()
-            }
+            callback { it.visitRendered() }
         }
     }
 
@@ -144,9 +136,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         logEvent("visitCompleted", "visitIdentifier" to visitIdentifier)
 
         if (visitIdentifier == currentVisit.identifier) {
-            context.runOnUiThread {
-                callback.visitCompleted()
-            }
+            callback { it.visitCompleted() }
         }
     }
 
@@ -154,8 +144,8 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     fun pageInvalidated() {
         logEvent("pageInvalidated")
 
-        context.runOnUiThread {
-            callback.pageInvalidated()
+        callback {
+            it.pageInvalidated()
             visit(currentVisit.copy(reload = true))
         }
     }
@@ -182,11 +172,9 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     @JavascriptInterface
     fun turbolinksFailedToLoad() {
-        context.runOnUiThread {
-            logEvent("turbolinksFailedToLoad")
-            reset()
-            callback.onReceivedError(-1)
-        }
+        logEvent("turbolinksFailedToLoad")
+        reset()
+        callback { it.onReceivedError(-1) }
     }
 
     // Private
@@ -231,9 +219,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     private fun renderVisitForColdBoot() {
         logEvent("renderVisitForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
         webView.runJavascript("webView.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
-        context.runOnUiThread {
-            callback.visitCompleted()
-        }
+        callback { it.visitCompleted() }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -264,6 +250,12 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         }
     }
 
+    private fun callback(action: (TurbolinksSessionCallback) -> Unit) {
+        context.runOnUiThread {
+            action(currentVisit.callback)
+        }
+    }
+
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply { add(0, "session" to sessionId) }
         val description = attributes.joinToString(prefix = "[", postfix = "]", separator = ", ") {
@@ -278,7 +270,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     private inner class TurbolinksWebViewClient : WebViewClient() {
         override fun onPageStarted(view: WebView, location: String, favicon: Bitmap?) {
             logEvent("onPageStarted", "location" to location)
-            callback.onPageStarted(location)
+            callback { it.onPageStarted(location) }
             coldBootVisitIdentifier = ""
         }
 
@@ -294,7 +286,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             logEvent("onPageFinished", "location" to location, "progress" to view.progress)
             coldBootVisitIdentifier = location.identifier()
             installBridge {
-                callback.onPageFinished(location)
+                callback { it.onPageFinished(location) }
             }
         }
 
@@ -313,10 +305,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 return false
             }
 
-            if (callback.shouldOverrideUrl(location)) {
-                return true
-            }
-
             if (shouldProposeThrottledVisit()) {
                 visitProposedToLocationWithAction(location, ACTION_ADVANCE)
             }
@@ -331,7 +319,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             if (request.isForMainFrame) {
                 logEvent("onReceivedHttpError", "statusCode" to errorResponse.statusCode)
                 reset()
-                callback.onReceivedError(errorResponse.statusCode)
+                callback { it.onReceivedError(errorResponse.statusCode) }
             }
         }
 
