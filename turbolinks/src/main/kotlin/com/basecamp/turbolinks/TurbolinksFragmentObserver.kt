@@ -84,7 +84,7 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
     }
 
     // -----------------------------------------------------------------------
-    // TurbolinksCallback interface
+    // TurbolinksSessionCallback interface
     // -----------------------------------------------------------------------
 
     override fun onPageStarted(location: String) {}

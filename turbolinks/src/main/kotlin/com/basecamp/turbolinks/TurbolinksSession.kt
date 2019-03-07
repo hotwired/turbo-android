@@ -1,11 +1,9 @@
 package com.basecamp.turbolinks
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
-import android.os.Build
 import android.util.AttributeSet
 import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams
@@ -37,21 +35,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     // Public
 
-    fun visit(visit: TurbolinksVisit) {
-        this.currentVisit = visit
-        callback { it.visitLocationStarted(visit.location) }
-
-        if (visit.reload) {
-            reset()
-        }
-
-        when {
-            isColdBooting -> visitPending = true
-            isReady -> visitLocation(visit)
-            else -> visitLocationAsColdBoot(visit)
-        }
-    }
-
     fun reset() {
         logEvent("reset")
         currentVisit.identifier = ""
@@ -64,6 +47,23 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     fun setDebugLoggingEnabled(enabled: Boolean) {
         TurbolinksLog.enableDebugLogging = enabled
+    }
+
+    // Internal
+
+    internal fun visit(visit: TurbolinksVisit) {
+        this.currentVisit = visit
+        callback { it.visitLocationStarted(visit.location) }
+
+        if (visit.reload) {
+            reset()
+        }
+
+        when {
+            isColdBooting -> visitPending = true
+            isReady -> visitLocation(visit)
+            else -> visitLocationAsColdBoot(visit)
+        }
     }
 
 
@@ -312,7 +312,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             return true
         }
 
-        @TargetApi(Build.VERSION_CODES.M)
         override fun onReceivedHttpError(view: WebView, request: WebResourceRequest, errorResponse: WebResourceResponse) {
             super.onReceivedHttpError(view, request, errorResponse)
 
