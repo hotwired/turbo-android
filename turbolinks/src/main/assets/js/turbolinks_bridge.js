@@ -46,6 +46,12 @@
             }
         },
 
+        visitRenderedForColdBoot: function(visitIdentifier) {
+            this.afterNextRepaint(function() {
+                TurbolinksSession.visitRendered(visitIdentifier)
+            })
+        },
+
         // Callbacks to TurbolinksSession from Turbolinks Core
 
         pageLoaded: function() {
@@ -83,12 +89,6 @@
         visitRendered: function(visit) {
             this.afterNextRepaint(function() {
                 TurbolinksSession.visitRendered(visit.identifier)
-            })
-        },
-
-        visitRenderedForColdBoot: function(visitIdentifier) {
-            this.afterNextRepaint(function() {
-                TurbolinksSession.visitRendered(visitIdentifier)
             })
         },
 
