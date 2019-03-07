@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.ben-manes.versions'
@@ -58,8 +57,8 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.0.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation 'androidx.lifecycle:lifecycle-runtime:2.1.0-alpha02'
-    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-rc01'
-    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-rc01'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0-rc02'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.0.0-rc02'
     implementation 'com.google.code.gson:gson:2.8.5'
 
     testImplementation 'org.assertj:assertj-core:3.11.1'
