@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.basecamp.turbolinks.TurbolinksPresentation.MODAL
+import com.basecamp.turbolinks.TurbolinksPresentation.NORMAL
 
 class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActivity by activity {
 
@@ -12,13 +14,23 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     // ----------------------------------------------------------------------------
 
     override fun navigate(location: String, action: String) {
-        detachWebViewFromCurrentDestination(destinationIsFinishing = false) {
-            val bundle = Bundle().apply { putString("location", location) }
-            val controller = currentController()
-            val router = onProvideRouter()
+        val controller = currentController()
+        val presentation = currentPresentation()
+        val router = onProvideRouter()
+        val bundle = buildBundle(location)
+        val previousLocation = previousLocation()
 
-            if (action == "replace") {
+        detachWebViewFromCurrentDestination(destinationIsFinishing = false) {
+            if (action == "replace" || presentation == MODAL) {
+                // Don't keep the current screen in the backstack
                 controller.popBackStack()
+
+                // If the previous location is the same as the new
+                // one, don't navigate to new location, so the same
+                // locations aren't both in the backstack.
+                if (locationsAreSame(location, previousLocation)) {
+                    return@detachWebViewFromCurrentDestination
+                }
             }
 
             router.getNavigationAction(location)?.let { actionId ->
@@ -50,7 +62,20 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     // ----------------------------------------------------------------------------
 
     private fun currentController(): NavController {
-        return onProvideCurrentDestination().findNavController()
+        return currentDestination().findNavController()
+    }
+
+    private fun currentDestination(): Fragment {
+        return onProvideCurrentDestination()
+    }
+
+    private fun previousLocation(): String? {
+        return currentDestination().arguments?.getString("previousLocation")
+    }
+
+    private fun currentPresentation(): TurbolinksPresentation {
+        val turbolinksFragment = currentDestination() as? TurbolinksFragment
+        return turbolinksFragment?.onProvidePresentation() ?: NORMAL
     }
 
     private fun popBackStack() {
@@ -83,5 +108,22 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
 
     private fun currentDestinationAction(action: (Fragment) -> Unit) {
         onProvideCurrentDestination().let(action)
+    }
+
+    private fun locationsAreSame(first: String?, second: String?): Boolean {
+        fun String.removeInconsequentialSuffix(): String {
+            return this.removeSuffix("#").removeSuffix("/")
+        }
+
+        return first?.removeInconsequentialSuffix() == second?.removeInconsequentialSuffix()
+    }
+
+    private fun buildBundle(location: String): Bundle {
+        val currentLocation = currentDestination().arguments?.getString("location")
+
+        return Bundle().apply {
+            putString("location", location)
+            currentLocation?.let { putString("previousLocation", it) }
+        }
     }
 }

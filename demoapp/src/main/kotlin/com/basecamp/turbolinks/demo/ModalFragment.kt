@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.basecamp.turbolinks.TurbolinksPresentation
+import com.basecamp.turbolinks.TurbolinksPresentation.*
 import kotlinx.android.synthetic.main.fragment_modal.*
 
 class ModalFragment : WebFragment() {
@@ -25,6 +27,10 @@ class ModalFragment : WebFragment() {
     override fun onDetach() {
         toggleModalPresentation(false)
         super.onDetach()
+    }
+
+    override fun onProvidePresentation(): TurbolinksPresentation {
+        return MODAL
     }
 
     override fun shouldEnablePullToRefresh(): Boolean {
