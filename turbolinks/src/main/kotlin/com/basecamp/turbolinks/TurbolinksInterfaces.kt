@@ -18,6 +18,7 @@ interface TurbolinksSessionCallback {
 
 interface TurbolinksActivity {
     fun onProvideSession(fragment: Fragment): TurbolinksSession
+    fun onProvideSessionRootLocation(): String?
     fun onProvideRouter(): TurbolinksRouter
     fun onProvideCurrentDestination(): Fragment
     fun onRequestFinish()

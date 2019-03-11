@@ -76,6 +76,10 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         return tabs.first { it.controller == controller }.session
     }
 
+    override fun onProvideSessionRootLocation(): String? {
+        return selectedTab.startLocation
+    }
+
     override fun onProvideRouter(): TurbolinksRouter {
         return router
     }

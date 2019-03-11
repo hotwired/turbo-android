@@ -26,6 +26,10 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
             if (navType == POP_PUSH || navType == PUSH) {
                 navigateToLocation(location, bundle)
             }
+
+            if (navType == CLEAR) {
+                clearBackStack()
+            }
         }
     }
 
@@ -127,17 +131,19 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     }
 
     private fun navType(location: String, action: String): NavType {
-        val locationsAreSame = locationsAreSame(location, previousLocation())
+        val locationIsRoot = locationsAreSame(location, onProvideSessionRootLocation())
+        val locationsIsPrevious = locationsAreSame(location, previousLocation())
         val shouldPop = action == "replace" || currentPresentation() == MODAL
 
         return when {
-            shouldPop && locationsAreSame -> POP
+            locationIsRoot -> CLEAR
+            shouldPop && locationsIsPrevious -> POP
             shouldPop -> POP_PUSH
             else -> PUSH
         }
     }
 
     private enum class NavType {
-        PUSH, POP_PUSH, POP
+        PUSH, POP_PUSH, POP, CLEAR
     }
 }

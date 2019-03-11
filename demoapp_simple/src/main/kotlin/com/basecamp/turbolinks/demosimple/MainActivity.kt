@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     private val view by lazy { layoutInflater.inflate(R.layout.activity_main, null) }
     private val router by lazy { Router(this) }
     private val delegate by lazy { TurbolinksActivityDelegate(this) }
+    private val startLocation = Constants.FOOD_URL
 
     // ----------------------------------------------------------------------------
     // AppCompatActivity
@@ -44,6 +45,10 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
 
     override fun onProvideSession(fragment: Fragment): TurbolinksSession {
         return session
+    }
+
+    override fun onProvideSessionRootLocation(): String? {
+        return startLocation
     }
 
     override fun onProvideRouter(): TurbolinksRouter {
@@ -83,7 +88,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     private fun initControllerGraph() {
         // Dynamically set the controller graph and start destination,
         // so we can use a simplified navigation graph.
-        val startLocation = NavArgument.Builder().setDefaultValue(Constants.FOOD_URL).build()
+        val startLocation = NavArgument.Builder().setDefaultValue(startLocation).build()
 
         controller.graph = controller.navInflater.inflate(R.navigation.nav_graph).apply {
             addArgument("location", startLocation)
