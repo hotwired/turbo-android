@@ -18,7 +18,7 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
         val navType = navType(location, action)
         val bundle = buildBundle(location)
 
-        detachWebViewFromCurrentDestination(destinationIsFinishing = false) {
+        detachWebViewFromCurrentDestination(destinationIsFinishing = navType != PUSH) {
             if (navType == POP || navType == POP_PUSH) {
                 currentController().popBackStack()
             }
