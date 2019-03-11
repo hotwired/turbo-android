@@ -124,10 +124,8 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     }
 
     private fun navType(location: String, action: String): NavType {
-        val presentation = currentPresentation()
-        val previousLocation = previousLocation()
-        val locationsAreSame = locationsAreSame(location, previousLocation)
-        val shouldPop = action == "replace" || presentation == MODAL
+        val locationsAreSame = locationsAreSame(location, previousLocation())
+        val shouldPop = action == "replace" || currentPresentation() == MODAL
 
         return when {
             shouldPop && locationsAreSame -> POP
