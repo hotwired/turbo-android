@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.basecamp.turbolinks.TurbolinksActivityDelegate.NavType.*
 import com.basecamp.turbolinks.TurbolinksPresentation.MODAL
 import com.basecamp.turbolinks.TurbolinksPresentation.NORMAL
 
@@ -14,27 +15,16 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     // ----------------------------------------------------------------------------
 
     override fun navigate(location: String, action: String) {
-        val controller = currentController()
-        val presentation = currentPresentation()
-        val router = onProvideRouter()
+        val navType = navType(location, action)
         val bundle = buildBundle(location)
-        val previousLocation = previousLocation()
 
         detachWebViewFromCurrentDestination(destinationIsFinishing = false) {
-            if (action == "replace" || presentation == MODAL) {
-                // Don't keep the current screen in the backstack
-                controller.popBackStack()
-
-                // If the previous location is the same as the new
-                // one, don't navigate to new location, so the same
-                // locations aren't both in the backstack.
-                if (locationsAreSame(location, previousLocation)) {
-                    return@detachWebViewFromCurrentDestination
-                }
+            if (navType == POP || navType == POP_PUSH) {
+                currentController().popBackStack()
             }
 
-            router.getNavigationAction(location)?.let { actionId ->
-                controller.navigate(actionId, bundle)
+            if (navType == POP_PUSH || navType == PUSH) {
+                navigateToLocation(location, bundle)
             }
         }
     }
@@ -60,6 +50,12 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     // ----------------------------------------------------------------------------
     // Private
     // ----------------------------------------------------------------------------
+
+    private fun navigateToLocation(location: String, bundle: Bundle) {
+        onProvideRouter().getNavigationAction(location)?.let { actionId ->
+            currentController().navigate(actionId, bundle)
+        }
+    }
 
     private fun currentController(): NavController {
         return currentDestination().findNavController()
@@ -125,5 +121,22 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
             putString("location", location)
             currentLocation?.let { putString("previousLocation", it) }
         }
+    }
+
+    private fun navType(location: String, action: String): NavType {
+        val presentation = currentPresentation()
+        val previousLocation = previousLocation()
+        val locationsAreSame = locationsAreSame(location, previousLocation)
+        val shouldPop = action == "replace" || presentation == MODAL
+
+        return when {
+            shouldPop && locationsAreSame -> POP
+            shouldPop -> POP_PUSH
+            else -> PUSH
+        }
+    }
+
+    private enum class NavType {
+        PUSH, POP_PUSH, POP
     }
 }
