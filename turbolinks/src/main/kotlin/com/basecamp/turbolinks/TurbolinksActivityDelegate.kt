@@ -19,15 +19,15 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
         val bundle = buildBundle(location, navType)
 
         detachWebViewFromCurrentDestination(destinationIsFinishing = navType != PUSH) {
-            if (navType == POP || navType == POP_PUSH) {
+            if (navType == POP || navType == REPLACE) {
                 currentController().popBackStack()
             }
 
-            if (navType == POP_PUSH || navType == PUSH) {
+            if (navType == REPLACE || navType == PUSH) {
                 navigateToLocation(location, bundle)
             }
 
-            if (navType == CLEAR) {
+            if (navType == REPLACE_ALL) {
                 clearBackStack()
             }
         }
@@ -136,14 +136,14 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
         val shouldPop = action == "replace" || currentPresentation() == MODAL
 
         return when {
-            locationIsRoot -> CLEAR
+            locationIsRoot -> REPLACE_ALL
             shouldPop && locationsIsPrevious -> POP
-            shouldPop -> POP_PUSH
+            shouldPop -> REPLACE
             else -> PUSH
         }
     }
 
     private enum class NavType {
-        PUSH, POP_PUSH, POP, CLEAR
+        PUSH, POP, REPLACE, REPLACE_ALL
     }
 }
