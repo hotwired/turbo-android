@@ -16,7 +16,7 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
 
     override fun navigate(location: String, action: String) {
         val navType = navType(location, action)
-        val bundle = buildBundle(location)
+        val bundle = buildBundle(location, navType)
 
         detachWebViewFromCurrentDestination(destinationIsFinishing = navType != PUSH) {
             if (navType == POP || navType == POP_PUSH) {
@@ -114,12 +114,15 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
         return first?.removeInconsequentialSuffix() == second?.removeInconsequentialSuffix()
     }
 
-    private fun buildBundle(location: String): Bundle {
-        val currentLocation = currentDestination().arguments?.getString("location")
+    private fun buildBundle(location: String, navType: NavType): Bundle {
+        val previousLocation = when (navType) {
+            PUSH -> currentDestination().arguments?.getString("location")
+            else -> currentDestination().arguments?.getString("previousLocation")
+        }
 
         return Bundle().apply {
             putString("location", location)
-            currentLocation?.let { putString("previousLocation", it) }
+            previousLocation?.let { putString("previousLocation", it) }
         }
     }
 
