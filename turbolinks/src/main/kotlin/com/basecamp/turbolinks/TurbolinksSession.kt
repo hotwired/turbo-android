@@ -186,12 +186,17 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             else -> ""
         }
 
+        val action = when (restorationIdentifier) {
+            "" -> ACTION_ADVANCE
+            else -> visit.action
+        }
+
         logEvent("visitLocation",
                 "location" to visit.location,
-                "action" to visit.action,
+                "action" to action,
                 "restorationIdentifier" to restorationIdentifier)
 
-        val params = commaDelimitedJson(visit.location.urlEncode(), visit.action, restorationIdentifier)
+        val params = commaDelimitedJson(visit.location.urlEncode(), action, restorationIdentifier)
         webView.runJavascript("webView.visitLocationWithActionAndRestorationIdentifier($params)")
     }
 

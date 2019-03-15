@@ -94,6 +94,11 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         // TODO
     }
 
+    override fun onProvideModalResult(): String? {
+        // TODO
+        return null
+    }
+
     override fun onRequestFinish() {
         finish()
     }
