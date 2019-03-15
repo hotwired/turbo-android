@@ -1,35 +1,25 @@
 package com.basecamp.turbolinks
 
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.basecamp.turbolinks.TurbolinksActivityDelegate.NavType.*
-import com.basecamp.turbolinks.TurbolinksPresentation.MODAL
-import com.basecamp.turbolinks.TurbolinksPresentation.NORMAL
+import com.basecamp.turbolinks.Presentation.*
+import com.basecamp.turbolinks.PresentationContext.MODAL
 
-class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActivity by activity {
-
+open class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : TurbolinksActivity by activity {
     // ----------------------------------------------------------------------------
     // TurbolinksActivity interface
     // ----------------------------------------------------------------------------
 
     override fun navigate(location: String, action: String) {
-        val navType = navType(location, action)
-        val bundle = buildBundle(location, navType)
+        val presentationContext = onProvideRouter().getPresentationContext(location)
+        val presentation = presentation(location, action)
 
-        detachWebViewFromCurrentDestination(destinationIsFinishing = navType != PUSH) {
-            if (navType == POP || navType == REPLACE) {
-                currentController().popBackStack()
-            }
-
-            if (navType == REPLACE || navType == PUSH) {
-                navigateToLocation(location, bundle)
-            }
-
-            if (navType == REPLACE_ALL) {
-                clearBackStack()
-            }
+        when (presentationContext) {
+            MODAL -> navigateToModalContext(location)
+            else -> navigateWithinContext(location, presentation)
         }
     }
 
@@ -52,6 +42,47 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
     }
 
     // ----------------------------------------------------------------------------
+    // Protected
+    // ----------------------------------------------------------------------------
+
+    protected fun navigateWithinContext(location: String, presentation: Presentation) {
+        val bundle = buildBundle(location, presentation)
+
+        if (presentation == NONE) {
+            return
+        }
+
+        detachWebViewFromCurrentDestination(destinationIsFinishing = presentation != PUSH) {
+            if (presentation == POP || presentation == REPLACE) {
+                currentController().popBackStack()
+            }
+
+            if (presentation == REPLACE || presentation == PUSH) {
+                navigateToLocation(location, bundle)
+            }
+
+            if (presentation == REPLACE_ALL) {
+                clearBackStack()
+            }
+        }
+    }
+
+    protected fun presentation(location: String, action: String): Presentation {
+        val locationIsRoot = locationsAreSame(location, onProvideSessionRootLocation())
+        val locationIsCurrent = locationsAreSame(location, currentLocation())
+        val locationIsPrevious = locationsAreSame(location, previousLocation())
+        val shouldPop = action == "replace"
+
+        return when {
+            locationIsRoot && locationIsCurrent -> NONE
+            shouldPop && locationIsPrevious -> POP
+            locationIsRoot -> REPLACE_ALL
+            shouldPop || locationIsCurrent -> REPLACE
+            else -> PUSH
+        }
+    }
+
+    // ----------------------------------------------------------------------------
     // Private
     // ----------------------------------------------------------------------------
 
@@ -59,6 +90,10 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
         onProvideRouter().getNavigationAction(location)?.let { actionId ->
             currentController().navigate(actionId, bundle)
         }
+    }
+
+    private fun navigateToModalContext(location: String) {
+        onStartModalContext(location)
     }
 
     private fun currentController(): NavController {
@@ -69,13 +104,12 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
         return onProvideCurrentDestination()
     }
 
-    private fun previousLocation(): String? {
-        return currentDestination().arguments?.getString("previousLocation")
+    private fun currentLocation(): String? {
+        return currentDestination().arguments?.getString("location")
     }
 
-    private fun currentPresentation(): TurbolinksPresentation {
-        val turbolinksFragment = currentDestination() as? TurbolinksFragment
-        return turbolinksFragment?.onProvidePresentation() ?: NORMAL
+    private fun previousLocation(): String? {
+        return currentDestination().arguments?.getString("previousLocation")
     }
 
     private fun popBackStack() {
@@ -118,32 +152,15 @@ class TurbolinksActivityDelegate(activity: TurbolinksActivity) : TurbolinksActiv
         return first?.removeInconsequentialSuffix() == second?.removeInconsequentialSuffix()
     }
 
-    private fun buildBundle(location: String, navType: NavType): Bundle {
-        val previousLocation = when (navType) {
+    private fun buildBundle(location: String, presentation: Presentation): Bundle {
+        val previousLocation = when (presentation) {
             PUSH -> currentDestination().arguments?.getString("location")
             else -> currentDestination().arguments?.getString("previousLocation")
         }
 
-        return Bundle().apply {
-            putString("location", location)
-            previousLocation?.let { putString("previousLocation", it) }
-        }
-    }
-
-    private fun navType(location: String, action: String): NavType {
-        val locationIsRoot = locationsAreSame(location, onProvideSessionRootLocation())
-        val locationsIsPrevious = locationsAreSame(location, previousLocation())
-        val shouldPop = action == "replace" || currentPresentation() == MODAL
-
-        return when {
-            locationIsRoot -> REPLACE_ALL
-            shouldPop && locationsIsPrevious -> POP
-            shouldPop -> REPLACE
-            else -> PUSH
-        }
-    }
-
-    private enum class NavType {
-        PUSH, POP, REPLACE, REPLACE_ALL
+        return bundleOf(
+            "location" to location,
+            "previousLocation" to previousLocation
+        )
     }
 }

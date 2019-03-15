@@ -3,6 +3,7 @@ package com.basecamp.turbolinks.demo
 import android.content.Context
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import com.basecamp.turbolinks.PresentationContext
 import com.basecamp.turbolinks.TurbolinksRouter
 
 class Router(private val context: Context) : TurbolinksRouter() {
@@ -18,6 +19,12 @@ class Router(private val context: Context) : TurbolinksRouter() {
         }
     }
 
+    override fun getPresentationContext(location: String): PresentationContext {
+        return when (isModalContext(location)) {
+            true -> PresentationContext.MODAL
+            else -> PresentationContext.DEFAULT
+        }
+    }
 
     fun getRouteCommand(location: String): RouteCommand {
         return when(location.startsWith(Constants.BASE_URL)) {
@@ -29,7 +36,7 @@ class Router(private val context: Context) : TurbolinksRouter() {
     fun getRouteDestination(location: String): RouteDestination {
         return when {
             location.endsWith(".png") -> RouteDestination.IMAGE
-            location.endsWith("/edit") -> RouteDestination.WEB_MODAL
+            isModalContext(location) -> RouteDestination.WEB_MODAL
             else -> RouteDestination.WEB
         }
     }
@@ -51,6 +58,10 @@ class Router(private val context: Context) : TurbolinksRouter() {
                 .build()
 
         intent.launchUrl(context, Uri.parse(location))
+    }
+
+    private fun isModalContext(location: String): Boolean {
+        return location.endsWith("/edit") || location.endsWith("/new")
     }
 }
 

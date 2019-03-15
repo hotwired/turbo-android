@@ -21,6 +21,8 @@ interface TurbolinksActivity {
     fun onProvideSessionRootLocation(): String?
     fun onProvideRouter(): TurbolinksRouter
     fun onProvideCurrentDestination(): Fragment
+    fun onProvideModalResult(): String?
+    fun onStartModalContext(location: String)
     fun onRequestFinish()
     fun navigate(location: String, action: String)
     fun navigateUp(): Boolean
@@ -30,7 +32,6 @@ interface TurbolinksActivity {
 
 interface TurbolinksFragment {
     fun onProvideObserver(): TurbolinksFragmentObserver
-    fun onProvidePresentation(): TurbolinksPresentation
     fun onProvideTurbolinksView(): TurbolinksView?
     fun onProvideErrorPlaceholder(): ViewGroup?
     fun onSetupToolbar()
@@ -38,8 +39,4 @@ interface TurbolinksFragment {
     fun createProgressView(location: String): View
     fun shouldEnablePullToRefresh(): Boolean
     fun onTitleChanged(title: String)
-}
-
-enum class TurbolinksPresentation {
-    NORMAL, MODAL
 }

@@ -90,6 +90,10 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
                 throw IllegalStateException("No current destination found")
     }
 
+    override fun onStartModalContext(location: String) {
+        // TODO
+    }
+
     override fun onRequestFinish() {
         finish()
     }

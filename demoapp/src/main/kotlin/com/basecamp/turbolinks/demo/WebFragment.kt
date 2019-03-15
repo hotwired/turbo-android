@@ -9,8 +9,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.basecamp.turbolinks.TurbolinksFragment
 import com.basecamp.turbolinks.TurbolinksFragmentObserver
-import com.basecamp.turbolinks.TurbolinksPresentation
-import com.basecamp.turbolinks.TurbolinksPresentation.NORMAL
 import com.basecamp.turbolinks.TurbolinksView
 import kotlinx.android.synthetic.main.error.view.*
 import kotlinx.android.synthetic.main.fragment_web.*
@@ -33,10 +31,6 @@ open class WebFragment : Fragment(), TurbolinksFragment {
 
     override fun onProvideObserver(): TurbolinksFragmentObserver {
         return observer
-    }
-
-    override fun onProvidePresentation(): TurbolinksPresentation {
-        return NORMAL
     }
 
     override fun onProvideTurbolinksView(): TurbolinksView? {

@@ -47,8 +47,13 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         activity = fragment.context as? TurbolinksActivity ?:
                 throw RuntimeException("The fragment Activity must implement TurbolinksActivity")
 
-        initView()
-        attachWebViewAndVisit()
+        val modalResult = activity?.onProvideModalResult()
+        if (modalResult == null) {
+            initView()
+            attachWebViewAndVisit()
+        } else {
+            activity?.navigate(modalResult, "advance")
+        }
     }
 
     @OnLifecycleEvent(ON_STOP)
