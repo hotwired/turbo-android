@@ -3,6 +3,7 @@ package com.basecamp.turbolinks
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 
 interface TurbolinksSessionCallback {
     fun onPageStarted(location: String)
@@ -20,9 +21,7 @@ interface TurbolinksActivity {
     fun onProvideSession(fragment: Fragment): TurbolinksSession
     fun onProvideSessionRootLocation(): String?
     fun onProvideRouter(): TurbolinksRouter
-    fun onProvideCurrentDestination(): Fragment
-    fun onProvideModalResult(): String?
-    fun onStartModalContext(location: String)
+    fun onProvideCurrentNavHostFragment(): NavHostFragment
     fun onRequestFinish()
     fun navigate(location: String, action: String)
     fun navigateUp(): Boolean

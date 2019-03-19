@@ -6,20 +6,22 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.basecamp.turbolinks.Presentation.*
+import com.basecamp.turbolinks.PresentationContext.DEFAULT
 import com.basecamp.turbolinks.PresentationContext.MODAL
 
-open class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : TurbolinksActivity by activity {
+class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : TurbolinksActivity by activity {
     // ----------------------------------------------------------------------------
     // TurbolinksActivity interface
     // ----------------------------------------------------------------------------
 
     override fun navigate(location: String, action: String) {
-        val presentationContext = onProvideRouter().getPresentationContext(location)
-        val presentation = presentation(location, action)
+        val currentContext = currentPresentationContext()
+        val newContext = onProvideRouter().getPresentationContext(location)
 
-        when (presentationContext) {
-            MODAL -> navigateToModalContext(location)
-            else -> navigateWithinContext(location, presentation)
+        when {
+            currentContext == newContext -> navigateWithinContext(location, action)
+            newContext == MODAL -> navigateToModalContext(location)
+            newContext == DEFAULT -> dismissModalContextAndNavigate(location, action)
         }
     }
 
@@ -45,8 +47,11 @@ open class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : Turbol
     // Protected
     // ----------------------------------------------------------------------------
 
-    protected fun navigateWithinContext(location: String, presentation: Presentation) {
+    private fun navigateWithinContext(location: String, action: String) {
+        val presentation = presentation(location, action)
         val bundle = buildBundle(location, presentation)
+
+        TurbolinksLog.e("navigateWithinContext() location: $location, action: $action, presentation: $presentation")
 
         if (presentation == NONE) {
             return
@@ -67,7 +72,31 @@ open class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : Turbol
         }
     }
 
-    protected fun presentation(location: String, action: String): Presentation {
+    private fun navigateToModalContext(location: String) {
+        val bundle = buildBundle(location, PUSH)
+
+        TurbolinksLog.e("navigateToModalContext() location: $location")
+
+        detachWebViewFromCurrentDestination(destinationIsFinishing = false) {
+            onProvideRouter().getModalContextStartAction(location).let { actionId ->
+                currentController().navigate(actionId, bundle)
+            }
+        }
+    }
+
+    private fun dismissModalContextAndNavigate(location: String, action: String) {
+        TurbolinksLog.e("dismissModalContextAndNavigate() location: $location, action: $action")
+
+        detachWebViewFromCurrentDestination(destinationIsFinishing = true) {
+            val dismissAction = onProvideRouter().getModalContextDismissAction(location)
+            currentController().navigate(dismissAction)
+            // TODO: Handle the subsequent DEFAULT context navigation
+        }
+    }
+
+    private fun presentation(location: String, action: String): Presentation {
+        TurbolinksLog.e("presentation() currentLocation: ${currentLocation()}, previousLocation: ${previousLocation()}")
+
         val locationIsRoot = locationsAreSame(location, onProvideSessionRootLocation())
         val locationIsCurrent = locationsAreSame(location, currentLocation())
         val locationIsPrevious = locationsAreSame(location, previousLocation())
@@ -92,24 +121,30 @@ open class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : Turbol
         }
     }
 
-    private fun navigateToModalContext(location: String) {
-        onStartModalContext(location)
-    }
-
     private fun currentController(): NavController {
         return currentDestination().findNavController()
     }
 
     private fun currentDestination(): Fragment {
-        return onProvideCurrentDestination()
+        return onProvideCurrentNavHostFragment().childFragmentManager.primaryNavigationFragment ?:
+            throw IllegalStateException("No current destination found in NavHostFragment")
+    }
+
+    private fun currentPresentationContext(): PresentationContext {
+        val location = currentDestinationArgument("location") ?: return DEFAULT
+        return onProvideRouter().getPresentationContext(location)
     }
 
     private fun currentLocation(): String? {
-        return currentDestination().arguments?.getString("location")
+        return currentDestinationArgument("location")
+    }
+
+    private fun currentDestinationArgument(key: String): String? {
+        return currentDestination().arguments?.getString(key)
     }
 
     private fun previousLocation(): String? {
-        return currentDestination().arguments?.getString("previousLocation")
+        return currentDestinationArgument("previousLocation")
     }
 
     private fun popBackStack() {
@@ -141,7 +176,7 @@ open class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : Turbol
     }
 
     private fun currentDestinationAction(action: (Fragment) -> Unit) {
-        onProvideCurrentDestination().let(action)
+        currentDestination().let(action)
     }
 
     private fun locationsAreSame(first: String?, second: String?): Boolean {
@@ -154,8 +189,8 @@ open class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : Turbol
 
     private fun buildBundle(location: String, presentation: Presentation): Bundle {
         val previousLocation = when (presentation) {
-            PUSH -> currentDestination().arguments?.getString("location")
-            else -> currentDestination().arguments?.getString("previousLocation")
+            PUSH -> currentDestinationArgument("location")
+            else -> currentDestinationArgument("previousLocation")
         }
 
         return bundleOf(
