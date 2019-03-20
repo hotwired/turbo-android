@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import kotlin.random.Random
 
+@Suppress("unused")
 open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         TurbolinksFragment by fragment, TurbolinksSessionCallback, LifecycleObserver {
 
@@ -47,8 +48,7 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         activity = fragment.context as? TurbolinksActivity ?:
                 throw RuntimeException("The fragment Activity must implement TurbolinksActivity")
 
-        initView()
-        attachWebViewAndVisit()
+        initNavigationVisit()
     }
 
     @OnLifecycleEvent(ON_STOP)
@@ -120,13 +120,23 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
     }
 
     override fun visitProposedToLocationWithAction(location: String, action: String) {
-        onTitleChanged("")
         activity?.navigate(location, action)
     }
 
     // -----------------------------------------------------------------------
     // Private
     // -----------------------------------------------------------------------
+
+    private fun initNavigationVisit() {
+        val navigated = onGetModalResult()?.let {
+            activity?.navigate(it.location, it.action)
+        } ?: false
+
+        if (!navigated) {
+            initView()
+            attachWebViewAndVisit()
+        }
+    }
 
     private fun initView() {
         onSetupToolbar()

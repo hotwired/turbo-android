@@ -15,14 +15,6 @@
         app:popExitAnim="@anim/nav_pop_exit_anim"/>
 
     <action
-        android:id="@+id/action_turbolinks_modal"
-        app:destination="@id/modal_fragment"
-        app:enterAnim="@anim/nav_enter_anim"
-        app:exitAnim="@anim/nav_exit_anim"
-        app:popEnterAnim="@anim/nav_pop_enter_anim"
-        app:popExitAnim="@anim/nav_pop_exit_anim"/>
-
-    <action
         android:id="@+id/action_image_viewer"
         app:destination="@id/image_viewer_activity"
         app:enterAnim="@anim/nav_default_enter_anim"
@@ -54,14 +46,53 @@
         android:label=""
         tools:layout="@layout/fragment_web"/>
 
-    <fragment
-        android:id="@+id/modal_fragment"
-        android:name="com.basecamp.turbolinks.demo.ModalFragment"
-        android:label=""
-        tools:layout="@layout/fragment_modal"/>
-
     <activity
         android:id="@+id/image_viewer_activity"
         android:name="com.basecamp.turbolinks.demo.ImageViewerActivity" />
+
+    <!-- Modal navigation graph -->
+
+    <action
+        android:id="@+id/action_turbolinks_modal_start"
+        app:destination="@id/nav_graph_modal"
+        app:enterAnim="@anim/nav_enter_anim"
+        app:exitAnim="@anim/nav_exit_anim"
+        app:popEnterAnim="@anim/nav_pop_enter_anim"
+        app:popExitAnim="@anim/nav_pop_exit_anim"/>
+
+    <action
+        android:id="@+id/action_turbolinks_modal_dismiss"
+        app:popUpTo="@id/nav_graph_modal"
+        app:popUpToInclusive="true"
+        app:enterAnim="@anim/nav_enter_anim"
+        app:exitAnim="@anim/nav_exit_anim"
+        app:popEnterAnim="@anim/nav_pop_enter_anim"
+        app:popExitAnim="@anim/nav_pop_exit_anim"/>
+
+    <navigation
+        android:id="@+id/nav_graph_modal"
+        app:startDestination="@id/modal_fragment_start">
+
+        <action
+            android:id="@+id/action_turbolinks_modal"
+            app:destination="@id/modal_fragment"
+            app:enterAnim="@anim/nav_enter_anim"
+            app:exitAnim="@anim/nav_exit_anim"
+            app:popEnterAnim="@anim/nav_pop_enter_anim"
+            app:popExitAnim="@anim/nav_pop_exit_anim"/>
+
+        <fragment
+            android:id="@+id/modal_fragment_start"
+            android:name="com.basecamp.turbolinks.demo.ModalFragment"
+            android:label=""
+            tools:layout="@layout/fragment_modal"/>
+
+        <fragment
+            android:id="@+id/modal_fragment"
+            android:name="com.basecamp.turbolinks.demo.ModalFragment"
+            android:label=""
+            tools:layout="@layout/fragment_modal"/>
+
+    </navigation>
 
 </navigation>

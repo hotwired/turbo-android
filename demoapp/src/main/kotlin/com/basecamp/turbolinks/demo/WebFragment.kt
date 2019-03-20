@@ -7,14 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import com.basecamp.turbolinks.TurbolinksFragment
-import com.basecamp.turbolinks.TurbolinksFragmentObserver
-import com.basecamp.turbolinks.TurbolinksView
+import com.basecamp.turbolinks.*
 import kotlinx.android.synthetic.main.error.view.*
 import kotlinx.android.synthetic.main.fragment_web.*
 
 open class WebFragment : Fragment(), TurbolinksFragment {
     protected val observer by lazy { BridgeFragmentObserver(this) }
+    private val viewModel by lazy { TurbolinksSharedViewModel.get(requireActivity()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +30,14 @@ open class WebFragment : Fragment(), TurbolinksFragment {
 
     override fun onProvideObserver(): TurbolinksFragmentObserver {
         return observer
+    }
+
+    override fun onSetModalResult(result: TurbolinksModalResult) {
+        viewModel.modalResult = result
+    }
+
+    override fun onGetModalResult(): TurbolinksModalResult? {
+        return viewModel.modalResult
     }
 
     override fun onProvideTurbolinksView(): TurbolinksView? {
