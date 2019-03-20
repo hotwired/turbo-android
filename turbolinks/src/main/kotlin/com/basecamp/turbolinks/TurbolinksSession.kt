@@ -263,10 +263,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply { add(0, "session" to sessionId) }
-        val description = attributes.joinToString(prefix = "[", postfix = "]", separator = ", ") {
-            "${it.first}: ${it.second}"
-        }
-        TurbolinksLog.d("$event ".padEnd(35, '.') + " $description")
+        logEvent(event, attributes)
     }
 
 
