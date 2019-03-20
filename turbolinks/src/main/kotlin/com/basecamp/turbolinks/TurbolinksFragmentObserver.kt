@@ -79,6 +79,10 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         onWebViewDetached()
     }
 
+    fun navigateUp() {
+        activity?.navigateUp()
+    }
+
     fun navigateBack() {
         activity?.navigateBack()
     }
