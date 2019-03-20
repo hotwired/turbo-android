@@ -14,15 +14,19 @@ class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : TurbolinksA
     // TurbolinksActivity interface
     // ----------------------------------------------------------------------------
 
-    override fun navigate(location: String, action: String) {
+    override fun navigate(location: String, action: String): Boolean {
         val currentContext = currentPresentationContext()
         val newContext = onProvideRouter().getPresentationContext(location)
+        val presentation = presentation(location, action)
 
         when {
-            currentContext == newContext -> navigateWithinContext(location, action)
+            presentation == NONE -> return false
+            currentContext == newContext -> navigateWithinContext(location, presentation)
             newContext == MODAL -> navigateToModalContext(location)
-            newContext == DEFAULT -> dismissModalContextAndNavigate(location, action)
+            newContext == DEFAULT -> dismissModalContextWithResult(location)
         }
+
+        return true
     }
 
     override fun navigateUp(): Boolean {
@@ -47,15 +51,10 @@ class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : TurbolinksA
     // Protected
     // ----------------------------------------------------------------------------
 
-    private fun navigateWithinContext(location: String, action: String) {
-        val presentation = presentation(location, action)
+    private fun navigateWithinContext(location: String, presentation: Presentation) {
         val bundle = buildBundle(location, presentation)
 
-        TurbolinksLog.e("navigateWithinContext() location: $location, action: $action, presentation: $presentation")
-
-        if (presentation == NONE) {
-            return
-        }
+        TurbolinksLog.e("navigateWithinContext() location: $location, presentation: $presentation")
 
         detachWebViewFromCurrentDestination(destinationIsFinishing = presentation != PUSH) {
             if (presentation == POP || presentation == REPLACE) {
@@ -84,13 +83,21 @@ class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : TurbolinksA
         }
     }
 
-    private fun dismissModalContextAndNavigate(location: String, action: String) {
-        TurbolinksLog.e("dismissModalContextAndNavigate() location: $location, action: $action")
+    private fun dismissModalContextWithResult(location: String) {
+        TurbolinksLog.e("dismissModalContextAndNavigate() location: $location")
 
         detachWebViewFromCurrentDestination(destinationIsFinishing = true) {
             val dismissAction = onProvideRouter().getModalContextDismissAction(location)
+            sendModalResult(location, "advance")
             currentController().navigate(dismissAction)
-            // TODO: Handle the subsequent DEFAULT context navigation
+        }
+    }
+
+    private fun sendModalResult(location: String, action: String) {
+        currentDestinationAction {
+            if (it is TurbolinksFragment) {
+                it.onSetModalResult(TurbolinksModalResult(location, action))
+            }
         }
     }
 

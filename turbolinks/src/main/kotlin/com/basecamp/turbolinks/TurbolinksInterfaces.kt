@@ -23,7 +23,7 @@ interface TurbolinksActivity {
     fun onProvideRouter(): TurbolinksRouter
     fun onProvideCurrentNavHostFragment(): NavHostFragment
     fun onRequestFinish()
-    fun navigate(location: String, action: String)
+    fun navigate(location: String, action: String): Boolean
     fun navigateUp(): Boolean
     fun navigateBack()
     fun clearBackStack()
@@ -31,6 +31,8 @@ interface TurbolinksActivity {
 
 interface TurbolinksFragment {
     fun onProvideObserver(): TurbolinksFragmentObserver
+    fun onGetModalResult(): TurbolinksModalResult?
+    fun onSetModalResult(result: TurbolinksModalResult)
     fun onProvideTurbolinksView(): TurbolinksView?
     fun onProvideErrorPlaceholder(): ViewGroup?
     fun onSetupToolbar()
