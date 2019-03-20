@@ -120,7 +120,6 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
     }
 
     override fun visitProposedToLocationWithAction(location: String, action: String) {
-        onTitleChanged("")
         activity?.navigate(location, action)
     }
 
