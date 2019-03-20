@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import kotlin.random.Random
 
+@Suppress("unused")
 open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         TurbolinksFragment by fragment, TurbolinksSessionCallback, LifecycleObserver {
 
@@ -25,7 +26,7 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         get() = onProvideErrorPlaceholder()
     private val fragment = fragment as? Fragment ?:
         throw IllegalArgumentException("fragment must be a Fragment")
-    protected val webView: WebView?
+    private val webView: WebView?
         get() = session()?.webView
 
     // ----------------------------------------------------------------------------

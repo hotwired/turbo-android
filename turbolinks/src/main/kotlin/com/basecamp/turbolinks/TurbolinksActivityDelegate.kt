@@ -9,7 +9,7 @@ import com.basecamp.turbolinks.Presentation.*
 import com.basecamp.turbolinks.PresentationContext.DEFAULT
 import com.basecamp.turbolinks.PresentationContext.MODAL
 
-class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : TurbolinksActivity by activity {
+class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : TurbolinksActivity by activity {
     // ----------------------------------------------------------------------------
     // TurbolinksActivity interface
     // ----------------------------------------------------------------------------
@@ -109,15 +109,13 @@ class TurbolinksActivityDelegate(val activity: TurbolinksActivity) : TurbolinksA
         val locationIsPrevious = locationsAreSame(location, previousLocation())
         val shouldPop = action == "replace"
 
-        val presentation = when {
+        return when {
             locationIsRoot && locationIsCurrent -> NONE
             shouldPop && locationIsPrevious -> POP
             locationIsRoot -> REPLACE_ALL
             shouldPop || locationIsCurrent -> REPLACE
             else -> PUSH
         }
-
-        return presentation
     }
 
     private fun navigateToLocation(location: String, bundle: Bundle) {
