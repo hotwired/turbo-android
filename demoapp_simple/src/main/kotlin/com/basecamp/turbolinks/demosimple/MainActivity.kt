@@ -5,15 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavArgument
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.basecamp.turbolinks.TurbolinksActivity
 import com.basecamp.turbolinks.TurbolinksActivityDelegate
 import com.basecamp.turbolinks.TurbolinksRouter
 import com.basecamp.turbolinks.TurbolinksSession
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
-    private val fragmentId = R.id.section_food_nav
+    private val hostFragmentId = R.id.section_food_nav
     private val session by lazy { TurbolinksSession.getNew(this) }
-    private val controller by lazy { findNavController(fragmentId) }
+    private val controller by lazy { findNavController(hostFragmentId) }
     private val view by lazy { layoutInflater.inflate(R.layout.activity_main, null) }
     private val router by lazy { Router(this) }
     private val delegate by lazy { TurbolinksActivityDelegate(this) }
@@ -55,22 +56,17 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         return router
     }
 
-    override fun onProvideCurrentDestination(): Fragment {
-        val host = supportFragmentManager.findFragmentById(fragmentId)
-        return host?.childFragmentManager?.primaryNavigationFragment ?:
-                throw IllegalStateException("No current destination found")
-    }
-
-    override fun onStartModalContext(location: String) {
-        // TODO
+    override fun onProvideCurrentNavHostFragment(): NavHostFragment {
+        return supportFragmentManager.findFragmentById(hostFragmentId) as? NavHostFragment ?:
+            throw IllegalStateException("No current NavHostFragment found")
     }
 
     override fun onRequestFinish() {
         finish()
     }
 
-    override fun navigate(location: String, action: String) {
-        delegate.navigate(location, action)
+    override fun navigate(location: String, action: String): Boolean {
+        return delegate.navigate(location, action)
     }
 
     override fun navigateUp(): Boolean {

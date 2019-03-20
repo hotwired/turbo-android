@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.basecamp.turbolinks.TurbolinksActivity
 import com.basecamp.turbolinks.TurbolinksActivityDelegate
@@ -84,27 +85,17 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         return router
     }
 
-    override fun onProvideCurrentDestination(): Fragment {
-        val host = supportFragmentManager.findFragmentById(selectedTab.menuId)
-        return host?.childFragmentManager?.primaryNavigationFragment ?:
-                throw IllegalStateException("No current destination found")
-    }
-
-    override fun onStartModalContext(location: String) {
-        // TODO
-    }
-
-    override fun onProvideModalResult(): String? {
-        // TODO
-        return null
+    override fun onProvideCurrentNavHostFragment(): NavHostFragment {
+        return supportFragmentManager.findFragmentById(selectedTab.menuId) as? NavHostFragment ?:
+            throw IllegalStateException("No current NavHostFragment found")
     }
 
     override fun onRequestFinish() {
         finish()
     }
 
-    override fun navigate(location: String, action: String) {
-        delegate.navigate(location, action)
+    override fun navigate(location: String, action: String): Boolean {
+        return delegate.navigate(location, action)
     }
 
     override fun navigateUp(): Boolean {

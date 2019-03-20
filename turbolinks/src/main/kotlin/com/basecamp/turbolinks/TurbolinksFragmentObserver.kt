@@ -26,7 +26,7 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         get() = onProvideErrorPlaceholder()
     private val fragment = fragment as? Fragment ?:
         throw IllegalArgumentException("fragment must be a Fragment")
-    private val webView: WebView?
+    protected val webView: WebView?
         get() = session()?.webView
 
     // ----------------------------------------------------------------------------

@@ -19,6 +19,14 @@ class Router(private val context: Context) : TurbolinksRouter() {
         }
     }
 
+    override fun getModalContextStartAction(location: String): Int {
+        return R.id.action_turbolinks_modal_start
+    }
+
+    override fun getModalContextDismissAction(location: String): Int {
+        return R.id.action_turbolinks_modal_dismiss
+    }
+
     override fun getPresentationContext(location: String): PresentationContext {
         return when (isModalContext(location)) {
             true -> PresentationContext.MODAL
