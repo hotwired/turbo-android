@@ -7,12 +7,12 @@ import okhttp3.Request
 import java.io.IOException
 
 internal class Repository {
-    private val client = OkHttpClient()
+    internal var client = OkHttpClient()
 
     suspend fun getRemotePathConfiguration(url: String): PathConfiguration? {
         val request = Request.Builder().url(url).build()
 
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.Main) {
             issueRequest(request)?.let {
                 PathConfiguration.load(it)
             }
