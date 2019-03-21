@@ -1,9 +1,10 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'kotlin-android-extensions'
 
 buildscript {
     ext.libVersionName = '1.0.6'
@@ -17,6 +18,11 @@ buildscript {
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
     }
+}
+
+repositories {
+    google()
+    mavenCentral()
 }
 
 android {
@@ -63,14 +69,21 @@ dependencies {
     // JSON
     implementation 'com.google.code.gson:gson:2.8.5'
 
+    // Networking/API
+    implementation 'com.squareup.okhttp3:okhttp:3.14.0'
+
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
+
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0-rc02'
     implementation 'androidx.navigation:navigation-ui-ktx:2.0.0-rc02'
 
     // Tests
-    testImplementation 'org.assertj:assertj-core:3.11.1'
+    testImplementation 'org.assertj:assertj-core:3.12.1'
     testImplementation 'org.robolectric:robolectric:4.0.1'
-    testImplementation 'org.mockito:mockito-core:2.23.0'
+    testImplementation 'org.mockito:mockito-core:2.25.0'
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
     testImplementation 'junit:junit:4.12'
 }
@@ -159,11 +172,6 @@ bintray {
             desc = libraryDescription
         }
     }
-}
-
-repositories {
-    mavenCentral()
-    google()
 }
 
 dependencyUpdates.resolutionStrategy = {

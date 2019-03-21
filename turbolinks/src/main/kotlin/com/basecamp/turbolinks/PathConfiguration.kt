@@ -2,12 +2,16 @@ package com.basecamp.turbolinks
 
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.regex.PatternSyntaxException
 import kotlin.text.RegexOption.IGNORE_CASE
 
 class PathConfiguration(
     @SerializedName("url") var url: String? = null,
     @SerializedName("rules") var rules: List<PathRule> = emptyList()) {
+
+    internal var repository = Repository()
 
     init {
         downloadRemoteConfiguration()
@@ -29,7 +33,12 @@ class PathConfiguration(
 
     private fun downloadRemoteConfiguration() {
         val configurationUrl = url ?: return
-        // TODO
+
+        GlobalScope.launch {
+            repository.getRemotePathConfiguration(configurationUrl)?.let {
+                it.rules = rules
+            }
+        }
     }
 
     companion object {
