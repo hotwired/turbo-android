@@ -1,0 +1,12 @@
+{
+  "rules": [
+    {
+      "patterns": [".+"],
+      "properties": {"context": "default", "type": "web"}
+    },
+    {
+      "patterns": ["/new$", "/edit$"],
+      "properties": {"context": "modal"}
+    }
+  ]
+}

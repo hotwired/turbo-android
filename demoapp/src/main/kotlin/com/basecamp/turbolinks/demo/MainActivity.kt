@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(view)
-        initWebViews()
+        initSessions()
         initBottomTabsListener()
         verifyServerIpAddress(this)
     }
@@ -111,8 +111,12 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     // Private
     // ----------------------------------------------------------------------------
 
-    private fun initWebViews() {
-        tabs.forEach { it.session.applyWebViewDefaults() }
+    private fun initSessions() {
+        val configuration = contentFromAsset("json/configuration.json")
+        tabs.forEach {
+            it.session.pathConfiguration = PathConfiguration.load(configuration)
+            it.session.applyWebViewDefaults()
+        }
     }
 
     private fun initBottomTabsListener() {
