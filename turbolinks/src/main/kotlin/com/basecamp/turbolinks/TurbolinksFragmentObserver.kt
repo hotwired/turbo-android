@@ -123,8 +123,9 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         }
     }
 
-    override fun visitProposedToLocationWithAction(location: String, action: String) {
-        activity?.navigate(location, action)
+    override fun visitProposedToLocation(location: String, action: String,
+                                         properties: PathProperties) {
+        activity?.navigate(location, action, properties)
     }
 
     // -----------------------------------------------------------------------

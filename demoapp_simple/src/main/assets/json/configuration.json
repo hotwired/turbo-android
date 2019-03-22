@@ -1,0 +1,8 @@
+{
+  "rules": [
+    {
+      "patterns": [".+"],
+      "properties": {"context": "default", "type": "web"}
+    }
+  ]
+}

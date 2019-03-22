@@ -3,18 +3,20 @@ package com.basecamp.turbolinks.demo
 import android.content.Context
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import com.basecamp.turbolinks.PathProperties
 import com.basecamp.turbolinks.PresentationContext
 import com.basecamp.turbolinks.TurbolinksRouter
+import com.basecamp.turbolinks.context
 
 class Router(private val context: Context) : TurbolinksRouter() {
-    override fun getNavigationAction(location: String): Int? {
+    override fun getNavigationAction(location: String, properties: PathProperties): Int? {
         return when (getRouteCommand(location)) {
             RouteCommand.OPEN_EXTERNAL -> {
                 launchChromeCustomTab(context, location)
                 null
             }
             RouteCommand.NAVIGATE -> {
-                getRouteAction(location)
+                getRouteAction(properties)
             }
         }
     }
@@ -27,37 +29,26 @@ class Router(private val context: Context) : TurbolinksRouter() {
         return R.id.action_turbolinks_modal_dismiss
     }
 
-    override fun getPresentationContext(location: String): PresentationContext {
-        return when (isModalContext(location)) {
-            true -> PresentationContext.MODAL
-            else -> PresentationContext.DEFAULT
-        }
-    }
-
     fun getRouteCommand(location: String): RouteCommand {
-        return when(location.startsWith(Constants.BASE_URL)) {
+        return when (location.startsWith(Constants.BASE_URL)) {
             true -> RouteCommand.NAVIGATE
             else -> RouteCommand.OPEN_EXTERNAL
         }
     }
 
-    fun getRouteDestination(location: String): RouteDestination {
-        return when {
-            location.endsWith(".png") -> RouteDestination.IMAGE
-            isModalContext(location) -> RouteDestination.WEB_MODAL
-            else -> RouteDestination.WEB
+    fun getRouteAction(properties: PathProperties): Int {
+        if (properties.context == PresentationContext.MODAL) {
+            // Navigating within an existing modal context
+            return R.id.action_turbolinks_modal
         }
-    }
 
-    fun getRouteAction(location: String): Int {
-        return when (getRouteDestination(location)) {
-            RouteDestination.IMAGE -> R.id.action_image_viewer
-            RouteDestination.WEB_MODAL -> R.id.action_turbolinks_modal
+        return when (properties.type) {
             RouteDestination.WEB -> R.id.action_turbolinks
+            RouteDestination.IMAGE -> R.id.action_image_viewer
         }
     }
 
-    fun launchChromeCustomTab(context: Context, location: String) {
+    private fun launchChromeCustomTab(context: Context, location: String) {
         val intent = CustomTabsIntent.Builder()
                 .setShowTitle(true)
                 .enableUrlBarHiding()
@@ -66,10 +57,6 @@ class Router(private val context: Context) : TurbolinksRouter() {
                 .build()
 
         intent.launchUrl(context, Uri.parse(location))
-    }
-
-    private fun isModalContext(location: String): Boolean {
-        return location.endsWith("/edit") || location.endsWith("/new")
     }
 }
 
@@ -80,6 +67,5 @@ enum class RouteCommand {
 
 enum class RouteDestination {
     IMAGE,
-    WEB,
-    WEB_MODAL
+    WEB
 }

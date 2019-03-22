@@ -7,10 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.basecamp.turbolinks.TurbolinksActivity
-import com.basecamp.turbolinks.TurbolinksActivityDelegate
-import com.basecamp.turbolinks.TurbolinksRouter
-import com.basecamp.turbolinks.TurbolinksSession
+import com.basecamp.turbolinks.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
@@ -55,7 +52,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(view)
-        initWebViews()
+        initSessions()
         initBottomTabsListener()
         verifyServerIpAddress(this)
     }
@@ -94,8 +91,8 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         finish()
     }
 
-    override fun navigate(location: String, action: String): Boolean {
-        return delegate.navigate(location, action)
+    override fun navigate(location: String, action: String, properties: PathProperties?): Boolean {
+        return delegate.navigate(location, action, properties)
     }
 
     override fun navigateUp(): Boolean {
@@ -114,8 +111,12 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     // Private
     // ----------------------------------------------------------------------------
 
-    private fun initWebViews() {
-        tabs.forEach { it.session.applyWebViewDefaults() }
+    private fun initSessions() {
+        val configuration = contentFromAsset("json/configuration.json")
+        tabs.forEach {
+            it.session.pathConfiguration = PathConfiguration.load(configuration)
+            it.session.applyWebViewDefaults()
+        }
     }
 
     private fun initBottomTabsListener() {

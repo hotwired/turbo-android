@@ -6,10 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavArgument
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import com.basecamp.turbolinks.TurbolinksActivity
-import com.basecamp.turbolinks.TurbolinksActivityDelegate
-import com.basecamp.turbolinks.TurbolinksRouter
-import com.basecamp.turbolinks.TurbolinksSession
+import com.basecamp.turbolinks.*
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
     private val hostFragmentId = R.id.section_food_nav
@@ -28,7 +25,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         super.onCreate(savedInstanceState)
         setContentView(view)
         initControllerGraph()
-        initWebView()
+        initSession()
         verifyServerIpAddress(this)
     }
 
@@ -65,8 +62,8 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         finish()
     }
 
-    override fun navigate(location: String, action: String): Boolean {
-        return delegate.navigate(location, action)
+    override fun navigate(location: String, action: String, properties: PathProperties?): Boolean {
+        return delegate.navigate(location, action, properties)
     }
 
     override fun navigateUp(): Boolean {
@@ -96,7 +93,9 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         }
     }
 
-    private fun initWebView() {
+    private fun initSession() {
+        val configuration = contentFromAsset("json/configuration.json")
+        session.pathConfiguration = PathConfiguration.load(configuration)
         session.applyWebViewDefaults()
     }
 }

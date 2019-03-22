@@ -50,7 +50,10 @@ class TurbolinksSessionTest {
         session.currentVisit = visit
         session.visitProposedToLocationWithAction(visit.location, TurbolinksSession.ACTION_ADVANCE)
 
-        verify(callback).visitProposedToLocationWithAction(visit.location, TurbolinksSession.ACTION_ADVANCE)
+        verify(callback).visitProposedToLocation(
+                visit.location,
+                TurbolinksSession.ACTION_ADVANCE,
+                PathProperties())
     }
 
     @Test

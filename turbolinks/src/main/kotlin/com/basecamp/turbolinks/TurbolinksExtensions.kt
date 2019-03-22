@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.annotation.ColorRes
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.net.URI
 import java.net.URL
 
@@ -34,13 +36,17 @@ internal fun Context.inflate(resource: Int, parent: ViewGroup? = null): View {
     return LayoutInflater.from(this).inflate(resource, parent, false)
 }
 
+internal fun <T> String.toObject(typeToken: TypeToken<T>): T {
+    return Gson().fromJson<T>(this, typeToken.type)
+}
+
 internal fun String.urlEncode(): String {
-    try {
+    return try {
         val url = URL(this)
         val uri = URI(url.protocol, url.userInfo, url.host, url.port, url.path, url.query, url.ref)
-        return uri.toURL().toString()
+        uri.toURL().toString()
     } catch (e: Exception) {
-        return ""
+        ""
     }
 }
 
