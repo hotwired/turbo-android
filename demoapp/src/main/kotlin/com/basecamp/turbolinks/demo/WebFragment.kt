@@ -51,6 +51,9 @@ open class WebFragment : Fragment(), TurbolinksFragment {
     override fun onSetupToolbar() {
         toolbar?.let {
             NavigationUI.setupWithNavController(it, findNavController())
+            it.setNavigationOnClickListener {
+                observer.navigateUp()
+            }
         }
     }
 
