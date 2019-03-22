@@ -23,7 +23,7 @@ interface TurbolinksActivity {
     fun onProvideRouter(): TurbolinksRouter
     fun onProvideCurrentNavHostFragment(): NavHostFragment
     fun onRequestFinish()
-    fun navigate(location: String, action: String, properties: PathProperties): Boolean
+    fun navigate(location: String, action: String, properties: PathProperties? = null): Boolean
     fun navigateUp(): Boolean
     fun navigateBack()
     fun clearBackStack()

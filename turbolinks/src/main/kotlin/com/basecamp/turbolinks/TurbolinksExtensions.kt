@@ -12,10 +12,6 @@ import com.google.gson.reflect.TypeToken
 import java.net.URI
 import java.net.URL
 
-internal fun TurbolinksSession?.pathProperties(location: String): PathProperties {
-    return this?.pathConfiguration?.properties(location) ?: PathProperties()
-}
-
 internal fun WebView.runJavascript(javascript: String) {
     context.runOnUiThread {
         evaluateJavascript(javascript) {}

@@ -3,11 +3,11 @@ package com.basecamp.turbolinks.demo
 import android.content.Context
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
-import com.basecamp.turbolinks.PresentationContext
+import com.basecamp.turbolinks.PathProperties
 import com.basecamp.turbolinks.TurbolinksRouter
 
 class Router(private val context: Context) : TurbolinksRouter() {
-    override fun getNavigationAction(location: String): Int? {
+    override fun getNavigationAction(location: String, properties: PathProperties): Int? {
         return when (getRouteCommand(location)) {
             RouteCommand.OPEN_EXTERNAL -> {
                 launchChromeCustomTab(context, location)
@@ -25,13 +25,6 @@ class Router(private val context: Context) : TurbolinksRouter() {
 
     override fun getModalContextDismissAction(location: String): Int {
         return R.id.action_turbolinks_modal_dismiss
-    }
-
-    override fun getPresentationContext(location: String): PresentationContext {
-        return when (isModalContext(location)) {
-            true -> PresentationContext.MODAL
-            else -> PresentationContext.DEFAULT
-        }
     }
 
     fun getRouteCommand(location: String): RouteCommand {

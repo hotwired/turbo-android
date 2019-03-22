@@ -14,9 +14,10 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
     // TurbolinksActivity interface
     // ----------------------------------------------------------------------------
 
-    override fun navigate(location: String, action: String, properties: PathProperties): Boolean {
+    override fun navigate(location: String, action: String, properties: PathProperties?): Boolean {
+        val currentProperties = properties ?: currentPathConfiguration().properties(location)
         val currentContext = currentPresentationContext()
-        val newContext = properties.context
+        val newContext = currentProperties.context
         val presentation = presentation(location, action)
 
         logEvent("navigate", "location" to location,
@@ -25,7 +26,7 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
 
         when {
             presentation == NONE -> return false
-            currentContext == newContext -> navigateWithinContext(location, properties, presentation)
+            currentContext == newContext -> navigateWithinContext(location, currentProperties, presentation)
             newContext == MODAL -> navigateToModalContext(location)
             newContext == DEFAULT -> dismissModalContextWithResult(location)
         }
@@ -133,9 +134,13 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
             throw IllegalStateException("No current destination found in NavHostFragment")
     }
 
+    private fun currentPathConfiguration(): PathConfiguration {
+        return onProvideSession(currentDestination()).pathConfiguration
+    }
+
     private fun currentPresentationContext(): PresentationContext {
         val location = currentDestinationArgument("location") ?: return DEFAULT
-        return onProvideSession(currentDestination()).pathProperties(location).context
+        return currentPathConfiguration().properties(location).context
     }
 
     private fun currentLocation(): String? {

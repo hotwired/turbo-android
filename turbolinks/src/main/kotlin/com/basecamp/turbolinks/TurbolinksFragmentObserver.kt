@@ -134,8 +134,7 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
 
     private fun initNavigationVisit() {
         val navigated = onGetModalResult()?.let {
-            val properties = session().pathProperties(it.location)
-            activity?.navigate(it.location, it.action, properties)
+            activity?.navigate(it.location, it.action)
         } ?: false
 
         if (!navigated) {

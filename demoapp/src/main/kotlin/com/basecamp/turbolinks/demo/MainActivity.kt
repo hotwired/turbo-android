@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         finish()
     }
 
-    override fun navigate(location: String, action: String, properties: PathProperties): Boolean {
+    override fun navigate(location: String, action: String, properties: PathProperties?): Boolean {
         return delegate.navigate(location, action, properties)
     }
 
