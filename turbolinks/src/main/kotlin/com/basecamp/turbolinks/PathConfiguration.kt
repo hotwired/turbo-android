@@ -67,8 +67,8 @@ data class PathRule(
 typealias PathProperties = HashMap<String, String>
 
 val PathProperties.context: PresentationContext get() = try {
-    val value = get("context")?.toUpperCase() ?: "default"
-    PresentationContext.valueOf(value)
+    val value = get("context") ?: "default"
+    PresentationContext.valueOf(value.toUpperCase())
 } catch (e: IllegalArgumentException) {
     PresentationContext.DEFAULT
 }
