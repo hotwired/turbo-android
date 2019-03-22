@@ -123,8 +123,9 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
         }
     }
 
-    override fun visitProposedToLocationWithAction(location: String, action: String) {
-        activity?.navigate(location, action)
+    override fun visitProposedToLocation(location: String, action: String,
+                                         properties: PathProperties) {
+        activity?.navigate(location, action, properties)
     }
 
     // -----------------------------------------------------------------------
@@ -133,7 +134,8 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
 
     private fun initNavigationVisit() {
         val navigated = onGetModalResult()?.let {
-            activity?.navigate(it.location, it.action)
+            val properties = session().pathProperties(it.location)
+            activity?.navigate(it.location, it.action, properties)
         } ?: false
 
         if (!navigated) {

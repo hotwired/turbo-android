@@ -14,9 +14,9 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
     // TurbolinksActivity interface
     // ----------------------------------------------------------------------------
 
-    override fun navigate(location: String, action: String): Boolean {
+    override fun navigate(location: String, action: String, properties: PathProperties): Boolean {
         val currentContext = currentPresentationContext()
-        val newContext = onProvideRouter().getPresentationContext(location)
+        val newContext = properties.context
         val presentation = presentation(location, action)
 
         logEvent("navigate", "location" to location,
@@ -25,7 +25,7 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
 
         when {
             presentation == NONE -> return false
-            currentContext == newContext -> navigateWithinContext(location, presentation)
+            currentContext == newContext -> navigateWithinContext(location, properties, presentation)
             newContext == MODAL -> navigateToModalContext(location)
             newContext == DEFAULT -> dismissModalContextWithResult(location)
         }
@@ -55,7 +55,7 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
     // Private
     // ----------------------------------------------------------------------------
 
-    private fun navigateWithinContext(location: String, presentation: Presentation) {
+    private fun navigateWithinContext(location: String, properties: PathProperties, presentation: Presentation) {
         logEvent("navigateWithinContext", "location" to location, "presentation" to presentation)
         val bundle = buildBundle(location, presentation)
 
@@ -65,7 +65,7 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
             }
 
             if (presentation == REPLACE || presentation == PUSH) {
-                navigateToLocation(location, bundle)
+                navigateToLocation(location, properties, bundle)
             }
 
             if (presentation == REPLACE_ALL) {
@@ -118,8 +118,8 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
         }
     }
 
-    private fun navigateToLocation(location: String, bundle: Bundle) {
-        onProvideRouter().getNavigationAction(location)?.let { actionId ->
+    private fun navigateToLocation(location: String, properties: PathProperties, bundle: Bundle) {
+        onProvideRouter().getNavigationAction(location, properties)?.let { actionId ->
             currentController().navigate(actionId, bundle)
         }
     }
@@ -135,7 +135,7 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
 
     private fun currentPresentationContext(): PresentationContext {
         val location = currentDestinationArgument("location") ?: return DEFAULT
-        return onProvideRouter().getPresentationContext(location)
+        return onProvideSession(currentDestination()).pathProperties(location).context
     }
 
     private fun currentLocation(): String? {

@@ -21,6 +21,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     // User accessible
 
+    var pathConfiguration = PathConfiguration()
     val sessionId = generateSessionId()
     var enableScreenshots = true
     var isColdBooting = false
@@ -72,7 +73,8 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     @JavascriptInterface
     fun visitProposedToLocationWithAction(location: String, action: String) {
         logEvent("visitProposedToLocationWithAction", "location" to location, "action" to action)
-        callback { it.visitProposedToLocationWithAction(location, action) }
+        val properties = pathConfiguration.properties(location)
+        callback { it.visitProposedToLocation(location, action, properties) }
     }
 
     @JavascriptInterface
