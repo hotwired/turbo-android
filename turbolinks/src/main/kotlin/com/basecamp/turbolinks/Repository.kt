@@ -2,13 +2,10 @@ package com.basecamp.turbolinks
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
 
 internal class Repository {
-    internal var client = OkHttpClient()
-
     suspend fun getRemotePathConfiguration(url: String): PathConfiguration? {
         val request = Request.Builder().url(url).build()
 
@@ -20,7 +17,7 @@ internal class Repository {
     }
 
     private fun issueRequest(request: Request): String? = try {
-        client.newCall(request).execute().use { response ->
+        Http.sharedHttpClient.newCall(request).execute().use { response ->
             if (response.isSuccessful) {
                 response.body()?.string()
             } else {

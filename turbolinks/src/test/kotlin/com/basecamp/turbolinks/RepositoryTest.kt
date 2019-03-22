@@ -21,7 +21,7 @@ class RepositoryTest : BaseRepositoryTest() {
 
     override fun setup() {
         super.setup()
-        repository.client = client()
+        Http.sharedHttpClient = client()
     }
 
     @Test
