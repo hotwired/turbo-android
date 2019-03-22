@@ -4,7 +4,15 @@ import android.util.Log
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import com.basecamp.turbolinks.PathProperties
 import com.basecamp.turbolinks.TurbolinksSession
+
+val PathProperties.type: RouteDestination get() = try {
+    val value = get("type") ?: "web"
+    RouteDestination.valueOf(value.toUpperCase())
+} catch (e: IllegalArgumentException) {
+    RouteDestination.WEB
+}
 
 fun TurbolinksSession.applyWebViewDefaults(): TurbolinksSession {
     return this.apply {

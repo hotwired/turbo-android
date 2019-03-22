@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         super.onCreate(savedInstanceState)
         setContentView(view)
         initControllerGraph()
-        initWebView()
+        initSession()
         verifyServerIpAddress(this)
     }
 
@@ -93,7 +93,9 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         }
     }
 
-    private fun initWebView() {
+    private fun initSession() {
+        val configuration = contentFromAsset("json/configuration.json")
+        session.pathConfiguration = PathConfiguration.load(configuration)
         session.applyWebViewDefaults()
     }
 }
