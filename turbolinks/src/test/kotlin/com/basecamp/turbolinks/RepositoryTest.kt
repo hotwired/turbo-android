@@ -37,7 +37,7 @@ class RepositoryTest : BaseRepositoryTest() {
                 val json = repository.getRemoteConfiguration(baseUrl())
                 assertThat(json).isNotNull()
 
-                val config = json?.toObject(object : TypeToken<PathConfiguration>() {})
+                val config = load(json)
                 assertThat(config?.rules?.size).isEqualTo(2)
             }
         }
