@@ -8,6 +8,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.basecamp.turbolinks.*
+import com.basecamp.turbolinks.PathConfiguration.Location
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
@@ -112,9 +113,9 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     // ----------------------------------------------------------------------------
 
     private fun initSessions() {
-        val configuration = contentFromAsset("json/configuration.json")
+        val location = Location(assetFilePath = "json/configuration.json")
         tabs.forEach {
-            it.session.pathConfiguration = PathConfiguration.load(configuration)
+            it.session.pathConfiguration.load(location)
             it.session.applyWebViewDefaults()
         }
     }

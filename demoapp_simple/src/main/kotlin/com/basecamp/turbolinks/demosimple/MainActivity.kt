@@ -7,6 +7,7 @@ import androidx.navigation.NavArgument
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.basecamp.turbolinks.*
+import com.basecamp.turbolinks.PathConfiguration.Location
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
     private val hostFragmentId = R.id.section_food_nav
@@ -94,8 +95,8 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     }
 
     private fun initSession() {
-        val configuration = contentFromAsset("json/configuration.json")
-        session.pathConfiguration = PathConfiguration.load(configuration)
+        val location = Location(assetFilePath = "json/configuration.json")
+        session.pathConfiguration.load(location)
         session.applyWebViewDefaults()
     }
 }
