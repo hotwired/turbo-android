@@ -1,18 +1,36 @@
 package com.basecamp.turbolinks
 
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Request
 import java.io.IOException
 
 internal class Repository {
-    suspend fun getRemotePathConfiguration(url: String): PathConfiguration? {
+    private val cacheFile = "turbolinks"
+    private val cacheKey = "configuration.json"
+
+    suspend fun getRemoteConfiguration(url: String): String? {
         val request = Request.Builder().url(url).build()
 
         return withContext(Dispatchers.Main) {
-            issueRequest(request)?.let {
-                PathConfiguration.load(it)
-            }
+            issueRequest(request)
+        }
+    }
+
+    fun getBundledConfiguration(context: Context, filePath: String): String {
+        return contentFromAsset(context, filePath)
+    }
+
+    fun getCachedConfiguration(context: Context): String? {
+        return prefs(context).getString(cacheKey, null)
+    }
+
+    fun cacheConfiguration(context: Context, pathConfiguration: PathConfiguration) {
+        prefs(context).edit {
+            putString(cacheKey, pathConfiguration.toJson())
         }
     }
 
@@ -28,6 +46,16 @@ internal class Repository {
     } catch (e: IOException) {
         logError(request, e.message)
         null
+    }
+
+    private fun prefs(context: Context): SharedPreferences {
+        return context.getSharedPreferences(cacheFile, Context.MODE_PRIVATE)
+    }
+
+    private fun contentFromAsset(context: Context, filePath: String): String {
+        return context.assets.open(filePath).use {
+            String(it.readBytes())
+        }
     }
 
     private fun logError(request: Request, message: String?) {

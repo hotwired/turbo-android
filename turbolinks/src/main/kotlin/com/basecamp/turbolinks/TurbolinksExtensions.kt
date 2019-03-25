@@ -36,6 +36,10 @@ internal fun Context.inflate(resource: Int, parent: ViewGroup? = null): View {
     return LayoutInflater.from(this).inflate(resource, parent, false)
 }
 
+internal fun Any.toJson(): String {
+    return Gson().toJson(this)
+}
+
 internal fun <T> String.toObject(typeToken: TypeToken<T>): T {
     return Gson().fromJson<T>(this, typeToken.type)
 }

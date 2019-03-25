@@ -1,20 +1,24 @@
 package com.basecamp.turbolinks
 
+import android.content.Context
 import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.util.regex.PatternSyntaxException
 import kotlin.text.RegexOption.IGNORE_CASE
 
-class PathConfiguration(
-    @SerializedName("url") var url: String? = null,
-    @SerializedName("rules") var rules: List<PathRule> = emptyList()) {
+class PathConfiguration(context: Context) {
+    @SerializedName("rules") var rules: List<PathRule> = emptyList()
 
-    internal var repository = Repository()
+    internal var loader = PathConfigurationLoader(context.applicationContext)
 
-    init {
-        downloadRemoteConfiguration()
+    data class Location(
+            val assetFilePath: String? = null,
+            val remoteFileUrl: String? = null
+    )
+
+    fun load(location: Location) {
+        loader.load(location) {
+            rules = it.rules
+        }
     }
 
     fun properties(path: String): PathProperties {
@@ -25,26 +29,6 @@ class PathConfiguration(
         }
 
         return properties
-    }
-
-    fun reloadRemoteConfiguration() {
-        downloadRemoteConfiguration()
-    }
-
-    private fun downloadRemoteConfiguration() {
-        val configurationUrl = url ?: return
-
-        GlobalScope.launch {
-            repository.getRemotePathConfiguration(configurationUrl)?.let {
-                it.rules = rules
-            }
-        }
-    }
-
-    companion object {
-        fun load(json: String): PathConfiguration {
-            return json.toObject(object : TypeToken<PathConfiguration>() {})
-        }
     }
 }
 
