@@ -108,13 +108,13 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
         val locationIsRoot = locationsAreSame(location, onProvideSessionRootLocation())
         val locationIsCurrent = locationsAreSame(location, currentLocation())
         val locationIsPrevious = locationsAreSame(location, previousLocation())
-        val shouldPop = action == "replace"
+        val replace = action == "replace"
 
         return when {
             locationIsRoot && locationIsCurrent -> NONE
-            shouldPop && locationIsPrevious -> POP
+            locationIsPrevious -> POP
             locationIsRoot -> REPLACE_ALL
-            shouldPop || locationIsCurrent -> REPLACE
+            locationIsCurrent || replace -> REPLACE
             else -> PUSH
         }
     }

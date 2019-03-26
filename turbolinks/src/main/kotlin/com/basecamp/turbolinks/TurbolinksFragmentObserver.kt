@@ -125,7 +125,12 @@ open class TurbolinksFragmentObserver(fragment: TurbolinksFragment) :
 
     override fun visitProposedToLocation(location: String, action: String,
                                          properties: PathProperties) {
-        activity?.navigate(location, action, properties)
+        val navigated = activity?.navigate(location, action, properties)
+
+        // In the case of a NONE presentation, reload the page with fresh data
+        if (navigated == false) {
+            visit(location, restoreWithCachedSnapshot = false, reload = false)
+        }
     }
 
     // -----------------------------------------------------------------------
