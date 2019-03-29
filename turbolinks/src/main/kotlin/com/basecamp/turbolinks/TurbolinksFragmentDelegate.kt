@@ -10,6 +10,9 @@ import kotlin.random.Random
 open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) :
         TurbolinksFragment by fragment, TurbolinksSessionCallback {
 
+    val fragment = fragment as? Fragment ?:
+        throw IllegalArgumentException("fragment must be a Fragment")
+
     private lateinit var location: String
     private val identifier = generateIdentifier()
     private var isInitialVisit = true
@@ -21,8 +24,6 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) :
         get() = onProvideTurbolinksView()
     private val turbolinksErrorPlaceholder: ViewGroup?
         get() = onProvideErrorPlaceholder()
-    private val fragment = fragment as? Fragment ?:
-    throw IllegalArgumentException("fragment must be a Fragment")
     protected val webView: WebView?
         get() = session()?.webView
 
@@ -30,20 +31,17 @@ open class TurbolinksFragmentDelegate(fragment: TurbolinksFragment) :
 
     open fun onWebViewDetached() {}
 
-    fun onCreate() {
-        location = fragment.arguments?.getString("location") ?:
-                throw IllegalArgumentException("A location argument must be provided")
+    fun onCreate(location: String) {
+        this.location = location
     }
 
-    fun onStart() {
-        activity = fragment.context as? TurbolinksActivity ?:
-                throw RuntimeException("The fragment Activity must implement TurbolinksActivity")
-
+    fun onStart(activity: TurbolinksActivity) {
+        this.activity = activity
         initNavigationVisit()
     }
 
     fun onStop() {
-        activity = null
+        this.activity = null
     }
 
     fun session(): TurbolinksSession? {

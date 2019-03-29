@@ -9,12 +9,18 @@ open class TurbolinksFragmentObserver(private val delegate: TurbolinksFragmentDe
 
     @OnLifecycleEvent(ON_CREATE)
     private fun create() {
-        delegate.onCreate()
+        val location = delegate.fragment.arguments?.getString("location") ?:
+                throw IllegalArgumentException("A location argument must be provided")
+
+        delegate.onCreate(location)
     }
 
     @OnLifecycleEvent(ON_START)
     private fun start() {
-        delegate.onStart()
+        val activity = delegate.fragment.context as? TurbolinksActivity ?:
+                throw RuntimeException("The fragment Activity must implement TurbolinksActivity")
+
+        delegate.onStart(activity)
     }
 
     @OnLifecycleEvent(ON_STOP)
