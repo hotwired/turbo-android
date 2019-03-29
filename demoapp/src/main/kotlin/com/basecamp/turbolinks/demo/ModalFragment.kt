@@ -32,8 +32,8 @@ class ModalFragment : WebFragment() {
     }
 
     private fun initView() {
-        modal_close.setOnClickListener { observer.navigateBack() }
-        modal_submit.setOnClickListener { observer.navigateBack() }
+        modal_close.setOnClickListener { delegate.navigateBack() }
+        modal_submit.setOnClickListener { delegate.navigateBack() }
     }
 
     private fun toggleModalPresentation(modal: Boolean) {

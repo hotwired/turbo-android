@@ -12,12 +12,12 @@ import kotlinx.android.synthetic.main.error.view.*
 import kotlinx.android.synthetic.main.fragment_web.*
 
 open class WebFragment : Fragment(), TurbolinksFragment {
-    private val observer by lazy { TurbolinksFragmentObserver(this) }
+    protected val delegate by lazy { TurbolinksFragmentDelegate(this) }
     private val viewModel by lazy { TurbolinksSharedViewModel.get(requireActivity()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(observer)
+        lifecycle.addObserver(TurbolinksFragmentObserver(delegate))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,8 +28,8 @@ open class WebFragment : Fragment(), TurbolinksFragment {
     // TurbolinksFragment interface
     // ----------------------------------------------------------------------------
 
-    override fun onProvideObserver(): TurbolinksFragmentObserver {
-        return observer
+    override fun onProvideDelegate(): TurbolinksFragmentDelegate {
+        return delegate
     }
 
     override fun onSetModalResult(result: TurbolinksModalResult) {
@@ -52,7 +52,7 @@ open class WebFragment : Fragment(), TurbolinksFragment {
         toolbar?.let {
             NavigationUI.setupWithNavController(it, findNavController())
             it.setNavigationOnClickListener {
-                observer.navigateUp()
+                delegate.navigateUp()
             }
         }
     }
