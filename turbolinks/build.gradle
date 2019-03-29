@@ -82,8 +82,8 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
 
     // Navigation
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0-rc02'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.0.0-rc02'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.0.0'
 
     // Tests
     testImplementation 'android.arch.core:core-testing:1.1.1'
