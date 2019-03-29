@@ -30,7 +30,7 @@ interface TurbolinksActivity {
 }
 
 interface TurbolinksFragment {
-    fun onProvideObserver(): TurbolinksFragmentObserver
+    fun onProvideDelegate(): TurbolinksFragmentDelegate
     fun onGetModalResult(): TurbolinksModalResult?
     fun onSetModalResult(result: TurbolinksModalResult)
     fun onProvideTurbolinksView(): TurbolinksView?
