@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.http.SslError
 import android.util.AttributeSet
 import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams
@@ -324,6 +325,15 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
                 reset()
                 callback { it.onReceivedError(errorResponse.statusCode) }
             }
+        }
+
+        override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
+            super.onReceivedSslError(view, handler, error)
+            handler.cancel()
+
+            logEvent("onReceivedSslError", "url" to error.url)
+            reset()
+            callback { it.onReceivedError(-1) }
         }
 
         /**
