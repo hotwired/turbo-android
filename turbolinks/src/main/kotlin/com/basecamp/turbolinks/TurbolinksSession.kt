@@ -317,6 +317,16 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
             return true
         }
 
+        override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+            super.onReceivedError(view, request, error)
+
+            if (request.isForMainFrame) {
+                logEvent("onReceivedError", "errorCode" to error.errorCode)
+                reset()
+                callback { it.onReceivedError(error.errorCode) }
+            }
+        }
+
         override fun onReceivedHttpError(view: WebView, request: WebResourceRequest, errorResponse: WebResourceResponse) {
             super.onReceivedHttpError(view, request, errorResponse)
 
