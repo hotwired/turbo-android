@@ -98,8 +98,8 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
 
     private fun sendModalResult(location: String, action: String) {
         currentDestinationAction {
-            if (it is TurbolinksFragmentCallback) {
-                it.onSetModalResult(TurbolinksModalResult(location, action))
+            if (it is TurbolinksFragment) {
+                it.setModalResult(TurbolinksModalResult(location, action))
             }
         }
     }
@@ -177,7 +177,7 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
     private fun detachWebViewFromCurrentDestination(destinationIsFinishing: Boolean, onDetached: () -> Unit = {}) {
         currentDestinationAction {
             when (it) {
-                is TurbolinksFragmentCallback -> it.onProvideDelegate().detachWebView(destinationIsFinishing, onDetached)
+                is TurbolinksFragment -> it.detachWebView(destinationIsFinishing, onDetached)
                 else -> onDetached()
             }
         }

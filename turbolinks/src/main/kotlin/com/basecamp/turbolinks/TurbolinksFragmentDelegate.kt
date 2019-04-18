@@ -127,7 +127,7 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
     // -----------------------------------------------------------------------
 
     private fun initNavigationVisit() {
-        val navigated = callback.onGetModalResult()?.let {
+        val navigated = fragment.getModalResult()?.let {
             activity?.navigate(it.location, it.action)
         } ?: false
 

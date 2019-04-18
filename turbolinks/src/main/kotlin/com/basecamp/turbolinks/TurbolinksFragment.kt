@@ -35,18 +35,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
         delegate.onStop()
     }
 
-    override fun onProvideDelegate(): TurbolinksFragmentDelegate {
-        return delegate
-    }
-
-    override fun onSetModalResult(result: TurbolinksModalResult) {
-        viewModel.modalResult = result
-    }
-
-    override fun onGetModalResult(): TurbolinksModalResult? {
-        return viewModel.modalResult
-    }
-
     override fun onSetupToolbar() {
         onProvideToolbar()?.let {
             NavigationUI.setupWithNavController(it, findNavController())
@@ -58,6 +46,18 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
 
     override fun onTitleChanged(title: String) {
         onProvideToolbar()?.title = title
+    }
+
+    internal fun setModalResult(result: TurbolinksModalResult) {
+        viewModel.modalResult = result
+    }
+
+    internal fun getModalResult(): TurbolinksModalResult? {
+        return viewModel.modalResult
+    }
+
+    internal fun detachWebView(destinationIsFinishing: Boolean, onDetached: () -> Unit = {}) {
+        delegate.detachWebView(destinationIsFinishing, onDetached)
     }
 
     fun navigate(location: String, action: String = "advance") {

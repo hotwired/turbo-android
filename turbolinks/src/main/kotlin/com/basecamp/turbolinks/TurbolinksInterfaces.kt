@@ -31,9 +31,6 @@ interface TurbolinksActivity {
 }
 
 interface TurbolinksFragmentCallback {
-    fun onProvideDelegate(): TurbolinksFragmentDelegate
-    fun onGetModalResult(): TurbolinksModalResult?
-    fun onSetModalResult(result: TurbolinksModalResult)
     fun onProvideTurbolinksView(): TurbolinksView?
     fun onProvideErrorPlaceholder(): ViewGroup?
     fun onProvideToolbar(): Toolbar?
