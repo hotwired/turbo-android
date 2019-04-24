@@ -3,30 +3,35 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 
 abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
-    private lateinit var viewModel: TurbolinksSharedViewModel
+    private lateinit var location: String
     private lateinit var delegate: TurbolinksFragmentDelegate
+
+    lateinit var sharedViewModel: TurbolinksSharedViewModel
+    lateinit var viewModel: TurbolinksFragmentViewModel
 
     val webView: WebView? get() = delegate.webView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = TurbolinksSharedViewModel.get(requireActivity())
-        delegate = TurbolinksFragmentDelegate(this, this)
+        location = requireNotNull(arguments?.getString("location")) { "A location argument must be provided" }
+        delegate = TurbolinksFragmentDelegate(this, this).apply { onCreate(location) }
+        sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
+        viewModel = TurbolinksFragmentViewModel.get(location, this)
 
-        val location = arguments?.getString("location") ?:
-                throw IllegalArgumentException("A location argument must be provided")
-        delegate.onCreate(location)
+        observeLiveData()
     }
 
     override fun onStart() {
         super.onStart()
 
-        val activity = context as? TurbolinksActivity ?:
-                throw RuntimeException("The fragment Activity must implement TurbolinksActivity")
+        val activity = requireNotNull(context as? TurbolinksActivity) {
+            "The fragment Activity must implement TurbolinksActivity"
+        }
         delegate.onStart(activity)
     }
 
@@ -44,23 +49,17 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
         }
     }
 
-    override fun onTitleChanged(title: String) {
-        onProvideToolbar()?.title = title
-    }
-
-    internal fun setModalResult(result: TurbolinksModalResult) {
-        viewModel.modalResult = result
-    }
-
-    internal fun getModalResult(): TurbolinksModalResult? {
-        return viewModel.modalResult
-    }
-
     internal fun detachWebView(destinationIsFinishing: Boolean, onDetached: () -> Unit = {}) {
         delegate.detachWebView(destinationIsFinishing, onDetached)
     }
 
     fun navigate(location: String, action: String = "advance") {
         delegate.navigate(location, action)
+    }
+
+    private fun observeLiveData() {
+        viewModel.title.observe(this, Observer {
+            onProvideToolbar()?.title = it
+        })
     }
 }

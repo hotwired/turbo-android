@@ -38,7 +38,6 @@ interface TurbolinksFragmentCallback {
     fun createErrorView(statusCode: Int): View
     fun createProgressView(location: String): View
     fun shouldEnablePullToRefresh(): Boolean
-    fun onTitleChanged(title: String)
     fun onWebViewAttached()
     fun onWebViewDetached()
     fun onColdBootPageStarted(location: String)

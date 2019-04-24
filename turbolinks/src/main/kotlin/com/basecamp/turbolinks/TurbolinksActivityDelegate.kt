@@ -99,7 +99,7 @@ class TurbolinksActivityDelegate(private val activity: TurbolinksActivity) : Tur
     private fun sendModalResult(location: String, action: String) {
         currentDestinationAction {
             if (it is TurbolinksFragment) {
-                it.setModalResult(TurbolinksModalResult(location, action))
+                it.sharedViewModel.modalResult = TurbolinksModalResult(location, action)
             }
         }
     }

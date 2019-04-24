@@ -54,7 +54,7 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
             screenshotView()
         }
 
-        callback.onTitleChanged("")
+        fragment.viewModel.setTitle("")
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onDetached() }
         callback.onWebViewDetached()
@@ -87,12 +87,12 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
     override fun pageInvalidated() {}
 
     override fun visitRendered() {
-        callback.onTitleChanged(title())
+        fragment.viewModel.setTitle(title())
         removeTransitionalViews()
     }
 
     override fun visitCompleted() {
-        callback.onTitleChanged(title())
+        fragment.viewModel.setTitle(title())
         removeTransitionalViews()
     }
 
@@ -127,7 +127,7 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
     // -----------------------------------------------------------------------
 
     private fun initNavigationVisit() {
-        val navigated = fragment.getModalResult()?.let {
+        val navigated = fragment.sharedViewModel.modalResult?.let {
             activity?.navigate(it.location, it.action)
         } ?: false
 
@@ -164,11 +164,6 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
 
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean, reload: Boolean) {
         val turbolinksSession = session() ?: return
-
-        // Update the toolbar title while loading the next visit
-        if (!reload) {
-            callback.onTitleChanged("")
-        }
 
         turbolinksSession.visit(TurbolinksVisit(
                 location = location,
