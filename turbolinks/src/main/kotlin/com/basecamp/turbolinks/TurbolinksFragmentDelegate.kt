@@ -54,7 +54,6 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
             screenshotView()
         }
 
-        fragment.viewModel.setTitle("")
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onDetached() }
         callback.onWebViewDetached()

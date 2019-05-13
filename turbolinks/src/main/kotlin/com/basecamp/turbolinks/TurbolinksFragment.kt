@@ -50,6 +50,9 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
     }
 
     internal fun detachWebView(destinationIsFinishing: Boolean, onDetached: () -> Unit = {}) {
+        // Clear the current toolbar title to prevent buggy animation
+        // effect when transitioning to the next/previous screen.
+        onProvideToolbar()?.title = ""
         delegate.detachWebView(destinationIsFinishing, onDetached)
     }
 
