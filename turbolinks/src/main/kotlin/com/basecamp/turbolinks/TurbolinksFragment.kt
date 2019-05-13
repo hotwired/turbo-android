@@ -21,7 +21,14 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        location = requireNotNull(arguments?.getString("location")) { "A location argument must be provided" }
+
+        val activity = requireNotNull(context as? TurbolinksActivity) {
+            "The fragment Activity must implement TurbolinksActivity"
+        }
+
+        location = currentLocation()
+        router = activity.onProvideRouter()
+        session = activity.onProvideSession(this)
         delegate = TurbolinksFragmentDelegate(this, this).apply { onCreate(location) }
         sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
         viewModel = TurbolinksFragmentViewModel.get(location, this)
@@ -31,13 +38,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
 
     override fun onStart() {
         super.onStart()
-
-        val activity = requireNotNull(context as? TurbolinksActivity) {
-            "The fragment Activity must implement TurbolinksActivity"
-        }
-
-        router = activity.onProvideRouter()
-        session = activity.onProvideSession(this)
         delegate.onStart()
     }
 
@@ -45,30 +45,36 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
         onProvideToolbar()?.let {
             NavigationUI.setupWithNavController(it, findNavController())
             it.setNavigationOnClickListener {
-                delegate.navigateUp()
+                delegate.navigator.navigateUp()
             }
         }
     }
 
-    fun navigate(location: String, action: String = "advance") {
-        delegate.navigate(location, action)
+    fun navigate(location: String, action: String = "advance"): Boolean {
+        return delegate.navigator.navigate(location, action)
     }
 
     fun navigateUp(): Boolean {
-        return delegate.navigateUp()
+        return delegate.navigator.navigateUp()
     }
 
     fun navigateBack() {
-        delegate.navigateBack()
+        delegate.navigator.navigateBack()
     }
 
     fun clearBackStack() {
-        delegate.clearBackStack()
+        delegate.navigator.clearBackStack()
     }
 
     private fun observeLiveData() {
         viewModel.title.observe(this, Observer {
             onProvideToolbar()?.title = it
         })
+    }
+
+    private fun currentLocation(): String {
+        return requireNotNull(arguments?.getString("location")) {
+            "A location argument must be provided"
+        }
     }
 }

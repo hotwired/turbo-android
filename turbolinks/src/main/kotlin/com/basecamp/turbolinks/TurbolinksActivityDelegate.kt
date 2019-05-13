@@ -2,31 +2,33 @@ package com.basecamp.turbolinks
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 
 class TurbolinksActivityDelegate(private val activity: Activity, private val turbolinksActivity: TurbolinksActivity) {
+    fun navigate(location: String, action: String = "advance"): Boolean {
+        return when (val destination = currentDestination()) {
+            is TurbolinksFragment -> destination.navigate(location, action)
+            else -> navigator(destination).navigate(location, action)
+        }
+    }
+
     fun navigateUp(): Boolean {
         return when (val destination = currentDestination()) {
             is TurbolinksFragment -> destination.navigateUp()
-            else -> destination.findNavController().navigateUp()
+            else -> navigator(destination).navigateUp()
         }
     }
 
     fun navigateBack() {
         when (val destination = currentDestination()) {
             is TurbolinksFragment -> destination.navigateBack()
-            else -> popBackStack(destination.findNavController())
+            else -> navigator(destination).navigateBack()
         }
     }
 
     fun clearBackStack() {
         when (val destination = currentDestination()) {
             is TurbolinksFragment -> destination.clearBackStack()
-            else -> {
-                val controller = destination.findNavController()
-                controller.popBackStack(controller.graph.startDestination, false)
-            }
+            else -> navigator(destination).clearBackStack()
         }
     }
 
@@ -35,9 +37,13 @@ class TurbolinksActivityDelegate(private val activity: Activity, private val tur
             throw IllegalStateException("No current destination found in NavHostFragment")
     }
 
-    private fun popBackStack(controller: NavController) {
-        if (!controller.popBackStack()) {
-            activity.finish()
+    private fun navigator(fragment: Fragment): TurbolinksNavigator {
+        return TurbolinksNavigator(
+            fragment = fragment,
+            session = turbolinksActivity.onProvideSession(fragment),
+            router = turbolinksActivity.onProvideRouter()
+        ) { _, onReady ->
+            onReady()
         }
     }
 }
