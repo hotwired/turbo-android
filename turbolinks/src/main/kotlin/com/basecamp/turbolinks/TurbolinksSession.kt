@@ -22,6 +22,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     // User accessible
 
+    var rootLocation: String? = null
     var pathConfiguration = PathConfiguration(context)
     val sessionId = generateSessionId()
     var enableScreenshots = true

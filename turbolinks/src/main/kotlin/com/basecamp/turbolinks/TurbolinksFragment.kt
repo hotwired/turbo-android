@@ -11,6 +11,9 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
     private lateinit var location: String
     private lateinit var delegate: TurbolinksFragmentDelegate
 
+    lateinit var router: TurbolinksRouter
+    lateinit var session: TurbolinksSession
+
     lateinit var sharedViewModel: TurbolinksSharedViewModel
     lateinit var viewModel: TurbolinksFragmentViewModel
 
@@ -32,12 +35,10 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
         val activity = requireNotNull(context as? TurbolinksActivity) {
             "The fragment Activity must implement TurbolinksActivity"
         }
-        delegate.onStart(activity)
-    }
 
-    override fun onStop() {
-        super.onStop()
-        delegate.onStop()
+        router = activity.onProvideRouter()
+        session = activity.onProvideSession(this)
+        delegate.onStart()
     }
 
     override fun onSetupToolbar() {
@@ -49,15 +50,20 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
         }
     }
 
-    internal fun detachWebView(destinationIsFinishing: Boolean, onDetached: () -> Unit = {}) {
-        // Clear the current toolbar title to prevent buggy animation
-        // effect when transitioning to the next/previous screen.
-        onProvideToolbar()?.title = ""
-        delegate.detachWebView(destinationIsFinishing, onDetached)
-    }
-
     fun navigate(location: String, action: String = "advance") {
         delegate.navigate(location, action)
+    }
+
+    fun navigateUp(): Boolean {
+        return delegate.navigateUp()
+    }
+
+    fun navigateBack() {
+        delegate.navigateBack()
+    }
+
+    fun clearBackStack() {
+        delegate.clearBackStack()
     }
 
     private fun observeLiveData() {
