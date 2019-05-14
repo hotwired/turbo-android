@@ -1,9 +1,8 @@
 package com.basecamp.turbolinks
 
-import android.app.Activity
 import androidx.fragment.app.Fragment
 
-class TurbolinksActivityDelegate(private val activity: Activity, private val turbolinksActivity: TurbolinksActivity) {
+class TurbolinksActivityDelegate(private val turbolinksActivity: TurbolinksActivity) {
     fun navigate(location: String, action: String = "advance"): Boolean {
         return when (val destination = currentDestination()) {
             is TurbolinksFragment -> destination.navigate(location, action)
