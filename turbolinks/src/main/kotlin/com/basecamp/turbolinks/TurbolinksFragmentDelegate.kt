@@ -27,8 +27,8 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
 
     fun onCreate(location: String) {
         this.location = location
-        this.navigator = TurbolinksNavigator(fragment, fragment.session, fragment.router) { isFinishing, onReady ->
-            detachWebView(isFinishing, onReady)
+        this.navigator = TurbolinksNavigator(fragment, fragment.session, fragment.router) { onReady ->
+            detachWebView(onReady)
         }
     }
 
@@ -128,11 +128,9 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
      * not change during the transition. Because the incoming screen will attach the WebView to the
      * new view hierarchy, it needs to already be detached from the previous screen.
      */
-    private fun detachWebView(destinationIsFinishing: Boolean, onReady: () -> Unit = {}) {
+    private fun detachWebView(onReady: () -> Unit = {}) {
         val view = webView ?: return
-        if (!destinationIsFinishing) {
-            screenshotView()
-        }
+        screenshotView()
 
         // Clear the current toolbar title to prevent buggy animation
         // effect when transitioning to the next/previous screen.

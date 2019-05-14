@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.webkit.WebView
 import android.widget.FrameLayout
+import androidx.core.view.drawToBitmap
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.turbolinks_view.view.*
 
@@ -66,9 +67,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         if (!hasEnoughMemoryForScreenshot()) return null
         if (width <= 0 || height <= 0) return null
 
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        draw(Canvas(bitmap))
-        return bitmap
+        return drawToBitmap()
     }
 
     fun screenshotOrientation(): Int {

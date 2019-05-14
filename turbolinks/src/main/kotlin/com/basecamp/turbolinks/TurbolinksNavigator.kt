@@ -9,11 +9,10 @@ import androidx.navigation.fragment.findNavController
 class TurbolinksNavigator(private val fragment: Fragment,
                           private val session: TurbolinksSession,
                           private val router: TurbolinksRouter,
-                          private val onNavigationReady: (isFinishing: Boolean,
-                                                          onReady: () -> Unit) -> Unit) {
+                          private val onNavigationReady: (onReady: () -> Unit) -> Unit) {
 
     fun navigateUp(): Boolean {
-        onNavigationReady(true) {}
+        onNavigationReady {}
         return currentController().navigateUp()
     }
 
@@ -24,7 +23,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
     fun clearBackStack() {
         if (isAtStartDestination()) return
 
-        onNavigationReady(true) {
+        onNavigationReady {
             val controller = currentController()
             controller.popBackStack(controller.graph.startDestination, false)
         }
@@ -54,7 +53,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
         logEvent("navigateWithinContext", "location" to location, "presentation" to presentation)
         val bundle = buildBundle(location, presentation)
 
-        onNavigationReady(presentation != Presentation.PUSH) {
+        onNavigationReady {
             if (presentation == Presentation.POP || presentation == Presentation.REPLACE) {
                 currentController().popBackStack()
             }
@@ -73,7 +72,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
         logEvent("navigateToModalContext", "location" to location)
         val bundle = buildBundle(location, Presentation.PUSH)
 
-        onNavigationReady(false) {
+        onNavigationReady {
             router.getModalContextStartAction(location).let { actionId ->
                 currentController().navigate(actionId, bundle)
             }
@@ -83,7 +82,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
     private fun dismissModalContextWithResult(location: String) {
         logEvent("dismissModalContextWithResult", "location" to location)
 
-        onNavigationReady(true) {
+        onNavigationReady {
             val dismissAction = router.getModalContextDismissAction(location)
             sendModalResult(location, "advance")
             currentController().navigate(dismissAction)
@@ -122,7 +121,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
     }
 
     private fun popBackStack() {
-        onNavigationReady(true) {
+        onNavigationReady {
             if (!currentController().popBackStack()) {
                 fragment.requireActivity().finish()
             }
