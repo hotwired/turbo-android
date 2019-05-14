@@ -1,8 +1,39 @@
 package com.basecamp.turbolinks
 
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavArgument
+import androidx.navigation.NavController
 
 class TurbolinksActivityDelegate(private val turbolinksActivity: TurbolinksActivity) {
+    /*
+     * Initialize the Activity with a BackPressedDispatcher that
+     * properly handles Fragment navigation with the back button.
+     */
+    fun onCreate(activity: FragmentActivity) {
+        activity.onBackPressedDispatcher.addCallback(activity) {
+            navigateBack()
+        }
+    }
+
+    /*
+     * Dynamically set the controller graph and start destination,
+     * so we can use a simplified navigation graph.
+     */
+    fun startControllerGraph(controller: NavController, startLocation: String,
+                             navGraph: Int, startDestination: Int) {
+
+        val location = NavArgument.Builder()
+            .setDefaultValue(startLocation)
+            .build()
+
+        controller.graph = controller.navInflater.inflate(navGraph).apply {
+            this.addArgument("location", location)
+            this.startDestination = startDestination
+        }
+    }
+
     fun navigate(location: String, action: String = "advance"): Boolean {
         return when (val destination = currentDestination()) {
             is TurbolinksFragment -> destination.navigate(location, action)

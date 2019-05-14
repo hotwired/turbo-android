@@ -2,7 +2,6 @@ package com.basecamp.turbolinks
 
 import android.os.Bundle
 import android.webkit.WebView
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
