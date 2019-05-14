@@ -2,6 +2,7 @@ package com.basecamp.turbolinks
 
 import android.os.Bundle
 import android.webkit.WebView
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -44,9 +45,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
     override fun onSetupToolbar() {
         onProvideToolbar()?.let {
             NavigationUI.setupWithNavController(it, findNavController())
-            it.setNavigationOnClickListener {
-                delegate.navigator.navigateUp()
-            }
+            it.setNavigationOnClickListener { navigateUp() }
         }
     }
 
