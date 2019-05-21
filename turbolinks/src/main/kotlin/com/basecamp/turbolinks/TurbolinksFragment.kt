@@ -1,23 +1,20 @@
 package com.basecamp.turbolinks
 
 import android.os.Bundle
-import android.webkit.WebView
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 
-abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
-    private lateinit var location: String
-    private lateinit var delegate: TurbolinksFragmentDelegate
-
+abstract class TurbolinksFragment : Fragment() {
+    lateinit var location: String
     lateinit var router: TurbolinksRouter
     lateinit var session: TurbolinksSession
+    lateinit var navigator: TurbolinksNavigator
 
     lateinit var sharedViewModel: TurbolinksSharedViewModel
-    lateinit var viewModel: TurbolinksFragmentViewModel
-
-    val webView: WebView? get() = delegate.webView
+    lateinit var pageViewModel: TurbolinksFragmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,43 +26,48 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksFragmentCallback {
         location = currentLocation()
         router = activity.onProvideRouter()
         session = activity.onProvideSession(this)
-        delegate = TurbolinksFragmentDelegate(this, this).apply { onCreate(location) }
+        navigator = TurbolinksNavigator(this, session, router)
         sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
-        viewModel = TurbolinksFragmentViewModel.get(location, this)
+        pageViewModel = TurbolinksFragmentViewModel.get(location, this)
 
         observeLiveData()
     }
 
-    override fun onStart() {
-        super.onStart()
-        delegate.onStart()
-    }
+    abstract fun onProvideToolbar(): Toolbar?
 
-    override fun onSetupToolbar() {
+    protected open fun initToolbar() {
         onProvideToolbar()?.let {
             NavigationUI.setupWithNavController(it, findNavController())
             it.setNavigationOnClickListener { navigateUp() }
         }
     }
 
+    // ----------------------------------------------------------------------------
+    // Navigation
+    // ----------------------------------------------------------------------------
+
     fun navigate(location: String, action: String = "advance"): Boolean {
-        return delegate.navigator.navigate(location, action)
+        return navigator.navigate(location, action)
     }
 
     fun navigateUp(): Boolean {
-        return delegate.navigator.navigateUp()
+        return navigator.navigateUp()
     }
 
     fun navigateBack() {
-        delegate.navigator.navigateBack()
+        navigator.navigateBack()
     }
 
     fun clearBackStack() {
-        delegate.navigator.clearBackStack()
+        navigator.clearBackStack()
     }
 
+    // ----------------------------------------------------------------------------
+    // Private
+    // ----------------------------------------------------------------------------
+
     private fun observeLiveData() {
-        viewModel.title.observe(this, Observer {
+        pageViewModel.title.observe(this, Observer {
             onProvideToolbar()?.title = it
         })
     }

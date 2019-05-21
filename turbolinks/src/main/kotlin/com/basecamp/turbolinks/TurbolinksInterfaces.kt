@@ -24,16 +24,20 @@ interface TurbolinksActivity {
     fun onProvideCurrentNavHostFragment(): NavHostFragment
 }
 
-interface TurbolinksFragmentCallback {
+interface TurbolinksWebFragmentCallback {
+    // View
     fun onProvideTurbolinksView(): TurbolinksView?
     fun onProvideErrorPlaceholder(): ViewGroup?
-    fun onProvideToolbar(): Toolbar?
-    fun onSetupToolbar()
     fun createErrorView(statusCode: Int): View
     fun createProgressView(location: String): View
     fun shouldEnablePullToRefresh(): Boolean
+
+    // Events
+    fun onUpdateView()
     fun onWebViewAttached()
     fun onWebViewDetached()
     fun onColdBootPageStarted(location: String)
-    fun onColdBootPageFinished(location: String)
+    fun onColdBootPageCompleted(location: String)
+    fun onVisitStarted(location: String)
+    fun onVisitCompleted(location: String)
 }
