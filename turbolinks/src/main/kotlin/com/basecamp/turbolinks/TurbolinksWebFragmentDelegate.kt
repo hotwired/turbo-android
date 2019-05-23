@@ -6,10 +6,11 @@ import android.webkit.WebView
 import kotlin.random.Random
 
 @Suppress("unused")
-open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
-                                      val callback: TurbolinksFragmentCallback) : TurbolinksSessionCallback {
+open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment,
+                                         val callback: TurbolinksWebFragmentCallback,
+                                         val navigator: TurbolinksNavigator) : TurbolinksSessionCallback {
 
-    private lateinit var location: String
+    private var location = fragment.location
     private val identifier = generateIdentifier()
     private var isInitialVisit = true
     private var isWebViewAttachedToNewDestination = false
@@ -20,14 +21,11 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
     private val turbolinksErrorPlaceholder: ViewGroup?
         get() = callback.onProvideErrorPlaceholder()
 
-    lateinit var navigator: TurbolinksNavigator
-
     val webView: WebView?
         get() = session().webView
 
-    fun onCreate(location: String) {
-        this.location = location
-        this.navigator = TurbolinksNavigator(fragment, fragment.session, fragment.router) { onReady ->
+    init {
+        navigator.onNavigationVisit = { onReady ->
             detachWebView(onReady)
         }
     }
@@ -49,18 +47,27 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
     }
 
     override fun onPageFinished(location: String) {
-        callback.onColdBootPageFinished(location)
+        callback.onColdBootPageCompleted(location)
     }
 
     override fun pageInvalidated() {}
 
+    override fun visitLocationStarted(location: String) {
+        callback.onVisitStarted(location)
+
+        if (isWebViewAttachedToNewDestination) {
+            showProgressView(location)
+        }
+    }
+
     override fun visitRendered() {
-        fragment.viewModel.setTitle(title())
+        fragment.pageViewModel.setTitle(title())
         removeTransitionalViews()
     }
 
     override fun visitCompleted() {
-        fragment.viewModel.setTitle(title())
+        callback.onVisitCompleted(location)
+        fragment.pageViewModel.setTitle(title())
         removeTransitionalViews()
     }
 
@@ -72,12 +79,6 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
     override fun requestFailedWithStatusCode(statusCode: Int) {
         handleError(statusCode)
         removeTransitionalViews()
-    }
-
-    override fun visitLocationStarted(location: String) {
-        if (isWebViewAttachedToNewDestination) {
-            showProgressView(location)
-        }
     }
 
     override fun visitProposedToLocation(location: String, action: String,
@@ -106,7 +107,7 @@ open class TurbolinksFragmentDelegate(val fragment: TurbolinksFragment,
     }
 
     private fun initView() {
-        callback.onSetupToolbar()
+        callback.onUpdateView()
         turbolinksView?.apply {
             initializePullToRefresh(this)
             showScreenshotIfAvailable(this)

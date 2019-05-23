@@ -71,8 +71,6 @@ class TurbolinksActivityDelegate(private val turbolinksActivity: TurbolinksActiv
         return TurbolinksNavigator(
             fragment = fragment,
             session = turbolinksActivity.onProvideSession(fragment),
-            router = turbolinksActivity.onProvideRouter()) { onReady ->
-            onReady()
-        }
+            router = turbolinksActivity.onProvideRouter())
     }
 }
