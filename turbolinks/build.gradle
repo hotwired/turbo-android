@@ -2,20 +2,20 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.ben-manes.versions'
 
-buildscript {
-    ext.libVersionName = '1.0.6'
+ext.libVersionName = '1.0.6'
 
+buildscript {
     repositories {
         jcenter()
     }
 
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
     }
 }
@@ -119,30 +119,30 @@ ext {
 group = publishedGroupId
 version = libraryVersion
 
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                groupId publishedGroupId
-                artifactId artifact
-
-                // Add your description here
-                name libraryName
-                description libraryDescription
-
-                developers {
-                    developer {
-                        id developerId
-                        name developerName
-                        email developerEmail
-                    }
-                }
-            }
-        }
-    }
-}
+//install {
+//    repositories.mavenInstaller {
+//        // This generates POM.xml with proper parameters
+//        pom {
+//            project {
+//                packaging 'aar'
+//                groupId publishedGroupId
+//                artifactId artifact
+//
+//                // Add your description here
+//                name libraryName
+//                description libraryDescription
+//
+//                developers {
+//                    developer {
+//                        id developerId
+//                        name developerName
+//                        email developerEmail
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -191,6 +191,20 @@ dependencyUpdates.resolutionStrategy = {
             if (rejected) {
                 selection.reject('Release candidate')
             }
+        }
+    }
+}
+
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories.mavenDeployer {
+        def deployPath = file("artifacts")
+        repository(url: "file://${deployPath.absolutePath}")
+        pom.project {
+            groupId 'com.basecamp'
+            artifactId 'turbolinks-android'
+            version libVersionName
         }
     }
 }
