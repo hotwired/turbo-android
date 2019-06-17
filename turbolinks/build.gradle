@@ -159,10 +159,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
+//artifacts {
+//    archives javadocJar
+//    archives sourcesJar
+//}
 
 // Bintray
 bintray {
