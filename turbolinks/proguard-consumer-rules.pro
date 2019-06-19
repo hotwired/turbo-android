@@ -7,3 +7,11 @@
     @android.webkit.JavascriptInterface <methods>;
 }
 -keepattributes JavascriptInterface
+
+# Gson
+-keep class com.google.** { *; }
+-keep class org.apache.** { *; }
+-keep class javax.** { *; }
+-keep class sun.misc.Unsafe { *; }
+
+-keep class com.basecamp.turbolinks.** { *; }
