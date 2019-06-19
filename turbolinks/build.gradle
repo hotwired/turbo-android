@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.ben-manes.versions'
 
-ext.libVersionName = '1.0.8'
+ext.libVersionName = '1.0.9'
 
 buildscript {
     repositories {
@@ -33,7 +33,7 @@ android {
     defaultConfig {
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 8
+        versionCode 9
         versionName "$libVersionName"
 
         // Define ProGuard rules for this android library project. These rules will be applied when
