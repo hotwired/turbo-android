@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 
 class WebHomeFragment : WebFragment() {
-    override fun onTitleChanged(title: String) {
-        // Do nothing, we don't want to display the title
+    override fun onProvideToolbar(): Toolbar? {
+        return null
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
