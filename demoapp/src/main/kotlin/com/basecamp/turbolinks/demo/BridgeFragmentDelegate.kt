@@ -2,27 +2,22 @@ package com.basecamp.turbolinks.demo
 
 import android.util.Log
 import android.webkit.WebView
-import com.basecamp.turbolinks.TurbolinksFragment
-import com.basecamp.turbolinks.TurbolinksFragmentDelegate
 
-class BridgeFragmentDelegate(fragment: TurbolinksFragment) : TurbolinksFragmentDelegate(fragment) {
+class BridgeFragmentDelegate(val fragment: WebFragment) {
     private var bridge: NativeBridge? = null
 
-    override fun onWebViewAttached() {
-        super.onWebViewAttached()
-        bridge = webView?.tag as NativeBridge?
+    fun load() {
+        bridge?.installScript()
+    }
+
+    fun onWebViewAttached() {
+        bridge = fragment.webView?.tag as NativeBridge?
         bridge?.listener = bridgeListener
     }
 
-    override fun onWebViewDetached() {
-        super.onWebViewDetached()
+    fun onWebViewDetached() {
         bridge?.listener = null
         bridge = null
-    }
-
-    override fun onPageFinished(location: String) {
-        super.onPageFinished(location)
-        installBridge()
     }
 
     fun onReceiveBridgeEvent(event: BridgeEvent) {
@@ -31,10 +26,6 @@ class BridgeFragmentDelegate(fragment: TurbolinksFragment) : TurbolinksFragmentD
 
     fun sendBridgeEvent(event: BridgeEvent) {
         bridge?.send(event)
-    }
-
-    private fun installBridge() {
-        bridge?.installScript()
     }
 
     // -----------------------------------------------------------------------
@@ -47,7 +38,7 @@ class BridgeFragmentDelegate(fragment: TurbolinksFragment) : TurbolinksFragmentD
         }
 
         override fun onProvideWebView(): WebView? {
-            return webView
+            return fragment.webView
         }
     }
 }

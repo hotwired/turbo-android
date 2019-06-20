@@ -4,13 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
+import com.basecamp.turbolinks.TurbolinksNativeFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.fragment_me.*
 import kotlinx.android.synthetic.main.fragment_me.view.*
 
-class MeFragment : NativeFragment() {
+class MeFragment : TurbolinksNativeFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_me, container, false)
     }
@@ -21,9 +23,13 @@ class MeFragment : NativeFragment() {
         loadAvatar()
     }
 
+    override fun onProvideToolbar(): Toolbar? {
+        return null
+    }
+
     private fun initView() {
         me_edit_profile.setOnClickListener {
-            listener?.navigate(Constants.PROFILE_EDIT_URL, "advance")
+            navigate(Constants.PROFILE_EDIT_URL, "advance")
         }
     }
 

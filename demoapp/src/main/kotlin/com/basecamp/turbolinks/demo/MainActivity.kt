@@ -7,12 +7,18 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.basecamp.turbolinks.*
 import com.basecamp.turbolinks.PathConfiguration.Location
+import com.basecamp.turbolinks.TurbolinksActivity
+import com.basecamp.turbolinks.TurbolinksActivityDelegate
+import com.basecamp.turbolinks.TurbolinksRouter
+import com.basecamp.turbolinks.TurbolinksSession
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
+    private val delegate by lazy { TurbolinksActivityDelegate(this) }
+
     private val foodTab by lazy { NavigationTab(
+            delegate = delegate,
             session = TurbolinksSession.getNew(this),
             controller = findNavController(R.id.section_food_nav),
             startLocation = Constants.FOOD_URL,
@@ -22,6 +28,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     )}
 
     private val ordersTab by lazy { NavigationTab(
+            delegate = delegate,
             session = TurbolinksSession.getNew(this),
             controller = findNavController(R.id.section_orders_nav),
             startLocation = Constants.ORDERS_URL,
@@ -31,9 +38,10 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     )}
 
     private val meTab by lazy { NavigationTab(
+            delegate = delegate,
             session = TurbolinksSession.getNew(this),
             controller = findNavController(R.id.section_me_nav),
-            startLocation = null,
+            startLocation = Constants.ME_URL,
             startDestination = R.id.me_fragment,
             menuId = R.id.section_me_nav,
             section = section_me
@@ -42,7 +50,6 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     private val view by lazy { layoutInflater.inflate(R.layout.activity_main, null) }
     private val tabs by lazy { arrayOf(foodTab, ordersTab, meTab) }
     private val router by lazy { Router(this) }
-    private val delegate by lazy { TurbolinksActivityDelegate(this) }
     private val selectedTab get() = tabs[selectedPosition]
     private var selectedPosition = 0
 
@@ -52,18 +59,11 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        delegate.onCreate(this)
         setContentView(view)
         initSessions()
         initBottomTabsListener()
         verifyServerIpAddress(this)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return navigateUp()
-    }
-
-    override fun onBackPressed() {
-        navigateBack()
     }
 
     // ----------------------------------------------------------------------------
@@ -75,37 +75,13 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         return tabs.first { it.controller == controller }.session
     }
 
-    override fun onProvideSessionRootLocation(): String? {
-        return selectedTab.startLocation
-    }
-
     override fun onProvideRouter(): TurbolinksRouter {
         return router
     }
 
     override fun onProvideCurrentNavHostFragment(): NavHostFragment {
-        return supportFragmentManager.findFragmentById(selectedTab.menuId) as? NavHostFragment ?:
-            throw IllegalStateException("No current NavHostFragment found")
-    }
-
-    override fun onRequestFinish() {
-        finish()
-    }
-
-    override fun navigate(location: String, action: String, properties: PathProperties?): Boolean {
-        return delegate.navigate(location, action, properties)
-    }
-
-    override fun navigateUp(): Boolean {
-        return delegate.navigateUp()
-    }
-
-    override fun navigateBack() {
-        delegate.navigateBack()
-    }
-
-    override fun clearBackStack() {
-        delegate.clearBackStack()
+        return supportFragmentManager.findFragmentById(selectedTab.menuId) as? NavHostFragment
+                ?: throw IllegalStateException("No current NavHostFragment found")
     }
 
     // ----------------------------------------------------------------------------
@@ -130,7 +106,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
 
     private fun switchTab(tab: NavigationTab) {
         if (tab == selectedTab) {
-            clearBackStack()
+            delegate.clearBackStack()
             return
         }
 

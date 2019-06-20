@@ -1,14 +1,15 @@
 package com.basecamp.turbolinks.demo
 
 import android.widget.FrameLayout
-import androidx.navigation.NavArgument
 import androidx.navigation.NavController
+import com.basecamp.turbolinks.TurbolinksActivityDelegate
 import com.basecamp.turbolinks.TurbolinksSession
 
 data class NavigationTab(
+        val delegate: TurbolinksActivityDelegate,
         val session: TurbolinksSession,
         val controller: NavController,
-        val startLocation: String?,
+        val startLocation: String,
         val startDestination: Int,
         val menuId: Int,
         val section: FrameLayout
@@ -16,13 +17,11 @@ data class NavigationTab(
     init {
         // Dynamically set the controller graph and start destination,
         // so we can use a shared, common navigation graph between tabs.
-        controller.graph = controller.navInflater.inflate(R.navigation.nav_graph).apply {
-            startLocation?.let { addArgument("location", buildArgument(it)) }
-            startDestination = this@NavigationTab.startDestination
-        }
-    }
-
-    private fun buildArgument(argument: String): NavArgument {
-        return NavArgument.Builder().setDefaultValue(argument).build()
+        delegate.startControllerGraph(
+                controller = controller,
+                startLocation = startLocation,
+                navGraph = R.navigation.nav_graph,
+                startDestination = startDestination
+        )
     }
 }
