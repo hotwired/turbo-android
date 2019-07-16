@@ -42,6 +42,10 @@ abstract class TurbolinksFragment : Fragment() {
         }
     }
 
+    open fun displaysToolbarTitle(): Boolean {
+        return true
+    }
+
     // ----------------------------------------------------------------------------
     // Navigation
     // ----------------------------------------------------------------------------
@@ -67,9 +71,11 @@ abstract class TurbolinksFragment : Fragment() {
     // ----------------------------------------------------------------------------
 
     private fun observeLiveData() {
-        pageViewModel.title.observe(this, Observer {
-            onProvideToolbar()?.title = it
-        })
+        if (displaysToolbarTitle()) {
+            pageViewModel.title.observe(this, Observer {
+                onProvideToolbar()?.title = it
+            })
+        }
     }
 
     private fun currentLocation(): String {
