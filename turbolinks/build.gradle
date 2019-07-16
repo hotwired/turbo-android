@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.ben-manes.versions'
 
-ext.libVersionName = '1.0.9'
+ext.libVersionName = '1.0.10'
 
 buildscript {
     repositories {
