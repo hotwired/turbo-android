@@ -146,11 +146,11 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment,
         // Attempt to attach the WebView. It may already be attached to the current instance.
         isWebViewAttachedToNewDestination = attachWebView()
 
-        // Visit every time the Fragment is attached to the Activity
-        // or started again after visiting another Activity outside
-        // of the main single-Activity architecture.
-        visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
-        isInitialVisit = false
+        // Visit every time the WebView is reattached to the current Fragment.
+        if (isWebViewAttachedToNewDestination) {
+            visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
+            isInitialVisit = false
+        }
     }
 
     private fun title(): String {
