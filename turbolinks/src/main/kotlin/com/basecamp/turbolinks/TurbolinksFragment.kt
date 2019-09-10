@@ -16,8 +16,8 @@ abstract class TurbolinksFragment : Fragment() {
     lateinit var sharedViewModel: TurbolinksSharedViewModel
     lateinit var pageViewModel: TurbolinksFragmentViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         val activity = requireNotNull(context as? TurbolinksActivity) {
             "The fragment Activity must implement TurbolinksActivity"
