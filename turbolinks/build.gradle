@@ -86,6 +86,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.0-alpha02'
 
     // Tests
+    testImplementation 'androidx.test:core:1.2.0' // Robolectric
     testImplementation 'android.arch.core:core-testing:1.1.1'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.2.1'
     testImplementation 'org.assertj:assertj-core:3.12.2'
