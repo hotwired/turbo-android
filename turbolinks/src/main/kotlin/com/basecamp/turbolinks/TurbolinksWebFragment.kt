@@ -8,9 +8,14 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
 
     val webView: WebView? get() = delegate.webView
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        delegate = TurbolinksWebFragmentDelegate(this)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        delegate = TurbolinksWebFragmentDelegate(this, this, navigator)
+        delegate.onActivityCreated()
     }
 
     override fun onStart() {

@@ -9,12 +9,25 @@ import androidx.navigation.ui.NavigationUI
 
 abstract class TurbolinksFragment : Fragment() {
     lateinit var location: String
+    lateinit var sessionName: String
+    lateinit var activityDelegate: TurbolinksActivityDelegate
     lateinit var router: TurbolinksRouter
     lateinit var session: TurbolinksSession
     lateinit var navigator: TurbolinksNavigator
 
     lateinit var sharedViewModel: TurbolinksSharedViewModel
     lateinit var pageViewModel: TurbolinksFragmentViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        location = currentLocation()
+        sessionName = currentSessionName()
+        sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
+        pageViewModel = TurbolinksFragmentViewModel.get(location, this)
+
+        observeLiveData()
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -23,14 +36,10 @@ abstract class TurbolinksFragment : Fragment() {
             "The fragment Activity must implement TurbolinksActivity"
         }
 
-        location = currentLocation()
-        router = activity.onProvideRouter()
-        session = activity.onProvideSession(this)
+        activityDelegate = activity.onProvideDelegate()
+        router = activityDelegate.router
+        session = activityDelegate.getSession(sessionName)
         navigator = TurbolinksNavigator(this, session, router)
-        sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
-        pageViewModel = TurbolinksFragmentViewModel.get(location, this)
-
-        observeLiveData()
     }
 
     abstract fun onProvideToolbar(): Toolbar?
@@ -81,6 +90,12 @@ abstract class TurbolinksFragment : Fragment() {
     private fun currentLocation(): String {
         return requireNotNull(arguments?.getString("location")) {
             "A location argument must be provided"
+        }
+    }
+
+    private fun currentSessionName(): String {
+        return requireNotNull(arguments?.getString("sessionName")) {
+            "A sessionName argument must be provided"
         }
     }
 }

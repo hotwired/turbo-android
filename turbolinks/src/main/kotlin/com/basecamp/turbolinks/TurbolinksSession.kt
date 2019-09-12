@@ -13,7 +13,7 @@ import android.widget.FrameLayout
 import java.util.*
 
 @Suppress("unused")
-class TurbolinksSession private constructor(val context: Context, val webView: TurbolinksWebView) {
+class TurbolinksSession private constructor(val sessionName: String, val context: Context, val webView: TurbolinksWebView) {
     internal lateinit var currentVisit: TurbolinksVisit
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
@@ -24,7 +24,6 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
 
     var rootLocation: String? = null
     var pathConfiguration = PathConfiguration(context)
-    val sessionId = generateSessionId()
     var enableScreenshots = true
     var isColdBooting = false
         internal set
@@ -266,7 +265,7 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
     }
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
-        val attributes = params.toMutableList().apply { add(0, "session" to sessionId) }
+        val attributes = params.toMutableList().apply { add(0, "session" to sessionName) }
         logEvent(event, attributes)
     }
 
@@ -374,14 +373,8 @@ class TurbolinksSession private constructor(val context: Context, val webView: T
         const val ACTION_RESTORE = "restore"
         const val ACTION_REPLACE = "replace"
 
-        private var sessionCount = 0
-
-        private fun generateSessionId(): Int {
-            return ++sessionCount
-        }
-
-        fun getNew(activity: Activity, webView: TurbolinksWebView = DefaultTurbolinksWebView(activity)): TurbolinksSession {
-            return TurbolinksSession(activity, webView)
+        fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView = DefaultTurbolinksWebView(activity)): TurbolinksSession {
+            return TurbolinksSession(sessionName, activity, webView)
         }
     }
 }

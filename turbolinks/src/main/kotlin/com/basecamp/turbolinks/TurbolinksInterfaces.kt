@@ -2,7 +2,6 @@ package com.basecamp.turbolinks
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 
@@ -19,8 +18,7 @@ interface TurbolinksSessionCallback {
 }
 
 interface TurbolinksActivity {
-    fun onProvideSession(fragment: Fragment): TurbolinksSession
-    fun onProvideRouter(): TurbolinksRouter
+    fun onProvideDelegate(): TurbolinksActivityDelegate
     fun onProvideCurrentNavHostFragment(): NavHostFragment
 }
 
