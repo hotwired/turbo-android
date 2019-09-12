@@ -19,7 +19,6 @@ interface TurbolinksSessionCallback {
 
 interface TurbolinksActivity {
     fun onProvideDelegate(): TurbolinksActivityDelegate
-    fun onProvideCurrentNavHostFragment(): NavHostFragment
 }
 
 interface TurbolinksWebFragmentCallback {

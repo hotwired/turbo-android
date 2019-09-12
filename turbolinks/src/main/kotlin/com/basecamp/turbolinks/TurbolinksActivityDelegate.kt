@@ -4,13 +4,14 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavArgument
 import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 
-class TurbolinksActivityDelegate(
-        val activity: AppCompatActivity,
-        val turbolinksActivity: TurbolinksActivity,
-        val router: TurbolinksRouter) {
+class TurbolinksActivityDelegate(val activity: AppCompatActivity,
+                                 val router: TurbolinksRouter,
+                                 var currentNavHostFragmentId: Int) {
 
     private val sessions = mutableListOf<TurbolinksSession>()
+    val currentDestination: TurbolinksFragment get() = currentFragment
 
     /*
      * Initialize the Activity with a BackPressedDispatcher that
@@ -59,23 +60,25 @@ class TurbolinksActivityDelegate(
     }
 
     fun navigate(location: String, action: String = "advance"): Boolean {
-        return currentDestination().navigate(location, action)
+        return currentDestination.navigate(location, action)
     }
 
     fun navigateUp(): Boolean {
-        return currentDestination().navigateUp()
+        return currentDestination.navigateUp()
     }
 
     fun navigateBack() {
-        currentDestination().navigateBack()
+        currentDestination.navigateBack()
     }
 
     fun clearBackStack() {
-        currentDestination().clearBackStack()
+        currentDestination.clearBackStack()
     }
 
-    fun currentDestination(): TurbolinksFragment {
-        val currentHostFragment = turbolinksActivity.onProvideCurrentNavHostFragment()
-        return currentHostFragment.childFragmentManager.primaryNavigationFragment as TurbolinksFragment
-    }
+    private val currentFragment: TurbolinksFragment
+        get() = navHostFragment.childFragmentManager.primaryNavigationFragment as TurbolinksFragment
+
+    private val navHostFragment: NavHostFragment
+        get() = activity.supportFragmentManager.findFragmentById(currentNavHostFragmentId) as? NavHostFragment
+            ?: throw IllegalStateException("No current NavHostFragment found")
 }
