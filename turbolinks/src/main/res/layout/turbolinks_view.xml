@@ -36,4 +36,16 @@
         android:focusable="true"
         tools:ignore="ContentDescription" />
 
+    <com.basecamp.turbolinks.TurbolinksSwipeRefreshLayout
+        android:id="@+id/turbolinks_error_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- Custom error view added/removed here -->
+
+    </com.basecamp.turbolinks.TurbolinksSwipeRefreshLayout>
+
 </com.basecamp.turbolinks.TurbolinksView>

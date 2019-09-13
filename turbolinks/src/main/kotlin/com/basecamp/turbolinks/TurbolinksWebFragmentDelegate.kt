@@ -1,7 +1,6 @@
 package com.basecamp.turbolinks
 
 import android.graphics.Bitmap
-import android.view.ViewGroup
 import android.webkit.WebView
 import kotlin.random.Random
 
@@ -18,8 +17,6 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
         get() = fragment.navigator
     private val turbolinksView: TurbolinksView?
         get() = fragment.turbolinksView
-    private val turbolinksErrorPlaceholder: ViewGroup?
-        get() = fragment.errorPlaceholderView
 
     val webView: WebView?
         get() = session().webView
@@ -72,13 +69,11 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     override fun onReceivedError(errorCode: Int) {
-        handleError(errorCode)
-        removeTransitionalViews()
+        showErrorView(errorCode)
     }
 
     override fun requestFailedWithStatusCode(statusCode: Int) {
-        handleError(statusCode)
-        removeTransitionalViews()
+        showErrorView(statusCode)
     }
 
     override fun visitProposedToLocation(location: String, action: String,
@@ -110,6 +105,7 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
         fragment.onUpdateView()
         turbolinksView?.apply {
             initializePullToRefresh(this)
+            initializeErrorPullToRefresh(this)
             showScreenshotIfAvailable(this)
             screenshot = null
             screenshotOrientation = 0
@@ -182,9 +178,23 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
         turbolinksView?.addProgressView(progressView)
     }
 
+    private fun showErrorView(code: Int) {
+        val errorView = fragment.createErrorView(code)
+        turbolinksView?.addErrorView(errorView)
+    }
+
     private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
         turbolinksView.refreshLayout.apply {
             isEnabled = fragment.shouldEnablePullToRefresh()
+            setOnRefreshListener {
+                isWebViewAttachedToNewDestination = false
+                visit(location, restoreWithCachedSnapshot = false, reload = true)
+            }
+        }
+    }
+
+    private fun initializeErrorPullToRefresh(turbolinksView: TurbolinksView) {
+        turbolinksView.errorRefreshLayout.apply {
             setOnRefreshListener {
                 isWebViewAttachedToNewDestination = false
                 visit(location, restoreWithCachedSnapshot = false, reload = true)
@@ -200,22 +210,14 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
 
     private fun removeTransitionalViews() {
         turbolinksView?.refreshLayout?.isRefreshing = false
+        turbolinksView?.errorRefreshLayout?.isRefreshing = false
 
         // TODO: This delay shouldn't be necessary, but visitRendered() is being called early.
         delay(200) {
             turbolinksView?.removeProgressView()
             turbolinksView?.removeScreenshot()
+            turbolinksView?.removeErrorView()
         }
-    }
-
-    private fun handleError(code: Int) {
-        val errorView = fragment.createErrorView(code)
-
-        // Make sure the underlying WebView isn't clickable.
-        errorView.isClickable = true
-
-        turbolinksErrorPlaceholder?.removeAllViews()
-        turbolinksErrorPlaceholder?.addView(errorView)
     }
 
     private fun generateIdentifier(): Int {
