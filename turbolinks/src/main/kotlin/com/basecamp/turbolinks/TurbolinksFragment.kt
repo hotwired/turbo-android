@@ -9,6 +9,7 @@ import androidx.navigation.ui.NavigationUI
 
 abstract class TurbolinksFragment : Fragment() {
     lateinit var location: String
+    lateinit var sessionName: String
     lateinit var router: TurbolinksRouter
     lateinit var session: TurbolinksSession
     lateinit var navigator: TurbolinksNavigator
@@ -16,34 +17,37 @@ abstract class TurbolinksFragment : Fragment() {
     lateinit var sharedViewModel: TurbolinksSharedViewModel
     lateinit var pageViewModel: TurbolinksFragmentViewModel
 
+    open val displaysToolbarTitle: Boolean = true
+    abstract val toolbar: Toolbar?
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val activity = requireNotNull(context as? TurbolinksActivity) {
-            "The fragment Activity must implement TurbolinksActivity"
-        }
-
         location = currentLocation()
-        router = activity.onProvideRouter()
-        session = activity.onProvideSession(this)
-        navigator = TurbolinksNavigator(this, session, router)
+        sessionName = currentSessionName()
         sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
         pageViewModel = TurbolinksFragmentViewModel.get(location, this)
 
         observeLiveData()
     }
 
-    abstract fun onProvideToolbar(): Toolbar?
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        val activity = requireNotNull(context as? TurbolinksActivity) {
+            "The fragment Activity must implement TurbolinksActivity"
+        }
+
+        router = activity.delegate.router
+        session = activity.delegate.getSession(sessionName)
+        navigator = TurbolinksNavigator(this, session, router)
+    }
 
     protected open fun initToolbar() {
-        onProvideToolbar()?.let {
+        toolbar?.let {
             NavigationUI.setupWithNavController(it, findNavController())
             it.setNavigationOnClickListener { navigateUp() }
         }
-    }
-
-    open fun displaysToolbarTitle(): Boolean {
-        return true
     }
 
     // ----------------------------------------------------------------------------
@@ -71,9 +75,9 @@ abstract class TurbolinksFragment : Fragment() {
     // ----------------------------------------------------------------------------
 
     private fun observeLiveData() {
-        if (displaysToolbarTitle()) {
+        if (displaysToolbarTitle) {
             pageViewModel.title.observe(this, Observer {
-                onProvideToolbar()?.title = it
+                toolbar?.title = it
             })
         }
     }
@@ -81,6 +85,12 @@ abstract class TurbolinksFragment : Fragment() {
     private fun currentLocation(): String {
         return requireNotNull(arguments?.getString("location")) {
             "A location argument must be provided"
+        }
+    }
+
+    private fun currentSessionName(): String {
+        return requireNotNull(arguments?.getString("sessionName")) {
+            "A sessionName argument must be provided"
         }
     }
 }

@@ -1,20 +1,44 @@
 package com.basecamp.turbolinks
 
 import androidx.activity.addCallback
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavArgument
 import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 
-class TurbolinksActivityDelegate(private val turbolinksActivity: TurbolinksActivity) {
+class TurbolinksActivityDelegate(val activity: AppCompatActivity,
+                                 val router: TurbolinksRouter,
+                                 var currentNavHostFragmentId: Int) {
+
+    private val sessions = mutableListOf<TurbolinksSession>()
+    val currentDestination: TurbolinksFragment get() = currentFragment
+
     /*
      * Initialize the Activity with a BackPressedDispatcher that
      * properly handles Fragment navigation with the back button.
      */
-    fun onCreate(activity: FragmentActivity) {
+    init {
         activity.onBackPressedDispatcher.addCallback(activity) {
             navigateBack()
         }
+    }
+
+    fun createSession(sessionName: String): TurbolinksSession {
+        sessions.firstOrNull { it.sessionName == sessionName }?.let {
+            throw IllegalArgumentException("Session with name '$sessionName' already exists")
+        }
+
+        return TurbolinksSession.getNew(sessionName, activity).also {
+            sessions.add(it)
+        }
+    }
+
+    fun getSession(sessionName: String): TurbolinksSession {
+        return sessions.first { it.sessionName == sessionName }
+    }
+
+    fun clearSessions() {
+        sessions.clear()
     }
 
     /*
@@ -22,55 +46,43 @@ class TurbolinksActivityDelegate(private val turbolinksActivity: TurbolinksActiv
      * so we can use a simplified navigation graph.
      */
     fun startControllerGraph(controller: NavController, startLocation: String,
-                             navGraph: Int, startDestination: Int) {
+                             sessionName: String, navGraph: Int, startDestination: Int) {
 
         val location = NavArgument.Builder()
             .setDefaultValue(startLocation)
             .build()
 
+        val session = NavArgument.Builder()
+            .setDefaultValue(sessionName)
+            .build()
+
         controller.graph = controller.navInflater.inflate(navGraph).apply {
             this.addArgument("location", location)
+            this.addArgument("sessionName", session)
             this.startDestination = startDestination
         }
     }
 
     fun navigate(location: String, action: String = "advance"): Boolean {
-        return when (val destination = currentDestination()) {
-            is TurbolinksFragment -> destination.navigate(location, action)
-            else -> navigator(destination).navigate(location, action)
-        }
+        return currentDestination.navigate(location, action)
     }
 
     fun navigateUp(): Boolean {
-        return when (val destination = currentDestination()) {
-            is TurbolinksFragment -> destination.navigateUp()
-            else -> navigator(destination).navigateUp()
-        }
+        return currentDestination.navigateUp()
     }
 
     fun navigateBack() {
-        when (val destination = currentDestination()) {
-            is TurbolinksFragment -> destination.navigateBack()
-            else -> navigator(destination).navigateBack()
-        }
+        currentDestination.navigateBack()
     }
 
     fun clearBackStack() {
-        when (val destination = currentDestination()) {
-            is TurbolinksFragment -> destination.clearBackStack()
-            else -> navigator(destination).clearBackStack()
-        }
+        currentDestination.clearBackStack()
     }
 
-    fun currentDestination(): Fragment {
-        return turbolinksActivity.onProvideCurrentNavHostFragment().childFragmentManager.primaryNavigationFragment ?:
-            throw IllegalStateException("No current destination found in NavHostFragment")
-    }
+    private val currentFragment: TurbolinksFragment
+        get() = navHostFragment.childFragmentManager.primaryNavigationFragment as TurbolinksFragment
 
-    private fun navigator(fragment: Fragment): TurbolinksNavigator {
-        return TurbolinksNavigator(
-            fragment = fragment,
-            session = turbolinksActivity.onProvideSession(fragment),
-            router = turbolinksActivity.onProvideRouter())
-    }
+    private val navHostFragment: NavHostFragment
+        get() = activity.supportFragmentManager.findFragmentById(currentNavHostFragmentId) as? NavHostFragment
+            ?: throw IllegalStateException("No current NavHostFragment found")
 }

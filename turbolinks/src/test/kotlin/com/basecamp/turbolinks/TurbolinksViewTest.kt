@@ -1,10 +1,12 @@
 package com.basecamp.turbolinks
 
+import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.webkit.WebView
+import androidx.test.core.app.ApplicationProvider
 import kotlinx.android.synthetic.main.turbolinks_view.view.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -12,8 +14,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -21,11 +23,12 @@ import org.robolectric.annotation.Config
 class TurbolinksViewTest {
     @Mock private lateinit var webView: WebView
     private lateinit var view: ViewGroup
-
-    private val context: Context = RuntimeEnvironment.application.applicationContext
+    private lateinit var context: Context
 
     @Before fun setup() {
         MockitoAnnotations.initMocks(this)
+
+        context = ApplicationProvider.getApplicationContext()
         view = LayoutInflater.from(context).inflate(R.layout.turbolinks_default, null) as ViewGroup
     }
 

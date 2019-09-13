@@ -2,7 +2,6 @@ package com.basecamp.turbolinks
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.View
@@ -16,6 +15,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         FrameLayout(context, attrs, defStyleAttr) {
 
     internal val refreshLayout get() = turbolinks_refresh
+    internal val errorRefreshLayout get() = turbolinks_error_refresh
 
     internal fun attachWebView(webView: WebView): Boolean {
         if (webView.parent == turbolinks_refresh) return false
@@ -37,9 +37,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         // Don't show the progress view if a screenshot is available
         if (turbolinks_screenshot.isVisible) return
 
-        if (progressView.parent != null) {
-            throw IllegalStateException("Progress view cannot be attached to another parent")
-        }
+        check(progressView.parent == null) { "Progress view cannot be attached to another parent" }
 
         removeProgressView()
         turbolinks_progress.addView(progressView)
@@ -61,6 +59,22 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     internal fun removeScreenshot() {
         turbolinks_screenshot.setImageBitmap(null)
         turbolinks_screenshot.isVisible = false
+    }
+
+    internal fun addErrorView(errorView: View) {
+        check(errorView.parent == null) { "Error view cannot be attached to another parent" }
+
+        turbolinks_error_refresh.addView(errorView)
+        turbolinks_error_refresh.isVisible = true
+        turbolinks_error_refresh.isEnabled = true
+        turbolinks_error_refresh.isRefreshing = false
+    }
+
+    internal fun removeErrorView() {
+        turbolinks_error_refresh.removeAllViews()
+        turbolinks_error_refresh.isVisible = false
+        turbolinks_error_refresh.isEnabled = false
+        turbolinks_error_refresh.isRefreshing = false
     }
 
     fun createScreenshot(): Bitmap? {

@@ -152,7 +152,8 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
         return bundleOf(
             "location" to location,
-            "previousLocation" to previousLocation
+            "previousLocation" to previousLocation,
+            "sessionName" to session.sessionName
         )
     }
 

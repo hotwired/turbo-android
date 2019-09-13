@@ -2,9 +2,6 @@ package com.basecamp.turbolinks
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
 
 interface TurbolinksSessionCallback {
     fun onPageStarted(location: String)
@@ -19,15 +16,12 @@ interface TurbolinksSessionCallback {
 }
 
 interface TurbolinksActivity {
-    fun onProvideSession(fragment: Fragment): TurbolinksSession
-    fun onProvideRouter(): TurbolinksRouter
-    fun onProvideCurrentNavHostFragment(): NavHostFragment
+    var delegate: TurbolinksActivityDelegate
 }
 
 interface TurbolinksWebFragmentCallback {
     // View
-    fun onProvideTurbolinksView(): TurbolinksView?
-    fun onProvideErrorPlaceholder(): ViewGroup?
+    val turbolinksView: TurbolinksView?
     fun createErrorView(statusCode: Int): View
     fun createProgressView(location: String): View
     fun shouldEnablePullToRefresh(): Boolean

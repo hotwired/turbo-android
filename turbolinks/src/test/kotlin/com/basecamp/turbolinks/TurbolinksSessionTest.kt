@@ -25,7 +25,7 @@ class TurbolinksSessionTest {
         MockitoAnnotations.initMocks(this)
 
         activity = Robolectric.setupActivity(TurbolinksTestActivity::class.java)
-        session = TurbolinksSession.getNew(activity)
+        session = TurbolinksSession.getNew("test", activity)
         visit = TurbolinksVisit(
                 location = "https://basecamp.com",
                 destinationIdentifier = 1,
@@ -37,13 +37,9 @@ class TurbolinksSessionTest {
     }
 
     @Test fun getNewIsAlwaysNewInstance() {
-        val session = TurbolinksSession.getNew(activity)
+        val session = TurbolinksSession.getNew("test", activity)
 
-        assertThat(session).isNotEqualTo(TurbolinksSession.getNew(activity))
-    }
-
-    @Test fun sessionIdIsPositive() {
-        assertThat(session.sessionId > 0).isTrue()
+        assertThat(session).isNotEqualTo(TurbolinksSession.getNew("test", activity))
     }
 
     @Test fun visitProposedToLocationWithActionFiresCallback() {

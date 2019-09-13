@@ -10,7 +10,12 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        delegate = TurbolinksWebFragmentDelegate(this, this, navigator)
+        delegate = TurbolinksWebFragmentDelegate(this)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        delegate.onActivityCreated()
     }
 
     override fun onStart() {
