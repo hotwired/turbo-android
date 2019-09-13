@@ -38,13 +38,15 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     // Public
 
     fun reset() {
-        logEvent("reset")
-        currentVisit.identifier = ""
-        coldBootVisitIdentifier = ""
-        restorationIdentifiers.clear()
-        visitPending = false
-        isReady = false
-        isColdBooting = false
+        if (::currentVisit.isInitialized) {
+            logEvent("reset")
+            currentVisit.identifier = ""
+            coldBootVisitIdentifier = ""
+            restorationIdentifiers.clear()
+            visitPending = false
+            isReady = false
+            isColdBooting = false
+        }
     }
 
     fun setDebugLoggingEnabled(enabled: Boolean) {
