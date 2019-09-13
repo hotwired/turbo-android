@@ -37,6 +37,10 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         return sessions.first { it.sessionName == sessionName }
     }
 
+    fun clearSessions() {
+        sessions.clear()
+    }
+
     /*
      * Dynamically set the controller graph and start destination,
      * so we can use a simplified navigation graph.
