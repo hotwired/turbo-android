@@ -17,9 +17,9 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     private val navigator: TurbolinksNavigator
         get() = fragment.navigator
     private val turbolinksView: TurbolinksView?
-        get() = fragment.onProvideTurbolinksView()
+        get() = fragment.turbolinksView
     private val turbolinksErrorPlaceholder: ViewGroup?
-        get() = fragment.onProvideErrorPlaceholder()
+        get() = fragment.errorPlaceholderView
 
     val webView: WebView?
         get() = session().webView

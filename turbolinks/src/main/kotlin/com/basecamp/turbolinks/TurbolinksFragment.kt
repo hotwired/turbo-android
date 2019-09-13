@@ -10,7 +10,6 @@ import androidx.navigation.ui.NavigationUI
 abstract class TurbolinksFragment : Fragment() {
     lateinit var location: String
     lateinit var sessionName: String
-    lateinit var activityDelegate: TurbolinksActivityDelegate
     lateinit var router: TurbolinksRouter
     lateinit var session: TurbolinksSession
     lateinit var navigator: TurbolinksNavigator
@@ -36,9 +35,8 @@ abstract class TurbolinksFragment : Fragment() {
             "The fragment Activity must implement TurbolinksActivity"
         }
 
-        activityDelegate = activity.onProvideDelegate()
-        router = activityDelegate.router
-        session = activityDelegate.getSession(sessionName)
+        router = activity.delegate.router
+        session = activity.delegate.getSession(sessionName)
         navigator = TurbolinksNavigator(this, session, router)
     }
 

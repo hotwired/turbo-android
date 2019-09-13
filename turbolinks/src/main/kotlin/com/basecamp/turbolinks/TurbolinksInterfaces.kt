@@ -2,8 +2,6 @@ package com.basecamp.turbolinks
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
 
 interface TurbolinksSessionCallback {
     fun onPageStarted(location: String)
@@ -18,13 +16,13 @@ interface TurbolinksSessionCallback {
 }
 
 interface TurbolinksActivity {
-    fun onProvideDelegate(): TurbolinksActivityDelegate
+    var delegate: TurbolinksActivityDelegate
 }
 
 interface TurbolinksWebFragmentCallback {
     // View
-    fun onProvideTurbolinksView(): TurbolinksView?
-    fun onProvideErrorPlaceholder(): ViewGroup?
+    val turbolinksView: TurbolinksView?
+    val errorPlaceholderView: ViewGroup?
     fun createErrorView(statusCode: Int): View
     fun createProgressView(location: String): View
     fun shouldEnablePullToRefresh(): Boolean
