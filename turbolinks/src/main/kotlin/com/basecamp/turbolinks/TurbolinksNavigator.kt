@@ -37,6 +37,10 @@ class TurbolinksNavigator(private val fragment: Fragment,
         val currentContext = currentPresentationContext()
         val newContext = currentProperties.context
         val presentation = presentation(location, action)
+        val navigateWithinContext = currentContext == newContext
+        val restartModal = navigateWithinContext &&
+                presentation == Presentation.REPLACE &&
+                newContext == PresentationContext.MODAL
 
         logEvent("navigate", "location" to location,
             "action" to action, "currentContext" to currentContext,
@@ -44,7 +48,8 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
         when {
             presentation == Presentation.NONE -> return false
-            currentContext == newContext -> navigateWithinContext(location, currentProperties, presentation)
+            restartModal -> dismissModalContextWithResult(location)
+            navigateWithinContext -> navigateWithinContext(location, currentProperties, presentation)
             newContext == PresentationContext.MODAL -> navigateToModalContext(location)
             newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location)
         }
