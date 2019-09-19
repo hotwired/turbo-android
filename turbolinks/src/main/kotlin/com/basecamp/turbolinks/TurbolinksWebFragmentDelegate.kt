@@ -28,7 +28,9 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     fun onStart() {
-        initNavigationVisit()
+        if (!fragment.navigatedFromModalResult) {
+            initNavigationVisit()
+        }
     }
 
     fun session(): TurbolinksSession {
@@ -91,14 +93,8 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     // -----------------------------------------------------------------------
 
     private fun initNavigationVisit() {
-        val navigated = fragment.sharedViewModel.modalResult?.let {
-            navigator.navigate(it.location, it.action)
-        } ?: false
-
-        if (!navigated) {
-            initView()
-            attachWebViewAndVisit()
-        }
+        initView()
+        attachWebViewAndVisit()
     }
 
     private fun initView() {
