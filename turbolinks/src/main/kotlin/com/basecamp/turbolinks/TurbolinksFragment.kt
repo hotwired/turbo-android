@@ -17,6 +17,7 @@ abstract class TurbolinksFragment : Fragment() {
     lateinit var sharedViewModel: TurbolinksSharedViewModel
     lateinit var pageViewModel: TurbolinksFragmentViewModel
 
+    var navigatedFromModalResult: Boolean = false
     open val displaysToolbarTitle: Boolean = true
     abstract val toolbar: Toolbar?
 
@@ -41,6 +42,14 @@ abstract class TurbolinksFragment : Fragment() {
         router = activity.delegate.router
         session = activity.delegate.getSession(sessionName)
         navigator = TurbolinksNavigator(this, session, router)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        navigatedFromModalResult = sharedViewModel.modalResult?.let {
+            navigator.navigate(it.location, it.action)
+        } ?: false
     }
 
     protected open fun initToolbar() {
