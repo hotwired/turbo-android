@@ -2,6 +2,7 @@ package com.basecamp.turbolinks
 
 import android.os.Handler
 import android.webkit.WebView
+import androidx.webkit.WebViewCompat
 import com.google.gson.GsonBuilder
 
 internal fun delay(milliseconds: Int, func: () -> Unit) {
@@ -13,12 +14,11 @@ fun commaDelimitedJson(vararg params: Any): String? {
     return params.joinToString(",") { gson.toJson(it) }
 }
 
-val WebView.chromeVersion: String?
-    get() {
-        val regex = "Chrome/([\\d.]+) Mobile".toRegex()
-        val result = regex.find(settings.userAgentString)
-        return result?.groupValues?.get(1)
-    }
+val WebView.packageName: String?
+    get() = WebViewCompat.getCurrentWebViewPackage(context)?.packageName
 
-val WebView.chromeMajorVersion: Int?
-    get() = chromeVersion?.substringBefore(".")?.toIntOrNull()
+val WebView.versionName: String?
+    get() = WebViewCompat.getCurrentWebViewPackage(context)?.versionName
+
+val WebView.majorVersion: Int?
+    get() = versionName?.substringBefore(".")?.toIntOrNull()
