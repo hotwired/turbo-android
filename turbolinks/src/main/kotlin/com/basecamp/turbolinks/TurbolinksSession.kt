@@ -10,6 +10,10 @@ import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams
 import android.webkit.*
 import android.widget.FrameLayout
+import androidx.webkit.WebResourceErrorCompat
+import androidx.webkit.WebViewClientCompat
+import androidx.webkit.WebViewFeature.WEB_RESOURCE_ERROR_GET_CODE
+import androidx.webkit.WebViewFeature.isFeatureSupported
 import java.util.*
 
 @Suppress("unused")
@@ -277,7 +281,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     // Classes and objects
 
-    private inner class TurbolinksWebViewClient : WebViewClient() {
+    private inner class TurbolinksWebViewClient : WebViewClientCompat() {
         override fun onPageStarted(view: WebView, location: String, favicon: Bitmap?) {
             logEvent("onPageStarted", "location" to location)
             callback { it.onPageStarted(location) }
@@ -298,6 +302,11 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             installBridge {
                 callback { it.onPageFinished(location) }
             }
+        }
+
+        override fun onPageCommitVisible(view: WebView, location: String) {
+            super.onPageCommitVisible(view, location)
+            logEvent("onPageCommitVisible", "location" to location, "progress" to view.progress)
         }
 
         /**
@@ -322,10 +331,10 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             return true
         }
 
-        override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+        override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {
             super.onReceivedError(view, request, error)
 
-            if (request.isForMainFrame) {
+            if (request.isForMainFrame && isFeatureSupported(WEB_RESOURCE_ERROR_GET_CODE)) {
                 logEvent("onReceivedError", "errorCode" to error.errorCode)
                 reset()
                 callback { it.onReceivedError(error.errorCode) }
