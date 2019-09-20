@@ -234,6 +234,9 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initializeWebView() {
+        logEvent("Chrome version: ${webView.chromeVersion}")
+        logEvent("Chrome major version: ${webView.chromeMajorVersion}")
+
         webView.apply {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
