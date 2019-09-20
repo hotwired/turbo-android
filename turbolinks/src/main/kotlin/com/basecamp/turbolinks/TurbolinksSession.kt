@@ -12,8 +12,8 @@ import android.webkit.*
 import android.widget.FrameLayout
 import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
-import androidx.webkit.WebViewFeature.WEB_RESOURCE_ERROR_GET_CODE
-import androidx.webkit.WebViewFeature.isFeatureSupported
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature.*
 import java.util.*
 
 @Suppress("unused")
@@ -37,7 +37,6 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     init {
         initializeWebView()
     }
-
 
     // Public
 
@@ -135,8 +134,12 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     fun visitRendered(visitIdentifier: String) {
         logEvent("visitRendered", "visitIdentifier" to visitIdentifier)
 
-        if (visitIdentifier == currentVisit.identifier) {
-            callback { it.visitRendered() }
+        if (visitIdentifier == coldBootVisitIdentifier || visitIdentifier == currentVisit.identifier) {
+            if (isFeatureSupported(VISUAL_STATE_CALLBACK)) {
+                postVisitVisualStateCallback(visitIdentifier)
+            } else {
+                callback { it.visitRendered() }
+            }
         }
     }
 
@@ -236,6 +239,25 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         callback { it.visitCompleted() }
     }
 
+    /**
+     * Updates to the DOM are processed asynchronously, so the changes may not immediately
+     * be reflected visually by subsequent WebView.onDraw invocations. Use a VisualStateCallback
+     * to be notified when the contents of the DOM are ready to be drawn.
+     */
+    private fun postVisitVisualStateCallback(visitIdentifier: String) {
+        if (!isFeatureSupported(VISUAL_STATE_CALLBACK)) return
+
+        context.runOnUiThread {
+            WebViewCompat.postVisualStateCallback(webView, visitIdentifier.toRequestId()) { requestId ->
+                logEvent("visitVisualStateComplete", "visitIdentifier" to visitIdentifier)
+
+                if (visitIdentifier.toRequestId() == requestId) {
+                    callback { it.visitRendered() }
+                }
+            }
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     private fun initializeWebView() {
         logEvent("WebView info",
@@ -267,6 +289,10 @@ class TurbolinksSession private constructor(val sessionName: String, val context
                 }
             }
         }
+    }
+
+    private fun String.toRequestId(): Long {
+        return hashCode().toLong()
     }
 
     private fun callback(action: (TurbolinksSessionCallback) -> Unit) {
