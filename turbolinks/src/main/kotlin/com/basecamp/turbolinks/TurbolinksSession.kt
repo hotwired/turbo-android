@@ -10,6 +10,10 @@ import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams
 import android.webkit.*
 import android.widget.FrameLayout
+import androidx.webkit.WebResourceErrorCompat
+import androidx.webkit.WebViewClientCompat
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature.*
 import java.util.*
 
 @Suppress("unused")
@@ -33,7 +37,6 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     init {
         initializeWebView()
     }
-
 
     // Public
 
@@ -131,8 +134,12 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     fun visitRendered(visitIdentifier: String) {
         logEvent("visitRendered", "visitIdentifier" to visitIdentifier)
 
-        if (visitIdentifier == currentVisit.identifier) {
-            callback { it.visitRendered() }
+        if (visitIdentifier == coldBootVisitIdentifier || visitIdentifier == currentVisit.identifier) {
+            if (isFeatureSupported(VISUAL_STATE_CALLBACK)) {
+                postVisitVisualStateCallback(visitIdentifier)
+            } else {
+                callback { it.visitRendered() }
+            }
         }
     }
 
@@ -232,8 +239,32 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         callback { it.visitCompleted() }
     }
 
+    /**
+     * Updates to the DOM are processed asynchronously, so the changes may not immediately
+     * be reflected visually by subsequent WebView.onDraw invocations. Use a VisualStateCallback
+     * to be notified when the contents of the DOM are ready to be drawn.
+     */
+    private fun postVisitVisualStateCallback(visitIdentifier: String) {
+        if (!isFeatureSupported(VISUAL_STATE_CALLBACK)) return
+
+        context.runOnUiThread {
+            WebViewCompat.postVisualStateCallback(webView, visitIdentifier.toRequestId()) { requestId ->
+                logEvent("visitVisualStateComplete", "visitIdentifier" to visitIdentifier)
+
+                if (visitIdentifier.toRequestId() == requestId) {
+                    callback { it.visitRendered() }
+                }
+            }
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     private fun initializeWebView() {
+        logEvent("WebView info",
+            "package" to (webView.packageName ?: ""),
+            "version" to (webView.versionName ?: ""),
+            "major version" to (webView.majorVersion ?: ""))
+
         webView.apply {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
@@ -260,6 +291,10 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         }
     }
 
+    private fun String.toRequestId(): Long {
+        return hashCode().toLong()
+    }
+
     private fun callback(action: (TurbolinksSessionCallback) -> Unit) {
         context.runOnUiThread {
             action(currentVisit.callback)
@@ -274,7 +309,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     // Classes and objects
 
-    private inner class TurbolinksWebViewClient : WebViewClient() {
+    private inner class TurbolinksWebViewClient : WebViewClientCompat() {
         override fun onPageStarted(view: WebView, location: String, favicon: Bitmap?) {
             logEvent("onPageStarted", "location" to location)
             callback { it.onPageStarted(location) }
@@ -295,6 +330,11 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             installBridge {
                 callback { it.onPageFinished(location) }
             }
+        }
+
+        override fun onPageCommitVisible(view: WebView, location: String) {
+            super.onPageCommitVisible(view, location)
+            logEvent("onPageCommitVisible", "location" to location, "progress" to view.progress)
         }
 
         /**
@@ -319,10 +359,10 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             return true
         }
 
-        override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+        override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {
             super.onReceivedError(view, request, error)
 
-            if (request.isForMainFrame) {
+            if (request.isForMainFrame && isFeatureSupported(WEB_RESOURCE_ERROR_GET_CODE)) {
                 logEvent("onReceivedError", "errorCode" to error.errorCode)
                 reset()
                 callback { it.onReceivedError(error.errorCode) }

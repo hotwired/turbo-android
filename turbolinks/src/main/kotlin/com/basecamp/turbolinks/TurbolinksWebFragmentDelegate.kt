@@ -67,7 +67,6 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     override fun visitCompleted() {
         fragment.onVisitCompleted(location)
         fragment.pageViewModel.setTitle(title())
-        removeTransitionalViews()
     }
 
     override fun onReceivedError(errorCode: Int) {
@@ -207,13 +206,9 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     private fun removeTransitionalViews() {
         turbolinksView?.refreshLayout?.isRefreshing = false
         turbolinksView?.errorRefreshLayout?.isRefreshing = false
-
-        // TODO: This delay shouldn't be necessary, but visitRendered() is being called early.
-        delay(200) {
-            turbolinksView?.removeProgressView()
-            turbolinksView?.removeScreenshot()
-            turbolinksView?.removeErrorView()
-        }
+        turbolinksView?.removeProgressView()
+        turbolinksView?.removeScreenshot()
+        turbolinksView?.removeErrorView()
     }
 
     private fun generateIdentifier(): Int {
