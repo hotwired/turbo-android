@@ -1,9 +1,10 @@
 package com.basecamp.turbolinks
 
+import androidx.navigation.NavOptions
+
 abstract class TurbolinksRouter {
-    abstract fun getNavigationAction(location: String, properties: PathProperties): Int?
-    abstract fun getModalContextStartAction(location: String): Int
-    abstract fun getModalContextDismissAction(location: String): Int
+    abstract fun shouldNavigate(location: String): Boolean
+    abstract fun getNavigationOptions(location: String, pathProperties: PathProperties): NavOptions?
 }
 
 enum class PresentationContext {

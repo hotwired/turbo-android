@@ -5,6 +5,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 
 class TurbolinksNavigator(private val fragment: Fragment,
                           private val session: TurbolinksSession,
@@ -48,10 +49,10 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
         when {
             presentation == Presentation.NONE -> return false
-            restartModal -> dismissModalContextWithResult(location)
+            restartModal -> dismissModalContextWithResult(location, currentProperties)
             navigateWithinContext -> navigateWithinContext(location, currentProperties, presentation)
-            newContext == PresentationContext.MODAL -> navigateToModalContext(location)
-            newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location)
+            newContext == PresentationContext.MODAL -> navigateToModalContext(location, currentProperties)
+            newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location, currentProperties)
         }
 
         return true
@@ -76,24 +77,42 @@ class TurbolinksNavigator(private val fragment: Fragment,
         }
     }
 
-    private fun navigateToModalContext(location: String) {
+    private fun navigateToModalContext(location: String, properties: PathProperties) {
         logEvent("navigateToModalContext", "location" to location)
         val bundle = buildBundle(location, Presentation.PUSH)
 
         onNavigationVisit {
-            router.getModalContextStartAction(location).let { actionId ->
-                currentController().navigate(actionId, bundle)
-            }
+            navigateToLocation(location, properties, bundle)
         }
     }
 
-    private fun dismissModalContextWithResult(location: String) {
+    private fun dismissModalContextWithResult(location: String, properties: PathProperties) {
         logEvent("dismissModalContextWithResult", "location" to location)
+        val bundle = buildBundle(location, Presentation.PUSH)
 
         onNavigationVisit {
-            val dismissAction = router.getModalContextDismissAction(location)
+            val controller = currentController()
+            val destination = controller.graph.find { it.hasDeepLink(properties.uri) } // TODO reference graph parent?
+
+            if (destination == null) {
+                logEvent("dismissModalContextWithResult", "uri" to properties.uri, "error" to "No modal graph found")
+                return@onNavigationVisit
+            }
+
+            logEvent("destinationId", "uri" to properties.uri, "destinationId" to "${destination.id}")
+
+            val options = navOptions {
+                popUpTo(destination.id) { inclusive = true }
+                anim {
+                    enter = R.anim.nav_default_enter_anim
+                    exit = R.anim.nav_default_exit_anim
+                    popEnter = R.anim.nav_default_pop_enter_anim
+                    popExit = R.anim.nav_default_pop_exit_anim
+                }
+            }
+
             sendModalResult(location, "advance")
-            currentController().navigate(dismissAction)
+            currentController().navigate(destination.id, bundle, options)
         }
     }
 
@@ -119,8 +138,29 @@ class TurbolinksNavigator(private val fragment: Fragment,
     }
 
     private fun navigateToLocation(location: String, properties: PathProperties, bundle: Bundle) {
-        router.getNavigationAction(location, properties)?.let { actionId ->
-            currentController().navigate(actionId, bundle)
+        logEvent("navigateToLocation", "location" to location, "uri" to properties.uri)
+
+        if (router.shouldNavigate(location)) {
+            val controller = currentController()
+            val destination = controller.graph.find { it.hasDeepLink(properties.uri) }
+            val options = router.getNavigationOptions(location, properties) ?: navOptions {
+                anim {
+                    enter = R.anim.nav_default_enter_anim
+                    exit = R.anim.nav_default_exit_anim
+                    popEnter = R.anim.nav_default_pop_enter_anim
+                    popExit = R.anim.nav_default_pop_exit_anim
+                }
+            }
+
+            if (destination == null) {
+                logEvent("navigateToLocation", "uri" to properties.uri, "error" to "No deep link found")
+                return
+            }
+
+            when (destination) {
+                null -> logEvent("navigateToLocation", "uri" to properties.uri, "error" to "No destination found")
+                else -> controller.navigate(destination.id, bundle, options)
+            }
         }
     }
 
@@ -180,6 +220,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
     }
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
-        logEvent(event, params.toList())
+        val attributes = params.toMutableList().apply { add(0, "session" to session.sessionName) }
+        logEvent(event, attributes)
     }
 }
