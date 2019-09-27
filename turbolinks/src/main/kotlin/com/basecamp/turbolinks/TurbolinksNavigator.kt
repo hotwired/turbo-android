@@ -133,11 +133,6 @@ class TurbolinksNavigator(private val fragment: Fragment,
                 newPathProperties = properties
             ) ?: defaultNavOptions()
 
-            if (destination == null) {
-                logEvent("navigateToLocation", "error" to "No deep link found")
-                return
-            }
-
             when (destination) {
                 null -> logEvent("navigateToLocation", "error" to "No destination found")
                 else -> controller.navigate(destination.id, bundle, options)
