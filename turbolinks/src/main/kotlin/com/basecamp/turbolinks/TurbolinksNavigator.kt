@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 
 class TurbolinksNavigator(private val fragment: Fragment,
                           private val session: TurbolinksSession,
@@ -37,10 +39,6 @@ class TurbolinksNavigator(private val fragment: Fragment,
         val currentContext = currentPresentationContext()
         val newContext = currentProperties.context
         val presentation = presentation(location, action)
-        val navigateWithinContext = currentContext == newContext
-        val restartModal = navigateWithinContext &&
-                presentation == Presentation.REPLACE &&
-                newContext == PresentationContext.MODAL
 
         logEvent("navigate", "location" to location,
             "action" to action, "currentContext" to currentContext,
@@ -48,10 +46,9 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
         when {
             presentation == Presentation.NONE -> return false
-            restartModal -> dismissModalContextWithResult(location)
-            navigateWithinContext -> navigateWithinContext(location, currentProperties, presentation)
-            newContext == PresentationContext.MODAL -> navigateToModalContext(location)
-            newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location)
+            newContext == currentContext -> navigateWithinContext(location, currentProperties, presentation)
+            newContext == PresentationContext.MODAL -> navigateToModalContext(location, currentProperties)
+            newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location, currentProperties)
         }
 
         return true
@@ -76,24 +73,29 @@ class TurbolinksNavigator(private val fragment: Fragment,
         }
     }
 
-    private fun navigateToModalContext(location: String) {
+    private fun navigateToModalContext(location: String, properties: PathProperties) {
         logEvent("navigateToModalContext", "location" to location)
         val bundle = buildBundle(location, Presentation.PUSH)
 
         onNavigationVisit {
-            router.getModalContextStartAction(location).let { actionId ->
-                currentController().navigate(actionId, bundle)
-            }
+            navigateToLocation(location, properties, bundle)
         }
     }
 
-    private fun dismissModalContextWithResult(location: String) {
-        logEvent("dismissModalContextWithResult", "location" to location)
+    private fun dismissModalContextWithResult(location: String, properties: PathProperties) {
+        logEvent("dismissModalContextWithResult", "location" to location, "uri" to properties.uri)
 
         onNavigationVisit {
-            val dismissAction = router.getModalContextDismissAction(location)
+            val controller = currentController()
+            val destination = controller.currentDestination
+
+            if (destination == null) {
+                logEvent("dismissModalContextWithResult", "error" to "No modal graph found")
+                return@onNavigationVisit
+            }
+
             sendModalResult(location, "advance")
-            currentController().navigate(dismissAction)
+            controller.popBackStack(destination.id, true)
         }
     }
 
@@ -119,8 +121,22 @@ class TurbolinksNavigator(private val fragment: Fragment,
     }
 
     private fun navigateToLocation(location: String, properties: PathProperties, bundle: Bundle) {
-        router.getNavigationAction(location, properties)?.let { actionId ->
-            currentController().navigate(actionId, bundle)
+        logEvent("navigateToLocation", "location" to location, "uri" to properties.uri)
+
+        if (router.shouldNavigate(location)) {
+            val controller = currentController()
+            val destination = controller.graph.find { it.hasDeepLink(properties.uri) }
+            val options = router.getNavigationOptions(
+                currentLocation = currentLocation(),
+                newLocation = location,
+                currentPathProperties = currentPathProperties(),
+                newPathProperties = properties
+            ) ?: defaultNavOptions()
+
+            when (destination) {
+                null -> logEvent("navigateToLocation", "error" to "No destination found")
+                else -> controller.navigate(destination.id, bundle, options)
+            }
         }
     }
 
@@ -162,8 +178,19 @@ class TurbolinksNavigator(private val fragment: Fragment,
         )
     }
 
-    private fun currentLocation(): String? {
-        return fragment.arguments?.getString("location")
+    private fun defaultNavOptions(): NavOptions {
+        return navOptions {
+            anim {
+                enter = R.anim.nav_default_enter_anim
+                exit = R.anim.nav_default_exit_anim
+                popEnter = R.anim.nav_default_pop_enter_anim
+                popExit = R.anim.nav_default_pop_exit_anim
+            }
+        }
+    }
+
+    private fun currentLocation(): String {
+        return checkNotNull(fragment.arguments?.getString("location"))
     }
 
     private fun previousLocation(): String? {
@@ -174,12 +201,19 @@ class TurbolinksNavigator(private val fragment: Fragment,
         return session.pathConfiguration
     }
 
+    private fun currentPathProperties(): PathProperties {
+        return currentPathConfiguration().properties(currentLocation())
+    }
+
     private fun currentPresentationContext(): PresentationContext {
-        val location = currentLocation() ?: return PresentationContext.DEFAULT
-        return currentPathConfiguration().properties(location).context
+        return currentPathProperties().context
     }
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
-        logEvent(event, params.toList())
+        val attributes = params.toMutableList().apply {
+            add(0, "session" to session.sessionName)
+            add("fragment" to fragment.javaClass.simpleName)
+        }
+        logEvent(event, attributes)
     }
 }

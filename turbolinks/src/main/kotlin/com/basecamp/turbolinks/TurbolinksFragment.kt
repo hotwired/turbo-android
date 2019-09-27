@@ -42,12 +42,16 @@ abstract class TurbolinksFragment : Fragment() {
         router = activity.delegate.router
         session = activity.delegate.getSession(sessionName)
         navigator = TurbolinksNavigator(this, session, router)
+
+        logEvent("fragment.onActivityCreated", "location" to location)
     }
 
     override fun onStart() {
         super.onStart()
+        logEvent("fragment.onStart", "location" to location)
 
         navigatedFromModalResult = sharedViewModel.modalResult?.let {
+            logEvent("navigateFromModalResult", "location" to it.location, "action" to it.action)
             navigator.navigate(it.location, it.action)
         } ?: false
     }
@@ -101,5 +105,13 @@ abstract class TurbolinksFragment : Fragment() {
         return requireNotNull(arguments?.getString("sessionName")) {
             "A sessionName argument must be provided"
         }
+    }
+
+    private fun logEvent(event: String, vararg params: Pair<String, Any>) {
+        val attributes = params.toMutableList().apply {
+            add(0, "session" to session.sessionName)
+            add("fragment" to this@TurbolinksFragment.javaClass.simpleName)
+        }
+        logEvent(event, attributes)
     }
 }

@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 import android.content.Context
+import android.net.Uri
 import com.google.gson.annotations.SerializedName
 import java.util.regex.PatternSyntaxException
 import kotlin.text.RegexOption.IGNORE_CASE
@@ -56,3 +57,6 @@ val PathProperties.context: PresentationContext get() = try {
 } catch (e: IllegalArgumentException) {
     PresentationContext.DEFAULT
 }
+
+val PathProperties.uri: Uri
+    get() = Uri.parse(get("uri"))
