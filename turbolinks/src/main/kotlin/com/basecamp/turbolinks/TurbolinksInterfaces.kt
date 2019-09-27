@@ -1,7 +1,6 @@
 package com.basecamp.turbolinks
 
 import android.view.View
-import android.view.ViewGroup
 
 interface TurbolinksSessionCallback {
     fun onPageStarted(location: String)

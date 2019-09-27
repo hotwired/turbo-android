@@ -4,7 +4,10 @@ import androidx.navigation.NavOptions
 
 abstract class TurbolinksRouter {
     abstract fun shouldNavigate(location: String): Boolean
-    abstract fun getNavigationOptions(location: String, pathProperties: PathProperties): NavOptions?
+    abstract fun getNavigationOptions(currentLocation: String,
+                                      newLocation: String,
+                                      currentPathProperties: PathProperties,
+                                      newPathProperties: PathProperties): NavOptions?
 }
 
 enum class PresentationContext {
