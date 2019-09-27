@@ -108,7 +108,10 @@ abstract class TurbolinksFragment : Fragment() {
     }
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
-        val attributes = params.toMutableList().apply { add(0, "session" to session.sessionName) }
+        val attributes = params.toMutableList().apply {
+            add(0, "session" to session.sessionName)
+            add("fragment" to this@TurbolinksFragment.javaClass.simpleName)
+        }
         logEvent(event, attributes)
     }
 }
