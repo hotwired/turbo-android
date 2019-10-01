@@ -38,9 +38,11 @@ class PathConfigurationTest {
 
     @Test
     fun presentationContext() {
-        assertThat(pathConfiguration.properties("/home").context).isEqualTo(DEFAULT)
-        assertThat(pathConfiguration.properties("/new").context).isEqualTo(MODAL)
-        assertThat(pathConfiguration.properties("/edit").context).isEqualTo(MODAL)
+        val url = "http://example.com"
+
+        assertThat(pathConfiguration.properties("$url/home").context).isEqualTo(DEFAULT)
+        assertThat(pathConfiguration.properties("$url/new").context).isEqualTo(MODAL)
+        assertThat(pathConfiguration.properties("$url/edit").context).isEqualTo(MODAL)
     }
 
     @Test

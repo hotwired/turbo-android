@@ -121,23 +121,24 @@ class TurbolinksNavigator(private val fragment: Fragment,
     }
 
     private fun navigateToLocation(location: String, properties: PathProperties, bundle: Bundle) {
-        logEvent("navigateToLocation", "location" to location, "uri" to properties.uri)
+        val controller = currentController()
+        val shouldNavigate = shouldNavigate(location, properties)
+        val destination = controller.graph.find { it.hasDeepLink(properties.uri) }
+        val navOptions = navOptions(location, properties)
 
-        if (router.shouldNavigate(location)) {
-            val controller = currentController()
-            val destination = controller.graph.find { it.hasDeepLink(properties.uri) }
-            val options = router.getNavigationOptions(
-                currentLocation = currentLocation(),
-                newLocation = location,
-                currentPathProperties = currentPathProperties(),
-                newPathProperties = properties
-            ) ?: defaultNavOptions()
+        logEvent("shouldNavigateToLocation", "location" to location, "shouldNavigate" to shouldNavigate)
 
-            when (destination) {
-                null -> logEvent("navigateToLocation", "error" to "No destination found")
-                else -> controller.navigate(destination.id, bundle, options)
-            }
+        if (!shouldNavigate) {
+            return
         }
+
+        if (destination == null) {
+            logEvent("navigateToLocation", "error" to "No destination found")
+            return
+        }
+
+        logEvent("navigateToLocation", "location" to location, "uri" to properties.uri)
+        controller.navigate(destination.id, bundle, navOptions)
     }
 
     private fun currentController(): NavController {
@@ -178,8 +179,22 @@ class TurbolinksNavigator(private val fragment: Fragment,
         )
     }
 
-    private fun defaultNavOptions(): NavOptions {
-        return navOptions {
+    private fun shouldNavigate(location: String, properties: PathProperties): Boolean {
+        return router.shouldNavigate(
+            currentLocation = currentLocation(),
+            newLocation = location,
+            currentPathProperties = currentPathProperties(),
+            newPathProperties = properties
+        )
+    }
+
+    private fun navOptions(location: String, properties: PathProperties): NavOptions {
+        return router.getNavigationOptions(
+            currentLocation = currentLocation(),
+            newLocation = location,
+            currentPathProperties = currentPathProperties(),
+            newPathProperties = properties
+        ) ?: navOptions {
             anim {
                 enter = R.anim.nav_default_enter_anim
                 exit = R.anim.nav_default_exit_anim

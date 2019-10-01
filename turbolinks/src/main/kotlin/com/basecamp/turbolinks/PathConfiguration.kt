@@ -3,6 +3,7 @@ package com.basecamp.turbolinks
 import android.content.Context
 import android.net.Uri
 import com.google.gson.annotations.SerializedName
+import java.net.URL
 import java.util.regex.PatternSyntaxException
 import kotlin.text.RegexOption.IGNORE_CASE
 
@@ -22,14 +23,24 @@ class PathConfiguration(context: Context) {
         }
     }
 
-    fun properties(path: String): PathProperties {
+    fun properties(location: String): PathProperties {
         val properties = PathProperties()
+        val path = path(location)
 
         for (rule in rules) when (rule.matches(path)) {
             true -> properties.putAll(rule.properties)
         }
 
         return properties
+    }
+
+    private fun path(location: String): String {
+        val url = URL(location)
+
+        return when (url.query) {
+            null -> url.path
+            else -> "${url.path}${url.query}"
+        }
     }
 }
 
