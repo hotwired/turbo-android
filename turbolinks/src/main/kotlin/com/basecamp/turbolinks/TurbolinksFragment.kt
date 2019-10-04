@@ -43,6 +43,7 @@ abstract class TurbolinksFragment : Fragment() {
         session = activity.delegate.getSession(sessionName)
         navigator = TurbolinksNavigator(this, session, router)
 
+        initToolbar()
         logEvent("fragment.onActivityCreated", "location" to location)
     }
 
@@ -54,13 +55,6 @@ abstract class TurbolinksFragment : Fragment() {
             logEvent("navigateFromModalResult", "location" to it.location, "action" to it.action)
             navigator.navigate(it.location, it.action)
         } ?: false
-    }
-
-    protected open fun initToolbar() {
-        toolbar?.let {
-            NavigationUI.setupWithNavController(it, findNavController())
-            it.setNavigationOnClickListener { navigateUp() }
-        }
     }
 
     // ----------------------------------------------------------------------------
@@ -86,6 +80,13 @@ abstract class TurbolinksFragment : Fragment() {
     // ----------------------------------------------------------------------------
     // Private
     // ----------------------------------------------------------------------------
+
+    private fun initToolbar() {
+        toolbar?.let {
+            NavigationUI.setupWithNavController(it, findNavController())
+            it.setNavigationOnClickListener { navigateUp() }
+        }
+    }
 
     private fun observeLiveData() {
         if (displaysToolbarTitle) {
