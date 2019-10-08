@@ -195,18 +195,16 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     // Private
 
     private fun visitLocation(visit: TurbolinksVisit) {
-        val restorationIdentifier = when (visit.action) {
+        val restorationIdentifier = when (visit.options.action) {
             ACTION_RESTORE -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
             ACTION_ADVANCE -> ""
             else -> ""
         }
 
-        val options = VisitOptions(
-            action = when (restorationIdentifier) {
-                "" -> ACTION_ADVANCE
-                else -> visit.action
-            }
-        )
+        val options = when (restorationIdentifier) {
+            "" -> visit.options.copy(action = ACTION_ADVANCE)
+            else -> visit.options
+        }
 
         logEvent("visitLocation",
                 "location" to visit.location,
