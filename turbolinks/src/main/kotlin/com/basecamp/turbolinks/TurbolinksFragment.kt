@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_ADVANCE
 
 abstract class TurbolinksFragment : Fragment() {
     lateinit var location: String
@@ -52,8 +53,8 @@ abstract class TurbolinksFragment : Fragment() {
         logEvent("fragment.onStart", "location" to location)
 
         navigatedFromModalResult = sharedViewModel.modalResult?.let {
-            logEvent("navigateFromModalResult", "location" to it.location, "action" to it.action)
-            navigator.navigate(it.location, it.action)
+            logEvent("navigateFromModalResult", "location" to it.location, "options" to it.options)
+            navigator.navigate(it.location, it.options)
         } ?: false
     }
 
@@ -61,8 +62,8 @@ abstract class TurbolinksFragment : Fragment() {
     // Navigation
     // ----------------------------------------------------------------------------
 
-    fun navigate(location: String, action: String = "advance"): Boolean {
-        return navigator.navigate(location, action)
+    fun navigate(location: String, options: VisitOptions = VisitOptions(action = ACTION_ADVANCE)): Boolean {
+        return navigator.navigate(location, options)
     }
 
     fun navigateUp(): Boolean {

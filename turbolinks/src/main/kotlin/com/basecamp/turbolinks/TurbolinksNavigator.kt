@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_REPLACE
 
 class TurbolinksNavigator(private val fragment: Fragment,
                           private val session: TurbolinksSession,
@@ -34,21 +35,21 @@ class TurbolinksNavigator(private val fragment: Fragment,
         }
     }
 
-    fun navigate(location: String, action: String, properties: PathProperties? = null): Boolean {
+    fun navigate(location: String, options: VisitOptions, properties: PathProperties? = null): Boolean {
         val currentProperties = properties ?: currentPathConfiguration().properties(location)
         val currentContext = currentPresentationContext()
         val newContext = currentProperties.context
-        val presentation = presentation(location, action)
+        val presentation = presentation(location, options)
 
         logEvent("navigate", "location" to location,
-            "action" to action, "currentContext" to currentContext,
+            "options" to options, "currentContext" to currentContext,
             "newContext" to newContext, "presentation" to presentation)
 
         when {
             presentation == Presentation.NONE -> return false
             newContext == currentContext -> navigateWithinContext(location, currentProperties, presentation)
             newContext == PresentationContext.MODAL -> navigateToModalContext(location, currentProperties)
-            newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location, currentProperties)
+            newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location, options, currentProperties)
         }
 
         return true
@@ -82,7 +83,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
         }
     }
 
-    private fun dismissModalContextWithResult(location: String, properties: PathProperties) {
+    private fun dismissModalContextWithResult(location: String, options: VisitOptions, properties: PathProperties) {
         logEvent("dismissModalContextWithResult", "location" to location, "uri" to properties.uri)
 
         onNavigationVisit {
@@ -94,22 +95,22 @@ class TurbolinksNavigator(private val fragment: Fragment,
                 return@onNavigationVisit
             }
 
-            sendModalResult(location, "advance")
+            sendModalResult(location, options)
             controller.popBackStack(destination.id, true)
         }
     }
 
-    private fun sendModalResult(location: String, action: String) {
+    private fun sendModalResult(location: String, options: VisitOptions) {
         if (fragment is TurbolinksWebFragment) {
-            fragment.sharedViewModel.modalResult = TurbolinksModalResult(location, action)
+            fragment.sharedViewModel.modalResult = TurbolinksModalResult(location, options)
         }
     }
 
-    private fun presentation(location: String, action: String): Presentation {
+    private fun presentation(location: String, options: VisitOptions): Presentation {
         val locationIsRoot = locationsAreSame(location, session.rootLocation)
         val locationIsCurrent = locationsAreSame(location, currentLocation())
         val locationIsPrevious = locationsAreSame(location, previousLocation())
-        val replace = action == "replace"
+        val replace = options.action == ACTION_REPLACE
 
         return when {
             locationIsRoot && locationIsCurrent -> Presentation.NONE

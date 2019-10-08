@@ -14,6 +14,7 @@ import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
+import com.google.gson.reflect.TypeToken
 import java.util.*
 
 @Suppress("unused")
@@ -77,10 +78,12 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     // Callbacks from Turbolinks Core
 
     @JavascriptInterface
-    fun visitProposedToLocationWithAction(location: String, action: String) {
-        logEvent("visitProposedToLocationWithAction", "location" to location, "action" to action)
+    fun visitProposedToLocation(location: String, optionsJson: String) {
         val properties = pathConfiguration.properties(location)
-        callback { it.visitProposedToLocation(location, action, properties) }
+        val options = optionsJson.toObject(object : TypeToken<VisitOptions>() {})
+
+        logEvent("visitProposedToLocation", "location" to location, "options" to options)
+        callback { it.visitProposedToLocation(location, options, properties) }
     }
 
     @JavascriptInterface
@@ -198,18 +201,20 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             else -> ""
         }
 
-        val action = when (restorationIdentifier) {
-            "" -> ACTION_ADVANCE
-            else -> visit.action
-        }
+        val options = VisitOptions(
+            action = when (restorationIdentifier) {
+                "" -> ACTION_ADVANCE
+                else -> visit.action
+            }
+        )
 
         logEvent("visitLocation",
                 "location" to visit.location,
-                "action" to action,
+                "options" to options,
                 "restorationIdentifier" to restorationIdentifier)
 
-        val params = commaDelimitedJson(visit.location.urlEncode(), action, restorationIdentifier)
-        webView.runJavascript("webView.visitLocationWithActionAndRestorationIdentifier($params)")
+        val params = commaDelimitedJson(visit.location.urlEncode(), options.toJson(), restorationIdentifier)
+        webView.runJavascript("webView.visitLocationWithOptionsAndRestorationIdentifier($params)")
     }
 
     private fun visitLocationAsColdBoot(visit: TurbolinksVisit) {
@@ -338,7 +343,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         }
 
         /**
-         * Turbolinks will not call adapter.visitProposedToLocationWithAction in some cases,
+         * Turbolinks will not call adapter.visitProposedToLocation in some cases,
          * like target=_blank or when the domain doesn't match. We still route those here.
          * This is only called when links within a webView are clicked and not during loadUrl.
          * So this is safely ignored for the first cold boot.
@@ -353,7 +358,8 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             }
 
             if (shouldProposeThrottledVisit()) {
-                visitProposedToLocationWithAction(location, ACTION_ADVANCE)
+                val options = VisitOptions(action = ACTION_ADVANCE)
+                visitProposedToLocation(location, options.toJson())
             }
 
             return true

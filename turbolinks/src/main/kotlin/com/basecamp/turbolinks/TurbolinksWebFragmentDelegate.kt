@@ -77,9 +77,10 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
         showErrorView(statusCode)
     }
 
-    override fun visitProposedToLocation(location: String, action: String,
+    override fun visitProposedToLocation(location: String,
+                                         options: VisitOptions,
                                          properties: PathProperties) {
-        val navigated = navigator.navigate(location, action, properties)
+        val navigated = navigator.navigate(location, options, properties)
 
         // In the case of a NONE presentation, reload the page with fresh data
         if (!navigated) {

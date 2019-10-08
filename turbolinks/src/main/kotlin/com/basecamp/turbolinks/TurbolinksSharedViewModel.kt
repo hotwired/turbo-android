@@ -18,5 +18,5 @@ class TurbolinksSharedViewModel : ViewModel() {
 
 data class TurbolinksModalResult(
     val location: String,
-    val action: String
+    val options: VisitOptions
 )
