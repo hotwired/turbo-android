@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_ADVANCE
+import com.basecamp.turbolinks.VisitAction.ADVANCE
 
 class TurbolinksActivityDelegate(val activity: AppCompatActivity,
                                  val router: TurbolinksRouter,
@@ -64,7 +64,7 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         }
     }
 
-    fun navigate(location: String, options: VisitOptions = VisitOptions(action = ACTION_ADVANCE)): Boolean {
+    fun navigate(location: String, options: VisitOptions = VisitOptions(action = ADVANCE)): Boolean {
         return currentDestination.navigate(location, options)
     }
 

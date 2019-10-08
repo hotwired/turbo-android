@@ -14,6 +14,8 @@ import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
+import com.basecamp.turbolinks.VisitAction.ADVANCE
+import com.basecamp.turbolinks.VisitAction.RESTORE
 import com.google.gson.reflect.TypeToken
 import java.util.*
 
@@ -196,13 +198,13 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     private fun visitLocation(visit: TurbolinksVisit) {
         val restorationIdentifier = when (visit.options.action) {
-            ACTION_RESTORE -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
-            ACTION_ADVANCE -> ""
+            RESTORE -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
+            ADVANCE -> ""
             else -> ""
         }
 
         val options = when (restorationIdentifier) {
-            "" -> visit.options.copy(action = ACTION_ADVANCE)
+            "" -> visit.options.copy(action = ADVANCE)
             else -> visit.options
         }
 
@@ -356,7 +358,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             }
 
             if (shouldProposeThrottledVisit()) {
-                val options = VisitOptions(action = ACTION_ADVANCE)
+                val options = VisitOptions(action = ADVANCE)
                 visitProposedToLocation(location, options.toJson())
             }
 
@@ -415,10 +417,6 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             TurbolinksWebView(context, attrs)
 
     companion object {
-        const val ACTION_ADVANCE = "advance"
-        const val ACTION_RESTORE = "restore"
-        const val ACTION_REPLACE = "replace"
-
         fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView = DefaultTurbolinksWebView(activity)): TurbolinksSession {
             return TurbolinksSession(sessionName, activity, webView)
         }

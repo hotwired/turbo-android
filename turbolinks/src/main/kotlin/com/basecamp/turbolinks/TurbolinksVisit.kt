@@ -9,8 +9,8 @@ data class TurbolinksVisit(
     var identifier: String = "", // Updated after visitStarted()
     val options: VisitOptions = VisitOptions(
         action = when (restoreWithCachedSnapshot && !reload) {
-            true -> TurbolinksSession.ACTION_RESTORE
-            else -> TurbolinksSession.ACTION_ADVANCE
+            true -> VisitAction.RESTORE
+            else -> VisitAction.ADVANCE
         }
     )
 )

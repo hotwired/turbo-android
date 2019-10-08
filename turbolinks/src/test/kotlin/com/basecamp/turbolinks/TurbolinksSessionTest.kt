@@ -2,6 +2,7 @@ package com.basecamp.turbolinks
 
 import android.app.Activity
 import android.os.Build
+import com.basecamp.turbolinks.VisitAction.ADVANCE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -43,7 +44,7 @@ class TurbolinksSessionTest {
     }
 
     @Test fun visitProposedToLocationFiresCallback() {
-        val options = VisitOptions(action = TurbolinksSession.ACTION_ADVANCE)
+        val options = VisitOptions(action = ADVANCE)
 
         session.currentVisit = visit
         session.visitProposedToLocation(visit.location, options.toJson())

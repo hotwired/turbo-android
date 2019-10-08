@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
-import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_REPLACE
 
 class TurbolinksNavigator(private val fragment: Fragment,
                           private val session: TurbolinksSession,
@@ -110,7 +109,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
         val locationIsRoot = locationsAreSame(location, session.rootLocation)
         val locationIsCurrent = locationsAreSame(location, currentLocation())
         val locationIsPrevious = locationsAreSame(location, previousLocation())
-        val replace = options.action == ACTION_REPLACE
+        val replace = options.action == VisitAction.REPLACE
 
         return when {
             locationIsRoot && locationIsCurrent -> Presentation.NONE

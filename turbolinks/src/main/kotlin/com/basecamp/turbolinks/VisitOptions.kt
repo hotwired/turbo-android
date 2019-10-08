@@ -1,9 +1,15 @@
 package com.basecamp.turbolinks
 
+import android.annotation.SuppressLint
+import com.basecamp.turbolinks.VisitAction.ADVANCE
+import com.basecamp.turbolinks.VisitAction.valueOf
+import com.google.gson.TypeAdapter
 import com.google.gson.annotations.SerializedName
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 
 data class VisitOptions(
-    @SerializedName("action") val action: String = TurbolinksSession.ACTION_ADVANCE,
+    @SerializedName("action") val action: VisitAction = ADVANCE,
     @SerializedName("response") val response: VisitResponse? = null
 )
 
@@ -11,3 +17,24 @@ data class VisitResponse(
     @SerializedName("statusCode") val statusCode: Int,
     @SerializedName("responseHTML") val responseHTML: String? = null
 )
+
+enum class VisitAction {
+    ADVANCE,
+    REPLACE,
+    RESTORE
+}
+
+@SuppressLint("DefaultLocale")
+class VisitActionAdapter : TypeAdapter<VisitAction>() {
+    override fun read(reader: JsonReader): VisitAction {
+        return try {
+            valueOf(reader.nextString().toUpperCase())
+        } catch (e: IllegalArgumentException) {
+            ADVANCE
+        }
+    }
+
+    override fun write(writer: JsonWriter, action: VisitAction) {
+        writer.value(action.name.toLowerCase())
+    }
+}

@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import com.basecamp.turbolinks.TurbolinksSession.Companion.ACTION_ADVANCE
+import com.basecamp.turbolinks.VisitAction.ADVANCE
 
 abstract class TurbolinksFragment : Fragment() {
     lateinit var location: String
@@ -62,7 +62,7 @@ abstract class TurbolinksFragment : Fragment() {
     // Navigation
     // ----------------------------------------------------------------------------
 
-    fun navigate(location: String, options: VisitOptions = VisitOptions(action = ACTION_ADVANCE)): Boolean {
+    fun navigate(location: String, options: VisitOptions = VisitOptions(action = ADVANCE)): Boolean {
         return navigator.navigate(location, options)
     }
 
