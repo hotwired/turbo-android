@@ -32,7 +32,8 @@ class TurbolinksSessionTest {
                 restoreWithCachedSnapshot = false,
                 reload = false,
                 callback = callback,
-                identifier = ""
+                identifier = "",
+                options = VisitOptions()
         )
     }
 
@@ -42,13 +43,15 @@ class TurbolinksSessionTest {
         assertThat(session).isNotEqualTo(TurbolinksSession.getNew("test", activity))
     }
 
-    @Test fun visitProposedToLocationWithActionFiresCallback() {
+    @Test fun visitProposedToLocationFiresCallback() {
+        val options = VisitOptions()
+
         session.currentVisit = visit
-        session.visitProposedToLocationWithAction(visit.location, TurbolinksSession.ACTION_ADVANCE)
+        session.visitProposedToLocation(visit.location, options.toJson())
 
         verify(callback).visitProposedToLocation(
                 visit.location,
-                TurbolinksSession.ACTION_ADVANCE,
+                options,
                 PathProperties())
     }
 

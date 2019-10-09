@@ -63,8 +63,8 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         }
     }
 
-    fun navigate(location: String, action: String = "advance"): Boolean {
-        return currentDestination.navigate(location, action)
+    fun navigate(location: String, options: VisitOptions = VisitOptions()): Boolean {
+        return currentDestination.navigate(location, options)
     }
 
     fun navigateUp(): Boolean {

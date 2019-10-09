@@ -14,6 +14,9 @@ import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
+import com.basecamp.turbolinks.VisitAction.ADVANCE
+import com.basecamp.turbolinks.VisitAction.RESTORE
+import com.google.gson.reflect.TypeToken
 import java.util.*
 
 @Suppress("unused")
@@ -77,10 +80,12 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     // Callbacks from Turbolinks Core
 
     @JavascriptInterface
-    fun visitProposedToLocationWithAction(location: String, action: String) {
-        logEvent("visitProposedToLocationWithAction", "location" to location, "action" to action)
+    fun visitProposedToLocation(location: String, optionsJson: String) {
         val properties = pathConfiguration.properties(location)
-        callback { it.visitProposedToLocation(location, action, properties) }
+        val options = VisitOptions.fromJSON(optionsJson) ?: return
+
+        logEvent("visitProposedToLocation", "location" to location, "options" to options)
+        callback { it.visitProposedToLocation(location, options, properties) }
     }
 
     @JavascriptInterface
@@ -192,24 +197,24 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     // Private
 
     private fun visitLocation(visit: TurbolinksVisit) {
-        val restorationIdentifier = when (visit.action) {
-            ACTION_RESTORE -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
-            ACTION_ADVANCE -> ""
+        val restorationIdentifier = when (visit.options.action) {
+            RESTORE -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
+            ADVANCE -> ""
             else -> ""
         }
 
-        val action = when (restorationIdentifier) {
-            "" -> ACTION_ADVANCE
-            else -> visit.action
+        val options = when (restorationIdentifier) {
+            "" -> visit.options.copy(action = ADVANCE)
+            else -> visit.options
         }
 
         logEvent("visitLocation",
                 "location" to visit.location,
-                "action" to action,
+                "options" to options,
                 "restorationIdentifier" to restorationIdentifier)
 
-        val params = commaDelimitedJson(visit.location.urlEncode(), action, restorationIdentifier)
-        webView.runJavascript("webView.visitLocationWithActionAndRestorationIdentifier($params)")
+        val params = commaDelimitedJson(visit.location.urlEncode(), options.toJson(), restorationIdentifier)
+        webView.runJavascript("webView.visitLocationWithOptionsAndRestorationIdentifier($params)")
     }
 
     private fun visitLocationAsColdBoot(visit: TurbolinksVisit) {
@@ -338,7 +343,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         }
 
         /**
-         * Turbolinks will not call adapter.visitProposedToLocationWithAction in some cases,
+         * Turbolinks will not call adapter.visitProposedToLocation in some cases,
          * like target=_blank or when the domain doesn't match. We still route those here.
          * This is only called when links within a webView are clicked and not during loadUrl.
          * So this is safely ignored for the first cold boot.
@@ -353,7 +358,8 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             }
 
             if (shouldProposeThrottledVisit()) {
-                visitProposedToLocationWithAction(location, ACTION_ADVANCE)
+                val options = VisitOptions()
+                visitProposedToLocation(location, options.toJson())
             }
 
             return true
@@ -411,10 +417,6 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             TurbolinksWebView(context, attrs)
 
     companion object {
-        const val ACTION_ADVANCE = "advance"
-        const val ACTION_RESTORE = "restore"
-        const val ACTION_REPLACE = "replace"
-
         fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView = DefaultTurbolinksWebView(activity)): TurbolinksSession {
             return TurbolinksSession(sessionName, activity, webView)
         }

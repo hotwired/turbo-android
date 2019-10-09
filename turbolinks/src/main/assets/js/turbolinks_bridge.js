@@ -10,8 +10,13 @@
     TLWebView.prototype = {
         // TurbolinksSession calls this as the starting point
 
-        visitLocationWithActionAndRestorationIdentifier: function(location, action, restorationIdentifier) {
-            this.controller.startVisitToLocationWithAction(location, action, restorationIdentifier)
+        visitLocationWithOptionsAndRestorationIdentifier: function(location, options, restorationIdentifier) {
+            if (this.controller.startVisitToLocation) {
+                this.controller.startVisitToLocation(location, restorationIdentifier, JSON.parse(options))
+            } else {
+                // Temporarily support old API
+                this.controller.startVisitToLocationWithAction(location, JSON.parse(options).action, restorationIdentifier)
+            }
         },
 
         // Functions available to TurbolinksSession to call directly into Turbolinks Core
@@ -61,8 +66,13 @@
             })
         },
 
+        // Temporary adapter for new API
         visitProposedToLocationWithAction: function(location, action) {
-            TurbolinksSession.visitProposedToLocationWithAction(location.absoluteURL, action)
+            this.visitProposedToLocation(location, { action })
+        },
+
+        visitProposedToLocation: function(location, options) {
+            TurbolinksSession.visitProposedToLocation(location.absoluteURL, JSON.stringify(options))
         },
 
         visitStarted: function(visit) {

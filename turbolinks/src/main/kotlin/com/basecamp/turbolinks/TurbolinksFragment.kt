@@ -6,9 +6,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import com.basecamp.turbolinks.VisitAction.ADVANCE
 
 abstract class TurbolinksFragment : Fragment() {
     lateinit var location: String
+    lateinit var visitOptions: VisitOptions
     lateinit var sessionName: String
     lateinit var router: TurbolinksRouter
     lateinit var session: TurbolinksSession
@@ -25,6 +27,7 @@ abstract class TurbolinksFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         location = currentLocation()
+        visitOptions = currentVisitOptions()
         sessionName = currentSessionName()
         sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
         pageViewModel = TurbolinksFragmentViewModel.get(location, this)
@@ -52,8 +55,8 @@ abstract class TurbolinksFragment : Fragment() {
         logEvent("fragment.onStart", "location" to location)
 
         navigatedFromModalResult = sharedViewModel.modalResult?.let {
-            logEvent("navigateFromModalResult", "location" to it.location, "action" to it.action)
-            navigator.navigate(it.location, it.action)
+            logEvent("navigateFromModalResult", "location" to it.location, "options" to it.options)
+            navigator.navigate(it.location, it.options)
         } ?: false
     }
 
@@ -61,8 +64,8 @@ abstract class TurbolinksFragment : Fragment() {
     // Navigation
     // ----------------------------------------------------------------------------
 
-    fun navigate(location: String, action: String = "advance"): Boolean {
-        return navigator.navigate(location, action)
+    fun navigate(location: String, options: VisitOptions = VisitOptions()): Boolean {
+        return navigator.navigate(location, options)
     }
 
     fun navigateUp(): Boolean {
@@ -100,6 +103,11 @@ abstract class TurbolinksFragment : Fragment() {
         return requireNotNull(arguments?.getString("location")) {
             "A location argument must be provided"
         }
+    }
+
+    private fun currentVisitOptions(): VisitOptions {
+        val options = VisitOptions.fromJSON(arguments?.getString("visitOptions"))
+        return options ?: VisitOptions()
     }
 
     private fun currentSessionName(): String {

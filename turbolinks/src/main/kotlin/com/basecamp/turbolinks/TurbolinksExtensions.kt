@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.annotation.ColorRes
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.net.URI
 import java.net.URL
@@ -37,11 +38,11 @@ internal fun Context.inflate(resource: Int, parent: ViewGroup? = null): View {
 }
 
 internal fun Any.toJson(): String {
-    return Gson().toJson(this)
+    return gson().toJson(this)
 }
 
 internal fun <T> String.toObject(typeToken: TypeToken<T>): T {
-    return Gson().fromJson<T>(this, typeToken.type)
+    return gson().fromJson<T>(this, typeToken.type)
 }
 
 internal fun String.urlEncode(): String {
@@ -72,4 +73,10 @@ internal fun View.invisible(invisible: Boolean) {
 
 internal fun View.gone() {
     visibility = View.GONE
+}
+
+private fun gson(): Gson {
+    return GsonBuilder()
+        .registerTypeAdapter(VisitAction::class.java, VisitActionAdapter())
+        .create()
 }
