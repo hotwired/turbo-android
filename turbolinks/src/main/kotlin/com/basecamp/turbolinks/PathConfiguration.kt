@@ -1,5 +1,6 @@
 package com.basecamp.turbolinks
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import com.google.gson.annotations.SerializedName
@@ -39,7 +40,7 @@ class PathConfiguration(context: Context) {
 
         return when (url.query) {
             null -> url.path
-            else -> "${url.path}${url.query}"
+            else -> "${url.path}?${url.query}"
         }
     }
 }
@@ -62,7 +63,8 @@ data class PathRule(
 
 typealias PathProperties = HashMap<String, String>
 
-val PathProperties.context: PresentationContext get() = try {
+val PathProperties.context: PresentationContext
+    @SuppressLint("DefaultLocale") get() = try {
     val value = get("context") ?: "default"
     PresentationContext.valueOf(value.toUpperCase())
 } catch (e: IllegalArgumentException) {
