@@ -39,7 +39,7 @@ class PathConfiguration(context: Context) {
 
         return when (url.query) {
             null -> url.path
-            else -> "${url.path}${url.query}"
+            else -> "${url.path}?${url.query}"
         }
     }
 }
