@@ -37,9 +37,9 @@ internal class Repository {
     private fun issueRequest(request: Request): String? = try {
         Http.sharedHttpClient.newCall(request).execute().use { response ->
             if (response.isSuccessful) {
-                response.body()?.string()
+                response.body?.string()
             } else {
-                logError(request, response.code().toString())
+                logError(request, response.code.toString())
                 null
             }
         }
@@ -59,6 +59,6 @@ internal class Repository {
     }
 
     private fun logError(request: Request, message: String?) {
-        TurbolinksLog.e("Response failed for ${request.url()} : $message")
+        TurbolinksLog.e("Response failed for ${request.url} : $message")
     }
 }
