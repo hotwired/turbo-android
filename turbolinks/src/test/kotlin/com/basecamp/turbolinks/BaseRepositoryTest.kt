@@ -9,7 +9,8 @@ import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import okio.Okio
+import okio.buffer
+import okio.source
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
@@ -47,7 +48,7 @@ open class BaseRepositoryTest : BaseUnitTest() {
 
     protected fun enqueueResponse(fileName: String, headers: Map<String, String> = emptyMap()) {
         val inputStream = loadAsset(fileName)
-        val source = Okio.buffer(Okio.source(inputStream))
+        val source = inputStream.source().buffer()
         val mockResponse = MockResponse().apply {
             headers.forEach { addHeader(it.key, it.value) }
             setBody(source.readString(StandardCharsets.UTF_8))
