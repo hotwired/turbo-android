@@ -10,6 +10,7 @@ import com.basecamp.turbolinks.VisitAction.ADVANCE
 
 abstract class TurbolinksFragment : Fragment() {
     lateinit var location: String
+    lateinit var visitOptions: VisitOptions
     lateinit var sessionName: String
     lateinit var router: TurbolinksRouter
     lateinit var session: TurbolinksSession
@@ -26,6 +27,7 @@ abstract class TurbolinksFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         location = currentLocation()
+        visitOptions = currentVisitOptions()
         sessionName = currentSessionName()
         sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
         pageViewModel = TurbolinksFragmentViewModel.get(location, this)
@@ -62,7 +64,7 @@ abstract class TurbolinksFragment : Fragment() {
     // Navigation
     // ----------------------------------------------------------------------------
 
-    fun navigate(location: String, options: VisitOptions = VisitOptions(action = ADVANCE)): Boolean {
+    fun navigate(location: String, options: VisitOptions = VisitOptions()): Boolean {
         return navigator.navigate(location, options)
     }
 
@@ -101,6 +103,11 @@ abstract class TurbolinksFragment : Fragment() {
         return requireNotNull(arguments?.getString("location")) {
             "A location argument must be provided"
         }
+    }
+
+    private fun currentVisitOptions(): VisitOptions {
+        val options = VisitOptions.fromJSON(arguments?.getString("visitOptions"))
+        return options ?: VisitOptions()
     }
 
     private fun currentSessionName(): String {

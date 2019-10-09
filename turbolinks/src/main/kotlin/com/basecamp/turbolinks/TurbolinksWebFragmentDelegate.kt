@@ -8,6 +8,7 @@ import kotlin.random.Random
 open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : TurbolinksSessionCallback {
 
     private var location = fragment.location
+    private var visitOptions = fragment.visitOptions
     private val identifier = generateIdentifier()
     private var isInitialVisit = true
     private var isWebViewAttachedToNewDestination = false
@@ -150,12 +151,20 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean, reload: Boolean) {
+        val restore = restoreWithCachedSnapshot && !reload
+        val options = when {
+            restore -> VisitOptions(action = VisitAction.RESTORE)
+            reload -> VisitOptions()
+            else -> visitOptions
+        }
+
         session().visit(TurbolinksVisit(
                 location = location,
                 destinationIdentifier = identifier,
                 restoreWithCachedSnapshot = restoreWithCachedSnapshot,
                 reload = reload,
-                callback = this
+                callback = this,
+                options = options
         ))
     }
 

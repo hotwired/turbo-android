@@ -46,17 +46,17 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
         when {
             presentation == Presentation.NONE -> return false
-            newContext == currentContext -> navigateWithinContext(location, currentProperties, presentation)
-            newContext == PresentationContext.MODAL -> navigateToModalContext(location, currentProperties)
+            newContext == currentContext -> navigateWithinContext(location, options, currentProperties, presentation)
+            newContext == PresentationContext.MODAL -> navigateToModalContext(location, options, currentProperties)
             newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location, options, currentProperties)
         }
 
         return true
     }
 
-    private fun navigateWithinContext(location: String, properties: PathProperties, presentation: Presentation) {
+    private fun navigateWithinContext(location: String, options: VisitOptions, properties: PathProperties, presentation: Presentation) {
         logEvent("navigateWithinContext", "location" to location, "presentation" to presentation)
-        val bundle = buildBundle(location, presentation)
+        val bundle = buildBundle(location, options, presentation)
 
         onNavigationVisit {
             if (presentation == Presentation.POP || presentation == Presentation.REPLACE) {
@@ -73,9 +73,9 @@ class TurbolinksNavigator(private val fragment: Fragment,
         }
     }
 
-    private fun navigateToModalContext(location: String, properties: PathProperties) {
+    private fun navigateToModalContext(location: String, options: VisitOptions, properties: PathProperties) {
         logEvent("navigateToModalContext", "location" to location)
-        val bundle = buildBundle(location, Presentation.PUSH)
+        val bundle = buildBundle(location, options, Presentation.PUSH)
 
         onNavigationVisit {
             navigateToLocation(location, properties, bundle)
@@ -166,7 +166,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
         return first?.removeInconsequentialSuffix() == second?.removeInconsequentialSuffix()
     }
 
-    private fun buildBundle(location: String, presentation: Presentation): Bundle {
+    private fun buildBundle(location: String, options: VisitOptions, presentation: Presentation): Bundle {
         val previousLocation = when (presentation) {
             Presentation.PUSH -> currentLocation()
             else -> previousLocation()
@@ -175,6 +175,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
         return bundleOf(
             "location" to location,
             "previousLocation" to previousLocation,
+            "visitOptions" to options.toJson(),
             "sessionName" to session.sessionName
         )
     }

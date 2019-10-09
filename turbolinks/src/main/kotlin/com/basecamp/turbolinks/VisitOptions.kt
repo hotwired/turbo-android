@@ -5,13 +5,22 @@ import com.basecamp.turbolinks.VisitAction.ADVANCE
 import com.basecamp.turbolinks.VisitAction.valueOf
 import com.google.gson.TypeAdapter
 import com.google.gson.annotations.SerializedName
+import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 
 data class VisitOptions(
     @SerializedName("action") val action: VisitAction = ADVANCE,
     @SerializedName("response") val response: VisitResponse? = null
-)
+) {
+    companion object {
+        fun fromJSON(json: String?): VisitOptions? = try {
+            json?.toObject(object : TypeToken<VisitOptions>() {})
+        } catch (e: Exception) {
+            null
+        }
+    }
+}
 
 data class VisitResponse(
     @SerializedName("statusCode") val statusCode: Int,
