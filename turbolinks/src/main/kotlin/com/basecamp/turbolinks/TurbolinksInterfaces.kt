@@ -33,4 +33,5 @@ interface TurbolinksWebFragmentCallback {
     fun onColdBootPageCompleted(location: String)
     fun onVisitStarted(location: String)
     fun onVisitCompleted(location: String)
+    fun onVisitErrorReceived(location: String, errorCode: Int)
 }

@@ -71,6 +71,7 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     override fun onReceivedError(errorCode: Int) {
+        fragment.onVisitErrorReceived(location, errorCode)
         showErrorView(errorCode)
     }
 

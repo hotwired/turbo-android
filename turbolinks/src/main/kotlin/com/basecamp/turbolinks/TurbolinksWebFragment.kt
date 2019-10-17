@@ -40,4 +40,6 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
     override fun onVisitStarted(location: String) {}
 
     override fun onVisitCompleted(location: String) {}
+
+    override fun onVisitErrorReceived(location: String, errorCode: Int) {}
 }

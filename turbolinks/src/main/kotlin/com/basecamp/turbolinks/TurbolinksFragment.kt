@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import com.basecamp.turbolinks.VisitAction.ADVANCE
 
 abstract class TurbolinksFragment : Fragment() {
     lateinit var location: String
