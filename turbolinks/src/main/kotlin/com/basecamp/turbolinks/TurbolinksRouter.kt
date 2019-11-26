@@ -19,5 +19,5 @@ enum class PresentationContext {
 }
 
 enum class Presentation {
-    PUSH, POP, REPLACE, REPLACE_ALL, NONE
+    PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT
 }
