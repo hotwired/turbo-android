@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import java.net.URI
 
 class TurbolinksNavigator(private val fragment: Fragment,
                           private val session: TurbolinksSession,
@@ -45,7 +46,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
             "newContext" to newContext, "presentation" to presentation)
 
         when {
-            presentation == Presentation.NONE -> return false
+            presentation == Presentation.REPLACE_ROOT -> navigateWithinContext(location, options, currentProperties, presentation)
             newContext == currentContext -> navigateWithinContext(location, options, currentProperties, presentation)
             newContext == PresentationContext.MODAL -> navigateToModalContext(location, options, currentProperties)
             newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location, options, currentProperties)
@@ -59,16 +60,23 @@ class TurbolinksNavigator(private val fragment: Fragment,
         val bundle = buildBundle(location, options, presentation)
 
         onNavigationVisit {
-            if (presentation == Presentation.POP || presentation == Presentation.REPLACE) {
-                currentController().popBackStack()
-            }
-
-            if (presentation == Presentation.REPLACE || presentation == Presentation.PUSH) {
-                navigateToLocation(location, properties, bundle)
-            }
-
-            if (presentation == Presentation.REPLACE_ALL) {
-                clearBackStack()
+            when (presentation) {
+                Presentation.POP -> {
+                    currentController().popBackStack()
+                }
+                Presentation.REPLACE -> {
+                    currentController().popBackStack()
+                    navigateToLocation(location, properties, bundle)
+                }
+                Presentation.PUSH -> {
+                    navigateToLocation(location, properties, bundle)
+                }
+                Presentation.REPLACE_ROOT -> {
+                    replaceRootLocation(location, properties, bundle)
+                }
+                Presentation.REPLACE_ALL -> {
+                    clearBackStack()
+                }
             }
         }
     }
@@ -112,12 +120,36 @@ class TurbolinksNavigator(private val fragment: Fragment,
         val replace = options.action == VisitAction.REPLACE
 
         return when {
-            locationIsRoot && locationIsCurrent -> Presentation.NONE
+            locationIsRoot && locationIsCurrent -> Presentation.REPLACE_ROOT
             locationIsPrevious -> Presentation.POP
             locationIsRoot -> Presentation.REPLACE_ALL
             locationIsCurrent || replace -> Presentation.REPLACE
             else -> Presentation.PUSH
         }
+    }
+
+    private fun replaceRootLocation(location: String, properties: PathProperties, bundle: Bundle) {
+        val controller = currentController()
+        val shouldNavigate = shouldNavigate(location, properties)
+        val destination = controller.graph.find { it.hasDeepLink(properties.uri) }
+
+        logEvent("shouldNavigateToLocation", "location" to location, "shouldNavigate" to shouldNavigate)
+
+        if (!shouldNavigate) {
+            return
+        }
+
+        if (destination == null) {
+            logEvent("replaceRootLocation", "error" to "No destination found")
+            return
+        }
+
+        val navOptions = navOptions {
+            popUpTo(destination.id) { inclusive = true }
+        }
+
+        logEvent("replaceRootLocation", "location" to location, "uri" to properties.uri)
+        controller.navigate(destination.id, bundle, navOptions)
     }
 
     private fun navigateToLocation(location: String, properties: PathProperties, bundle: Bundle) {
@@ -159,11 +191,11 @@ class TurbolinksNavigator(private val fragment: Fragment,
     }
 
     private fun locationsAreSame(first: String?, second: String?): Boolean {
-        fun String.removeInconsequentialSuffix(): String {
-            return this.removeSuffix("#").removeSuffix("/")
+        if (first == null || second == null) {
+            return false
         }
 
-        return first?.removeInconsequentialSuffix() == second?.removeInconsequentialSuffix()
+        return URI(first).path == URI(second).path
     }
 
     private fun buildBundle(location: String, options: VisitOptions, presentation: Presentation): Bundle {
