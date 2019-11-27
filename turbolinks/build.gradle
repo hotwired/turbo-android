@@ -16,9 +16,9 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     //  classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.25.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
     }
 }
 
