@@ -45,6 +45,10 @@ class TurbolinksNavigator(private val fragment: Fragment,
             "options" to options, "currentContext" to currentContext,
             "newContext" to newContext, "presentation" to presentation)
 
+        if (!shouldNavigate(location, currentProperties)) {
+            return true
+        }
+
         when {
             presentation == Presentation.REPLACE_ROOT -> navigateWithinContext(location, options, currentProperties, presentation)
             newContext == currentContext -> navigateWithinContext(location, options, currentProperties, presentation)
@@ -130,14 +134,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
     private fun replaceRootLocation(location: String, properties: PathProperties, bundle: Bundle) {
         val controller = currentController()
-        val shouldNavigate = shouldNavigate(location, properties)
         val destination = controller.graph.find { it.hasDeepLink(properties.uri) }
-
-        logEvent("shouldNavigateToLocation", "location" to location, "shouldNavigate" to shouldNavigate)
-
-        if (!shouldNavigate) {
-            return
-        }
 
         if (destination == null) {
             logEvent("replaceRootLocation", "error" to "No destination found")
@@ -154,15 +151,8 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
     private fun navigateToLocation(location: String, properties: PathProperties, bundle: Bundle) {
         val controller = currentController()
-        val shouldNavigate = shouldNavigate(location, properties)
         val destination = controller.graph.find { it.hasDeepLink(properties.uri) }
         val navOptions = navOptions(location, properties)
-
-        logEvent("shouldNavigateToLocation", "location" to location, "shouldNavigate" to shouldNavigate)
-
-        if (!shouldNavigate) {
-            return
-        }
 
         if (destination == null) {
             logEvent("navigateToLocation", "error" to "No destination found")
@@ -213,12 +203,15 @@ class TurbolinksNavigator(private val fragment: Fragment,
     }
 
     private fun shouldNavigate(location: String, properties: PathProperties): Boolean {
-        return router.shouldNavigate(
+        val shouldNavigate = router.shouldNavigate(
             currentLocation = currentLocation(),
             newLocation = location,
             currentPathProperties = currentPathProperties(),
             newPathProperties = properties
         )
+
+        logEvent("shouldNavigateToLocation", "location" to location, "shouldNavigate" to shouldNavigate)
+        return shouldNavigate
     }
 
     private fun navOptions(location: String, properties: PathProperties): NavOptions {
