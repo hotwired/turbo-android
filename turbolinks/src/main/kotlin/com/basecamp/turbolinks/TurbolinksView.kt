@@ -78,6 +78,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun createScreenshot(): Bitmap? {
+        if (!isLaidOut) return null
         if (!hasEnoughMemoryForScreenshot()) return null
         if (width <= 0 || height <= 0) return null
 
