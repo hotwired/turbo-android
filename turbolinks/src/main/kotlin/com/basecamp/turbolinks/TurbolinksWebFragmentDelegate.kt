@@ -127,10 +127,6 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
         val view = webView ?: return
         screenshotView()
 
-        // Clear the current toolbar title to prevent buggy animation
-        // effect when transitioning to the next/previous screen.
-        fragment.toolbar?.title = ""
-
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onReady() }
         fragment.onWebViewDetached()
