@@ -3,7 +3,6 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 
@@ -18,9 +17,9 @@ abstract class TurbolinksFragment : Fragment() {
     lateinit var sharedViewModel: TurbolinksSharedViewModel
     lateinit var pageViewModel: TurbolinksFragmentViewModel
 
-    var navigatedFromModalResult: Boolean = false
-    open val displaysToolbarTitle: Boolean = true
-    abstract val toolbar: Toolbar?
+    internal var navigatedFromModalResult: Boolean = false
+
+    abstract fun toolbarForNavigation(): Toolbar?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +29,6 @@ abstract class TurbolinksFragment : Fragment() {
         sessionName = currentSessionName()
         sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
         pageViewModel = TurbolinksFragmentViewModel.get(location, this)
-
-        observeLiveData()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -84,17 +81,9 @@ abstract class TurbolinksFragment : Fragment() {
     // ----------------------------------------------------------------------------
 
     private fun initToolbar() {
-        toolbar?.let {
+        toolbarForNavigation()?.let {
             NavigationUI.setupWithNavController(it, findNavController())
             it.setNavigationOnClickListener { navigateUp() }
-        }
-    }
-
-    private fun observeLiveData() {
-        if (displaysToolbarTitle) {
-            pageViewModel.title.observe(this, Observer {
-                toolbar?.title = it
-            })
         }
     }
 

@@ -417,7 +417,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             TurbolinksWebView(context, attrs)
 
     companion object {
-        fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView = DefaultTurbolinksWebView(activity)): TurbolinksSession {
+        fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView): TurbolinksSession {
             return TurbolinksSession(sessionName, activity, webView)
         }
     }
