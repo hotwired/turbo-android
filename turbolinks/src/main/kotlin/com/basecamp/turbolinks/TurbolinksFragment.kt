@@ -19,7 +19,6 @@ abstract class TurbolinksFragment : Fragment() {
     lateinit var pageViewModel: TurbolinksFragmentViewModel
 
     var navigatedFromModalResult: Boolean = false
-    open val displaysToolbarTitle: Boolean = true
     abstract val toolbar: Toolbar?
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +29,6 @@ abstract class TurbolinksFragment : Fragment() {
         sessionName = currentSessionName()
         sharedViewModel = TurbolinksSharedViewModel.get(requireActivity())
         pageViewModel = TurbolinksFragmentViewModel.get(location, this)
-
-        observeLiveData()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -87,14 +84,6 @@ abstract class TurbolinksFragment : Fragment() {
         toolbar?.let {
             NavigationUI.setupWithNavController(it, findNavController())
             it.setNavigationOnClickListener { navigateUp() }
-        }
-    }
-
-    private fun observeLiveData() {
-        if (displaysToolbarTitle) {
-            pageViewModel.title.observe(this, Observer {
-                toolbar?.title = it
-            })
         }
     }
 
