@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.basecamp.turbolinks.TurbolinksSession.DefaultTurbolinksWebView
 
 class TurbolinksActivityDelegate(val activity: AppCompatActivity,
                                  val router: TurbolinksRouter,
@@ -23,12 +24,12 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         }
     }
 
-    fun createSession(sessionName: String): TurbolinksSession {
+    fun createSession(sessionName: String, webView: TurbolinksWebView = DefaultTurbolinksWebView(activity)): TurbolinksSession {
         sessions.firstOrNull { it.sessionName == sessionName }?.let {
             throw IllegalArgumentException("Session with name '$sessionName' already exists")
         }
 
-        return TurbolinksSession.getNew(sessionName, activity).also {
+        return TurbolinksSession.getNew(sessionName, activity, webView).also {
             sessions.add(it)
         }
     }
