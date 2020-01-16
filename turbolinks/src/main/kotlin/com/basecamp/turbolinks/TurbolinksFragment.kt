@@ -9,6 +9,7 @@ import androidx.navigation.ui.NavigationUI
 abstract class TurbolinksFragment : Fragment() {
     lateinit var location: String
     lateinit var visitOptions: VisitOptions
+    lateinit var pathProperties: PathProperties
     lateinit var sessionName: String
     lateinit var router: TurbolinksRouter
     lateinit var session: TurbolinksSession
@@ -40,6 +41,7 @@ abstract class TurbolinksFragment : Fragment() {
 
         router = activity.delegate.router
         session = activity.delegate.getSession(sessionName)
+        pathProperties = session.pathConfiguration.properties(location)
         navigator = TurbolinksNavigator(this, session, router)
 
         initToolbar()
