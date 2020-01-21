@@ -15,7 +15,7 @@ internal class Repository {
     suspend fun getRemoteConfiguration(url: String): String? {
         val request = Request.Builder().url(url).build()
 
-        return withContext(Dispatchers.Main) {
+        return withContext(Dispatchers.IO) {
             issueRequest(request)
         }
     }
