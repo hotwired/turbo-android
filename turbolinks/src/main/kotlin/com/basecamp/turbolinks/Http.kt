@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
 internal object Http {
@@ -11,6 +12,12 @@ internal object Http {
                 .connectTimeout(10L, TimeUnit.SECONDS)
                 .readTimeout(30L, TimeUnit.SECONDS)
                 .writeTimeout(30L, TimeUnit.SECONDS)
+
+        if (TurbolinksLog.enableDebugLogging) {
+            builder.addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BASIC
+            })
+        }
 
         return builder.build()
     }
