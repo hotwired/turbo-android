@@ -11,6 +11,8 @@ import com.google.gson.GsonBuilder
 
 @SuppressLint("SetJavaScriptEnabled")
 open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : WebView(context, attrs) {
+    private val gson = GsonBuilder().disableHtmlEscaping().create()
+
     init {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
@@ -57,7 +59,6 @@ open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: 
     }
 
     private fun encodeArguments(vararg args: Any): String? {
-        val gson = GsonBuilder().disableHtmlEscaping().create()
         return args.joinToString(",") { gson.toJson(it) }
     }
 }
