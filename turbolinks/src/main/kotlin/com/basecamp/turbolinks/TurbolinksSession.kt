@@ -5,11 +5,8 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
-import android.util.AttributeSet
 import android.util.SparseArray
-import android.view.ViewGroup.LayoutParams
 import android.webkit.*
-import android.widget.FrameLayout
 import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
@@ -204,8 +201,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
                 "options" to options,
                 "restorationIdentifier" to restorationIdentifier)
 
-        val params = commaDelimitedJson(visit.location.urlEncode(), options.toJson(), restorationIdentifier)
-        webView.runJavascript("webView.visitLocationWithOptionsAndRestorationIdentifier($params)")
+        webView.visitLocation(visit.location, options, restorationIdentifier)
     }
 
     private fun visitLocationAsColdBoot(visit: TurbolinksVisit) {
@@ -231,7 +227,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     private fun renderVisitForColdBoot() {
         logEvent("renderVisitForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
-        webView.runJavascript("webView.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
+        webView.visitRenderedForColdBoot(coldBootVisitIdentifier)
         callback { it.visitCompleted() }
     }
 
@@ -262,28 +258,17 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             "major version" to (webView.majorVersion ?: ""))
 
         webView.apply {
-            settings.javaScriptEnabled = true
-            settings.domStorageEnabled = true
-
-            layoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             addJavascriptInterface(this@TurbolinksSession, "TurbolinksSession")
             webChromeClient = WebChromeClient()
             webViewClient = TurbolinksWebViewClient()
         }
     }
 
-    private fun installBridge(onBridgeInstalled: () -> Unit) {
+    private fun installBridge(location: String) {
         logEvent("installBridge")
 
-        val script = "window.webView == null"
-        val bridge = context.contentFromAsset("js/turbolinks_bridge.js")
-
-        webView.evaluateJavascript(script) { s ->
-            if (s?.toBoolean() == true) {
-                webView.evaluateJavascript(bridge) {
-                    onBridgeInstalled()
-                }
-            }
+        webView.installBridge {
+            callback { it.onPageFinished(location) }
         }
     }
 
@@ -323,9 +308,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
             logEvent("onPageFinished", "location" to location, "progress" to view.progress)
             coldBootVisitIdentifier = location.identifier()
-            installBridge {
-                callback { it.onPageFinished(location) }
-            }
+            installBridge(location)
         }
 
         override fun onPageCommitVisible(view: WebView, location: String) {
@@ -403,9 +386,6 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             return hashCode().toString()
         }
     }
-
-    internal class DefaultTurbolinksWebView constructor(context: Context, attrs: AttributeSet? = null) :
-            TurbolinksWebView(context, attrs)
 
     companion object {
         fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView): TurbolinksSession {

@@ -13,12 +13,6 @@ import com.google.gson.reflect.TypeToken
 import java.net.URI
 import java.net.URL
 
-internal fun WebView.runJavascript(javascript: String) {
-    context.runOnUiThread {
-        evaluateJavascript(javascript) {}
-    }
-}
-
 internal fun Context.color(@ColorRes id: Int): Int {
     return resources.getColor(id, null)
 }
