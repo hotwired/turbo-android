@@ -16,7 +16,6 @@ import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import com.basecamp.turbolinks.VisitAction.ADVANCE
 import com.basecamp.turbolinks.VisitAction.RESTORE
-import com.google.gson.reflect.TypeToken
 import java.util.*
 
 @Suppress("unused")
@@ -89,33 +88,17 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     }
 
     @JavascriptInterface
-    fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String, restorationIdentifier: String) {
+    fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String) {
         logEvent("visitStarted", "location" to location,
                 "visitIdentifier" to visitIdentifier,
-                "visitHasCachedSnapshot" to visitHasCachedSnapshot,
-                "restorationIdentifier" to restorationIdentifier)
+                "visitHasCachedSnapshot" to visitHasCachedSnapshot)
 
-        restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
         currentVisit.identifier = visitIdentifier
-
-        val params = commaDelimitedJson(visitIdentifier)
-        val script = """
-            webView.changeHistoryForVisitWithIdentifier($params);
-            webView.issueRequestForVisitWithIdentifier($params);
-            webView.loadCachedSnapshotForVisitWithIdentifier($params);
-        """.trimIndent()
-
-        webView.runJavascript(script)
     }
 
     @JavascriptInterface
     fun visitRequestCompleted(visitIdentifier: String) {
         logEvent("visitRequestCompleted", "visitIdentifier" to visitIdentifier)
-
-        if (visitIdentifier == currentVisit.identifier) {
-            val params = commaDelimitedJson(visitIdentifier)
-            webView.runJavascript("webView.loadResponseForVisitWithIdentifier($params)")
-        }
     }
 
     @JavascriptInterface
@@ -127,6 +110,11 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         if (visitIdentifier == currentVisit.identifier) {
             callback { it.requestFailedWithStatusCode(statusCode) }
         }
+    }
+
+    @JavascriptInterface
+    fun visitRequestFinished(visitIdentifier: String) {
+        logEvent("visitRequestFinished", "visitIdentifier" to visitIdentifier)
     }
 
     @JavascriptInterface
@@ -149,10 +137,13 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     }
 
     @JavascriptInterface
-    fun visitCompleted(visitIdentifier: String) {
-        logEvent("visitCompleted", "visitIdentifier" to visitIdentifier)
+    fun visitCompleted(visitIdentifier: String, restorationIdentifier: String) {
+        logEvent("visitCompleted",
+            "visitIdentifier" to visitIdentifier,
+            "restorationIdentifier" to restorationIdentifier)
 
         if (visitIdentifier == currentVisit.identifier) {
+            restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
             callback { it.visitCompleted() }
         }
     }
