@@ -76,8 +76,11 @@
         },
 
         visitStarted: function(visit) {
+            TurbolinksSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.location.absoluteURL)
             this.currentVisit = visit
-            TurbolinksSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.location.absoluteURL, visit.restorationIdentifier)
+            this.issueRequestForVisitWithIdentifier(visit.identifier)
+            this.changeHistoryForVisitWithIdentifier(visit.identifier)
+            this.loadCachedSnapshotForVisitWithIdentifier(visit.identifier)
         },
 
         visitRequestStarted: function(visit) {
@@ -86,6 +89,7 @@
 
         visitRequestCompleted: function(visit) {
             TurbolinksSession.visitRequestCompleted(visit.identifier)
+            this.loadResponseForVisitWithIdentifier(visit.identifier)
         },
 
         visitRequestFailedWithStatusCode: function(visit, statusCode) {
@@ -93,7 +97,7 @@
         },
 
         visitRequestFinished: function(visit) {
-            // Purposely left unimplemented. visitRequestCompleted covers most cases.
+            TurbolinksSession.visitRequestFinished(visit.identifier)
         },
 
         visitRendered: function(visit) {
@@ -104,7 +108,7 @@
 
         visitCompleted: function(visit) {
             this.afterNextRepaint(function() {
-                TurbolinksSession.visitCompleted(visit.identifier)
+                TurbolinksSession.visitCompleted(visit.identifier, visit.restorationIdentifier)
             })
         },
 
