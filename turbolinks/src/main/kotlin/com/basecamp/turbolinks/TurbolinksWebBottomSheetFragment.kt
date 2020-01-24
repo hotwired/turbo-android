@@ -3,7 +3,8 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import android.webkit.WebView
 
-abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWebFragmentCallback {
+@Suppress("unused")
+abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
 
     val webView: WebView? get() = delegate.webView

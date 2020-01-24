@@ -3,7 +3,7 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -13,7 +13,9 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
                                  var currentNavHostFragmentId: Int) {
 
     private val sessions = mutableListOf<TurbolinksSession>()
-    val currentDestination: TurbolinksFragment get() = currentFragment
+
+    val currentDestination: TurbolinksDestination
+        get() = currentFragment as TurbolinksDestination
 
     /*
      * Initialize the Activity with a BackPressedDispatcher that
@@ -83,8 +85,8 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         currentDestination.clearBackStack()
     }
 
-    private val currentFragment: TurbolinksFragment
-        get() = navHostFragment.childFragmentManager.primaryNavigationFragment as TurbolinksFragment
+    private val currentFragment: Fragment
+        get() = navHostFragment.childFragmentManager.primaryNavigationFragment as Fragment
 
     private val navHostFragment: NavHostFragment
         get() = activity.supportFragmentManager.findFragmentById(currentNavHostFragmentId) as? NavHostFragment

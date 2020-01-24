@@ -1,5 +1,6 @@
 package com.basecamp.turbolinks
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
@@ -12,7 +13,7 @@ class TurbolinksFragmentViewModel : ViewModel() {
     }
 
     companion object {
-        fun get(location: String, fragment: TurbolinksFragment): TurbolinksFragmentViewModel {
+        fun get(location: String, fragment: Fragment): TurbolinksFragmentViewModel {
             return ViewModelProviders.of(fragment).get(location, TurbolinksFragmentViewModel::class.java)
         }
     }
