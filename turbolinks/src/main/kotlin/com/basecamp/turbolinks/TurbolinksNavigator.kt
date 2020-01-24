@@ -1,9 +1,11 @@
 package com.basecamp.turbolinks
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
@@ -134,7 +136,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
     private fun replaceRootLocation(location: String, properties: PathProperties, bundle: Bundle) {
         val controller = currentController()
-        val destination = controller.graph.find { it.hasDeepLink(properties.uri) }
+        val destination = destinationFor(properties.uri)
 
         if (destination == null) {
             logEvent("replaceRootLocation", "error" to "No destination found")
@@ -151,20 +153,35 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
     private fun navigateToLocation(location: String, properties: PathProperties, bundle: Bundle) {
         val controller = currentController()
-        val destination = controller.graph.find { it.hasDeepLink(properties.uri) }
         val navOptions = navOptions(location, properties)
 
-        if (destination == null) {
-            logEvent("navigateToLocation", "error" to "No destination found")
+        destinationFor(properties.uri)?.let { destination ->
+            logEvent("navigateToLocation", "location" to location, "uri" to properties.uri)
+            controller.navigate(destination.id, bundle, navOptions)
             return
         }
 
-        logEvent("navigateToLocation", "location" to location, "uri" to properties.uri)
-        controller.navigate(destination.id, bundle, navOptions)
+        logEvent("navigateToLocation", "location" to location,
+            "warning" to "No destination found", "uri" to properties.uri)
+
+        val fallbackUri = router.getFallbackDeepLinkUri(location)
+
+        destinationFor(fallbackUri)?.let { destination ->
+            logEvent("navigateToLocation", "location" to location, "fallbackUri" to fallbackUri)
+            controller.navigate(destination.id, bundle, navOptions)
+            return
+        }
+
+        logEvent("navigateToLocation", "location" to location,
+            "error" to "No fallback destination found", "uri" to fallbackUri)
     }
 
     private fun currentController(): NavController {
         return fragment.findNavController()
+    }
+
+    private fun destinationFor(uri: Uri): NavDestination? {
+        return currentController().graph.find { it.hasDeepLink(uri) }
     }
 
     private fun popBackStack() {
