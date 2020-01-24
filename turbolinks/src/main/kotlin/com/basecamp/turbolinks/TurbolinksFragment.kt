@@ -62,8 +62,10 @@ abstract class TurbolinksFragment : Fragment() {
     // Navigation
     // ----------------------------------------------------------------------------
 
-    fun navigate(location: String, options: VisitOptions = VisitOptions()): Boolean {
-        return navigator.navigate(location, options)
+    fun navigate(location: String,
+                 options: VisitOptions = VisitOptions(),
+                 bundle: Bundle? = null): Boolean {
+        return navigator.navigate(location, options, null, bundle)
     }
 
     fun navigateUp(): Boolean {
