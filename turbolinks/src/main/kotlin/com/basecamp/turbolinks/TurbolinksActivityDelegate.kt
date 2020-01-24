@@ -1,7 +1,9 @@
 package com.basecamp.turbolinks
 
+import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -63,8 +65,10 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         }
     }
 
-    fun navigate(location: String, options: VisitOptions = VisitOptions()): Boolean {
-        return currentDestination.navigate(location, options)
+    fun navigate(location: String,
+                 options: VisitOptions = VisitOptions(),
+                 bundle: Bundle? = null): Boolean {
+        return currentDestination.navigate(location, options, bundle)
     }
 
     fun navigateUp(): Boolean {

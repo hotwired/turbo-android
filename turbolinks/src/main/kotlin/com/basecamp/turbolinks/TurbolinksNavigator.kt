@@ -37,7 +37,11 @@ class TurbolinksNavigator(private val fragment: Fragment,
         }
     }
 
-    fun navigate(location: String, options: VisitOptions, properties: PathProperties? = null): Boolean {
+    fun navigate(location: String,
+                 options: VisitOptions,
+                 properties: PathProperties? = null,
+                 bundle: Bundle? = null): Boolean {
+
         val currentProperties = properties ?: currentPathConfiguration().properties(location)
         val currentContext = currentPresentationContext()
         val newContext = currentProperties.context
@@ -52,18 +56,31 @@ class TurbolinksNavigator(private val fragment: Fragment,
         }
 
         when {
-            presentation == Presentation.REPLACE_ROOT -> navigateWithinContext(location, options, currentProperties, presentation)
-            newContext == currentContext -> navigateWithinContext(location, options, currentProperties, presentation)
-            newContext == PresentationContext.MODAL -> navigateToModalContext(location, options, currentProperties)
-            newContext == PresentationContext.DEFAULT -> dismissModalContextWithResult(location, options, currentProperties)
+            presentation == Presentation.REPLACE_ROOT -> {
+                navigateWithinContext(location, options, currentProperties, presentation, bundle)
+            }
+            newContext == currentContext -> {
+                navigateWithinContext(location, options, currentProperties, presentation, bundle)
+            }
+            newContext == PresentationContext.MODAL -> {
+                navigateToModalContext(location, options, currentProperties, bundle)
+            }
+            newContext == PresentationContext.DEFAULT -> {
+                dismissModalContextWithResult(location, options, currentProperties)
+            }
         }
 
         return true
     }
 
-    private fun navigateWithinContext(location: String, options: VisitOptions, properties: PathProperties, presentation: Presentation) {
+    private fun navigateWithinContext(location: String,
+                                      options: VisitOptions,
+                                      properties: PathProperties,
+                                      presentation: Presentation,
+                                      bundle: Bundle?) {
+
         logEvent("navigateWithinContext", "location" to location, "presentation" to presentation)
-        val bundle = buildBundle(location, options, presentation)
+        val navBundle = bundle.withNavArguments(location, options, presentation)
 
         onNavigationVisit {
             when (presentation) {
@@ -72,13 +89,13 @@ class TurbolinksNavigator(private val fragment: Fragment,
                 }
                 Presentation.REPLACE -> {
                     currentController().popBackStack()
-                    navigateToLocation(location, properties, bundle)
+                    navigateToLocation(location, properties, navBundle)
                 }
                 Presentation.PUSH -> {
-                    navigateToLocation(location, properties, bundle)
+                    navigateToLocation(location, properties, navBundle)
                 }
                 Presentation.REPLACE_ROOT -> {
-                    replaceRootLocation(location, properties, bundle)
+                    replaceRootLocation(location, properties, navBundle)
                 }
                 Presentation.REPLACE_ALL -> {
                     clearBackStack()
@@ -87,12 +104,16 @@ class TurbolinksNavigator(private val fragment: Fragment,
         }
     }
 
-    private fun navigateToModalContext(location: String, options: VisitOptions, properties: PathProperties) {
+    private fun navigateToModalContext(location: String,
+                                       options: VisitOptions,
+                                       properties: PathProperties,
+                                       bundle: Bundle?) {
+
         logEvent("navigateToModalContext", "location" to location)
-        val bundle = buildBundle(location, options, Presentation.PUSH)
+        val navBundle = bundle.withNavArguments(location, options, Presentation.PUSH)
 
         onNavigationVisit {
-            navigateToLocation(location, properties, bundle)
+            navigateToLocation(location, properties, navBundle)
         }
     }
 
@@ -205,18 +226,21 @@ class TurbolinksNavigator(private val fragment: Fragment,
         return URI(first).path == URI(second).path
     }
 
-    private fun buildBundle(location: String, options: VisitOptions, presentation: Presentation): Bundle {
+    private fun Bundle?.withNavArguments(location: String, options: VisitOptions, presentation: Presentation): Bundle {
         val previousLocation = when (presentation) {
             Presentation.PUSH -> currentLocation()
             else -> previousLocation()
         }
 
-        return bundleOf(
+        val bundle = this ?: bundleOf()
+        val navBundle = bundleOf(
             "location" to location,
             "previousLocation" to previousLocation,
             "visitOptions" to options.toJson(),
             "sessionName" to session.sessionName
         )
+
+        return bundle.apply { putAll(navBundle) }
     }
 
     private fun shouldNavigate(location: String, properties: PathProperties): Boolean {
