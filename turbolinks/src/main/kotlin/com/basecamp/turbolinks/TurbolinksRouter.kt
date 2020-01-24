@@ -1,5 +1,6 @@
 package com.basecamp.turbolinks
 
+import android.net.Uri
 import androidx.navigation.NavOptions
 
 abstract class TurbolinksRouter {
@@ -12,6 +13,8 @@ abstract class TurbolinksRouter {
                                       newLocation: String,
                                       currentPathProperties: PathProperties,
                                       newPathProperties: PathProperties): NavOptions?
+
+    abstract fun getFallbackDeepLinkUri(location: String): Uri
 }
 
 enum class PresentationContext {

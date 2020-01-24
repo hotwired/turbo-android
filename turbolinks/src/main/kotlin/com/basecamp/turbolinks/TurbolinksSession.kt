@@ -265,7 +265,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     }
 
     private fun installBridge(location: String) {
-        logEvent("installBridge")
+        logEvent("installBridge", "location" to location)
 
         webView.installBridge {
             callback { it.onPageFinished(location) }
