@@ -1,13 +1,11 @@
 package com.basecamp.turbolinks
 
+import android.content.DialogInterface
 import android.os.Bundle
-import android.webkit.WebView
 
 @Suppress("unused")
 abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
-
-    val webView: WebView? get() = delegate.webView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +20,11 @@ abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFra
     override fun onStart() {
         super.onStart()
         delegate.onStart()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        delegate.onDialogDismiss()
+        super.onDismiss(dialog)
     }
 
     // ----------------------------------------------------------------------------

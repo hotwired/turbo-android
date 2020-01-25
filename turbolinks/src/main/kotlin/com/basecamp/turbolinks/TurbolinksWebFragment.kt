@@ -6,8 +6,6 @@ import android.webkit.WebView
 abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
 
-    val webView: WebView? get() = delegate.webView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         delegate = TurbolinksWebFragmentDelegate(this, this)

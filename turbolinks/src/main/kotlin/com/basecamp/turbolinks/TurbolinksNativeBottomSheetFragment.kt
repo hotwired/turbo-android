@@ -1,7 +1,6 @@
 package com.basecamp.turbolinks
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 abstract class TurbolinksNativeBottomSheetFragment : BottomSheetDialogFragment(), TurbolinksDestination {
@@ -20,10 +19,6 @@ abstract class TurbolinksNativeBottomSheetFragment : BottomSheetDialogFragment()
     override fun onStart() {
         super.onStart()
         delegate.onStart()
-    }
-
-    override fun fragment(): Fragment {
-        return this
     }
 
     override fun delegate(): TurbolinksFragmentDelegate {

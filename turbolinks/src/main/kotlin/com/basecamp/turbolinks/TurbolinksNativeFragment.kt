@@ -21,10 +21,6 @@ abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
         delegate.onStart()
     }
 
-    override fun fragment(): Fragment {
-        return this
-    }
-
     override fun delegate(): TurbolinksFragmentDelegate {
         return delegate
     }

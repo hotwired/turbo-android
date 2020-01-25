@@ -3,8 +3,12 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 
 interface TurbolinksDestination {
+    val fragment: Fragment
+        get() = this as Fragment
+
     val location: String
         get() = delegate().location
 
@@ -23,6 +27,9 @@ interface TurbolinksDestination {
     val session: TurbolinksSession
         get() = delegate().session
 
+    val webView: TurbolinksWebView
+        get() = session.webView
+
     val sharedViewModel: TurbolinksSharedViewModel
         get() = delegate().sharedViewModel
 
@@ -34,8 +41,6 @@ interface TurbolinksDestination {
 
     val navigator: TurbolinksNavigator
         get() = delegate().navigator
-
-    fun fragment(): Fragment
 
     fun delegate(): TurbolinksFragmentDelegate
 

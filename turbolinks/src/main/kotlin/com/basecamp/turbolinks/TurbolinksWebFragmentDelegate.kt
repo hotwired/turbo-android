@@ -35,6 +35,10 @@ open class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDest
         }
     }
 
+    fun onDialogDismiss() {
+        detachWebView()
+    }
+
     fun session(): TurbolinksSession {
         return destination.session
     }
