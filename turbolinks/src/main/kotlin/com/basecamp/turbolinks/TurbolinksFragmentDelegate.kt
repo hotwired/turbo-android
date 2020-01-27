@@ -10,7 +10,6 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     internal var sessionName = currentSessionName()
     internal var sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
     internal var pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
-    internal var navigatedFromModalResult: Boolean = false
 
     internal lateinit var pathProperties: PathProperties
     internal lateinit var router: TurbolinksRouter
@@ -33,11 +32,15 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
 
     fun onStart() {
         logEvent("fragment.onStart", "location" to location)
+    }
 
-        navigatedFromModalResult = sessionViewModel.modalResult?.let {
-            logEvent("navigateFromModalResult", "location" to it.location, "options" to it.options)
-            navigator.navigate(it.location, it.options)
-        } ?: false
+    fun onStartAfterDialogDismiss() {
+        logEvent("fragment.onStartAfterDialogDismiss", "location" to location)
+    }
+
+    fun onStartAfterModalResult(result: TurbolinksModalResult) {
+        logEvent("fragment.onStartAfterModalResult", "location" to result.location, "options" to result.options)
+        navigator.navigate(result.location, result.options)
     }
 
     fun onDialogDismiss() {

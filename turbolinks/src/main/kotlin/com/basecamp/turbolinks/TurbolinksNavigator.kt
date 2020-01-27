@@ -55,8 +55,6 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             return true
         }
 
-        destination.onBeforeNavigation()
-
         when {
             presentation == Presentation.REPLACE_ROOT -> {
                 navigateWithinContext(location, options, currentProperties, presentation, bundle)
@@ -137,9 +135,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun sendModalResult(location: String, options: VisitOptions) {
-        if (fragment is TurbolinksWebFragment) {
-            fragment.sessionViewModel.modalResult = TurbolinksModalResult(location, options)
-        }
+        destination.sessionViewModel.sendModalResult(TurbolinksModalResult(location, options))
     }
 
     private fun presentation(location: String, options: VisitOptions): Presentation {

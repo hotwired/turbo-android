@@ -17,12 +17,18 @@ abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWeb
 
     override fun onStart() {
         super.onStart()
-        delegate.onStart()
+
+        if (!sessionViewModel.modalResultExists) {
+            delegate.onStart()
+        }
     }
 
     override fun onStartAfterDialogDismiss() {
         super.onStartAfterDialogDismiss()
-        delegate.onStart()
+
+        if (!sessionViewModel.modalResultExists) {
+            delegate.onStartAfterDialogDismiss()
+        }
     }
 
     // ----------------------------------------------------------------------------

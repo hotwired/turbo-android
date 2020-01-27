@@ -29,9 +29,11 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     fun onStart() {
-        if (!destination.navigatedFromModalResult) {
-            initNavigationVisit()
-        }
+        initNavigationVisit()
+    }
+
+    fun onStartAfterDialogDismiss() {
+        initNavigationVisit()
     }
 
     fun onDialogDismiss() {

@@ -35,15 +35,10 @@ interface TurbolinksDestination {
     val pageViewModel: TurbolinksFragmentViewModel
         get() = delegate().pageViewModel
 
-    val navigatedFromModalResult: Boolean
-        get() = delegate().navigatedFromModalResult
-
     val navigator: TurbolinksNavigator
         get() = delegate().navigator
 
     fun delegate(): TurbolinksFragmentDelegate
-
-    fun onBeforeNavigation() {}
 
     fun toolbarForNavigation(): Toolbar?
 

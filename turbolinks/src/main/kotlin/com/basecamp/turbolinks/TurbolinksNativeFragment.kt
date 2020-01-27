@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.basecamp.turbolinks.PresentationContext.MODAL
 
 abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
     private lateinit var delegate: TurbolinksFragmentDelegate
@@ -15,6 +16,7 @@ abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeModalResult()
         observeDialogResult()
     }
 
@@ -25,15 +27,35 @@ abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
 
     override fun onStart() {
         super.onStart()
-        delegate.onStart()
+
+        if (!sessionViewModel.modalResultExists) {
+            delegate.onStart()
+        }
+    }
+
+    open fun onStartAfterModalResult(result: TurbolinksModalResult) {
+        delegate.onStartAfterModalResult(result)
+    }
+
+    open fun onStartAfterDialogDismiss() {
+        if (!sessionViewModel.modalResultExists) {
+            delegate.onStartAfterDialogDismiss()
+        }
     }
 
     override fun delegate(): TurbolinksFragmentDelegate {
         return delegate
     }
 
-    open fun onStartAfterDialogDismiss() {
-        delegate.onStart()
+    private fun observeModalResult() {
+        delegate.sessionViewModel.modalResult.observe(viewLifecycleOwner, Observer { event ->
+            // Only handle modal results in non-modal contexts
+            if (pathProperties.context != MODAL) {
+                event.getContentIfNotHandled()?.let {
+                    onStartAfterModalResult(it)
+                }
+            }
+        })
     }
 
     private fun observeDialogResult() {

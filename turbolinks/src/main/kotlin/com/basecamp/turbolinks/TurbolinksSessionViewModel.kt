@@ -6,13 +6,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class TurbolinksSessionViewModel : ViewModel() {
-    // Modal result can only be retrieved once
-    var modalResult: TurbolinksModalResult? = null
-        get() = field.also { field = null }
+    // Modal result can only be observed once
+    val modalResult: MutableLiveData<TurbolinksEvent<TurbolinksModalResult>> by lazy {
+        MutableLiveData<TurbolinksEvent<TurbolinksModalResult>>()
+    }
 
-    // Dialog dismissed event can only be observed once
+    val modalResultExists: Boolean
+        get() = modalResult.value?.hasBeenHandled == false
+
+    // Dialog result can only be observed once
     val dialogResult: MutableLiveData<TurbolinksEvent<TurbolinksDialogResult>> by lazy {
         MutableLiveData<TurbolinksEvent<TurbolinksDialogResult>>()
+    }
+
+    fun sendModalResult(result: TurbolinksModalResult) {
+        modalResult.value = TurbolinksEvent(result)
     }
 
     fun sendDialogResult() {
