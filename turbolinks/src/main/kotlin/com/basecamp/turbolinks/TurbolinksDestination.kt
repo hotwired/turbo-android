@@ -3,7 +3,6 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 
 interface TurbolinksDestination {
     val fragment: Fragment
@@ -30,8 +29,8 @@ interface TurbolinksDestination {
     val webView: TurbolinksWebView
         get() = session.webView
 
-    val sharedViewModel: TurbolinksSharedViewModel
-        get() = delegate().sharedViewModel
+    val sessionViewModel: TurbolinksSessionViewModel
+        get() = delegate().sessionViewModel
 
     val pageViewModel: TurbolinksFragmentViewModel
         get() = delegate().pageViewModel
@@ -43,6 +42,8 @@ interface TurbolinksDestination {
         get() = delegate().navigator
 
     fun delegate(): TurbolinksFragmentDelegate
+
+    fun onBeforeNavigation() {}
 
     fun toolbarForNavigation(): Toolbar?
 

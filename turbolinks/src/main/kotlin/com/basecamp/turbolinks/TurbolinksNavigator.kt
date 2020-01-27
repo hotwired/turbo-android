@@ -3,7 +3,6 @@ package com.basecamp.turbolinks
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
@@ -11,9 +10,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import java.net.URI
 
-class TurbolinksNavigator(private val fragment: Fragment,
-                          private val session: TurbolinksSession,
-                          private val router: TurbolinksRouter) {
+class TurbolinksNavigator(private val destination: TurbolinksDestination) {
+    private val fragment = destination.fragment
+    private val session = destination.session
+    private val router = destination.router
 
     var onNavigationVisit: (onNavigate: () -> Unit) -> Unit = { onReady ->
         onReady()
@@ -54,6 +54,8 @@ class TurbolinksNavigator(private val fragment: Fragment,
         if (!shouldNavigate(location, currentProperties)) {
             return true
         }
+
+        destination.onBeforeNavigation()
 
         when {
             presentation == Presentation.REPLACE_ROOT -> {
@@ -136,7 +138,7 @@ class TurbolinksNavigator(private val fragment: Fragment,
 
     private fun sendModalResult(location: String, options: VisitOptions) {
         if (fragment is TurbolinksWebFragment) {
-            fragment.sharedViewModel.modalResult = TurbolinksModalResult(location, options)
+            fragment.sessionViewModel.modalResult = TurbolinksModalResult(location, options)
         }
     }
 

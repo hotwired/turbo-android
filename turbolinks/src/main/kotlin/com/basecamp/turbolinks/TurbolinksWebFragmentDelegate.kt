@@ -4,9 +4,8 @@ import android.graphics.Bitmap
 import android.webkit.WebView
 import kotlin.random.Random
 
-@Suppress("unused")
-open class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestination,
-                                         private val callback: TurbolinksWebFragmentCallback) : TurbolinksSessionCallback {
+class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestination,
+                                    private val callback: TurbolinksWebFragmentCallback) : TurbolinksSessionCallback {
 
     private var location = destination.location
     private var visitOptions = destination.visitOptions
@@ -225,9 +224,5 @@ open class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDest
 
     private fun generateIdentifier(): Int {
         return Random.nextInt(0, 999999999)
-    }
-
-    private fun logEvent(event: String, vararg params: Pair<String, Any>) {
-        logEvent(event, params.toList())
     }
 }

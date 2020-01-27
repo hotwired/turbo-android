@@ -1,7 +1,6 @@
 package com.basecamp.turbolinks
 
 import android.os.Bundle
-import android.webkit.WebView
 
 abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
@@ -18,6 +17,11 @@ abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWeb
 
     override fun onStart() {
         super.onStart()
+        delegate.onStart()
+    }
+
+    override fun onStartAfterDialogDismiss() {
+        super.onStartAfterDialogDismiss()
         delegate.onStart()
     }
 

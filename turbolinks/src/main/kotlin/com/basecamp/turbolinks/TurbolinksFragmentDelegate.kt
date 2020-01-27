@@ -1,16 +1,14 @@
 package com.basecamp.turbolinks
 
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 
-class TurbolinksFragmentDelegate(private val fragment: Fragment,
-                                 private val destination: TurbolinksDestination) {
-
+class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
+    internal var fragment = destination.fragment
     internal var location = currentLocation()
     internal var visitOptions = currentVisitOptions()
     internal var sessionName = currentSessionName()
-    internal var sharedViewModel = TurbolinksSharedViewModel.get(fragment.requireActivity())
+    internal var sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
     internal var pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
     internal var navigatedFromModalResult: Boolean = false
 
@@ -27,7 +25,7 @@ class TurbolinksFragmentDelegate(private val fragment: Fragment,
         router = activity.delegate.router
         session = activity.delegate.getSession(sessionName)
         pathProperties = session.pathConfiguration.properties(location)
-        navigator = TurbolinksNavigator(fragment, session, router)
+        navigator = TurbolinksNavigator(destination)
 
         initToolbar()
         logEvent("fragment.onActivityCreated", "location" to location)
@@ -36,10 +34,15 @@ class TurbolinksFragmentDelegate(private val fragment: Fragment,
     fun onStart() {
         logEvent("fragment.onStart", "location" to location)
 
-        navigatedFromModalResult = sharedViewModel.modalResult?.let {
+        navigatedFromModalResult = sessionViewModel.modalResult?.let {
             logEvent("navigateFromModalResult", "location" to it.location, "options" to it.options)
             navigator.navigate(it.location, it.options)
         } ?: false
+    }
+
+    fun onDialogDismiss() {
+        logEvent("fragment.onDialogDismiss", "location" to location)
+        sessionViewModel.sendDialogResult()
     }
 
     // ----------------------------------------------------------------------------
