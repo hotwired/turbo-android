@@ -6,19 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.basecamp.turbolinks.TurbolinksSwipeRefreshLayout
+    <FrameLayout
         android:id="@+id/turbolinks_webView_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:minHeight="400dp">
 
         <!-- WebView get attached/detached here -->
 
-    </com.basecamp.turbolinks.TurbolinksSwipeRefreshLayout>
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/turbolinks_progress_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:minHeight="400dp"
         android:visibility="gone"
         android:clickable="true"
         android:focusable="true">
@@ -36,16 +38,17 @@
         android:focusable="true"
         tools:ignore="ContentDescription" />
 
-    <com.basecamp.turbolinks.TurbolinksSwipeRefreshLayout
+    <FrameLayout
         android:id="@+id/turbolinks_error_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:minHeight="400dp"
         android:visibility="gone"
         android:clickable="true"
         android:focusable="true">
 
         <!-- Custom error view added/removed here -->
 
-    </com.basecamp.turbolinks.TurbolinksSwipeRefreshLayout>
+    </FrameLayout>
 
 </com.basecamp.turbolinks.TurbolinksView>

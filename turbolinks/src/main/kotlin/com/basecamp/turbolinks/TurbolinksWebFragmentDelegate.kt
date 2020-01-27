@@ -190,7 +190,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
-        turbolinksView.refreshLayout.apply {
+        turbolinksView.webViewRefresh?.apply {
             isEnabled = callback.shouldEnablePullToRefresh()
             setOnRefreshListener {
                 isWebViewAttachedToNewDestination = false
@@ -200,7 +200,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     private fun initializeErrorPullToRefresh(turbolinksView: TurbolinksView) {
-        turbolinksView.errorRefreshLayout.apply {
+        turbolinksView.errorRefresh?.apply {
             setOnRefreshListener {
                 isWebViewAttachedToNewDestination = false
                 visit(location, restoreWithCachedSnapshot = false, reload = true)
@@ -215,8 +215,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     private fun removeTransitionalViews() {
-        turbolinksView?.refreshLayout?.isRefreshing = false
-        turbolinksView?.errorRefreshLayout?.isRefreshing = false
+        turbolinksView?.webViewRefresh?.isRefreshing = false
+        turbolinksView?.errorRefresh?.isRefreshing = false
         turbolinksView?.removeProgressView()
         turbolinksView?.removeScreenshot()
         turbolinksView?.removeErrorView()
