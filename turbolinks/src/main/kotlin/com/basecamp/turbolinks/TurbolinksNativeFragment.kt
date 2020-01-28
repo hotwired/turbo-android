@@ -37,9 +37,9 @@ abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
         delegate.onStartAfterModalResult(result)
     }
 
-    open fun onStartAfterDialogDismiss() {
+    open fun onStartAfterDialogCancel() {
         if (!sessionViewModel.modalResultExists) {
-            delegate.onStartAfterDialogDismiss()
+            delegate.onStartAfterDialogCancel()
         }
     }
 
@@ -61,7 +61,7 @@ abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
     private fun observeDialogResult() {
         delegate.sessionViewModel.dialogResult.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                onStartAfterDialogDismiss()
+                onStartAfterDialogCancel()
             }
         })
     }

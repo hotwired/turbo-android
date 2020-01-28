@@ -34,8 +34,8 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
         logEvent("fragment.onStart", "location" to location)
     }
 
-    fun onStartAfterDialogDismiss() {
-        logEvent("fragment.onStartAfterDialogDismiss", "location" to location)
+    fun onStartAfterDialogCancel() {
+        logEvent("fragment.onStartAfterDialogCancel", "location" to location)
     }
 
     fun onStartAfterModalResult(result: TurbolinksModalResult) {
@@ -43,9 +43,11 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
         navigator.navigate(result.location, result.options)
     }
 
-    fun onDialogDismiss() {
-        logEvent("fragment.onDialogDismiss", "location" to location)
-        sessionViewModel.sendDialogResult()
+    fun onDialogCancel() {
+        logEvent("fragment.onDialogCancel", "location" to location)
+        if (!sessionViewModel.modalResultExists) {
+            sessionViewModel.sendDialogResult()
+        }
     }
 
     // ----------------------------------------------------------------------------

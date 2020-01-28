@@ -23,11 +23,11 @@ abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWeb
         }
     }
 
-    override fun onStartAfterDialogDismiss() {
-        super.onStartAfterDialogDismiss()
+    override fun onStartAfterDialogCancel() {
+        super.onStartAfterDialogCancel()
 
         if (!sessionViewModel.modalResultExists) {
-            delegate.onStartAfterDialogDismiss()
+            delegate.onStartAfterDialogCancel()
         }
     }
 

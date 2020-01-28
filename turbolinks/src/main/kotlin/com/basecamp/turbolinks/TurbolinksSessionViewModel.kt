@@ -42,5 +42,5 @@ data class TurbolinksModalResult(
 )
 
 data class TurbolinksDialogResult(
-    val dismissed: Boolean
+    val cancelled: Boolean
 )
