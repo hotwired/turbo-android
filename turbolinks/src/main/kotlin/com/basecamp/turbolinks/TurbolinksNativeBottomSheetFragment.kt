@@ -23,8 +23,8 @@ abstract class TurbolinksNativeBottomSheetFragment : BottomSheetDialogFragment()
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
         delegate.onDialogDismiss()
+        super.onDismiss(dialog)
     }
 
     override fun delegate(): TurbolinksFragmentDelegate {
