@@ -1,8 +1,9 @@
 package com.basecamp.turbolinks
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 
 class TurbolinksFragmentViewModel : ViewModel() {
     val title: MutableLiveData<String> = MutableLiveData()
@@ -12,8 +13,10 @@ class TurbolinksFragmentViewModel : ViewModel() {
     }
 
     companion object {
-        fun get(location: String, fragment: TurbolinksFragment): TurbolinksFragmentViewModel {
-            return ViewModelProviders.of(fragment).get(location, TurbolinksFragmentViewModel::class.java)
+        fun get(location: String, fragment: Fragment): TurbolinksFragmentViewModel {
+            return ViewModelProvider(fragment).get(
+                location, TurbolinksFragmentViewModel::class.java
+            )
         }
     }
 }

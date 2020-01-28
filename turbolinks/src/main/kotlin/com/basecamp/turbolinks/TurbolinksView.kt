@@ -5,76 +5,89 @@ import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.core.view.drawToBitmap
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.turbolinks_view.view.*
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 class TurbolinksView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
         FrameLayout(context, attrs, defStyleAttr) {
 
-    internal val refreshLayout get() = turbolinks_refresh
-    internal val errorRefreshLayout get() = turbolinks_error_refresh
+    private val webViewContainer: ViewGroup get() = findViewById(R.id.turbolinks_webView_container)
+    private val progressContainer: ViewGroup get() = findViewById(R.id.turbolinks_progress_container)
+    private val errorContainer: ViewGroup get() = findViewById(R.id.turbolinks_error_container)
+    private val screenshotView: ImageView get() = findViewById(R.id.turbolinks_screenshot)
+
+    internal val webViewRefresh: SwipeRefreshLayout? get() = webViewContainer as? SwipeRefreshLayout
+    internal val errorRefresh: SwipeRefreshLayout? get() = errorContainer as? SwipeRefreshLayout
 
     internal fun attachWebView(webView: WebView): Boolean {
-        if (webView.parent == turbolinks_refresh) return false
+        if (webView.parent == webViewContainer) return false
 
         // Match the WebView background with its new parent
         if (background is ColorDrawable) {
             webView.setBackgroundColor((background as ColorDrawable).color)
         }
 
-        turbolinks_refresh.addView(webView)
+        webViewContainer.addView(webView)
         return true
     }
 
     internal fun detachWebView(webView: WebView) {
-        turbolinks_refresh.removeView(webView)
+        webViewContainer.removeView(webView)
     }
 
     internal fun addProgressView(progressView: View) {
         // Don't show the progress view if a screenshot is available
-        if (turbolinks_screenshot.isVisible) return
+        if (screenshotView.isVisible) return
 
         check(progressView.parent == null) { "Progress view cannot be attached to another parent" }
 
         removeProgressView()
-        turbolinks_progress.addView(progressView)
-        turbolinks_progress.isVisible = true
+        progressContainer.addView(progressView)
+        progressContainer.isVisible = true
     }
 
     internal fun removeProgressView() {
-        turbolinks_progress.removeAllViews()
-        turbolinks_progress.isVisible = false
+        progressContainer.removeAllViews()
+        progressContainer.isVisible = false
     }
 
     internal fun addScreenshot(screenshot: Bitmap?) {
         if (screenshot == null) return
 
-        turbolinks_screenshot.setImageBitmap(screenshot)
-        turbolinks_screenshot.isVisible = true
+        screenshotView.setImageBitmap(screenshot)
+        screenshotView.isVisible = true
     }
 
     internal fun removeScreenshot() {
-        turbolinks_screenshot.setImageBitmap(null)
-        turbolinks_screenshot.isVisible = false
+        screenshotView.setImageBitmap(null)
+        screenshotView.isVisible = false
     }
 
     internal fun addErrorView(errorView: View) {
         check(errorView.parent == null) { "Error view cannot be attached to another parent" }
 
-        turbolinks_error_refresh.addView(errorView)
-        turbolinks_error_refresh.isVisible = true
-        turbolinks_error_refresh.isEnabled = true
-        turbolinks_error_refresh.isRefreshing = false
+        errorContainer.addView(errorView)
+        errorContainer.isVisible = true
+
+        errorRefresh?.let {
+            it.isEnabled = true
+            it.isRefreshing = true
+        }
     }
 
     internal fun removeErrorView() {
-        turbolinks_error_refresh.removeAllViews()
-        turbolinks_error_refresh.isVisible = false
-        turbolinks_error_refresh.isEnabled = false
-        turbolinks_error_refresh.isRefreshing = false
+        errorContainer.removeAllViews()
+        errorContainer.isVisible = false
+
+        errorRefresh?.let {
+            it.isEnabled = false
+            it.isRefreshing = false
+        }
     }
 
     fun createScreenshot(): Bitmap? {

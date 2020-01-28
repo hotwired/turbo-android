@@ -1,8 +1,10 @@
 package com.basecamp.turbolinks
 
+import android.content.DialogInterface
 import android.os.Bundle
 
-abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWebFragmentCallback {
+@Suppress("unused")
+abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,18 +19,12 @@ abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWeb
 
     override fun onStart() {
         super.onStart()
-
-        if (!sessionViewModel.modalResultExists) {
-            delegate.onStart()
-        }
+        delegate.onStart()
     }
 
-    override fun onStartAfterDialogCancel() {
-        super.onStartAfterDialogCancel()
-
-        if (!sessionViewModel.modalResultExists) {
-            delegate.onStartAfterDialogCancel()
-        }
+    override fun onCancel(dialog: DialogInterface) {
+        delegate.onDialogCancel()
+        super.onCancel(dialog)
     }
 
     // ----------------------------------------------------------------------------

@@ -4,20 +4,20 @@ import android.graphics.Bitmap
 import android.webkit.WebView
 import kotlin.random.Random
 
-@Suppress("unused")
-open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : TurbolinksSessionCallback {
+class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestination,
+                                    private val callback: TurbolinksWebFragmentCallback) : TurbolinksSessionCallback {
 
-    private var location = fragment.location
-    private var visitOptions = fragment.visitOptions
+    private var location = destination.location
+    private var visitOptions = destination.visitOptions
     private val identifier = generateIdentifier()
     private var isInitialVisit = true
     private var isWebViewAttachedToNewDestination = false
     private var screenshot: Bitmap? = null
     private var screenshotOrientation = 0
     private val navigator: TurbolinksNavigator
-        get() = fragment.navigator
+        get() = destination.navigator
     private val turbolinksView: TurbolinksView?
-        get() = fragment.turbolinksView
+        get() = callback.turbolinksView
 
     val webView: WebView?
         get() = session().webView
@@ -29,13 +29,19 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     fun onStart() {
-        if (!fragment.navigatedFromModalResult) {
-            initNavigationVisit()
-        }
+        initNavigationVisit()
+    }
+
+    fun onStartAfterDialogCancel() {
+        initNavigationVisit()
+    }
+
+    fun onDialogCancel() {
+        detachWebView()
     }
 
     fun session(): TurbolinksSession {
-        return fragment.session
+        return destination.session
     }
 
     // -----------------------------------------------------------------------
@@ -43,17 +49,17 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     // -----------------------------------------------------------------------
 
     override fun onPageStarted(location: String) {
-        fragment.onColdBootPageStarted(location)
+        callback.onColdBootPageStarted(location)
     }
 
     override fun onPageFinished(location: String) {
-        fragment.onColdBootPageCompleted(location)
+        callback.onColdBootPageCompleted(location)
     }
 
     override fun pageInvalidated() {}
 
     override fun visitLocationStarted(location: String) {
-        fragment.onVisitStarted(location)
+        callback.onVisitStarted(location)
 
         if (isWebViewAttachedToNewDestination) {
             showProgressView(location)
@@ -61,17 +67,17 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     override fun visitRendered() {
-        fragment.pageViewModel.setTitle(title())
+        destination.pageViewModel.setTitle(title())
         removeTransitionalViews()
     }
 
     override fun visitCompleted() {
-        fragment.onVisitCompleted(location)
-        fragment.pageViewModel.setTitle(title())
+        callback.onVisitCompleted(location)
+        destination.pageViewModel.setTitle(title())
     }
 
     override fun onReceivedError(errorCode: Int) {
-        fragment.onVisitErrorReceived(location, errorCode)
+        callback.onVisitErrorReceived(location, errorCode)
         showErrorView(errorCode)
     }
 
@@ -100,7 +106,7 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     private fun initView() {
-        fragment.onUpdateView()
+        callback.onUpdateView()
         turbolinksView?.apply {
             initializePullToRefresh(this)
             initializeErrorPullToRefresh(this)
@@ -113,7 +119,7 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     private fun attachWebView(): Boolean {
         val view = turbolinksView ?: return false
         return view.attachWebView(requireNotNull(webView)).also {
-            if (it) fragment.onWebViewAttached()
+            if (it) callback.onWebViewAttached()
         }
     }
 
@@ -129,7 +135,7 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
 
         turbolinksView?.detachWebView(view)
         turbolinksView?.post { onReady() }
-        fragment.onWebViewDetached()
+        callback.onWebViewDetached()
     }
 
     private fun attachWebViewAndVisit() {
@@ -176,18 +182,18 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     private fun showProgressView(location: String) {
-        val progressView = fragment.createProgressView(location)
+        val progressView = callback.createProgressView(location)
         turbolinksView?.addProgressView(progressView)
     }
 
     private fun showErrorView(code: Int) {
-        val errorView = fragment.createErrorView(code)
+        val errorView = callback.createErrorView(code)
         turbolinksView?.addErrorView(errorView)
     }
 
     private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
-        turbolinksView.refreshLayout.apply {
-            isEnabled = fragment.shouldEnablePullToRefresh()
+        turbolinksView.webViewRefresh?.apply {
+            isEnabled = callback.shouldEnablePullToRefresh()
             setOnRefreshListener {
                 isWebViewAttachedToNewDestination = false
                 visit(location, restoreWithCachedSnapshot = false, reload = true)
@@ -196,7 +202,7 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     private fun initializeErrorPullToRefresh(turbolinksView: TurbolinksView) {
-        turbolinksView.errorRefreshLayout.apply {
+        turbolinksView.errorRefresh?.apply {
             setOnRefreshListener {
                 isWebViewAttachedToNewDestination = false
                 visit(location, restoreWithCachedSnapshot = false, reload = true)
@@ -211,8 +217,8 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
     }
 
     private fun removeTransitionalViews() {
-        turbolinksView?.refreshLayout?.isRefreshing = false
-        turbolinksView?.errorRefreshLayout?.isRefreshing = false
+        turbolinksView?.webViewRefresh?.isRefreshing = false
+        turbolinksView?.errorRefresh?.isRefreshing = false
         turbolinksView?.removeProgressView()
         turbolinksView?.removeScreenshot()
         turbolinksView?.removeErrorView()
@@ -220,9 +226,5 @@ open class TurbolinksWebFragmentDelegate(val fragment: TurbolinksWebFragment) : 
 
     private fun generateIdentifier(): Int {
         return Random.nextInt(0, 999999999)
-    }
-
-    private fun logEvent(event: String, vararg params: Pair<String, Any>) {
-        logEvent(event, params.toList())
     }
 }
