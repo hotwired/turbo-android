@@ -45,7 +45,7 @@ interface TurbolinksDestination {
     fun navigate(location: String,
                  options: VisitOptions = VisitOptions(),
                  bundle: Bundle? = null): Boolean {
-        return navigator.navigate(location, options, null, bundle)
+        return navigator.navigate(location, options, bundle)
     }
 
     fun navigateUp(): Boolean {

@@ -39,34 +39,33 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
     fun navigate(location: String,
                  options: VisitOptions,
-                 properties: PathProperties? = null,
                  bundle: Bundle? = null): Boolean {
 
-        val currentProperties = properties ?: currentPathConfiguration().properties(location)
+        val pathProperties = currentPathConfiguration().properties(location)
         val currentContext = currentPresentationContext()
-        val newContext = currentProperties.context
+        val newContext = pathProperties.context
         val presentation = presentation(location, options)
 
         logEvent("navigate", "location" to location,
             "options" to options, "currentContext" to currentContext,
             "newContext" to newContext, "presentation" to presentation)
 
-        if (!shouldNavigate(location, currentProperties)) {
+        if (!shouldNavigate(location, pathProperties)) {
             return true
         }
 
         when {
             presentation == Presentation.REPLACE_ROOT -> {
-                navigateWithinContext(location, options, currentProperties, presentation, bundle)
+                navigateWithinContext(location, options, pathProperties, presentation, bundle)
             }
             newContext == currentContext -> {
-                navigateWithinContext(location, options, currentProperties, presentation, bundle)
+                navigateWithinContext(location, options, pathProperties, presentation, bundle)
             }
             newContext == PresentationContext.MODAL -> {
-                navigateToModalContext(location, options, currentProperties, bundle)
+                navigateToModalContext(location, options, pathProperties, bundle)
             }
             newContext == PresentationContext.DEFAULT -> {
-                dismissModalContextWithResult(location, options, currentProperties)
+                dismissModalContextWithResult(location, options, pathProperties)
             }
         }
 
