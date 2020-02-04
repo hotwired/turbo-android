@@ -2,17 +2,16 @@ package com.basecamp.turbolinks
 
 import android.os.Bundle
 import androidx.activity.addCallback
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavArgument
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class TurbolinksActivityDelegate(val activity: AppCompatActivity,
                                  val router: TurbolinksRouter,
-                                 var currentNavHostFragmentId: Int) {
+                                 var currentNavHostId: Int) {
 
-    private val sessions = mutableListOf<TurbolinksSession>()
+    private val navHosts = mutableListOf<TurbolinksNavHost>()
 
     val currentDestination: TurbolinksDestination
         get() = currentFragment as TurbolinksDestination
@@ -27,44 +26,27 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         }
     }
 
-    fun createSession(sessionName: String, webView: TurbolinksWebView = TurbolinksWebView(activity)): TurbolinksSession {
-        sessions.firstOrNull { it.sessionName == sessionName }?.let {
-            throw IllegalArgumentException("Session with name '$sessionName' already exists")
-        }
-
-        return TurbolinksSession.getNew(sessionName, activity, webView).also {
-            sessions.add(it)
+    fun registerNavHost(@IdRes navHostId: Int): TurbolinksNavHost {
+        return findNavHost(navHostId).also {
+            navHosts.add(it)
         }
     }
 
-    fun getSession(sessionName: String): TurbolinksSession {
-        return sessions.first { it.sessionName == sessionName }
+    fun navHost(@IdRes navHostId: Int): TurbolinksNavHost {
+        return navHosts.firstOrNull { it.id == navHostId }
+            ?: throw IllegalStateException("No registered TurbolinksNavHost found")
     }
 
-    fun clearSessions() {
-        sessions.clear()
-    }
-
-    /*
-     * Dynamically set the controller graph and start destination,
-     * so we can use a simplified navigation graph.
-     */
-    fun startControllerGraph(controller: NavController, startLocation: String,
-                             sessionName: String, navGraph: Int, startDestination: Int) {
-
-        val location = NavArgument.Builder()
-            .setDefaultValue(startLocation)
-            .build()
-
-        val session = NavArgument.Builder()
-            .setDefaultValue(sessionName)
-            .build()
-
-        controller.graph = controller.navInflater.inflate(navGraph).apply {
-            this.addArgument("location", location)
-            this.addArgument("sessionName", session)
-            this.startDestination = startDestination
+    fun resetNavHosts() {
+        navHosts.forEach {
+            it.session.reset()
+            it.resetRootLocation()
+            it.resetControllerGraph()
         }
+    }
+
+    fun resetSessions() {
+        navHosts.forEach { it.session.reset() }
     }
 
     fun navigate(location: String,
@@ -86,9 +68,13 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
     }
 
     private val currentFragment: Fragment
-        get() = navHostFragment.childFragmentManager.primaryNavigationFragment as Fragment
+        get() = currentNavHostFragment.childFragmentManager.primaryNavigationFragment as Fragment
 
-    private val navHostFragment: NavHostFragment
-        get() = activity.supportFragmentManager.findFragmentById(currentNavHostFragmentId) as? NavHostFragment
-            ?: throw IllegalStateException("No current NavHostFragment found")
+    private val currentNavHostFragment: TurbolinksNavHost
+        get() = navHost(currentNavHostId)
+
+    private fun findNavHost(@IdRes navHostId: Int): TurbolinksNavHost {
+        return activity.supportFragmentManager.findFragmentById(navHostId) as? TurbolinksNavHost
+            ?: throw IllegalStateException("No TurbolinksNavHost found with ID: $navHostId")
+    }
 }
