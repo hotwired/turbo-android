@@ -277,7 +277,9 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     private fun callback(action: (TurbolinksSessionCallback) -> Unit) {
         context.runOnUiThread {
-            action(currentVisit.callback)
+            if (currentVisit.callback.isActive()) {
+                action(currentVisit.callback)
+            }
         }
     }
 
