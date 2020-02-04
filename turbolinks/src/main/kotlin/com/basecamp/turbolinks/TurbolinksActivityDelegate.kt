@@ -38,11 +38,7 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
     }
 
     fun resetNavHosts() {
-        navHosts.forEach {
-            it.session.reset()
-            it.resetRootLocation()
-            it.resetControllerGraph()
-        }
+        navHosts.forEach { it.reset() }
     }
 
     fun resetSessions() {

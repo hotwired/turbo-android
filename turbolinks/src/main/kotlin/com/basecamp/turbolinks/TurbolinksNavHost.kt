@@ -24,21 +24,18 @@ abstract class TurbolinksNavHost : NavHostFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initControllerGraph()
+        reset()
         loadPathConfiguration()
-        resetRootLocation()
     }
 
     open fun onCreateWebView(context: Context): TurbolinksWebView {
         return TurbolinksWebView(context, null)
     }
 
-    fun resetControllerGraph() {
-        initControllerGraph()
-    }
-
-    fun resetRootLocation() {
+    fun reset() {
+        session.reset()
         session.rootLocation = startLocation
+        initControllerGraph()
     }
 
     val currentDestination: TurbolinksDestination
