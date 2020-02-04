@@ -76,11 +76,10 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     @JavascriptInterface
     fun visitProposedToLocation(location: String, optionsJson: String) {
-        val properties = pathConfiguration.properties(location)
         val options = VisitOptions.fromJSON(optionsJson) ?: return
 
         logEvent("visitProposedToLocation", "location" to location, "options" to options)
-        callback { it.visitProposedToLocation(location, options, properties) }
+        callback { it.visitProposedToLocation(location, options) }
     }
 
     @JavascriptInterface

@@ -3,6 +3,7 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.FragmentNavigator
 
 interface TurbolinksDestination {
     val fragment: Fragment
@@ -47,8 +48,9 @@ interface TurbolinksDestination {
 
     fun navigate(location: String,
                  options: VisitOptions = VisitOptions(),
-                 bundle: Bundle? = null): Boolean {
-        return navigator.navigate(location, options, null, bundle)
+                 bundle: Bundle? = null,
+                 extras: FragmentNavigator.Extras? = null): Boolean {
+        return navigator.navigate(location, options, bundle, extras)
     }
 
     fun navigateUp(): Boolean {

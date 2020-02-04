@@ -86,9 +86,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     override fun visitProposedToLocation(location: String,
-                                         options: VisitOptions,
-                                         properties: PathProperties) {
-        val navigated = navigator.navigate(location, options, properties)
+                                         options: VisitOptions) {
+        val navigated = navigator.navigate(location, options)
 
         // In the case of a NONE presentation, reload the page with fresh data
         if (!navigated) {
