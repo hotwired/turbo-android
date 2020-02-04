@@ -12,6 +12,7 @@ interface TurbolinksSessionCallback {
     fun visitCompleted()
     fun visitLocationStarted(location: String)
     fun visitProposedToLocation(location: String, options: VisitOptions)
+    fun isActive(): Boolean
 }
 
 interface TurbolinksActivity {

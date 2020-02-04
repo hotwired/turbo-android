@@ -95,6 +95,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         }
     }
 
+    override fun isActive(): Boolean {
+        return destination.fragment.isAdded
+    }
+
     // -----------------------------------------------------------------------
     // Private
     // -----------------------------------------------------------------------

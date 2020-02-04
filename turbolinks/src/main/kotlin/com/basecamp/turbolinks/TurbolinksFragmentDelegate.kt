@@ -22,7 +22,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
         }
 
         router = activity.delegate.router
-        session = activity.delegate.getSession(sessionName)
+        session = destination.session
         pathProperties = session.pathConfiguration.properties(location)
         navigator = TurbolinksNavigator(destination)
 

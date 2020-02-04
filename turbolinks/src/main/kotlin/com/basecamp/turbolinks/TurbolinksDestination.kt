@@ -9,6 +9,9 @@ interface TurbolinksDestination {
     val fragment: Fragment
         get() = this as Fragment
 
+    val navHost: TurbolinksNavHost
+        get() = fragment.parentFragment as TurbolinksNavHost
+
     val location: String
         get() = delegate().location
 
@@ -25,7 +28,7 @@ interface TurbolinksDestination {
         get() = delegate().router
 
     val session: TurbolinksSession
-        get() = delegate().session
+        get() = navHost.session
 
     val webView: TurbolinksWebView
         get() = session.webView
