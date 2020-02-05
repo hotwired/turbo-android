@@ -147,6 +147,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
         // Visit every time the WebView is reattached to the current Fragment.
         if (isWebViewAttachedToNewDestination) {
+            showProgressView(location)
             visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
             isInitialVisit = false
         }
