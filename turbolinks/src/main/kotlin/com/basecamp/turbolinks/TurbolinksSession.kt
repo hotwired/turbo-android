@@ -242,6 +242,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
                 logEvent("visitVisualStateComplete", "visitIdentifier" to visitIdentifier)
 
                 if (visitIdentifier.toRequestId() == requestId) {
+                    webView.requestLayout()
                     callback { it.visitRendered() }
                 }
             }
