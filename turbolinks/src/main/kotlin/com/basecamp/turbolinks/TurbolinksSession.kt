@@ -307,6 +307,13 @@ class TurbolinksSession private constructor(val sessionName: String, val context
                 return
             }
 
+            if (!isColdBooting) {
+                // We can get here even when the page failed to load. If
+                // onReceivedError() or onReceivedHttpError() are called,
+                // they reset the session, so we're no longer cold booting.
+                return
+            }
+
             logEvent("onPageFinished", "location" to location, "progress" to view.progress)
             coldBootVisitIdentifier = location.identifier()
             installBridge(location)
