@@ -22,7 +22,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     private val screenshotView: ImageView get() = findViewById(R.id.turbolinks_screenshot)
 
     internal val webViewRefresh: SwipeRefreshLayout? get() = webViewContainer as? SwipeRefreshLayout
-    internal val errorRefresh: SwipeRefreshLayout? get() = errorContainer as? SwipeRefreshLayout
+    internal val errorRefresh: SwipeRefreshLayout? get() = findViewById(R.id.turbolinks_error_refresh)
 
     internal fun attachWebView(webView: WebView): Boolean {
         if (webView.parent == webViewContainer) return false
@@ -71,12 +71,14 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     internal fun addErrorView(errorView: View) {
         check(errorView.parent == null) { "Error view cannot be attached to another parent" }
 
+        removeErrorView()
         errorContainer.addView(errorView)
         errorContainer.isVisible = true
 
         errorRefresh?.let {
+            it.isVisible = true
             it.isEnabled = true
-            it.isRefreshing = true
+            it.isRefreshing = false
         }
     }
 
@@ -85,6 +87,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         errorContainer.isVisible = false
 
         errorRefresh?.let {
+            it.isVisible = false
             it.isEnabled = false
             it.isRefreshing = false
         }
