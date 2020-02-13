@@ -43,6 +43,10 @@ abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
         }
     }
 
+    override fun onBeforeNavigation() {
+        // Allow subclasses to do state cleanup
+    }
+
     override fun delegate(): TurbolinksFragmentDelegate {
         return delegate
     }

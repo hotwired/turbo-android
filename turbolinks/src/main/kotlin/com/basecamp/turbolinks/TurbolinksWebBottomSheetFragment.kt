@@ -27,6 +27,10 @@ abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFra
         super.onCancel(dialog)
     }
 
+    override fun onBeforeNavigation() {
+        // Allow subclasses to do state cleanup
+    }
+
     // ----------------------------------------------------------------------------
     // TurbolinksWebFragmentCallback interface
     // ----------------------------------------------------------------------------

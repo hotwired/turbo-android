@@ -46,6 +46,8 @@ interface TurbolinksDestination {
 
     fun toolbarForNavigation(): Toolbar?
 
+    fun onBeforeNavigation()
+
     fun navigate(location: String,
                  options: VisitOptions = VisitOptions(),
                  bundle: Bundle? = null,

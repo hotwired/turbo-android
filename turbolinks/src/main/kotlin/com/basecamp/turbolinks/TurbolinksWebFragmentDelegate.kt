@@ -24,6 +24,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     fun onActivityCreated() {
         navigator.onNavigationVisit = { onReady ->
+            destination.onBeforeNavigation()
             detachWebView(onReady)
         }
     }

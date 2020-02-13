@@ -17,6 +17,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private val router = destination.router
 
     var onNavigationVisit: (onNavigate: () -> Unit) -> Unit = { onReady ->
+        destination.onBeforeNavigation()
         onReady()
     }
 

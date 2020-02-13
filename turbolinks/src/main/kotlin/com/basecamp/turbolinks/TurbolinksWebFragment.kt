@@ -31,6 +31,10 @@ abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWeb
         }
     }
 
+    override fun onBeforeNavigation() {
+        // Allow subclasses to do state cleanup
+    }
+
     // ----------------------------------------------------------------------------
     // TurbolinksWebFragmentCallback interface
     // ----------------------------------------------------------------------------
