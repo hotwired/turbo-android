@@ -33,8 +33,18 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         initNavigationVisit()
     }
 
+    fun onStartAfterModalResult(result: TurbolinksModalResult) {
+        if (!result.shouldNavigate) {
+            initNavigationVisit()
+        }
+    }
+
     fun onStartAfterDialogCancel() {
         initNavigationVisit()
+    }
+
+    fun onDialogStop() {
+        detachWebView()
     }
 
     fun onDialogCancel() {
@@ -88,12 +98,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     override fun visitProposedToLocation(location: String,
                                          options: VisitOptions) {
-        val navigated = navigator.navigate(location, options)
-
-        // In the case of a NONE presentation, reload the page with fresh data
-        if (!navigated) {
-            visit(location, restoreWithCachedSnapshot = false, reload = false)
-        }
+        navigator.navigate(location, options)
     }
 
     override fun isActive(): Boolean {

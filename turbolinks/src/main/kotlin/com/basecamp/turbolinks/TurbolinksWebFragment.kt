@@ -23,6 +23,11 @@ abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWeb
         }
     }
 
+    override fun onStartAfterModalResult(result: TurbolinksModalResult) {
+        super.onStartAfterModalResult(result)
+        delegate.onStartAfterModalResult(result)
+    }
+
     override fun onStartAfterDialogCancel() {
         super.onStartAfterDialogCancel()
 

@@ -63,6 +63,14 @@ data class PathRule(
 
 typealias PathProperties = HashMap<String, String>
 
+val PathProperties.presentation: Presentation
+    @SuppressLint("DefaultLocale") get() = try {
+        val value = get("presentation") ?: "default"
+        Presentation.valueOf(value.toUpperCase())
+    } catch (e: IllegalArgumentException) {
+        Presentation.DEFAULT
+    }
+
 val PathProperties.context: PresentationContext
     @SuppressLint("DefaultLocale") get() = try {
     val value = get("context") ?: "default"

@@ -51,8 +51,8 @@ interface TurbolinksDestination {
     fun navigate(location: String,
                  options: VisitOptions = VisitOptions(),
                  bundle: Bundle? = null,
-                 extras: FragmentNavigator.Extras? = null): Boolean {
-        return navigator.navigate(location, options, bundle, extras)
+                 extras: FragmentNavigator.Extras? = null) {
+        navigator.navigate(location, options, bundle, extras)
     }
 
     fun navigateUp(): Boolean {
