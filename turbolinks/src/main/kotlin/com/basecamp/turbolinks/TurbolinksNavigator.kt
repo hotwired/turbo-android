@@ -81,27 +81,28 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         logEvent("navigateWithinContext", "location" to location, "presentation" to presentation)
         val navBundle = bundle.withNavArguments(location, options, presentation)
 
-        onNavigationVisit {
-            when (presentation) {
-                Presentation.POP -> {
-                    currentController().popBackStack()
-                }
-                Presentation.REPLACE -> {
-                    currentController().popBackStack()
-                    navigateToLocation(location, properties, navBundle, extras)
-                }
-                Presentation.PUSH -> {
-                    navigateToLocation(location, properties, navBundle, extras)
-                }
-                Presentation.REPLACE_ROOT -> {
-                    replaceRootLocation(location, properties, navBundle)
-                }
-                Presentation.REPLACE_ALL -> {
-                    clearBackStack()
-                }
-                else -> {
-                    throw IllegalStateException("Unexpected Presentation for navigating within context")
-                }
+        when (presentation) {
+            Presentation.POP -> onNavigationVisit {
+                currentController().popBackStack()
+            }
+            Presentation.REPLACE -> onNavigationVisit {
+                currentController().popBackStack()
+                navigateToLocation(location, properties, navBundle, extras)
+            }
+            Presentation.PUSH -> onNavigationVisit {
+                navigateToLocation(location, properties, navBundle, extras)
+            }
+            Presentation.REPLACE_ROOT -> onNavigationVisit {
+                replaceRootLocation(location, properties, navBundle)
+            }
+            Presentation.REPLACE_ALL -> onNavigationVisit {
+                clearBackStack()
+            }
+            Presentation.NONE -> {
+                // Do nothing
+            }
+            else -> {
+                throw IllegalStateException("Unexpected Presentation for navigating within context")
             }
         }
     }
