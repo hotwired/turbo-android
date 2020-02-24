@@ -42,34 +42,33 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     fun navigate(location: String,
                  options: VisitOptions,
                  bundle: Bundle? = null,
-                 extras: FragmentNavigator.Extras? = null): Boolean {
+                 extras: FragmentNavigator.Extras? = null) {
 
         val pathProperties = currentPathConfiguration().properties(location)
         val currentContext = currentPresentationContext()
         val newContext = pathProperties.context
-        val presentation = presentation(location, options)
+        val presentation = presentation(location, options, pathProperties)
+        val navigationMode = navigationMode(currentContext, newContext, presentation)
+
+        if (!shouldNavigate(location, pathProperties)) {
+            return
+        }
 
         logEvent("navigate", "location" to location,
             "options" to options, "currentContext" to currentContext,
             "newContext" to newContext, "presentation" to presentation)
 
-        if (!shouldNavigate(location, pathProperties)) {
-            return true
-        }
-
-        when {
-            presentation == Presentation.REPLACE_ROOT || newContext == currentContext -> {
-                navigateWithinContext(location, options, pathProperties, presentation, bundle, extras)
-            }
-            newContext == PresentationContext.MODAL -> {
-                navigateToModalContext(location, options, pathProperties, bundle, extras)
-            }
-            newContext == PresentationContext.DEFAULT -> {
+        when (navigationMode) {
+            NavigationMode.DISMISS_MODAL -> {
                 dismissModalContextWithResult(location, options, pathProperties)
             }
+            NavigationMode.TO_MODAL -> {
+                navigateToModalContext(location, options, pathProperties, bundle, extras)
+            }
+            NavigationMode.IN_CONTEXT -> {
+                navigateWithinContext(location, options, pathProperties, presentation, bundle, extras)
+            }
         }
-
-        return true
     }
 
     private fun navigateWithinContext(location: String,
@@ -100,6 +99,9 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                 Presentation.REPLACE_ALL -> {
                     clearBackStack()
                 }
+                else -> {
+                    throw IllegalStateException("Unexpected Presentation for navigating within context")
+                }
             }
         }
     }
@@ -119,7 +121,11 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun dismissModalContextWithResult(location: String, options: VisitOptions, properties: PathProperties) {
-        logEvent("dismissModalContextWithResult", "location" to location, "uri" to properties.uri)
+        logEvent("dismissModalContextWithResult",
+            "location" to location,
+            "uri" to properties.uri,
+            "presentation" to properties.presentation
+        )
 
         onNavigationVisit {
             val controller = currentController()
@@ -130,28 +136,19 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                 return@onNavigationVisit
             }
 
-            sendModalResult(location, options)
+            sendModalResult(location, options, properties)
             controller.popBackStack(destination.id, true)
         }
     }
 
-    private fun sendModalResult(location: String, options: VisitOptions) {
-        destination.sessionViewModel.sendModalResult(TurbolinksModalResult(location, options))
-    }
-
-    private fun presentation(location: String, options: VisitOptions): Presentation {
-        val locationIsRoot = locationsAreSame(location, session.rootLocation)
-        val locationIsCurrent = locationsAreSame(location, currentLocation())
-        val locationIsPrevious = locationsAreSame(location, previousLocation())
-        val replace = options.action == VisitAction.REPLACE
-
-        return when {
-            locationIsRoot && locationIsCurrent -> Presentation.REPLACE_ROOT
-            locationIsPrevious -> Presentation.POP
-            locationIsRoot -> Presentation.REPLACE_ALL
-            locationIsCurrent || replace -> Presentation.REPLACE
-            else -> Presentation.PUSH
-        }
+    private fun sendModalResult(location: String, options: VisitOptions, properties: PathProperties) {
+        destination.sessionViewModel.sendModalResult(
+            TurbolinksModalResult(
+                location = location,
+                options = options,
+                shouldNavigate = properties.presentation != Presentation.NONE
+            )
+        )
     }
 
     private fun replaceRootLocation(location: String, properties: PathProperties, bundle: Bundle) {
@@ -198,6 +195,48 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
         logEvent("navigateToLocation", "location" to location,
             "error" to "No fallback destination found", "uri" to fallbackUri)
+    }
+
+    private fun presentation(location: String, options: VisitOptions, properties: PathProperties): Presentation {
+        val presentation = properties.presentation
+
+        logEvent("presentation", "location" to location, "presentation" to presentation)
+
+        if (presentation == Presentation.DEFAULT) {
+            val locationIsRoot = locationsAreSame(location, session.rootLocation)
+            val locationIsCurrent = locationsAreSame(location, currentLocation())
+            val locationIsPrevious = locationsAreSame(location, previousLocation())
+            val replace = options.action == VisitAction.REPLACE
+
+            return when {
+                locationIsRoot && locationIsCurrent -> Presentation.REPLACE_ROOT
+                locationIsPrevious -> Presentation.POP
+                locationIsRoot -> Presentation.REPLACE_ALL
+                locationIsCurrent || replace -> Presentation.REPLACE
+                else -> Presentation.PUSH
+            }
+        } else {
+            return presentation
+        }
+    }
+
+    private fun navigationMode(currentContext: PresentationContext,
+                               newContext: PresentationContext,
+                               presentation: Presentation): NavigationMode {
+
+        val dismissModalContext = currentContext == PresentationContext.MODAL &&
+                newContext == PresentationContext.DEFAULT &&
+                presentation != Presentation.REPLACE_ROOT
+
+        val navigateToModalContext = currentContext == PresentationContext.DEFAULT &&
+                newContext == PresentationContext.MODAL &&
+                presentation != Presentation.REPLACE_ROOT
+
+        return when {
+            dismissModalContext -> NavigationMode.DISMISS_MODAL
+            navigateToModalContext -> NavigationMode.TO_MODAL
+            else -> NavigationMode.IN_CONTEXT
+        }
     }
 
     private fun currentController(): NavController {

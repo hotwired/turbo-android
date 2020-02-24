@@ -22,5 +22,9 @@ enum class PresentationContext {
 }
 
 enum class Presentation {
-    PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT
+    DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, NONE
+}
+
+enum class NavigationMode {
+    IN_CONTEXT, TO_MODAL, DISMISS_MODAL
 }

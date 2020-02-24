@@ -40,7 +40,9 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
 
     fun onStartAfterModalResult(result: TurbolinksModalResult) {
         logEvent("fragment.onStartAfterModalResult", "location" to result.location, "options" to result.options)
-        navigator.navigate(result.location, result.options)
+        if (result.shouldNavigate) {
+            navigator.navigate(result.location, result.options)
+        }
     }
 
     fun onDialogCancel() {
