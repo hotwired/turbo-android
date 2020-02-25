@@ -3,6 +3,7 @@ package com.basecamp.turbolinks
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import okhttp3.CacheControl
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
@@ -11,13 +12,37 @@ internal class TurbolinksHttpRepository {
     private val cookieManager = CookieManager.getInstance()
 
     fun fetch(resourceRequest: WebResourceRequest?): WebResourceResponse? {
-        resourceRequest ?: return null
-
-        val request = buildRequest(resourceRequest)
-        return issueRequest(request)
+        return when (resourceRequest) {
+            null -> null
+            else -> try {
+                issueRequest(resourceRequest)
+            } catch (e: IOException) {
+                issueOfflineRequest(resourceRequest)
+            }
+        }
     }
 
-    private fun buildRequest(resourceRequest: WebResourceRequest): Request {
+    private fun issueRequest(resourceRequest: WebResourceRequest): WebResourceResponse? {
+        return try {
+            val request = buildRequest(resourceRequest, forceCache = false)
+            getResponse(request)
+        } catch (e: IOException) {
+            throw e
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun issueOfflineRequest(resourceRequest: WebResourceRequest): WebResourceResponse? {
+        return try {
+            val request = buildRequest(resourceRequest, forceCache = true)
+            getResponse(request)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun buildRequest(resourceRequest: WebResourceRequest, forceCache: Boolean): Request {
         val url = resourceRequest.url.toString()
         val headers = resourceRequest.requestHeaders
         val builder = Request.Builder().url(url)
@@ -25,25 +50,29 @@ internal class TurbolinksHttpRepository {
         headers.forEach { builder.header(it.key, it.value) }
         builder.header("Cookie", getCookie(url))
 
+        if (forceCache) {
+            builder.cacheControl(CacheControl.FORCE_CACHE)
+        } else {
+            // TODO for text/html assets
+            // builder.cacheControl(CacheControl.Builder()
+            //  .maxAge(0, TimeUnit.SECONDS)
+            //  .build())
+        }
+
         return builder.build()
     }
 
-    private fun issueRequest(request: Request): WebResourceResponse? = try {
+    private fun getResponse(request: Request): WebResourceResponse? {
         val url = request.url.toString()
         val call = TurbolinksHttpClient.instance.newCall(request)
         val response = call.execute()
 
-        if (response.isSuccessful) {
+        return if (response.isSuccessful) {
             setCookies(url, response)
             resourceResponse(response)
         } else {
             null
         }
-    } catch (e: IOException) {
-        // TODO offline cache
-        null
-    } catch (e: Exception) {
-        null
     }
 
     private fun getCookie(url: String): String {
