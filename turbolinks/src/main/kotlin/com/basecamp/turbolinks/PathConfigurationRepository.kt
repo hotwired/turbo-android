@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.Request
 import java.io.IOException
 
-internal class Repository {
+internal class PathConfigurationRepository {
     private val cacheFile = "turbolinks"
     private val cacheKey = "configuration.json"
 

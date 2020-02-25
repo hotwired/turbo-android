@@ -6,7 +6,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class PathConfigurationLoader(val context: Context) {
-    internal var repository = Repository()
+    internal var repository = PathConfigurationRepository()
 
     fun load(location: PathConfiguration.Location, onCompletion: (PathConfiguration) -> Unit) {
         location.assetFilePath?.let {
