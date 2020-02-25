@@ -21,6 +21,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     internal var previousOverrideUrlTime = 0L
     internal var visitPending = false
     internal var restorationIdentifiers = SparseArray<String>()
+    internal val httpRepository = TurbolinksHttpRepository()
 
     // User accessible
 
@@ -345,6 +346,19 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             }
 
             return true
+        }
+
+        override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+            val response = when (request?.method) {
+                "GET" -> httpRepository.fetch(request)
+                else -> null
+            }
+
+            response?.let {
+                logEvent("interceptedRequest", "url" to "${request?.url?.toString()}")
+            }
+
+            return response
         }
 
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {

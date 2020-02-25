@@ -25,7 +25,7 @@ class PathConfigurationRepositoryTest : BaseRepositoryTest() {
     override fun setup() {
         super.setup()
         context = RuntimeEnvironment.application.applicationContext
-        Http.sharedHttpClient = client()
+        TurbolinksHttpClient.instance = client()
     }
 
     @Test

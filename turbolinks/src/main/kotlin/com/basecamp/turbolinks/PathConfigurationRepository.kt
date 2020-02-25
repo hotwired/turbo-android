@@ -35,16 +35,14 @@ internal class PathConfigurationRepository {
     }
 
     private fun issueRequest(request: Request): String? = try {
-        Http.sharedHttpClient.newCall(request).execute().use { response ->
+        TurbolinksHttpClient.instance.newCall(request).execute().use { response ->
             if (response.isSuccessful) {
                 response.body?.string()
             } else {
-                logError(request, response.code.toString())
                 null
             }
         }
     } catch (e: IOException) {
-        logError(request, e.message)
         null
     }
 
