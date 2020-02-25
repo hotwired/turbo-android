@@ -27,6 +27,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     var rootLocation: String? = null
     var pathConfiguration = PathConfiguration(context)
+    var enableHttpCaching = false
     var enableScreenshots = true
     var isColdBooting = false
         internal set
@@ -35,6 +36,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     init {
         initializeWebView()
+        TurbolinksHttpClient.enableCachingWith(context)
     }
 
     // Public
@@ -349,16 +351,12 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         }
 
         override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
-            val response = when (request?.method) {
+            if (!enableHttpCaching) return null
+
+            return when (request?.method) {
                 "GET" -> httpRepository.fetch(request)
                 else -> null
             }
-
-            response?.let {
-                logEvent("interceptedRequest", "url" to "${request?.url?.toString()}")
-            }
-
-            return response
         }
 
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {

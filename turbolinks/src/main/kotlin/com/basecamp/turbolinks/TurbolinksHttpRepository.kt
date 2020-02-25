@@ -5,6 +5,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import okhttp3.Request
 import okhttp3.Response
+import java.io.IOException
 
 internal class TurbolinksHttpRepository {
     private val cookieManager = CookieManager.getInstance()
@@ -28,23 +29,19 @@ internal class TurbolinksHttpRepository {
     }
 
     private fun issueRequest(request: Request): WebResourceResponse? = try {
+        val url = request.url.toString()
         val call = TurbolinksHttpClient.instance.newCall(request)
         val response = call.execute()
 
         if (response.isSuccessful) {
-            setCookies(request.url.toString(), response)
-
-            WebResourceResponse(
-                contentType(response),          // mimeType
-                encoding(),                     // encoding
-                response.code,                  // statusCode
-                response.message,               // reasonPhrase
-                headers(response),              // responseHeaders
-                response.body?.byteStream()     // data
-            )
+            setCookies(url, response)
+            resourceResponse(response)
         } else {
             null
         }
+    } catch (e: IOException) {
+        // TODO offline cache
+        null
     } catch (e: Exception) {
         null
     }
@@ -57,6 +54,17 @@ internal class TurbolinksHttpRepository {
         response.headers("Set-Cookie").forEach {
             cookieManager.setCookie(url, it)
         }
+    }
+
+    private fun resourceResponse(response: Response): WebResourceResponse {
+        return WebResourceResponse(
+            contentType(response),          // mimeType
+            encoding(),                     // encoding
+            response.code,                  // statusCode
+            response.message,               // reasonPhrase
+            headers(response),              // responseHeaders
+            response.body?.byteStream()     // data
+        )
     }
 
     private fun contentType(response: Response): String {
