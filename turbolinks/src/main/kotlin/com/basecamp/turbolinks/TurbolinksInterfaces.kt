@@ -9,7 +9,7 @@ interface TurbolinksSessionCallback {
     fun pageInvalidated()
     fun requestFailedWithStatusCode(statusCode: Int)
     fun visitRendered()
-    fun visitCompleted()
+    fun visitCompleted(completedOffline: Boolean)
     fun visitLocationStarted(location: String)
     fun visitProposedToLocation(location: String, options: VisitOptions)
     fun isActive(): Boolean
@@ -33,6 +33,6 @@ interface TurbolinksWebFragmentCallback {
     fun onColdBootPageStarted(location: String)
     fun onColdBootPageCompleted(location: String)
     fun onVisitStarted(location: String)
-    fun onVisitCompleted(location: String)
+    fun onVisitCompleted(location: String, completedOffline: Boolean)
     fun onVisitErrorReceived(location: String, errorCode: Int)
 }

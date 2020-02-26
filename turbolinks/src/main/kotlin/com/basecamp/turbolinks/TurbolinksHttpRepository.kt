@@ -11,14 +11,16 @@ import java.io.IOException
 internal class TurbolinksHttpRepository {
     private val cookieManager = CookieManager.getInstance()
 
-    fun fetch(resourceRequest: WebResourceRequest?): WebResourceResponse? {
-        return when (resourceRequest) {
-            null -> null
-            else -> try {
-                issueRequest(resourceRequest)
-            } catch (e: IOException) {
-                issueOfflineRequest(resourceRequest)
-            }
+    data class Result(
+        val response: WebResourceResponse?,
+        val offline: Boolean
+    )
+
+    fun fetch(resourceRequest: WebResourceRequest): Result {
+        return try {
+            Result(issueRequest(resourceRequest), false)
+        } catch (e: IOException) {
+            Result(issueOfflineRequest(resourceRequest), true)
         }
     }
 

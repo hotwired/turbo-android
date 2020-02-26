@@ -27,7 +27,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     var rootLocation: String? = null
     var pathConfiguration = PathConfiguration(context)
-    var enableHttpCaching = false
+    var enableOfflineCaching = false
     var enableScreenshots = true
     var isColdBooting = false
         internal set
@@ -142,7 +142,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
         if (visitIdentifier == currentVisit.identifier) {
             restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
-            callback { it.visitCompleted() }
+            callback { it.visitCompleted(currentVisit.completedOffline) }
         }
     }
 
@@ -229,7 +229,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     private fun renderVisitForColdBoot() {
         logEvent("renderVisitForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
         webView.visitRenderedForColdBoot(coldBootVisitIdentifier)
-        callback { it.visitCompleted() }
+        callback { it.visitCompleted(currentVisit.completedOffline) }
     }
 
     /**
@@ -350,13 +350,19 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             return true
         }
 
-        override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
-            if (!enableHttpCaching) return null
-
-            return when (request?.method) {
-                "GET" -> httpRepository.fetch(request)
-                else -> null
+        override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+            if (!enableOfflineCaching || request.method != "GET") {
+                return null
             }
+
+            val url = request.url.toString()
+            val result = httpRepository.fetch(request)
+
+            if (currentVisit.location == url) {
+                currentVisit.completedOffline = result.offline
+            }
+
+            return result.response
         }
 
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {

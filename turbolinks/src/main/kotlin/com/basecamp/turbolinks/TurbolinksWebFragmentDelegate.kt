@@ -82,8 +82,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         removeTransitionalViews()
     }
 
-    override fun visitCompleted() {
-        callback.onVisitCompleted(location)
+    override fun visitCompleted(completedOffline: Boolean) {
+        callback.onVisitCompleted(location, completedOffline)
         destination.pageViewModel.setTitle(title())
     }
 
