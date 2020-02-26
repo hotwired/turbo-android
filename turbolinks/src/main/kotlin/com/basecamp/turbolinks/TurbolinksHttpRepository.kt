@@ -52,11 +52,6 @@ internal class TurbolinksHttpRepository {
 
         if (forceCache) {
             builder.cacheControl(CacheControl.FORCE_CACHE)
-        } else {
-            // TODO for text/html assets
-            // builder.cacheControl(CacheControl.Builder()
-            //  .maxAge(0, TimeUnit.SECONDS)
-            //  .build())
         }
 
         return builder.build()
