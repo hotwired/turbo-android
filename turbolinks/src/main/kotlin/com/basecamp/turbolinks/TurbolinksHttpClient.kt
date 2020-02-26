@@ -8,7 +8,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 object TurbolinksHttpClient {
-    private var context: Context? = null
+    private var cache: Cache? = null
     private var httpCacheSize = 50L * 1024L * 1024L // 50 MBs
 
     internal val instance by lazy { buildNewHttpClient() }
@@ -21,14 +21,15 @@ object TurbolinksHttpClient {
     @Suppress("unused")
     fun invalidateCache() {
         try {
-            cache()?.evictAll()
+            cache?.evictAll()
         } catch (e: IOException) {
             TurbolinksLog.e(e.toString())
         }
     }
 
     internal fun enableCachingWith(context: Context) {
-        this.context = context.applicationContext
+        val dir = File(context.cacheDir, "turbolinks_cache")
+        cache = Cache(dir, httpCacheSize)
     }
 
     private fun buildNewHttpClient(): OkHttpClient {
@@ -38,7 +39,7 @@ object TurbolinksHttpClient {
             .writeTimeout(30L, TimeUnit.SECONDS)
             .addNetworkInterceptor(cacheControlNetworkInterceptor)
 
-        cache()?.let {
+        cache?.let {
             builder.cache(it)
         }
 
@@ -61,7 +62,7 @@ object TurbolinksHttpClient {
     }
 
     private fun validateRequestCacheControl(request: Request): Request {
-        if (request.cacheControl.maxAgeSeconds >= 0) {
+        if (cache == null || request.cacheControl.maxAgeSeconds >= 0) {
             return request
         }
 
@@ -74,7 +75,7 @@ object TurbolinksHttpClient {
     }
 
     private fun validateResponseCacheControl(response: Response): Response {
-        if (!response.cacheControl.noStore) {
+        if (cache == null || !response.cacheControl.noStore) {
             return response
         }
 
@@ -83,12 +84,5 @@ object TurbolinksHttpClient {
         return response.newBuilder()
             .header("Cache-Control", "max-age=0")
             .build()
-    }
-
-    private fun cache(): Cache? {
-        return context?.let {
-            val dir = File(it.cacheDir, "turbolinks_cache")
-            return Cache(dir, httpCacheSize)
-        }
     }
 }

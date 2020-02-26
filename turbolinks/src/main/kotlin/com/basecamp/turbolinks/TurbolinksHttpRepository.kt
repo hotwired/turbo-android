@@ -94,8 +94,14 @@ internal class TurbolinksHttpRepository {
     private fun contentType(response: Response): String {
         return when (val contentType = response.headers["Content-Type"]) {
             null -> "text/plain"
-            else -> contentType.removeSuffix("; charset=utf-8")
+            else -> sanitizeContentType(contentType)
         }
+    }
+
+    private fun sanitizeContentType(contentType: String): String {
+        // The Content-Type header may contain a charset suffix,
+        // but this is compatible with what WebView expects.
+        return contentType.removeSuffix("; charset=utf-8")
     }
 
     private fun encoding(): String {
