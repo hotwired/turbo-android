@@ -62,27 +62,35 @@ object TurbolinksHttpClient {
     }
 
     private fun validateRequestCacheControl(request: Request): Request {
-        if (cache == null || request.cacheControl.maxAgeSeconds >= 0) {
+        if (cache == null || !shouldRewriteCacheControl(request.cacheControl)) {
             return request
         }
 
-        // Prefer a stale response over no response
+        // Allow caching, but check with the origin server
+        // for validation before using the cached copy. Prefer
+        // a stale response over no response at all.
         return request.newBuilder()
-            .cacheControl(CacheControl.Builder()
-                .maxStale(365, TimeUnit.DAYS)
-                .build())
+            .header("Cache-Control", "max-age=0; max-stale=31536000")
             .build()
     }
 
     private fun validateResponseCacheControl(response: Response): Response {
-        if (cache == null || !response.cacheControl.noStore) {
+        if (cache == null || !shouldRewriteCacheControl(response.cacheControl)) {
             return response
         }
 
         // Allow caching, but check with the origin server
-        // for validation before using the cached copy
+        // for validation before using the cached copy. Prefer
+        // a stale response over no response at all.
         return response.newBuilder()
-            .header("Cache-Control", "max-age=0")
+            .header("Cache-Control", "max-age=0; max-stale=31536000")
             .build()
     }
+
+    private fun shouldRewriteCacheControl(cacheControl: CacheControl): Boolean {
+        return  cacheControl.noStore ||
+                cacheControl.maxAgeSeconds <= 0 ||
+                cacheControl.maxStaleSeconds <= 0
+    }
+
 }
