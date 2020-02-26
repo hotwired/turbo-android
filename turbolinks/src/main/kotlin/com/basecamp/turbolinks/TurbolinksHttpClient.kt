@@ -21,7 +21,7 @@ object TurbolinksHttpClient {
     @Suppress("unused")
     fun invalidateCache() {
         try {
-            context?.let { cache(it).evictAll() }
+            cache()?.evictAll()
         } catch (e: IOException) {
             TurbolinksLog.e(e.toString())
         }
@@ -38,8 +38,8 @@ object TurbolinksHttpClient {
             .writeTimeout(30L, TimeUnit.SECONDS)
             .addNetworkInterceptor(cacheControlNetworkInterceptor)
 
-        context?.let {
-            builder.cache(cache(it))
+        cache()?.let {
+            builder.cache(it)
         }
 
         if (TurbolinksLog.enableDebugLogging) {
@@ -47,6 +47,10 @@ object TurbolinksHttpClient {
         }
 
         return builder.build()
+    }
+
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BASIC
     }
 
     private val cacheControlNetworkInterceptor = object : Interceptor {
@@ -81,12 +85,10 @@ object TurbolinksHttpClient {
             .build()
     }
 
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BASIC
-    }
-
-    private fun cache(context: Context): Cache {
-        val dir = File(context.cacheDir, "turbolinks_cache")
-        return Cache(dir, httpCacheSize)
+    private fun cache(): Cache? {
+        return context?.let {
+            val dir = File(it.cacheDir, "turbolinks_cache")
+            return Cache(dir, httpCacheSize)
+        }
     }
 }
