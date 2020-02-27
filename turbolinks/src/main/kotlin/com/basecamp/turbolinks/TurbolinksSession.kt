@@ -333,7 +333,13 @@ class TurbolinksSession private constructor(val sessionName: String, val context
          */
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
             val location = request.url.toString()
-            val shouldOverride = (!isReady || isColdBooting) && currentVisit.location != location
+            val shouldOverride = isReady || (isColdBooting && currentVisit.location != location)
+
+            // Don't allow onPageFinished to process its
+            // callbacks if a cold boot was blocked.
+            if (shouldOverride && isColdBooting) {
+                reset()
+            }
 
             if (shouldOverride && shouldProposeThrottledVisit()) {
                 visitProposedToLocation(location, VisitOptions().toJson())
