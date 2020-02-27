@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class TurbolinksActivityDelegate(val activity: AppCompatActivity,
-                                 val router: TurbolinksRouter,
                                  var currentNavHostId: Int) {
 
     private val navHosts = mutableListOf<TurbolinksNavHost>()

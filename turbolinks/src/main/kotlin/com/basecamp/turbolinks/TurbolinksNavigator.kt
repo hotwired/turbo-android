@@ -14,7 +14,18 @@ import java.net.URI
 class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
     private val session = destination.session
-    private val router = destination.router
+
+    enum class PresentationContext {
+        DEFAULT, MODAL
+    }
+
+    enum class Presentation {
+        DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, NONE
+    }
+
+    enum class NavigationMode {
+        IN_CONTEXT, TO_MODAL, DISMISS_MODAL
+    }
 
     var onNavigationVisit: (onNavigate: () -> Unit) -> Unit = { onReady ->
         destination.onBeforeNavigation()
@@ -44,15 +55,15 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                  bundle: Bundle? = null,
                  extras: FragmentNavigator.Extras? = null) {
 
+        if (!shouldNavigate(location)) {
+            return
+        }
+
         val pathProperties = currentPathConfiguration().properties(location)
         val currentContext = currentPresentationContext()
         val newContext = pathProperties.context
         val presentation = presentation(location, options, pathProperties)
         val navigationMode = navigationMode(currentContext, newContext, presentation)
-
-        if (!shouldNavigate(location, pathProperties)) {
-            return
-        }
 
         logEvent("navigate", "location" to location,
             "options" to options, "currentContext" to currentContext,
@@ -186,16 +197,16 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         logEvent("navigateToLocation", "location" to location,
             "warning" to "No destination found", "uri" to properties.uri)
 
-        val fallbackUri = router.getFallbackDeepLinkUri(location)
+        val fallbackUri = destination.getFallbackDeepLinkUri(location)
 
         destinationFor(fallbackUri)?.let { destination ->
-            logEvent("navigateToLocation", "location" to location, "fallbackUri" to fallbackUri)
+            logEvent("navigateToLocation", "location" to location, "fallbackUri" to "$fallbackUri")
             controller.navigate(destination.id, bundle, navOptions, extras)
             return
         }
 
         logEvent("navigateToLocation", "location" to location,
-            "error" to "No fallback destination found", "uri" to fallbackUri)
+            "error" to "No fallback destination found")
     }
 
     private fun presentation(location: String, options: VisitOptions, properties: PathProperties): Presentation {
@@ -244,7 +255,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         return fragment.findNavController()
     }
 
-    private fun destinationFor(uri: Uri): NavDestination? {
+    private fun destinationFor(uri: Uri?): NavDestination? {
+        uri ?: return null
         return currentController().graph.find { it.hasDeepLink(uri) }
     }
 
@@ -286,32 +298,18 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         return bundle.apply { putAll(navBundle) }
     }
 
-    private fun shouldNavigate(location: String, properties: PathProperties): Boolean {
-        val shouldNavigate = router.shouldNavigate(
-            currentLocation = currentLocation(),
-            newLocation = location,
-            currentPathProperties = currentPathProperties(),
-            newPathProperties = properties
-        )
+    private fun shouldNavigate(location: String): Boolean {
+        val shouldNavigate = destination.shouldNavigateTo(location)
 
         logEvent("shouldNavigateToLocation", "location" to location, "shouldNavigate" to shouldNavigate)
         return shouldNavigate
     }
 
     private fun navOptions(location: String, properties: PathProperties): NavOptions {
-        return router.getNavigationOptions(
-            currentLocation = currentLocation(),
+        return destination.getNavigationOptions(
             newLocation = location,
-            currentPathProperties = currentPathProperties(),
             newPathProperties = properties
-        ) ?: navOptions {
-            anim {
-                enter = R.anim.nav_default_enter_anim
-                exit = R.anim.nav_default_exit_anim
-                popEnter = R.anim.nav_default_pop_enter_anim
-                popExit = R.anim.nav_default_pop_exit_anim
-            }
-        }
+        )
     }
 
     private fun currentLocation(): String {
