@@ -28,8 +28,10 @@ object TurbolinksHttpClient {
     }
 
     internal fun enableCachingWith(context: Context) {
-        val dir = File(context.cacheDir, "turbolinks_cache")
-        cache = Cache(dir, httpCacheSize)
+        if (cache == null) {
+            val dir = File(context.cacheDir, "turbolinks_cache")
+            cache = Cache(dir, httpCacheSize)
+        }
     }
 
     private fun buildNewHttpClient(): OkHttpClient {
@@ -92,5 +94,4 @@ object TurbolinksHttpClient {
                 cacheControl.maxAgeSeconds <= 0 ||
                 cacheControl.maxStaleSeconds <= 0
     }
-
 }
