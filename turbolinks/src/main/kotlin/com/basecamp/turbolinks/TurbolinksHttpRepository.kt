@@ -105,7 +105,7 @@ internal class TurbolinksHttpRepository {
 
     private fun sanitizeContentType(contentType: String): String {
         // The Content-Type header may contain a charset suffix,
-        // but this is incompatible with what WebView expects.
+        // but this is incompatible with a WebResourceResponse.
         return contentType.removeSuffix("; charset=utf-8")
     }
 

@@ -71,9 +71,15 @@ object TurbolinksHttpClient {
         // Allow caching, but check with the origin server
         // for validation before using the cached copy. Prefer
         // a stale response over no response at all.
+        val maxAge = maxOf(response.cacheControl.maxAgeSeconds, 0)
+        val cacheControl = CacheControl.Builder()
+            .maxAge(maxAge, TimeUnit.SECONDS)
+            .maxStale(365, TimeUnit.DAYS)
+            .build()
+
         return response.newBuilder()
             .removeHeader("pragma")
-            .header("cache-control", "public, max-age=0, max-stale=31536000")
+            .header("cache-control", cacheControl.toString())
             .build()
     }
 
