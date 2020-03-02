@@ -7,8 +7,8 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.ben-manes.versions'
 
 // Update when releasing a new library version
-ext.libVersionCode = 38
-ext.libVersionName = '1.0.38'
+ext.libVersionCode = 40
+ext.libVersionName = '1.0.40'
 
 buildscript {
     repositories {
