@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 object TurbolinksHttpClient {
     private var cache: Cache? = null
-    private var httpCacheSize = 50L * 1024L * 1024L // 50 MBs
+    private var httpCacheSize = 100L * 1024L * 1024L // 100 MBs
 
     internal val instance by lazy { buildNewHttpClient() }
 
