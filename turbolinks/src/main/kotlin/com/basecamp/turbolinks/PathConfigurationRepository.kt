@@ -34,16 +34,20 @@ internal class PathConfigurationRepository {
         }
     }
 
-    private fun issueRequest(request: Request): String? = try {
-        TurbolinksHttpClient.instance.newCall(request).execute().use { response ->
-            if (response.isSuccessful) {
-                response.body?.string()
-            } else {
-                null
+    private fun issueRequest(request: Request): String? {
+        return try {
+            val call = TurbolinksHttpClient.instance.newCall(request)
+
+            call.execute().use { response ->
+                if (response.isSuccessful) {
+                    response.body?.string()
+                } else {
+                    null
+                }
             }
+        } catch (e: IOException) {
+            null
         }
-    } catch (e: IOException) {
-        null
     }
 
     private fun prefs(context: Context): SharedPreferences {
@@ -54,9 +58,5 @@ internal class PathConfigurationRepository {
         return context.assets.open(filePath).use {
             String(it.readBytes())
         }
-    }
-
-    private fun logError(request: Request, message: String?) {
-        TurbolinksLog.e("Response failed for ${request.url} : $message")
     }
 }

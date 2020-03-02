@@ -58,22 +58,9 @@ object TurbolinksHttpClient {
 
     private val cacheControlNetworkInterceptor = object : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
-            val request = validateRequestCacheControl(chain.request())
+            val request = chain.request()
             return validateResponseCacheControl(chain.proceed(request))
         }
-    }
-
-    private fun validateRequestCacheControl(request: Request): Request {
-        if (cache == null || !shouldRewriteCacheControl(request.cacheControl)) {
-            return request
-        }
-
-        // Allow caching, but check with the origin server
-        // for validation before using the cached copy. Prefer
-        // a stale response over no response at all.
-        return request.newBuilder()
-            .header("Cache-Control", "max-age=0; max-stale=31536000")
-            .build()
     }
 
     private fun validateResponseCacheControl(response: Response): Response {
@@ -85,12 +72,14 @@ object TurbolinksHttpClient {
         // for validation before using the cached copy. Prefer
         // a stale response over no response at all.
         return response.newBuilder()
-            .header("Cache-Control", "max-age=0; max-stale=31536000")
+            .removeHeader("pragma")
+            .header("cache-control", "public, max-age=0, max-stale=31536000")
             .build()
     }
 
     private fun shouldRewriteCacheControl(cacheControl: CacheControl): Boolean {
         return  cacheControl.noStore ||
+                cacheControl.noCache ||
                 cacheControl.maxAgeSeconds <= 0 ||
                 cacheControl.maxStaleSeconds <= 0
     }

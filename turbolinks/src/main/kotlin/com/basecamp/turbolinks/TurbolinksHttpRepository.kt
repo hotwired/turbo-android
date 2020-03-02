@@ -31,6 +31,7 @@ internal class TurbolinksHttpRepository {
         } catch (e: IOException) {
             throw e
         } catch (e: Exception) {
+            TurbolinksLog.e("Request error: ${e.message}")
             null
         }
     }
@@ -40,6 +41,7 @@ internal class TurbolinksHttpRepository {
             val request = buildRequest(resourceRequest, forceCache = true)
             getResponse(request)
         } catch (e: Exception) {
+            TurbolinksLog.e("Offline Request error: ${e.message}")
             null
         }
     }
@@ -87,13 +89,14 @@ internal class TurbolinksHttpRepository {
             contentType(response),          // mimeType
             encoding(),                     // encoding
             response.code,                  // statusCode
-            response.message,               // reasonPhrase
+            reasonPhrase(response),         // reasonPhrase
             headers(response),              // responseHeaders
             response.body?.byteStream()     // data
         )
     }
 
     private fun contentType(response: Response): String {
+        // A Content-Type header may not exist, provide a fallback.
         return when (val contentType = response.headers["Content-Type"]) {
             null -> "text/plain"
             else -> sanitizeContentType(contentType)
@@ -102,12 +105,20 @@ internal class TurbolinksHttpRepository {
 
     private fun sanitizeContentType(contentType: String): String {
         // The Content-Type header may contain a charset suffix,
-        // but this is compatible with what WebView expects.
+        // but this is incompatible with what WebView expects.
         return contentType.removeSuffix("; charset=utf-8")
     }
 
     private fun encoding(): String {
         return "utf-8"
+    }
+
+    private fun reasonPhrase(response: Response): String {
+        // A reason phrase cannot be empty
+        return when (response.message.isEmpty()) {
+            true -> "OK"
+            else -> response.message
+        }
     }
 
     private fun headers(response: Response): Map<String, String> {
