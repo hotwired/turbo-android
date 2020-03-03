@@ -52,7 +52,10 @@ internal class TurbolinksHttpRepository {
         val builder = Request.Builder().url(url)
 
         headers.forEach { builder.header(it.key, it.value) }
-        builder.header("Cookie", getCookie(url))
+
+        getCookie(url)?.let {
+            builder.header("Cookie", it)
+        }
 
         if (forceCache) {
             builder.cacheControl(CacheControl.FORCE_CACHE)
@@ -74,7 +77,7 @@ internal class TurbolinksHttpRepository {
         }
     }
 
-    private fun getCookie(url: String): String {
+    private fun getCookie(url: String): String? {
         return cookieManager.getCookie(url)
     }
 
