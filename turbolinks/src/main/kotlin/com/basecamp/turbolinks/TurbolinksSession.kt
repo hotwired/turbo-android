@@ -337,7 +337,8 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
             // Don't allow onPageFinished to process its
             // callbacks if a cold boot was blocked.
-            if (shouldOverride && isColdBooting) {
+            if (isColdBootRedirect) {
+                logEvent("coldBootRedirect", "location" to location)
                 reset()
             }
 
