@@ -53,7 +53,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     private fun initToolbar() {
         destination.toolbarForNavigation()?.let {
             NavigationUI.setupWithNavController(it, fragment.findNavController())
-            it.setNavigationOnClickListener { navigator.navigateUp() }
+            it.setNavigationOnClickListener { destination.navigateUp() }
         }
     }
 
