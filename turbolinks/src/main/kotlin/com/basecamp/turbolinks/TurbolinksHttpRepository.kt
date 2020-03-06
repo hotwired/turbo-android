@@ -156,8 +156,7 @@ internal class TurbolinksHttpRepository {
 
     private fun data(response: Response): InputStream? {
         return try {
-            val body = response.body?.string()
-            ByteArrayInputStream(body?.toByteArray())
+            ByteArrayInputStream(response.body?.bytes())
         } catch (e: Exception) {
             TurbolinksLog.e("Byte stream error: ${e.message}")
             null
