@@ -58,13 +58,23 @@ object TurbolinksHttpClient {
 
     private val cacheControlNetworkInterceptor = object : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
-            val request = chain.request()
+            val request = validateRequestCacheControl(chain.request())
             return validateResponseCacheControl(chain.proceed(request))
         }
     }
 
+    private fun validateRequestCacheControl(request: Request): Request {
+        if (cache == null || !shouldRewriteCacheControl(request)) {
+            return request
+        }
+
+        return request.newBuilder()
+            .removeHeader("Cache-Control")
+            .build()
+    }
+
     private fun validateResponseCacheControl(response: Response): Response {
-        if (cache == null || !shouldRewriteCacheControl(response.cacheControl)) {
+        if (cache == null || !shouldRewriteCacheControl(response)) {
             return response
         }
 
@@ -78,15 +88,21 @@ object TurbolinksHttpClient {
             .build()
 
         return response.newBuilder()
-            .removeHeader("pragma")
-            .header("cache-control", cacheControl.toString())
+            .removeHeader("Pragma")
+            .header("Cache-Control", cacheControl.toString())
             .build()
     }
 
-    private fun shouldRewriteCacheControl(cacheControl: CacheControl): Boolean {
-        return  cacheControl.noStore ||
-                cacheControl.noCache ||
-                cacheControl.maxAgeSeconds <= 0 ||
-                cacheControl.maxStaleSeconds <= 0
+    private fun shouldRewriteCacheControl(request: Request): Boolean {
+        return  request.cacheControl.noStore ||
+                request.cacheControl.noCache
+    }
+
+    private fun shouldRewriteCacheControl(response: Response): Boolean {
+        return  response.header("Pragma") != null ||
+                response.cacheControl.noStore ||
+                response.cacheControl.noCache ||
+                response.cacheControl.maxAgeSeconds <= 0 ||
+                response.cacheControl.maxStaleSeconds <= 0
     }
 }
