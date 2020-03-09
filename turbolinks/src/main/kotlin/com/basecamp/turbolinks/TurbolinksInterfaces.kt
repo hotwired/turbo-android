@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 import android.view.View
+import android.webkit.HttpAuthHandler
 
 interface TurbolinksSessionCallback {
     fun onPageStarted(location: String)
@@ -13,6 +14,7 @@ interface TurbolinksSessionCallback {
     fun visitLocationStarted(location: String)
     fun visitProposedToLocation(location: String, options: VisitOptions)
     fun isActive(): Boolean
+    fun onReceivedHttpAuthRequest(handler: HttpAuthHandler?)
 }
 
 interface TurbolinksActivity {
@@ -35,4 +37,5 @@ interface TurbolinksWebFragmentCallback {
     fun onVisitStarted(location: String)
     fun onVisitCompleted(location: String)
     fun onVisitErrorReceived(location: String, errorCode: Int)
+    fun onReceivedHttpAuthRequest(handler: HttpAuthHandler?)
 }

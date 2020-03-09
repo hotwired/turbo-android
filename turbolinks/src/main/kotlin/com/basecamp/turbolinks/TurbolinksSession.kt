@@ -318,6 +318,10 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             installBridge(location)
         }
 
+        override fun onReceivedHttpAuthRequest(view: WebView?, handler: HttpAuthHandler?, host: String?, realm: String?) {
+            callback { it.onReceivedHttpAuthRequest(handler) }
+        }
+
         override fun onPageCommitVisible(view: WebView, location: String) {
             super.onPageCommitVisible(view, location)
             logEvent("onPageCommitVisible", "location" to location, "progress" to view.progress)

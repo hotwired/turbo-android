@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 import android.graphics.Bitmap
+import android.webkit.HttpAuthHandler
 import android.webkit.WebView
 import kotlin.random.Random
 
@@ -103,6 +104,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     override fun isActive(): Boolean {
         return destination.fragment.isAdded
+    }
+
+    override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler?) {
+        callback.onReceivedHttpAuthRequest(handler)
     }
 
     // -----------------------------------------------------------------------
