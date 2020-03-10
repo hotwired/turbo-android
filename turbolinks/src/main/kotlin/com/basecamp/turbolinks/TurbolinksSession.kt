@@ -356,6 +356,10 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             return shouldOverride
         }
 
+        override fun onReceivedHttpAuthRequest(view: WebView, handler: HttpAuthHandler, host: String, realm: String) {
+            callback { it.onReceivedHttpAuthRequest(handler, host, realm) }
+        }
+
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {
             super.onReceivedError(view, request, error)
 

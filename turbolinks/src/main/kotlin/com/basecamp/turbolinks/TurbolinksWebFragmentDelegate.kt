@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 import android.graphics.Bitmap
+import android.webkit.HttpAuthHandler
 import android.webkit.WebView
 import kotlin.random.Random
 
@@ -94,6 +95,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     override fun requestFailedWithStatusCode(statusCode: Int) {
         showErrorView(statusCode)
+    }
+
+    override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {
+        callback.onReceivedHttpAuthRequest(handler, host, realm)
     }
 
     override fun visitProposedToLocation(location: String,
