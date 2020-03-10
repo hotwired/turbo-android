@@ -97,6 +97,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         showErrorView(statusCode)
     }
 
+    override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {
+        callback.onReceivedHttpAuthRequest(handler, host, realm)
+    }
+
     override fun visitProposedToLocation(location: String,
                                          options: VisitOptions) {
         navigator.navigate(location, options)
@@ -104,10 +108,6 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     override fun isActive(): Boolean {
         return destination.fragment.isAdded
-    }
-
-    override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler?) {
-        callback.onReceivedHttpAuthRequest(handler)
     }
 
     // -----------------------------------------------------------------------

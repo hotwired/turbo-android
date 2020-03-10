@@ -2,6 +2,7 @@ package com.basecamp.turbolinks
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.webkit.HttpAuthHandler
 
 @Suppress("unused")
 abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFragment(), TurbolinksWebFragmentCallback {
@@ -56,4 +57,8 @@ abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFra
     override fun onVisitCompleted(location: String) {}
 
     override fun onVisitErrorReceived(location: String, errorCode: Int) {}
+
+    override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {
+        handler.cancel()
+    }
 }
