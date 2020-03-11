@@ -18,14 +18,14 @@ import org.robolectric.annotation.Config
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class RepositoryTest : BaseRepositoryTest() {
+class PathConfigurationRepositoryTest : BaseRepositoryTest() {
     private lateinit var context: Context
-    private val repository = Repository()
+    private val repository = PathConfigurationRepository()
 
     override fun setup() {
         super.setup()
         context = RuntimeEnvironment.application.applicationContext
-        Http.sharedHttpClient = client()
+        TurbolinksHttpClient.instance = client()
     }
 
     @Test

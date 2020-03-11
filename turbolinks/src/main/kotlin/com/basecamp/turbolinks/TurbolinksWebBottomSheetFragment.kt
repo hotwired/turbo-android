@@ -54,7 +54,7 @@ abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFra
 
     override fun onVisitStarted(location: String) {}
 
-    override fun onVisitCompleted(location: String) {}
+    override fun onVisitCompleted(location: String, completedOffline: Boolean) {}
 
     override fun onVisitErrorReceived(location: String, errorCode: Int) {}
 

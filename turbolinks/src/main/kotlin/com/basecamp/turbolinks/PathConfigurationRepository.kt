@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.Request
 import java.io.IOException
 
-internal class Repository {
+internal class PathConfigurationRepository {
     private val cacheFile = "turbolinks"
     private val cacheKey = "configuration.json"
 
@@ -34,18 +34,20 @@ internal class Repository {
         }
     }
 
-    private fun issueRequest(request: Request): String? = try {
-        Http.sharedHttpClient.newCall(request).execute().use { response ->
-            if (response.isSuccessful) {
-                response.body?.string()
-            } else {
-                logError(request, response.code.toString())
-                null
+    private fun issueRequest(request: Request): String? {
+        return try {
+            val call = TurbolinksHttpClient.instance.newCall(request)
+
+            call.execute().use { response ->
+                if (response.isSuccessful) {
+                    response.body?.string()
+                } else {
+                    null
+                }
             }
+        } catch (e: IOException) {
+            null
         }
-    } catch (e: IOException) {
-        logError(request, e.message)
-        null
     }
 
     private fun prefs(context: Context): SharedPreferences {
@@ -56,9 +58,5 @@ internal class Repository {
         return context.assets.open(filePath).use {
             String(it.readBytes())
         }
-    }
-
-    private fun logError(request: Request, message: String?) {
-        TurbolinksLog.e("Response failed for ${request.url} : $message")
     }
 }

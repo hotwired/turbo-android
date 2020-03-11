@@ -20,11 +20,13 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     internal var previousOverrideUrlTime = 0L
     internal var visitPending = false
     internal var restorationIdentifiers = SparseArray<String>()
+    internal val httpRepository = TurbolinksHttpRepository()
 
     // User accessible
 
     var rootLocation: String? = null
     var pathConfiguration = PathConfiguration(context)
+    var enableOfflineCaching = false
     var enableScreenshots = true
     var isColdBooting = false
         internal set
@@ -33,6 +35,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     init {
         initializeWebView()
+        TurbolinksHttpClient.enableCachingWith(context)
     }
 
     // Public
@@ -138,7 +141,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
         if (visitIdentifier == currentVisit.identifier) {
             restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
-            callback { it.visitCompleted() }
+            callback { it.visitCompleted(currentVisit.completedOffline) }
         }
     }
 
@@ -225,7 +228,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     private fun renderVisitForColdBoot() {
         logEvent("renderVisitForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
         webView.visitRenderedForColdBoot(coldBootVisitIdentifier)
-        callback { it.visitCompleted() }
+        callback { it.visitCompleted(currentVisit.completedOffline) }
     }
 
     /**
@@ -358,6 +361,23 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
         override fun onReceivedHttpAuthRequest(view: WebView, handler: HttpAuthHandler, host: String, realm: String) {
             callback { it.onReceivedHttpAuthRequest(handler, host, realm) }
+        }
+
+        override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+            if (!enableOfflineCaching ||
+                !request.method.equals("GET", ignoreCase = true) ||
+                request.url.scheme?.startsWith("HTTP", ignoreCase = true) != true) {
+                return null
+            }
+
+            val url = request.url.toString()
+            val result = httpRepository.fetch(request)
+
+            if (currentVisit.location == url) {
+                currentVisit.completedOffline = result.offline
+            }
+
+            return result.response
         }
 
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {

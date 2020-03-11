@@ -21,7 +21,7 @@ import org.robolectric.annotation.Config
 class PathConfigurationTest {
     private lateinit var context: Context
     private lateinit var pathConfiguration: PathConfiguration
-    private val mockRepository = mock<Repository>()
+    private val mockRepository = mock<PathConfigurationRepository>()
 
     @Before
     fun setup() {
