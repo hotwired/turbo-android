@@ -80,7 +80,7 @@ internal class TurbolinksHttpRepository {
 
         return call.execute().use { response ->
             if (response.isSuccessful) {
-                verifyResponseCaching(response, request)
+                logIfNotCached(response, request)
                 setCookies(location, response)
                 resourceResponse(response)
             } else {
@@ -89,7 +89,7 @@ internal class TurbolinksHttpRepository {
         }
     }
 
-    private fun verifyResponseCaching(response: Response, request: Request) {
+    private fun logIfNotCached(response: Response, request: Request) {
         if (!CacheStrategy.isCacheable(response, request)) {
             logEvent("responseNotCacheable", listOf(
                 "location" to request.url,
@@ -130,7 +130,8 @@ internal class TurbolinksHttpRepository {
 
     private fun sanitizeContentType(contentType: String): String {
         // The Content-Type header may contain a charset suffix,
-        // but this is incompatible with a WebResourceResponse.
+        // but this is incompatible with a WebResourceResponse and
+        // the resource will default to `text/plain` otherwise.
         return contentType.removeSuffix("; charset=utf-8")
     }
 
