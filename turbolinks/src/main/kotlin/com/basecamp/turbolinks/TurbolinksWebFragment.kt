@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 import android.os.Bundle
+import android.webkit.HttpAuthHandler
 
 abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
@@ -59,4 +60,8 @@ abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWeb
     override fun onVisitCompleted(location: String, completedOffline: Boolean) {}
 
     override fun onVisitErrorReceived(location: String, errorCode: Int) {}
+
+    override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {
+        handler.cancel()
+    }
 }

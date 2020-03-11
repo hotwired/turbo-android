@@ -10,8 +10,7 @@ import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
-import com.basecamp.turbolinks.VisitAction.ADVANCE
-import com.basecamp.turbolinks.VisitAction.RESTORE
+import com.basecamp.turbolinks.VisitAction.*
 import java.util.*
 
 @Suppress("unused")
@@ -330,24 +329,38 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         /**
          * Turbolinks will not call adapter.visitProposedToLocation in some cases,
          * like target=_blank or when the domain doesn't match. We still route those here.
-         * This is only called when links within a webView are clicked and not during loadUrl.
-         * So this is safely ignored for the first cold boot.
+         * This is only called when links within a webView are clicked and during a
+         * redirect while cold booting.
          * http://stackoverflow.com/a/6739042/3280911
          */
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
             val location = request.url.toString()
-            logEvent("shouldOverrideUrlLoading", "location" to location)
+            val isColdBootRedirect = isColdBooting && currentVisit.location != location
+            val shouldOverride = isReady || isColdBootRedirect
 
-            if (!isReady || isColdBooting) {
-                return false
+            // Don't allow onPageFinished to process its
+            // callbacks if a cold boot was blocked.
+            if (isColdBootRedirect) {
+                logEvent("coldBootRedirect", "location" to location)
+                reset()
             }
 
-            if (shouldProposeThrottledVisit()) {
-                val options = VisitOptions()
+            if (shouldOverride && shouldProposeThrottledVisit()) {
+                // Replace the cold boot destination on a redirect
+                // since the original url isn't visitable.
+                val options = when (isColdBootRedirect) {
+                    true -> VisitOptions(action = REPLACE)
+                    else -> VisitOptions(action = ADVANCE)
+                }
                 visitProposedToLocation(location, options.toJson())
             }
 
-            return true
+            logEvent("shouldOverrideUrlLoading", "location" to location, "shouldOverride" to shouldOverride)
+            return shouldOverride
+        }
+
+        override fun onReceivedHttpAuthRequest(view: WebView, handler: HttpAuthHandler, host: String, realm: String) {
+            callback { it.onReceivedHttpAuthRequest(handler, host, realm) }
         }
 
         override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {

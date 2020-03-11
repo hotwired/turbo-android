@@ -12,16 +12,10 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     internal var pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
 
     internal lateinit var pathProperties: PathProperties
-    internal lateinit var router: TurbolinksRouter
     internal lateinit var session: TurbolinksSession
     internal lateinit var navigator: TurbolinksNavigator
 
     fun onActivityCreated() {
-        val activity = requireNotNull(fragment.context as? TurbolinksActivity) {
-            "The fragment Activity must implement TurbolinksActivity"
-        }
-
-        router = activity.delegate.router
         session = destination.session
         pathProperties = session.pathConfiguration.properties(location)
         navigator = TurbolinksNavigator(destination)
@@ -59,7 +53,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     private fun initToolbar() {
         destination.toolbarForNavigation()?.let {
             NavigationUI.setupWithNavController(it, fragment.findNavController())
-            it.setNavigationOnClickListener { navigator.navigateUp() }
+            it.setNavigationOnClickListener { destination.navigateUp() }
         }
     }
 
