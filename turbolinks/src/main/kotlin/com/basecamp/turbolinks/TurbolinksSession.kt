@@ -351,7 +351,9 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         }
 
         override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-            if (!enableOfflineCaching || request.method != "GET") {
+            if (!enableOfflineCaching ||
+                !request.method.equals("GET", ignoreCase = true) ||
+                request.url.scheme?.startsWith("HTTP", ignoreCase = true) != true) {
                 return null
             }
 
