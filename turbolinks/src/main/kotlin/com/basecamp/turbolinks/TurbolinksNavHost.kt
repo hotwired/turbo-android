@@ -2,7 +2,6 @@ package com.basecamp.turbolinks
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import androidx.navigation.NavArgument
 import androidx.navigation.fragment.NavHostFragment
 
@@ -19,12 +18,7 @@ abstract class TurbolinksNavHost : NavHostFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         session = TurbolinksSession.getNew(sessionName, requireActivity(), onCreateWebView(requireActivity()))
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        reset()
+        initControllerGraph()
         loadPathConfiguration()
     }
 
