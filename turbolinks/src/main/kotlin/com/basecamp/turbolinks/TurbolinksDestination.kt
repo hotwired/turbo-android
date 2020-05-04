@@ -4,8 +4,10 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 
 interface TurbolinksDestination {
@@ -47,6 +49,10 @@ interface TurbolinksDestination {
     fun toolbarForNavigation(): Toolbar?
 
     fun onBeforeNavigation()
+
+    fun controllerForNavigation(location: String?): NavController {
+        return fragment.findNavController()
+    }
 
     fun getFallbackDeepLinkUri(location: String): Uri? {
         return null

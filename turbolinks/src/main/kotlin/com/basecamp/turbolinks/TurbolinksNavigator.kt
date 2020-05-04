@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import java.net.URI
 
@@ -97,7 +96,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                 currentController().popBackStack()
             }
             Presentation.REPLACE -> onNavigationVisit {
-                currentController().popBackStack()
+                currentController(location).popBackStack()
                 navigateToLocation(location, properties, navBundle, extras)
             }
             Presentation.PUSH -> onNavigationVisit {
@@ -185,7 +184,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                                    bundle: Bundle,
                                    extras: FragmentNavigator.Extras?) {
 
-        val controller = currentController()
+        val controller = currentController(location)
         val navOptions = navOptions(location, properties)
 
         destinationFor(properties.uri)?.let { destination ->
@@ -251,8 +250,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    private fun currentController(): NavController {
-        return fragment.findNavController()
+    private fun currentController(location: String? = null): NavController {
+        return destination.controllerForNavigation(location)
     }
 
     private fun destinationFor(uri: Uri?): NavDestination? {
