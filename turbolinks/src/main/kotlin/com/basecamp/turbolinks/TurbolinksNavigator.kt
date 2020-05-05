@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import java.net.URI
 
@@ -37,7 +38,11 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     fun navigateBack() {
-        popBackStack()
+        onNavigationVisit {
+            if (!currentController().popBackStack()) {
+                fragment.requireActivity().finish()
+            }
+        }
     }
 
     fun clearBackStack() {
@@ -90,13 +95,14 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
         logEvent("navigateWithinContext", "location" to location, "presentation" to presentation)
         val navBundle = bundle.withNavArguments(location, options, presentation)
+        val controller = currentControllerForLocation(location)
 
         when (presentation) {
             Presentation.POP -> onNavigationVisit {
-                currentController().popBackStack()
+                controller.popBackStack()
             }
             Presentation.REPLACE -> onNavigationVisit {
-                currentController(location).popBackStack()
+                controller.popBackStack()
                 navigateToLocation(location, properties, navBundle, extras)
             }
             Presentation.PUSH -> onNavigationVisit {
@@ -139,7 +145,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         )
 
         onNavigationVisit {
-            val controller = currentController()
+            val controller = currentControllerForLocation(location)
             val destination = controller.currentDestination
 
             if (destination == null) {
@@ -163,8 +169,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun replaceRootLocation(location: String, properties: PathProperties, bundle: Bundle) {
-        val controller = currentController()
-        val destination = destinationFor(properties.uri)
+        val controller = currentControllerForLocation(location)
+        val destination = controller.destinationFor(properties.uri)
 
         if (destination == null) {
             logEvent("replaceRootLocation", "error" to "No destination found")
@@ -184,10 +190,10 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                                    bundle: Bundle,
                                    extras: FragmentNavigator.Extras?) {
 
-        val controller = currentController(location)
+        val controller = currentControllerForLocation(location)
         val navOptions = navOptions(location, properties)
 
-        destinationFor(properties.uri)?.let { destination ->
+        controller.destinationFor(properties.uri)?.let { destination ->
             logEvent("navigateToLocation", "location" to location, "uri" to properties.uri)
             controller.navigate(destination.id, bundle, navOptions, extras)
             return
@@ -198,7 +204,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
         val fallbackUri = destination.getFallbackDeepLinkUri(location)
 
-        destinationFor(fallbackUri)?.let { destination ->
+        controller.destinationFor(fallbackUri)?.let { destination ->
             logEvent("navigateToLocation", "location" to location, "fallbackUri" to "$fallbackUri")
             controller.navigate(destination.id, bundle, navOptions, extras)
             return
@@ -250,21 +256,17 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    private fun currentController(location: String? = null): NavController {
-        return destination.controllerForNavigation(location)
+    private fun currentController(): NavController {
+        return fragment.findNavController()
     }
 
-    private fun destinationFor(uri: Uri?): NavDestination? {
+    private fun currentControllerForLocation(location: String): NavController {
+        return destination.navHostForNavigation(location).navController
+    }
+
+    private fun NavController.destinationFor(uri: Uri?): NavDestination? {
         uri ?: return null
-        return currentController().graph.find { it.hasDeepLink(uri) }
-    }
-
-    private fun popBackStack() {
-        onNavigationVisit {
-            if (!currentController().popBackStack()) {
-                fragment.requireActivity().finish()
-            }
-        }
+        return graph.find { it.hasDeepLink(uri) }
     }
 
     private fun isAtStartDestination(): Boolean {
