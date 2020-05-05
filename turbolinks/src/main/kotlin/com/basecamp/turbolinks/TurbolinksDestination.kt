@@ -2,8 +2,10 @@ package com.basecamp.turbolinks
 
 import android.net.Uri
 import android.os.Bundle
+import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.navOptions
@@ -48,6 +50,10 @@ interface TurbolinksDestination {
 
     fun onBeforeNavigation()
 
+    fun navHostForNavigation(newLocation: String): TurbolinksNavHost {
+        return navHost
+    }
+
     fun getFallbackDeepLinkUri(location: String): Uri? {
         return null
     }
@@ -89,5 +95,16 @@ interface TurbolinksDestination {
 
     fun clearBackStack() {
         navigator.clearBackStack()
+    }
+
+    fun findNavHost(@IdRes navHostId: Int): TurbolinksNavHost {
+        return fragment.parentFragment?.childFragmentManager?.findNavHost(navHostId)
+            ?: fragment.parentFragment?.parentFragment?.childFragmentManager?.findNavHost(navHostId)
+            ?: fragment.requireActivity().supportFragmentManager.findNavHost(navHostId)
+            ?: throw IllegalStateException("No TurbolinksNavHost found with ID: $navHostId")
+    }
+
+    private fun FragmentManager.findNavHost(navHostId: Int): TurbolinksNavHost? {
+        return findFragmentById(navHostId) as? TurbolinksNavHost
     }
 }
