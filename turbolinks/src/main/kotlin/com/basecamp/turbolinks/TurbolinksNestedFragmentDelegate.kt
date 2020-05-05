@@ -5,31 +5,18 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class TurbolinksNestedFragmentDelegate(val fragment: Fragment,
-                                       var currentNavHostId: Int) {
-
-    private val navHosts = mutableListOf<TurbolinksNavHost>()
+class TurbolinksNestedFragmentDelegate(val fragment: Fragment, navHostId: Int) {
+    val navHost by lazy { findNavHost(navHostId) }
 
     val currentDestination: TurbolinksDestination
         get() = currentFragment as TurbolinksDestination
 
-    fun registerNavHost(@IdRes navHostId: Int): TurbolinksNavHost {
-        return findNavHost(navHostId).also {
-            navHosts.add(it)
-        }
+    fun resetNavHost() {
+        navHost.reset()
     }
 
-    fun navHost(@IdRes navHostId: Int): TurbolinksNavHost {
-        return navHosts.firstOrNull { it.id == navHostId }
-            ?: throw IllegalStateException("No registered TurbolinksNavHost found")
-    }
-
-    fun resetNavHosts() {
-        navHosts.forEach { it.reset() }
-    }
-
-    fun resetSessions() {
-        navHosts.forEach { it.session.reset() }
+    fun resetSession() {
+        navHost.session.reset()
     }
 
     fun navigate(location: String,
@@ -51,10 +38,7 @@ class TurbolinksNestedFragmentDelegate(val fragment: Fragment,
     }
 
     private val currentFragment: Fragment
-        get() = currentNavHostFragment.childFragmentManager.primaryNavigationFragment as Fragment
-
-    private val currentNavHostFragment: TurbolinksNavHost
-        get() = navHost(currentNavHostId)
+        get() = navHost.childFragmentManager.primaryNavigationFragment as Fragment
 
     private fun findNavHost(@IdRes navHostId: Int): TurbolinksNavHost {
         return fragment.childFragmentManager.findFragmentById(navHostId) as? TurbolinksNavHost
