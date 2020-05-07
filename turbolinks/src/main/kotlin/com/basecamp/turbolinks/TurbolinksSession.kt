@@ -26,7 +26,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     var rootLocation: String? = null
     var pathConfiguration = PathConfiguration(context)
-    var enableOfflineCaching = false
+    var offlineRequestHandler: OfflineRequestHandler? = null
     var enableScreenshots = true
     var isColdBooting = false
         internal set
@@ -364,14 +364,15 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         }
 
         override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-            if (!enableOfflineCaching ||
-                !request.method.equals("GET", ignoreCase = true) ||
+            val requestHandler = offlineRequestHandler ?: return null
+
+            if (!request.method.equals("GET", ignoreCase = true) ||
                 request.url.scheme?.startsWith("HTTP", ignoreCase = true) != true) {
                 return null
             }
 
             val url = request.url.toString()
-            val result = httpRepository.fetch(request)
+            val result = httpRepository.fetch(requestHandler, request)
 
             if (currentVisit.location == url) {
                 currentVisit.completedOffline = result.offline

@@ -3,6 +3,7 @@ package com.basecamp.turbolinks
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import com.basecamp.turbolinks.OfflineCacheStrategy.*
 import okhttp3.CacheControl
 import okhttp3.Request
 import okhttp3.Response
@@ -10,6 +11,16 @@ import okhttp3.internal.cache.CacheStrategy
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
+
+enum class OfflineCacheStrategy {
+    APP, HTTP, NONE
+}
+
+interface OfflineRequestHandler {
+    fun cacheStrategy(url: String): OfflineCacheStrategy
+    fun cacheResponse(url: String, response: WebResourceResponse)
+    fun getCachedResponse(url: String): WebResourceResponse?
+}
 
 internal class TurbolinksHttpRepository {
     private val cookieManager = CookieManager.getInstance()
@@ -19,11 +30,24 @@ internal class TurbolinksHttpRepository {
         val offline: Boolean
     )
 
-    fun fetch(resourceRequest: WebResourceRequest): Result {
+    internal fun fetch(requestHandler: OfflineRequestHandler, resourceRequest: WebResourceRequest): Result {
+        val url = resourceRequest.url.toString()
+        val cacheStrategy = requestHandler.cacheStrategy(url)
+
         return try {
-            Result(issueRequest(resourceRequest), false)
+            val response = issueRequest(resourceRequest)
+
+            if (response != null && cacheStrategy == APP) {
+                requestHandler.cacheResponse(url, response)
+            }
+
+            Result(response, false)
         } catch (e: IOException) {
-            Result(issueOfflineRequest(resourceRequest), true)
+            when (cacheStrategy) {
+                APP -> Result(requestHandler.getCachedResponse(url), true)
+                HTTP -> Result(issueOfflineRequest(resourceRequest), true)
+                NONE -> Result(null, true)
+            }
         }
     }
 
