@@ -17,9 +17,9 @@ enum class OfflineCacheStrategy {
 }
 
 interface OfflineRequestHandler {
-    fun cacheStrategy(url: String): OfflineCacheStrategy
-    fun cacheResponse(url: String, response: WebResourceResponse)
+    fun getCacheStrategy(url: String): OfflineCacheStrategy
     fun getCachedResponse(url: String): WebResourceResponse?
+    fun cacheResponse(url: String, response: WebResourceResponse)
 }
 
 internal class TurbolinksHttpRepository {
@@ -32,22 +32,33 @@ internal class TurbolinksHttpRepository {
 
     internal fun fetch(requestHandler: OfflineRequestHandler, resourceRequest: WebResourceRequest): Result {
         val url = resourceRequest.url.toString()
-        val cacheStrategy = requestHandler.cacheStrategy(url)
+
+        return when (requestHandler.getCacheStrategy(url)) {
+            APP -> fetchAppCacheRequest(requestHandler, resourceRequest)
+            HTTP -> fetchHttpCacheRequest(resourceRequest)
+            NONE -> Result(null, false)
+        }
+    }
+
+    private fun fetchAppCacheRequest(requestHandler: OfflineRequestHandler, resourceRequest: WebResourceRequest): Result {
+        val url = resourceRequest.url.toString()
 
         return try {
-            val response = issueRequest(resourceRequest)
-
-            if (response != null && cacheStrategy == APP) {
-                requestHandler.cacheResponse(url, response)
+            val response = issueRequest(resourceRequest)?.also {
+                requestHandler.cacheResponse(url, it)
             }
 
             Result(response, false)
         } catch (e: IOException) {
-            when (cacheStrategy) {
-                APP -> Result(requestHandler.getCachedResponse(url), true)
-                HTTP -> Result(issueOfflineRequest(resourceRequest), true)
-                NONE -> Result(null, true)
-            }
+            Result(requestHandler.getCachedResponse(url), true)
+        }
+    }
+
+    private fun fetchHttpCacheRequest(resourceRequest: WebResourceRequest): Result {
+        return try {
+            Result(issueRequest(resourceRequest), false)
+        } catch (e: IOException) {
+            Result(issueOfflineRequest(resourceRequest), true)
         }
     }
 
