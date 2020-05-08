@@ -2,7 +2,6 @@ package com.basecamp.turbolinks
 
 import android.content.Context
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class PathConfigurationLoader(val context: Context) {
@@ -22,7 +21,7 @@ class PathConfigurationLoader(val context: Context) {
         // Always load the previously cached version first, if available
         loadCachedConfiguration(onCompletion)
 
-        GlobalScope.launch {
+        context.coroutineScope().launch {
             repository.getRemoteConfiguration(url)?.let {
                 onCompletion(load(it))
                 cacheConfiguration(load(it))

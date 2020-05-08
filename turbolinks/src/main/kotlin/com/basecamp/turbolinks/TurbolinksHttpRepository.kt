@@ -4,6 +4,8 @@ import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import com.basecamp.turbolinks.OfflineCacheStrategy.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
 import okhttp3.Request
 import okhttp3.Response
@@ -34,6 +36,13 @@ internal class TurbolinksHttpRepository {
         val response: WebResourceResponse?,
         val offline: Boolean
     )
+
+    internal suspend fun preCache(requestHandler: TurbolinksOfflineRequestHandler,
+                                  resourceRequest: WebResourceRequest) {
+        withContext(Dispatchers.IO) {
+            fetch(requestHandler, resourceRequest)
+        }
+    }
 
     internal fun fetch(requestHandler: TurbolinksOfflineRequestHandler,
                        resourceRequest: WebResourceRequest): Result {

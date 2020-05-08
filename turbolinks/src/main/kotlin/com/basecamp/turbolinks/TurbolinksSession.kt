@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
@@ -11,6 +12,7 @@ import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import com.basecamp.turbolinks.VisitAction.*
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Suppress("unused")
@@ -39,6 +41,18 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     }
 
     // Public
+
+    fun preCacheLocation(location: String) {
+        val requestHandler = checkNotNull(offlineRequestHandler) {
+            "An offline request handler must be provided to pre-cache $location"
+        }
+
+        context.coroutineScope().launch {
+            httpRepository.preCache(requestHandler, TurbolinksPreCacheRequest(
+                url = location, userAgent = webView.settings.userAgentString
+            ))
+        }
+    }
 
     fun reset() {
         if (::currentVisit.isInitialized) {
@@ -430,8 +444,8 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     }
 
     companion object {
-        fun getNew(sessionName: String, context: Context, webView: TurbolinksWebView): TurbolinksSession {
-            return TurbolinksSession(sessionName, context.applicationContext, webView)
+        fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView): TurbolinksSession {
+            return TurbolinksSession(sessionName, activity, webView)
         }
     }
 }
