@@ -16,7 +16,7 @@ enum class OfflineCacheStrategy {
     APP, HTTP, NONE
 }
 
-interface OfflineRequestHandler {
+interface TurbolinksOfflineRequestHandler {
     fun getCacheStrategy(url: String): OfflineCacheStrategy
     fun getCachedResponse(url: String): WebResourceResponse?
     fun cacheResponse(url: String, response: WebResourceResponse)
@@ -35,7 +35,8 @@ internal class TurbolinksHttpRepository {
         val offline: Boolean
     )
 
-    internal fun fetch(requestHandler: OfflineRequestHandler, resourceRequest: WebResourceRequest): Result {
+    internal fun fetch(requestHandler: TurbolinksOfflineRequestHandler,
+                       resourceRequest: WebResourceRequest): Result {
         val url = resourceRequest.url.toString()
 
         return when (requestHandler.getCacheStrategy(url)) {
@@ -45,7 +46,8 @@ internal class TurbolinksHttpRepository {
         }
     }
 
-    private fun fetchAppCacheRequest(requestHandler: OfflineRequestHandler, resourceRequest: WebResourceRequest): Result {
+    private fun fetchAppCacheRequest(requestHandler: TurbolinksOfflineRequestHandler,
+                                     resourceRequest: WebResourceRequest): Result {
         val url = resourceRequest.url.toString()
 
         return try {

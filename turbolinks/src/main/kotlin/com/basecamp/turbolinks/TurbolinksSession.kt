@@ -26,7 +26,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     var rootLocation: String? = null
     var pathConfiguration = PathConfiguration(context)
-    var offlineRequestHandler: OfflineRequestHandler? = null
+    var offlineRequestHandler: TurbolinksOfflineRequestHandler? = null
     var enableScreenshots = true
     var isColdBooting = false
         internal set
