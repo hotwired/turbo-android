@@ -81,7 +81,7 @@ object TurbolinksHttpClient {
             val maxAge = maxOf(response.cacheControl.maxAgeSeconds, 0)
             val cacheControl = CacheControl.Builder()
                 .maxAge(maxAge, TimeUnit.SECONDS)
-                .maxStale(365, TimeUnit.DAYS)
+                .maxStale(7, TimeUnit.DAYS)
                 .build()
 
             response.newBuilder()

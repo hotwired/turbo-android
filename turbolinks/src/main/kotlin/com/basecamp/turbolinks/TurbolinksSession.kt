@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
@@ -11,6 +12,7 @@ import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import com.basecamp.turbolinks.VisitAction.*
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Suppress("unused")
@@ -26,7 +28,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
 
     var rootLocation: String? = null
     var pathConfiguration = PathConfiguration(context)
-    var enableOfflineCaching = false
+    var offlineRequestHandler: TurbolinksOfflineRequestHandler? = null
     var enableScreenshots = true
     var isColdBooting = false
         internal set
@@ -39,6 +41,18 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     }
 
     // Public
+
+    fun preCacheLocation(location: String) {
+        val requestHandler = checkNotNull(offlineRequestHandler) {
+            "An offline request handler must be provided to pre-cache $location"
+        }
+
+        context.coroutineScope().launch {
+            httpRepository.preCache(requestHandler, TurbolinksPreCacheRequest(
+                url = location, userAgent = webView.settings.userAgentString
+            ))
+        }
+    }
 
     fun reset() {
         if (::currentVisit.isInitialized) {
@@ -364,14 +378,15 @@ class TurbolinksSession private constructor(val sessionName: String, val context
         }
 
         override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-            if (!enableOfflineCaching ||
-                !request.method.equals("GET", ignoreCase = true) ||
+            val requestHandler = offlineRequestHandler ?: return null
+
+            if (!request.method.equals("GET", ignoreCase = true) ||
                 request.url.scheme?.startsWith("HTTP", ignoreCase = true) != true) {
                 return null
             }
 
             val url = request.url.toString()
-            val result = httpRepository.fetch(request)
+            val result = httpRepository.fetch(requestHandler, request)
 
             if (currentVisit.location == url) {
                 currentVisit.completedOffline = result.offline
@@ -429,8 +444,8 @@ class TurbolinksSession private constructor(val sessionName: String, val context
     }
 
     companion object {
-        fun getNew(sessionName: String, context: Context, webView: TurbolinksWebView): TurbolinksSession {
-            return TurbolinksSession(sessionName, context.applicationContext, webView)
+        fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView): TurbolinksSession {
+            return TurbolinksSession(sessionName, activity, webView)
         }
     }
 }

@@ -10,7 +10,10 @@ import androidx.fragment.app.Fragment
 class TurbolinksActivityDelegate(val activity: AppCompatActivity,
                                  var currentNavHostId: Int) {
 
-    private val navHosts = mutableListOf<TurbolinksNavHost>()
+    private val navHosts = mutableMapOf<Int, TurbolinksNavHost>()
+
+    val currentNavHost: TurbolinksNavHost
+        get() = navHost(currentNavHostId)
 
     val currentDestination: TurbolinksDestination
         get() = currentFragment as TurbolinksDestination
@@ -20,6 +23,7 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
      * properly handles Fragment navigation with the back button.
      */
     init {
+        registerNavHost(currentNavHostId)
         activity.onBackPressedDispatcher.addCallback(activity) {
             navigateBack()
         }
@@ -27,21 +31,22 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
 
     fun registerNavHost(@IdRes navHostId: Int): TurbolinksNavHost {
         return findNavHost(navHostId).also {
-            navHosts.add(it)
+            navHosts[navHostId] = it
         }
     }
 
     fun navHost(@IdRes navHostId: Int): TurbolinksNavHost {
-        return navHosts.firstOrNull { it.id == navHostId }
-            ?: throw IllegalStateException("No registered TurbolinksNavHost found")
+        return requireNotNull(navHosts[navHostId]) {
+            "No registered TurbolinksNavHost found"
+        }
     }
 
     fun resetNavHosts() {
-        navHosts.forEach { it.reset() }
+        navHosts.forEach { it.value.reset() }
     }
 
     fun resetSessions() {
-        navHosts.forEach { it.session.reset() }
+        navHosts.forEach { it.value.session.reset() }
     }
 
     fun navigate(location: String,
@@ -63,10 +68,7 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
     }
 
     private val currentFragment: Fragment
-        get() = currentNavHostFragment.childFragmentManager.primaryNavigationFragment as Fragment
-
-    private val currentNavHostFragment: TurbolinksNavHost
-        get() = navHost(currentNavHostId)
+        get() = currentNavHost.childFragmentManager.primaryNavigationFragment as Fragment
 
     private fun findNavHost(@IdRes navHostId: Int): TurbolinksNavHost {
         return activity.supportFragmentManager.findFragmentById(navHostId) as? TurbolinksNavHost
