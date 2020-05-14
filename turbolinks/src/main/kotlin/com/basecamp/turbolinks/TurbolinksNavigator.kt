@@ -210,10 +210,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         logEvent("navigateToLocation", "location" to location,
             "warning" to "No destination found", "uri" to properties.uri)
 
-        val fallbackUri = destination.getFallbackDeepLinkUri(location)
-
-        controller.destinationFor(fallbackUri)?.let { destination ->
-            logEvent("navigateToLocation", "location" to location, "fallbackUri" to "$fallbackUri")
+        controller.destinationFor(properties.fallbackUri)?.let { destination ->
+            logEvent("navigateToLocation", "location" to location, "fallbackUri" to "${properties.fallbackUri}")
             controller.navigate(destination.id, bundle, navOptions, extras)
             return
         }
