@@ -1,6 +1,5 @@
 package com.basecamp.turbolinks
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
@@ -52,10 +51,6 @@ interface TurbolinksDestination {
 
     fun navHostForNavigation(newLocation: String): TurbolinksNavHost {
         return navHost
-    }
-
-    fun getFallbackDeepLinkUri(location: String): Uri? {
-        return null
     }
 
     fun shouldNavigateTo(newLocation: String): Boolean {

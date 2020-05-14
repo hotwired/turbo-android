@@ -83,3 +83,6 @@ val PathProperties.context: PresentationContext
 
 val PathProperties.uri: Uri
     get() = Uri.parse(get("uri"))
+
+val PathProperties.fallbackUri: Uri?
+    get() = get("fallback_uri")?.let { Uri.parse(it) }
