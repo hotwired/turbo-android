@@ -17,9 +17,17 @@ abstract class TurbolinksNavHost : NavHostFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        session = TurbolinksSession.getNew(sessionName, requireActivity(), onCreateWebView(requireActivity()))
+        createNewSession()
         initControllerGraph()
-        loadPathConfiguration()
+    }
+
+    internal fun createNewSession() {
+        session = TurbolinksSession.getNew(sessionName, requireActivity(), onCreateWebView(requireActivity()))
+        onSessionCreated()
+    }
+
+    open fun onSessionCreated() {
+        session.pathConfiguration.load(pathConfigurationLocation)
     }
 
     open fun onCreateWebView(context: Context): TurbolinksWebView {
@@ -52,9 +60,5 @@ abstract class TurbolinksNavHost : NavHostFragment() {
             this.addArgument("sessionName", session)
             this.startDestination = startDestinationId
         }
-    }
-
-    private fun loadPathConfiguration() {
-        session.pathConfiguration.load(pathConfigurationLocation)
     }
 }
