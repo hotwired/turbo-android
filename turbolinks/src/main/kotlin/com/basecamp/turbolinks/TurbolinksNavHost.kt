@@ -17,11 +17,11 @@ abstract class TurbolinksNavHost : NavHostFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        recreateSession()
+        createNewSession()
         initControllerGraph()
     }
 
-    internal fun recreateSession() {
+    internal fun createNewSession() {
         session = TurbolinksSession.getNew(sessionName, requireActivity(), onCreateWebView(requireActivity()))
         onSessionCreated()
     }
