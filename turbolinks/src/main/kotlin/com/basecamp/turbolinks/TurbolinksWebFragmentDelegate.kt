@@ -24,6 +24,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         get() = session().webView
 
     fun onActivityCreated() {
+        if (session().isRenderProcessGone) {
+            destination.navHost.recreateSession()
+        }
+
         navigator.onNavigationVisit = { onReady ->
             destination.onBeforeNavigation()
             detachWebView(onReady)
@@ -91,6 +95,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     override fun onReceivedError(errorCode: Int) {
         callback.onVisitErrorReceived(location, errorCode)
         showErrorView(errorCode)
+    }
+
+    override fun onRenderProcessGone() {
+        navigator.navigate(location, VisitOptions(action = VisitAction.REPLACE))
     }
 
     override fun requestFailedWithStatusCode(statusCode: Int) {

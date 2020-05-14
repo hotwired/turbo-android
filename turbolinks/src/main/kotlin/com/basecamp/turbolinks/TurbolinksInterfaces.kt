@@ -7,6 +7,7 @@ interface TurbolinksSessionCallback {
     fun onPageStarted(location: String)
     fun onPageFinished(location: String)
     fun onReceivedError(errorCode: Int)
+    fun onRenderProcessGone()
     fun pageInvalidated()
     fun requestFailedWithStatusCode(statusCode: Int)
     fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String)

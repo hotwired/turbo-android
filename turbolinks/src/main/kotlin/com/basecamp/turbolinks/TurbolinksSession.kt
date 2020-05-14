@@ -1,10 +1,12 @@
 package com.basecamp.turbolinks
 
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
+import android.os.Build
 import android.util.SparseArray
 import android.webkit.*
 import androidx.webkit.WebResourceErrorCompat
@@ -16,16 +18,18 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 @Suppress("unused")
-class TurbolinksSession private constructor(val sessionName: String, val context: Context, val webView: TurbolinksWebView) {
+class TurbolinksSession private constructor(val sessionName: String, val activity: Activity, val webView: TurbolinksWebView) {
     internal lateinit var currentVisit: TurbolinksVisit
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
     internal var visitPending = false
+    internal var isRenderProcessGone = false
     internal var restorationIdentifiers = SparseArray<String>()
     internal val httpRepository = TurbolinksHttpRepository()
 
     // User accessible
 
+    val context: Context = activity.applicationContext
     var rootLocation: String? = null
     var pathConfiguration = PathConfiguration(context)
     var offlineRequestHandler: TurbolinksOfflineRequestHandler? = null
@@ -47,7 +51,7 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             "An offline request handler must be provided to pre-cache $location"
         }
 
-        context.coroutineScope().launch {
+        activity.coroutineScope().launch {
             httpRepository.preCache(requestHandler, TurbolinksPreCacheRequest(
                 url = location, userAgent = webView.settings.userAgentString
             ))
@@ -422,6 +426,25 @@ class TurbolinksSession private constructor(val sessionName: String, val context
             logEvent("onReceivedSslError", "url" to error.url)
             reset()
             callback { it.onReceivedError(-1) }
+        }
+
+        @TargetApi(Build.VERSION_CODES.O)
+        override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
+            logEvent("onRenderProcessGone", "didCrash" to detail.didCrash())
+
+            if (view == webView) {
+                // Set a flag if the WebView render process is gone so we
+                // can avoid using this session any further in the app.
+                isRenderProcessGone = true
+
+                // We can reach this callback even if a WebView visit hasn't been
+                // performed yet. Guard against this state so we don't crash.
+                if (::currentVisit.isInitialized) {
+                    callback { it.onRenderProcessGone() }
+                }
+            }
+
+            return true
         }
 
         /**
