@@ -46,16 +46,6 @@ internal fun <T> String.toObject(typeToken: TypeToken<T>): T {
     return gson().fromJson<T>(this, typeToken.type)
 }
 
-internal fun String.urlEncode(): String {
-    return try {
-        val url = URL(this)
-        val uri = URI(url.protocol, url.userInfo, url.host, url.port, url.path, url.query, url.ref)
-        uri.toURL().toString()
-    } catch (e: Exception) {
-        ""
-    }
-}
-
 internal fun View.visible() {
     visibility = View.VISIBLE
 }

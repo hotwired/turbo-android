@@ -124,11 +124,6 @@ class TurbolinksSessionTest {
             assertThat(domStorageEnabled).isTrue()
         }
     }
-
-    @Test fun encodeUrlProperlyEncodes() {
-        val url = "http://basecamp.com/search?q=test test + testing & /testfile .mp4"
-        assertThat(url.urlEncode()).doesNotContain(" ")
-    }
 }
 
 internal class TurbolinksTestActivity : Activity()

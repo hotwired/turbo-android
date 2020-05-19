@@ -29,7 +29,7 @@ open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: 
         get() = versionName?.substringBefore(".")?.toIntOrNull()
 
     internal fun visitLocation(location: String, options: VisitOptions, restorationIdentifier: String) {
-        val args = encodeArguments(location.urlEncode(), options.toJson(), restorationIdentifier)
+        val args = encodeArguments(location, options.toJson(), restorationIdentifier)
         runJavascript("webView.visitLocationWithOptionsAndRestorationIdentifier($args)")
     }
 
