@@ -28,6 +28,10 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
         logEvent("fragment.onStart", "location" to location)
     }
 
+    fun onStop() {
+        logEvent("fragment.onStop", "location" to location)
+    }
+
     fun onStartAfterDialogCancel() {
         logEvent("fragment.onStartAfterDialogCancel", "location" to location)
     }

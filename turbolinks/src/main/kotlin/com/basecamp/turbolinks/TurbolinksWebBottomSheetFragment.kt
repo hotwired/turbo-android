@@ -23,12 +23,6 @@ abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFra
         delegate.onStart()
     }
 
-    override fun onStop() {
-        delegate.onDialogStop()
-        dismissAllowingStateLoss()
-        super.onStop()
-    }
-
     override fun onCancel(dialog: DialogInterface) {
         delegate.onDialogCancel()
         super.onCancel(dialog)

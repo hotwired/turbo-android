@@ -33,6 +33,11 @@ abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        delegate.onStop()
+    }
+
     open fun onStartAfterModalResult(result: TurbolinksModalResult) {
         delegate.onStartAfterModalResult(result)
     }
@@ -53,8 +58,7 @@ abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
 
     private fun observeModalResult() {
         delegate.sessionViewModel.modalResult.observe(viewLifecycleOwner, Observer { event ->
-            // Only handle modal results in non-modal contexts
-            if (pathProperties.context != PresentationContext.MODAL) {
+            if (shouldHandleModalResults()) {
                 event.getContentIfNotHandled()?.let {
                     onStartAfterModalResult(it)
                 }
@@ -68,5 +72,10 @@ abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
                 onStartAfterDialogCancel()
             }
         })
+    }
+
+    private fun shouldHandleModalResults(): Boolean {
+        // Only handle modal results in non-modal contexts
+        return pathProperties.context != PresentationContext.MODAL
     }
 }
