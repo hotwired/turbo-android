@@ -48,10 +48,6 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         initNavigationVisit()
     }
 
-    fun onDialogStop() {
-        detachWebView()
-    }
-
     fun onDialogCancel() {
         detachWebView()
     }

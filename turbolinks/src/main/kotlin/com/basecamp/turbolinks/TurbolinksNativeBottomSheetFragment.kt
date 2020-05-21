@@ -22,6 +22,11 @@ abstract class TurbolinksNativeBottomSheetFragment : BottomSheetDialogFragment()
         delegate.onStart()
     }
 
+    override fun onStop() {
+        super.onStop()
+        delegate.onStop()
+    }
+
     override fun onCancel(dialog: DialogInterface) {
         delegate.onDialogCancel()
         super.onCancel(dialog)
