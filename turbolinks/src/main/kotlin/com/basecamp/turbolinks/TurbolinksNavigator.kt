@@ -162,9 +162,16 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             "presentation" to properties.presentation
         )
 
-        val controller = currentControllerForLocation(location)
-        val navDestination = checkNotNull(controller.currentDestination)
+        onNavigationVisit {
+            val controller = currentControllerForLocation(location)
+            val navDestination = checkNotNull(controller.currentDestination)
 
+            sendModalResult(location, options, properties)
+            controller.popBackStack(navDestination.id, true)
+        }
+    }
+
+    private fun sendModalResult(location: String, options: VisitOptions, properties: PathProperties) {
         // Save the modal result with VisitOptions so it can be retrieved
         // by the previous destination when the backstack is popped.
         destination.sessionViewModel.sendModalResult(
@@ -174,10 +181,6 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                 shouldNavigate = properties.presentation != Presentation.NONE
             )
         )
-
-        onNavigationVisit {
-            controller.popBackStack(navDestination.id, true)
-        }
     }
 
     private fun replaceRootLocation(location: String, properties: PathProperties, bundle: Bundle) {
