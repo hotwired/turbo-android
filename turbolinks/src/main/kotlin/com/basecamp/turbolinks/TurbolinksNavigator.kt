@@ -94,8 +94,13 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                                       extras: FragmentNavigator.Extras?) {
 
         logEvent("navigateWithinContext", "location" to location, "presentation" to presentation)
-        val navBundle = bundle.withNavArguments(location, options, presentation)
+        val navBundle = bundle.withNavArguments(location, presentation)
         val controller = currentControllerForLocation(location)
+
+        // Save the VisitOptions so it can be retrieved by the next
+        // destination. When response.responseHTML is present it is
+        // too large to save directly within the args bundle.
+        destination.sessionViewModel.saveVisitOptions(options)
 
         when (presentation) {
             Presentation.POP -> onNavigationVisit {
@@ -131,8 +136,13 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                                        extras: FragmentNavigator.Extras?) {
 
         logEvent("navigateToModalContext", "location" to location)
-        val navBundle = bundle.withNavArguments(location, options, Presentation.PUSH)
+        val navBundle = bundle.withNavArguments(location, Presentation.PUSH)
         val controller = currentControllerForLocation(location)
+
+        // Save the VisitOptions so it can be retrieved by the next
+        // destination. When response.responseHTML is present it is
+        // too large to save directly within the args bundle.
+        destination.sessionViewModel.saveVisitOptions(options)
 
         when (presentation) {
             Presentation.REPLACE -> onNavigationVisit {
@@ -152,21 +162,11 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             "presentation" to properties.presentation
         )
 
-        onNavigationVisit {
-            val controller = currentControllerForLocation(location)
-            val destination = controller.currentDestination
+        val controller = currentControllerForLocation(location)
+        val navDestination = checkNotNull(controller.currentDestination)
 
-            if (destination == null) {
-                logEvent("dismissModalContextWithResult", "error" to "No modal graph found")
-                return@onNavigationVisit
-            }
-
-            sendModalResult(location, options, properties)
-            controller.popBackStack(destination.id, true)
-        }
-    }
-
-    private fun sendModalResult(location: String, options: VisitOptions, properties: PathProperties) {
+        // Save the modal result with VisitOptions so it can be retrieved
+        // by the previous destination when the backstack is popped.
         destination.sessionViewModel.sendModalResult(
             TurbolinksModalResult(
                 location = location,
@@ -174,6 +174,10 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                 shouldNavigate = properties.presentation != Presentation.NONE
             )
         )
+
+        onNavigationVisit {
+            controller.popBackStack(navDestination.id, true)
+        }
     }
 
     private fun replaceRootLocation(location: String, properties: PathProperties, bundle: Bundle) {
@@ -288,7 +292,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         return URI(first).path == URI(second).path
     }
 
-    private fun Bundle?.withNavArguments(location: String, options: VisitOptions, presentation: Presentation): Bundle {
+    private fun Bundle?.withNavArguments(location: String, presentation: Presentation): Bundle {
         val previousLocation = when (presentation) {
             Presentation.PUSH -> currentLocation()
             else -> previousLocation()
@@ -298,7 +302,6 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         val navBundle = bundleOf(
             "location" to location,
             "previousLocation" to previousLocation,
-            "visitOptions" to options.toJson(),
             "sessionName" to session.sessionName
         )
 
@@ -320,7 +323,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun currentLocation(): String {
-        return checkNotNull(fragment.arguments?.getString("location"))
+        val location = fragment.arguments?.getString("location")
+        return checkNotNull(location)
     }
 
     private fun previousLocation(): String? {

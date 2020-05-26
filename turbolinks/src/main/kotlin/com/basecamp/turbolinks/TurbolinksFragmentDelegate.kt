@@ -4,12 +4,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 
 class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
-    internal var fragment = destination.fragment
-    internal var location = currentLocation()
-    internal var visitOptions = currentVisitOptions()
-    internal var sessionName = currentSessionName()
-    internal var sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
-    internal var pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
+    internal val fragment = destination.fragment
+    internal val location = currentLocation()
+    internal val sessionName = currentSessionName()
+    internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
+    internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
 
     internal lateinit var pathProperties: PathProperties
     internal lateinit var session: TurbolinksSession
@@ -65,11 +64,6 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
         return requireNotNull(fragment.arguments?.getString("location")) {
             "A location argument must be provided"
         }
-    }
-
-    private fun currentVisitOptions(): VisitOptions {
-        val options = VisitOptions.fromJSON(fragment.arguments?.getString("visitOptions"))
-        return options ?: VisitOptions()
     }
 
     private fun currentSessionName(): String {

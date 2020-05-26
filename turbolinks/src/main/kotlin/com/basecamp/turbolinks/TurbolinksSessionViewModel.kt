@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class TurbolinksSessionViewModel : ViewModel() {
+    // Visit options can only be read once
+    var visitOptions: TurbolinksEvent<VisitOptions>? = null
+
     // Modal result can only be observed once
     val modalResult: MutableLiveData<TurbolinksEvent<TurbolinksModalResult>> by lazy {
         MutableLiveData<TurbolinksEvent<TurbolinksModalResult>>()
@@ -17,6 +20,10 @@ class TurbolinksSessionViewModel : ViewModel() {
     // Dialog result can only be observed once
     val dialogResult: MutableLiveData<TurbolinksEvent<TurbolinksDialogResult>> by lazy {
         MutableLiveData<TurbolinksEvent<TurbolinksDialogResult>>()
+    }
+
+    fun saveVisitOptions(options: VisitOptions) {
+        visitOptions = TurbolinksEvent(options)
     }
 
     fun sendModalResult(result: TurbolinksModalResult) {

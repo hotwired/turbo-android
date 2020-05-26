@@ -9,8 +9,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
                                     private val callback: TurbolinksWebFragmentCallback) : TurbolinksSessionCallback {
 
     private var location = destination.location
-    private var visitOptions = destination.visitOptions
-    private val identifier = generateIdentifier()
+    private var visitOptions = currentVisitOptions()
+    private var identifier = generateIdentifier()
     private var isInitialVisit = true
     private var isWebViewAttachedToNewDestination = false
     private var screenshot: Bitmap? = null
@@ -117,6 +117,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     // -----------------------------------------------------------------------
     // Private
     // -----------------------------------------------------------------------
+
+    private fun currentVisitOptions(): VisitOptions {
+        return destination.sessionViewModel.visitOptions?.getContentIfNotHandled() ?: VisitOptions()
+    }
 
     private fun initNavigationVisit() {
         initView()
