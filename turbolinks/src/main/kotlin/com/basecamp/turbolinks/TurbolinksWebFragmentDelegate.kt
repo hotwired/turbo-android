@@ -8,9 +8,9 @@ import kotlin.random.Random
 class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestination,
                                     private val callback: TurbolinksWebFragmentCallback) : TurbolinksSessionCallback {
 
-    private var location = destination.location
-    private var visitOptions = currentVisitOptions()
-    private var identifier = generateIdentifier()
+    private val location = destination.location
+    private val visitOptions = currentVisitOptions()
+    private val identifier = generateIdentifier()
     private var isInitialVisit = true
     private var isWebViewAttachedToNewDestination = false
     private var screenshot: Bitmap? = null
