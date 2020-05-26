@@ -97,21 +97,16 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         val navBundle = bundle.withNavArguments(location, presentation)
         val controller = currentControllerForLocation(location)
 
-        // Save the VisitOptions so it can be retrieved by the next
-        // destination. When response.responseHTML is present it is
-        // too large to save directly within the args bundle.
-        destination.sessionViewModel.saveVisitOptions(options)
-
         when (presentation) {
             Presentation.POP -> onNavigationVisit {
                 controller.popBackStack()
             }
             Presentation.REPLACE -> onNavigationVisit {
                 controller.popBackStack()
-                navigateToLocation(location, properties, navBundle, extras)
+                navigateToLocation(location, options, properties, navBundle, extras)
             }
             Presentation.PUSH -> onNavigationVisit {
-                navigateToLocation(location, properties, navBundle, extras)
+                navigateToLocation(location, options, properties, navBundle, extras)
             }
             Presentation.REPLACE_ROOT -> onNavigationVisit {
                 replaceRootLocation(location, properties, navBundle)
@@ -139,18 +134,13 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         val navBundle = bundle.withNavArguments(location, Presentation.PUSH)
         val controller = currentControllerForLocation(location)
 
-        // Save the VisitOptions so it can be retrieved by the next
-        // destination. When response.responseHTML is present it is
-        // too large to save directly within the args bundle.
-        destination.sessionViewModel.saveVisitOptions(options)
-
         when (presentation) {
             Presentation.REPLACE -> onNavigationVisit {
                 controller.popBackStack()
-                navigateToLocation(location, properties, navBundle, extras)
+                navigateToLocation(location, options, properties, navBundle, extras)
             }
             else -> onNavigationVisit {
-                navigateToLocation(location, properties, navBundle, extras)
+                navigateToLocation(location, options, properties, navBundle, extras)
             }
         }
     }
@@ -201,12 +191,18 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun navigateToLocation(location: String,
+                                   options: VisitOptions,
                                    properties: PathProperties,
                                    bundle: Bundle,
                                    extras: FragmentNavigator.Extras?) {
 
         val controller = currentControllerForLocation(location)
         val navOptions = navOptions(location, properties)
+
+        // Save the VisitOptions so it can be retrieved by the next
+        // destination. When response.responseHTML is present it is
+        // too large to save directly within the args bundle.
+        destination.sessionViewModel.saveVisitOptions(options)
 
         controller.destinationFor(properties.uri)?.let { destination ->
             logEvent("navigateToLocation", "location" to location, "uri" to properties.uri)
