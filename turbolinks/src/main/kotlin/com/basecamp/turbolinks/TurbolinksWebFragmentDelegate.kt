@@ -8,8 +8,8 @@ import kotlin.random.Random
 class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestination,
                                     private val callback: TurbolinksWebFragmentCallback) : TurbolinksSessionCallback {
 
-    private var location = destination.location
-    private var visitOptions = destination.visitOptions
+    private val location = destination.location
+    private val visitOptions = currentVisitOptions()
     private val identifier = generateIdentifier()
     private var isInitialVisit = true
     private var isWebViewAttachedToNewDestination = false
@@ -117,6 +117,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     // -----------------------------------------------------------------------
     // Private
     // -----------------------------------------------------------------------
+
+    private fun currentVisitOptions(): VisitOptions {
+        return destination.sessionViewModel.visitOptions?.getContentIfNotHandled() ?: VisitOptions()
+    }
 
     private fun initNavigationVisit() {
         initView()

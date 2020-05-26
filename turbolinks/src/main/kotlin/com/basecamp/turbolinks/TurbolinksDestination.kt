@@ -19,9 +19,6 @@ interface TurbolinksDestination {
     val location: String
         get() = delegate().location
 
-    val visitOptions: VisitOptions
-        get() = delegate().visitOptions
-
     val pathProperties: PathProperties
         get() = delegate().pathProperties
 
