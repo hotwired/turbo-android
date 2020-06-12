@@ -114,6 +114,11 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         return destination.fragment.isAdded
     }
 
+    // TODO: New callback to give app an option to respond to non-main frame requests
+    override fun onNonMainFrameRequest(location: String) {
+        callback.onNonMainFrameRequest(location)
+    }
+
     // -----------------------------------------------------------------------
     // Private
     // -----------------------------------------------------------------------

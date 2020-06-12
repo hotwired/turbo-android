@@ -382,6 +382,13 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
 
         override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+            // TODO: There are certain situations where shouldInterceptRequest will be called without a
+            // true visit preceding it — specifically, requests outside of the main frame. We pass
+            // these back to the app in case we want to handle them
+            if (!request.isForMainFrame) {
+                callback { it.onNonMainFrameRequest(request.url.toString()) }
+            }
+
             val requestHandler = offlineRequestHandler ?: return null
 
             if (!request.method.equals("GET", ignoreCase = true) ||
