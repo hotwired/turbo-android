@@ -16,7 +16,7 @@ interface TurbolinksSessionCallback {
     fun visitLocationStarted(location: String)
     fun visitProposedToLocation(location: String, options: VisitOptions)
     fun isActive(): Boolean
-    fun onNonMainFrameRequest(location: String) // TODO: New callback to give app an option to respond to non-main frame requests
+    fun shouldInterceptRequest(location: String) // TODO: New callback to give app an option to respond to non-main frame requests
 }
 
 interface TurbolinksActivity {
@@ -40,5 +40,5 @@ interface TurbolinksWebFragmentCallback {
     fun onVisitCompleted(location: String, completedOffline: Boolean)
     fun onVisitErrorReceived(location: String, errorCode: Int)
     fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String)
-    fun onNonMainFrameRequest(location: String) // TODO: New callback to give app an option to respond to non-main frame requests
+    fun shouldInterceptRequest(location: String) // TODO: New callback to give app an option to respond to non-main frame requests
 }
