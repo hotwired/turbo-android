@@ -114,6 +114,11 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         return destination.fragment.isAdded
     }
 
+    // TODO: New callback to give app an option to respond to shouldInterceptRequest
+    override fun shouldInterceptRequest(location: String) {
+        callback.shouldInterceptRequest(location)
+    }
+
     // -----------------------------------------------------------------------
     // Private
     // -----------------------------------------------------------------------

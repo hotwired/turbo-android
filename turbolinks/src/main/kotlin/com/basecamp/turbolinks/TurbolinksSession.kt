@@ -382,6 +382,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
 
         override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+            // TODO: Give the app an opportunity to override the standard behavior that we send the
+            // request through. Specifically, this is necessary when a redirect isn't picked up by
+            // shouldOverrideUrlLoading and TL ignores the visit (eg, a file location).
+            callback { it.shouldInterceptRequest(request.url.toString()) }
+
             val requestHandler = offlineRequestHandler ?: return null
 
             if (!request.method.equals("GET", ignoreCase = true) ||
