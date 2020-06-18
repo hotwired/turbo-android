@@ -100,7 +100,14 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         if (!hasEnoughMemoryForScreenshot()) return null
         if (width <= 0 || height <= 0) return null
 
-        return drawToBitmap()
+        // TODO: Catch-all approach where taking a screenshot for TL should never crash the app
+        // https://sentry.io/organizations/basecamp/issues/1706905982/events/fbdca87b1f8d4bda882e946c1b890f88/?project=1861173&query=is%3Aunresolved
+        return try {
+            drawToBitmap()
+        } catch (e: Exception) {
+            // Don't ever crash when trying to make a screenshot
+            null
+        }
     }
 
     fun screenshotOrientation(): Int {
@@ -113,6 +120,8 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         val max = runtime.maxMemory().toFloat()
         val remaining = 1f - (used / max)
 
-        return remaining > .10
+        // TODO: Some instances where low memory may be removing views and drawing bitmaps crashes
+        // https://sentry.io/organizations/basecamp/issues/1706905982/events/latest/?project=1861173&query=is%3Aunresolved
+        return remaining > .20
     }
 }
