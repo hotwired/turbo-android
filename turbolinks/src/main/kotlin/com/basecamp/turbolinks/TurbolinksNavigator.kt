@@ -20,7 +20,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     enum class Presentation {
-        DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, NONE
+        DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, REFRESH, NONE
     }
 
     enum class NavigationMode {
@@ -69,9 +69,11 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         val presentation = presentation(location, options, pathProperties)
         val navigationMode = navigationMode(currentContext, newContext, presentation)
 
-        logEvent("navigate", "location" to location,
+        logEvent(
+            "navigate", "location" to location,
             "options" to options, "currentContext" to currentContext,
-            "newContext" to newContext, "presentation" to presentation)
+            "newContext" to newContext, "presentation" to presentation
+        )
 
         when (navigationMode) {
             NavigationMode.DISMISS_MODAL -> {
@@ -81,7 +83,16 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                 navigateToModalContext(location, options, pathProperties, presentation, bundle, extras)
             }
             NavigationMode.IN_CONTEXT -> {
-                navigateWithinContext(location, options, pathProperties, presentation, bundle, extras)
+                when (presentation) {
+                    Presentation.REFRESH -> {
+                        // Refresh signals reloading the current destination
+                        // url, ignoring the provided `location` url.
+                        navigate(currentLocation(), VisitOptions())
+                    }
+                    else -> {
+                        navigateWithinContext(location, options, pathProperties, presentation, bundle, extras)
+                    }
+                }
             }
         }
     }
