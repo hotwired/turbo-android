@@ -20,7 +20,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     enum class Presentation {
-        DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, NONE
+        DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, REFRESH, NONE
     }
 
     enum class NavigationMode {
@@ -69,9 +69,13 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         val presentation = presentation(location, options, pathProperties)
         val navigationMode = navigationMode(currentContext, newContext, presentation)
 
-        logEvent("navigate", "location" to location,
-            "options" to options, "currentContext" to currentContext,
-            "newContext" to newContext, "presentation" to presentation)
+        if (pathProperties.presentation != Presentation.REFRESH) {
+            logEvent(
+                "navigate", "location" to location,
+                "options" to options, "currentContext" to currentContext,
+                "newContext" to newContext, "presentation" to presentation
+            )
+        }
 
         when (navigationMode) {
             NavigationMode.DISMISS_MODAL -> {
@@ -81,7 +85,22 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                 navigateToModalContext(location, options, pathProperties, presentation, bundle, extras)
             }
             NavigationMode.IN_CONTEXT -> {
-                navigateWithinContext(location, options, pathProperties, presentation, bundle, extras)
+                if (pathProperties.presentation == Presentation.REFRESH) { // Refresh implies reloading the current url
+                    val refreshLocation = currentLocation()
+                    val refreshOptions = options.copy(action = VisitAction.REPLACE)
+                    val refreshPathProperties = currentPathProperties()
+                    val refreshPresentation = presentation(refreshLocation, refreshOptions, refreshPathProperties)
+
+                    logEvent(
+                        "navigate", "location" to refreshLocation,
+                        "options" to refreshOptions, "currentContext" to currentContext,
+                        "newContext" to newContext, "presentation" to refreshPresentation
+                    )
+
+                    navigateWithinContext(refreshLocation, refreshOptions, refreshPathProperties, refreshPresentation, bundle, extras)
+                } else {
+                    navigateWithinContext(location, options, pathProperties, presentation, bundle, extras)
+                }
             }
         }
     }
@@ -101,7 +120,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             Presentation.POP -> onNavigationVisit {
                 controller.popBackStack()
             }
-            Presentation.REPLACE -> onNavigationVisit {
+            Presentation.REPLACE, Presentation.REFRESH -> onNavigationVisit {
                 controller.popBackStack()
                 navigateToLocation(location, options, properties, navBundle, extras)
             }
