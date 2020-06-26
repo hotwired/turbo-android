@@ -143,20 +143,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         }
     }
 
-    private fun attachWebView(onReady: (Boolean) -> Unit = {}) {
-        val view = turbolinksView
-
-        if (view == null) {
-            onReady(false)
-            return
-        }
-
-        view.attachWebView(requireNotNull(webView)) { attachedToNewDestination ->
-            onReady(attachedToNewDestination)
-
-            if (attachedToNewDestination) {
-                callback.onWebViewAttached()
-            }
+    private fun attachWebView(): Boolean {
+        val view = turbolinksView ?: return false
+        return view.attachWebView(requireNotNull(webView)).also {
+            if (it) callback.onWebViewAttached()
         }
     }
 
@@ -170,23 +160,20 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         val view = webView ?: return
         screenshotView()
 
-        turbolinksView?.detachWebView(view) {
-            onReady()
-            callback.onWebViewDetached()
-        }
+        turbolinksView?.detachWebView(view)
+        turbolinksView?.post { onReady() }
+        callback.onWebViewDetached()
     }
 
     private fun attachWebViewAndVisit() {
         // Attempt to attach the WebView. It may already be attached to the current instance.
-        attachWebView {
-            isWebViewAttachedToNewDestination = it
+        isWebViewAttachedToNewDestination = attachWebView()
 
-            // Visit every time the WebView is reattached to the current Fragment.
-            if (isWebViewAttachedToNewDestination) {
-                showProgressView(location)
-                visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
-                isInitialVisit = false
-            }
+        // Visit every time the WebView is reattached to the current Fragment.
+        if (isWebViewAttachedToNewDestination) {
+            showProgressView(location)
+            visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
+            isInitialVisit = false
         }
     }
 

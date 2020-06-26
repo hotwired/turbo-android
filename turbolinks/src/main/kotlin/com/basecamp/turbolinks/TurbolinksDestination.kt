@@ -77,8 +77,8 @@ interface TurbolinksDestination {
         }
     }
 
-    fun navigateUp() {
-        navigator.navigateUp()
+    fun navigateUp(): Boolean {
+        return navigator.navigateUp()
     }
 
     fun navigateBack() {

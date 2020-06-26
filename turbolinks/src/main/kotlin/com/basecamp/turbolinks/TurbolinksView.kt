@@ -24,10 +24,9 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     internal val webViewRefresh: SwipeRefreshLayout? get() = webViewContainer as? SwipeRefreshLayout
     internal val errorRefresh: SwipeRefreshLayout? get() = findViewById(R.id.turbolinks_error_refresh)
 
-    internal fun attachWebView(webView: WebView, onAttachedToNewDestination: (Boolean) -> Unit) {
+    internal fun attachWebView(webView: WebView): Boolean {
         if (webView.parent != null) {
-            onAttachedToNewDestination(false)
-            return
+            return false
         }
 
         // Match the WebView background with its new parent
@@ -35,17 +34,12 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
             webView.setBackgroundColor((background as ColorDrawable).color)
         }
 
-        webViewContainer.post {
-            webViewContainer.addView(webView)
-            onAttachedToNewDestination(true)
-        }
+        webViewContainer.addView(webView)
+        return true
     }
 
-    internal fun detachWebView(webView: WebView, onDetached: () -> Unit) {
-        webViewContainer.post {
-            webViewContainer.removeView(webView)
-            onDetached()
-        }
+    internal fun detachWebView(webView: WebView) {
+        webViewContainer.removeView(webView)
     }
 
     internal fun addProgressView(progressView: View) {
