@@ -27,6 +27,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     internal fun attachWebView(webView: WebView, onAttached: (Boolean) -> Unit) {
         if (webView.parent != null) {
             onAttached(false)
+            return
         }
 
         // Match the WebView background with its new parent
