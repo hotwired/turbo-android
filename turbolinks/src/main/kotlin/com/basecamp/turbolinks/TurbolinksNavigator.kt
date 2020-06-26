@@ -32,9 +32,10 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         onReady()
     }
 
-    fun navigateUp(): Boolean {
-        onNavigationVisit {}
-        return currentController().navigateUp()
+    fun navigateUp() {
+        onNavigationVisit {
+            currentController().navigateUp()
+        }
     }
 
     fun navigateBack() {

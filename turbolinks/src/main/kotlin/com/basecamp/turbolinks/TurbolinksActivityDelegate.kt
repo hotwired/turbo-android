@@ -55,8 +55,8 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         currentDestination.navigate(location, options, bundle)
     }
 
-    fun navigateUp(): Boolean {
-        return currentDestination.navigateUp()
+    fun navigateUp() {
+        currentDestination.navigateUp()
     }
 
     fun navigateBack() {
