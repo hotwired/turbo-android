@@ -24,9 +24,9 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     internal val webViewRefresh: SwipeRefreshLayout? get() = webViewContainer as? SwipeRefreshLayout
     internal val errorRefresh: SwipeRefreshLayout? get() = findViewById(R.id.turbolinks_error_refresh)
 
-    internal fun attachWebView(webView: WebView, onAttached: (Boolean) -> Unit) {
+    internal fun attachWebView(webView: WebView, onAttachedToNewDestination: (Boolean) -> Unit) {
         if (webView.parent != null) {
-            onAttached(false)
+            onAttachedToNewDestination(false)
             return
         }
 
@@ -37,7 +37,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
 
         webViewContainer.post {
             webViewContainer.addView(webView)
-            onAttached(true)
+            onAttachedToNewDestination(true)
         }
     }
 

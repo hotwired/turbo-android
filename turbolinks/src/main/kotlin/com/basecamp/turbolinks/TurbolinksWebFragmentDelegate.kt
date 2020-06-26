@@ -151,9 +151,12 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
             return
         }
 
-        view.attachWebView(requireNotNull(webView)) {
-            onReady(it)
-            if (it) callback.onWebViewAttached()
+        view.attachWebView(requireNotNull(webView)) { attachedToNewDestination ->
+            onReady(attachedToNewDestination)
+
+            if (attachedToNewDestination) {
+                callback.onWebViewAttached()
+            }
         }
     }
 
