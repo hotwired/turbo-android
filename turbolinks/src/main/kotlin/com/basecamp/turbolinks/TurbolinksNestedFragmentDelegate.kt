@@ -25,8 +25,8 @@ class TurbolinksNestedFragmentDelegate(val fragment: Fragment, navHostId: Int) {
         currentDestination.navigate(location, options, bundle)
     }
 
-    fun navigateUp(): Boolean {
-        return currentDestination.navigateUp()
+    fun navigateUp() {
+        currentDestination.navigateUp()
     }
 
     fun navigateBack() {
