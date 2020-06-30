@@ -42,9 +42,17 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     internal fun detachWebView(webView: WebView, onDetached: () -> Unit) {
-        webViewContainer.post {
+        // If the view is already detached from the window (like
+        // when dismissing a bottom sheet), detach immediately,
+        // since posting to the message queue will be ignored.
+        if (webViewContainer.windowToken == null) {
             webViewContainer.removeView(webView)
             onDetached()
+        } else {
+            webViewContainer.post {
+                webViewContainer.removeView(webView)
+                onDetached()
+            }
         }
     }
 
