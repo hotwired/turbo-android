@@ -280,6 +280,14 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
             addJavascriptInterface(this@TurbolinksSession, "TurbolinksSession")
             webChromeClient = WebChromeClient()
             webViewClient = TurbolinksWebViewClient()
+            initDownloadListener()
+        }
+    }
+
+    private fun WebView.initDownloadListener() {
+        setDownloadListener { url, _, _, _, _ ->
+            logEvent("downloadListener", "location" to url)
+            visitProposedToLocation(url, VisitOptions().toJson())
         }
     }
 
@@ -382,11 +390,6 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
 
         override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-            // TODO: Give the app an opportunity to override the standard behavior that we send the
-            // request through. Specifically, this is necessary when a redirect isn't picked up by
-            // shouldOverrideUrlLoading and TL ignores the visit (eg, a file location).
-            callback { it.shouldInterceptRequest(request.url.toString()) }
-
             val requestHandler = offlineRequestHandler ?: return null
 
             if (!request.method.equals("GET", ignoreCase = true) ||
