@@ -280,6 +280,14 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
             addJavascriptInterface(this@TurbolinksSession, "TurbolinksSession")
             webChromeClient = WebChromeClient()
             webViewClient = TurbolinksWebViewClient()
+            initDownloadListener()
+        }
+    }
+
+    private fun WebView.initDownloadListener() {
+        setDownloadListener { url, _, _, _, _ ->
+            logEvent("downloadListener", "location" to url)
+            visitProposedToLocation(url, VisitOptions().toJson())
         }
     }
 
