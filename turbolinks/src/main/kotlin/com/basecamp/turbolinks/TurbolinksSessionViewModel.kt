@@ -1,5 +1,6 @@
 package com.basecamp.turbolinks
 
+import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,6 +47,7 @@ class TurbolinksSessionViewModel : ViewModel() {
 data class TurbolinksModalResult(
     val location: String,
     val options: VisitOptions,
+    val bundle: Bundle?,
     val shouldNavigate: Boolean
 )
 
