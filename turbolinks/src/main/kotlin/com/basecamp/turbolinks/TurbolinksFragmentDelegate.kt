@@ -10,13 +10,15 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
     internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
 
+    internal lateinit var pathConfiguration: PathConfiguration
     internal lateinit var pathProperties: PathProperties
     internal lateinit var session: TurbolinksSession
     internal lateinit var navigator: TurbolinksNavigator
 
     fun onActivityCreated() {
         session = destination.session
-        pathProperties = session.pathConfiguration.properties(location)
+        pathConfiguration = session.pathConfiguration
+        pathProperties = pathConfiguration.properties(location)
         navigator = TurbolinksNavigator(destination)
 
         initToolbar()
