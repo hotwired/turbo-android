@@ -78,7 +78,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
         when (navigationMode) {
             NavigationMode.DISMISS_MODAL -> {
-                dismissModalContextWithResult(location, options, pathProperties)
+                dismissModalContextWithResult(location, options, pathProperties, bundle)
             }
             NavigationMode.TO_MODAL -> {
                 navigateToModalContext(location, options, pathProperties, presentation, bundle, extras)
@@ -157,7 +157,11 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    private fun dismissModalContextWithResult(location: String, options: VisitOptions, properties: PathProperties) {
+    private fun dismissModalContextWithResult(location: String,
+                                              options: VisitOptions,
+                                              properties: PathProperties,
+                                              bundle: Bundle?) {
+
         logEvent("dismissModalContextWithResult",
             "location" to location,
             "uri" to properties.uri,
@@ -168,18 +172,19 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             val controller = currentControllerForLocation(location)
             val navDestination = checkNotNull(controller.currentDestination)
 
-            sendModalResult(location, options, properties)
+            sendModalResult(location, options, properties, bundle)
             controller.popBackStack(navDestination.id, true)
         }
     }
 
-    private fun sendModalResult(location: String, options: VisitOptions, properties: PathProperties) {
+    private fun sendModalResult(location: String, options: VisitOptions, properties: PathProperties, bundle: Bundle?) {
         // Save the modal result with VisitOptions so it can be retrieved
         // by the previous destination when the backstack is popped.
         destination.sessionViewModel.sendModalResult(
             TurbolinksModalResult(
                 location = location,
                 options = options,
+                bundle = bundle,
                 shouldNavigate = properties.presentation != Presentation.NONE
             )
         )

@@ -3,7 +3,7 @@
   <groupId>com.basecamp</groupId>
   <artifactId>turbolinks-android</artifactId>
   <versioning>
-    <release>1.0.61</release>
+    <release>1.0.62</release>
     <versions>
       <version>1.0.6</version>
       <version>1.0.7</version>
@@ -61,7 +61,8 @@
       <version>1.0.59</version>
       <version>1.0.60</version>
       <version>1.0.61</version>
+      <version>1.0.62</version>
     </versions>
-    <lastUpdated>20200702182049</lastUpdated>
+    <lastUpdated>20200706163951</lastUpdated>
   </versioning>
 </metadata>
