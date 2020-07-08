@@ -15,8 +15,8 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
     val currentNavHost: TurbolinksNavHost
         get() = navHost(currentNavHostId)
 
-    val currentDestination: TurbolinksDestination
-        get() = currentFragment as TurbolinksDestination
+    val currentDestination: TurbolinksDestination?
+        get() = currentFragment as TurbolinksDestination?
 
     /*
      * Initialize the Activity with a BackPressedDispatcher that
@@ -52,23 +52,29 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
     fun navigate(location: String,
                  options: VisitOptions = VisitOptions(),
                  bundle: Bundle? = null) {
-        currentDestination.navigate(location, options, bundle)
+        currentDestination?.navigate(location, options, bundle)
     }
 
     fun navigateUp() {
-        currentDestination.navigateUp()
+        currentDestination?.navigateUp()
     }
 
     fun navigateBack() {
-        currentDestination.navigateBack()
+        currentDestination?.navigateBack()
     }
 
     fun clearBackStack() {
-        currentDestination.clearBackStack()
+        currentDestination?.clearBackStack()
     }
 
-    private val currentFragment: Fragment
-        get() = currentNavHost.childFragmentManager.primaryNavigationFragment as Fragment
+    private val currentFragment: Fragment?
+        get() {
+            return if (currentNavHost.isAdded && !currentNavHost.isDetached) {
+                currentNavHost.childFragmentManager.primaryNavigationFragment
+            } else {
+                null
+            }
+        }
 
     private fun findNavHost(@IdRes navHostId: Int): TurbolinksNavHost {
         return activity.supportFragmentManager.findFragmentById(navHostId) as? TurbolinksNavHost
