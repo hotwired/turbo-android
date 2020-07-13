@@ -18,6 +18,7 @@ enum class OfflineCacheStrategy {
     APP, HTTP, NONE
 }
 
+@Suppress("unused")
 enum class OfflineCacheControl {
     STALE_IF_ERROR, IMMUTABLE
 }
@@ -25,7 +26,7 @@ enum class OfflineCacheControl {
 interface TurbolinksOfflineRequestHandler {
     fun getCacheStrategy(url: String): OfflineCacheStrategy
     fun getCacheControl(url: String): OfflineCacheControl
-    fun getCachedResponse(url: String, allowStaleResponse: Boolean): WebResourceResponse?
+    fun getCachedResponse(url: String, allowStaleResponse: Boolean = false): WebResourceResponse?
     fun cacheResponse(url: String, response: WebResourceResponse)
 }
 
@@ -66,7 +67,7 @@ internal class TurbolinksHttpRepository {
         val cacheControl = requestHandler.getCacheControl(url)
 
         if (cacheControl == OfflineCacheControl.IMMUTABLE) {
-            requestHandler.getCachedResponse(url, allowStaleResponse = false)?.let {
+            requestHandler.getCachedResponse(url)?.let {
                 return Result(it, false)
             }
         }
