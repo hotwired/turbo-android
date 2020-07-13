@@ -18,9 +18,15 @@ enum class OfflineCacheStrategy {
     APP, HTTP, NONE
 }
 
+@Suppress("unused")
+enum class OfflineCacheControl {
+    STALE_IF_ERROR, IMMUTABLE
+}
+
 interface TurbolinksOfflineRequestHandler {
     fun getCacheStrategy(url: String): OfflineCacheStrategy
-    fun getCachedResponse(url: String): WebResourceResponse?
+    fun getCacheControl(url: String): OfflineCacheControl
+    fun getCachedResponse(url: String, allowStaleResponse: Boolean = false): WebResourceResponse?
     fun cacheResponse(url: String, response: WebResourceResponse)
 }
 
@@ -58,6 +64,13 @@ internal class TurbolinksHttpRepository {
     private fun fetchAppCacheRequest(requestHandler: TurbolinksOfflineRequestHandler,
                                      resourceRequest: WebResourceRequest): Result {
         val url = resourceRequest.url.toString()
+        val cacheControl = requestHandler.getCacheControl(url)
+
+        if (cacheControl == OfflineCacheControl.IMMUTABLE) {
+            requestHandler.getCachedResponse(url)?.let {
+                return Result(it, false)
+            }
+        }
 
         return try {
             val response = issueRequest(resourceRequest)
@@ -69,7 +82,7 @@ internal class TurbolinksHttpRepository {
 
             Result(resourceResponse(response), false)
         } catch (e: IOException) {
-            Result(requestHandler.getCachedResponse(url), true)
+            Result(requestHandler.getCachedResponse(url, allowStaleResponse = true), true)
         }
     }
 
