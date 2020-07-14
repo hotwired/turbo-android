@@ -15,6 +15,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     private var isWebViewAttachedToNewDestination = false
     private var screenshot: Bitmap? = null
     private var screenshotOrientation = 0
+    private var screenshotZoomed = false
+    private var currentlyZoomed = false
     private val navigator: TurbolinksNavigator
         get() = destination.navigator
     private val turbolinksView: TurbolinksView?
@@ -66,6 +68,16 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     override fun onPageFinished(location: String) {
         callback.onColdBootPageCompleted(location)
+    }
+
+    override fun onZoomed(newScale: Float) {
+        currentlyZoomed = true
+        pullToRefreshEnabled(false)
+    }
+
+    override fun onZoomReset(newScale: Float) {
+        currentlyZoomed = false
+        pullToRefreshEnabled(callback.shouldEnablePullToRefresh())
     }
 
     override fun pageInvalidated() {}
@@ -128,6 +140,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     private fun initView() {
+        currentlyZoomed = false
         callback.onUpdateView()
         turbolinksView?.apply {
             initializePullToRefresh(this)
@@ -135,6 +148,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
             showScreenshotIfAvailable(this)
             screenshot = null
             screenshotOrientation = 0
+            screenshotZoomed = false
         }
     }
 
@@ -213,6 +227,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         turbolinksView?.let {
             screenshot = it.createScreenshot()
             screenshotOrientation = it.screenshotOrientation()
+            screenshotZoomed = currentlyZoomed
             showScreenshotIfAvailable(it)
         }
     }
@@ -246,8 +261,13 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         }
     }
 
+    private fun pullToRefreshEnabled(enabled: Boolean) {
+        turbolinksView?.webViewRefresh?.isEnabled = enabled
+    }
+
     private fun showScreenshotIfAvailable(turbolinksView: TurbolinksView) {
-        if (screenshotOrientation == turbolinksView.screenshotOrientation()) {
+        if (screenshotOrientation == turbolinksView.screenshotOrientation() &&
+            screenshotZoomed == currentlyZoomed) {
             screenshot?.let { turbolinksView.addScreenshot(it) }
         }
     }
