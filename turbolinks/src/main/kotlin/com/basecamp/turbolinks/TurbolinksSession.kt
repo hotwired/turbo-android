@@ -320,6 +320,9 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     // Classes and objects
 
     private inner class TurbolinksWebViewClient : WebViewClientCompat() {
+        private var initialScaleChanged = false
+        private var initialScale = 0f
+
         override fun onPageStarted(view: WebView, location: String, favicon: Bitmap?) {
             logEvent("onPageStarted", "location" to location)
             callback { it.onPageStarted(location) }
@@ -350,6 +353,30 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         override fun onPageCommitVisible(view: WebView, location: String) {
             super.onPageCommitVisible(view, location)
             logEvent("onPageCommitVisible", "location" to location, "progress" to view.progress)
+        }
+
+        override fun onScaleChanged(view: WebView, oldScale: Float, newScale: Float) {
+            super.onScaleChanged(view, oldScale, newScale)
+            logEvent("onScaleChanged", "oldScale" to oldScale, "newScale" to newScale)
+
+            trackInitialScale(oldScale)
+
+            if (isAtInitialScale(newScale)) {
+                callback { it.onZoomReset(newScale) }
+            } else {
+                callback { it.onZoomed(newScale) }
+            }
+        }
+
+        private fun trackInitialScale(scale: Float) {
+            if (!initialScaleChanged) {
+                initialScaleChanged = true
+                initialScale = scale
+            }
+        }
+
+        private fun isAtInitialScale(scale: Float): Boolean {
+            return initialScale == scale
         }
 
         /**
