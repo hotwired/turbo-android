@@ -359,16 +359,24 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
             super.onScaleChanged(view, oldScale, newScale)
             logEvent("onScaleChanged", "oldScale" to oldScale, "newScale" to newScale)
 
-            if (!initialScaleChanged) {
-                initialScaleChanged = true
-                initialScale = oldScale
-            }
+            trackInitialScale(oldScale)
 
-            if (initialScale == newScale) {
+            if (isAtInitialScale(newScale)) {
                 callback { it.onZoomReset(newScale) }
             } else {
                 callback { it.onZoomed(newScale) }
             }
+        }
+
+        private fun trackInitialScale(scale: Float) {
+            if (!initialScaleChanged) {
+                initialScaleChanged = true
+                initialScale = scale
+            }
+        }
+
+        private fun isAtInitialScale(scale: Float): Boolean {
+            return initialScale == scale
         }
 
         /**
