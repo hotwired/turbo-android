@@ -3,6 +3,10 @@ package com.basecamp.turbolinks
 import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
 import android.webkit.WebView
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestination,
@@ -211,14 +215,34 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
             else -> visitOptions
         }
 
-        session().visit(TurbolinksVisit(
+        destination.fragment.lifecycleScope.launch {
+            val snapshot = when (options.action) {
+                VisitAction.ADVANCE -> fetchCachedSnapshot()
+                else -> null
+            }
+
+            session().visit(TurbolinksVisit(
                 location = location,
                 destinationIdentifier = identifier,
                 restoreWithCachedSnapshot = restoreWithCachedSnapshot,
                 reload = reload,
-                callback = this,
-                options = options
-        ))
+                callback = this@TurbolinksWebFragmentDelegate,
+                options = options.copy(snapshotHTML = snapshot)
+            ))
+        }
+    }
+
+    private suspend fun fetchCachedSnapshot(): String? {
+        return withContext(Dispatchers.IO) {
+            val response = session().offlineRequestHandler?.getCachedResponse(
+                url = location,
+                allowStaleResponse = true
+            )
+
+            response?.data?.use {
+                String(it.readBytes())
+            }
+        }
     }
 
     private fun screenshotView() {

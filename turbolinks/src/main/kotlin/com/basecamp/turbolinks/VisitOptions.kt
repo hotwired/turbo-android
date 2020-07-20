@@ -11,6 +11,7 @@ import com.google.gson.stream.JsonWriter
 
 data class VisitOptions(
     @SerializedName("action") val action: VisitAction = ADVANCE,
+    @SerializedName("snapshotHTML") val snapshotHTML: String? = null,
     @SerializedName("response") val response: VisitResponse? = null
 ) {
     companion object {
