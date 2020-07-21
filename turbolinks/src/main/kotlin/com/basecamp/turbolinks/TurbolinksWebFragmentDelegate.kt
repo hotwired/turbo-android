@@ -105,7 +105,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     override fun onReceivedError(errorCode: Int) {
-        callback.onVisitErrorReceived(location, errorCode)
+        callback.onVisitErrorReceived(location, false, errorCode)
         showErrorView(errorCode)
     }
 
@@ -113,8 +113,12 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         navigator.navigate(location, VisitOptions(action = VisitAction.REPLACE))
     }
 
-    override fun requestFailedWithStatusCode(statusCode: Int) {
-        showErrorView(statusCode)
+    override fun requestFailedWithStatusCode(visitHasCachedSnapshot: Boolean, statusCode: Int) {
+        callback.onVisitErrorReceived(location, visitHasCachedSnapshot, statusCode)
+
+        if (!visitHasCachedSnapshot) {
+            showErrorView(statusCode)
+        }
     }
 
     override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {

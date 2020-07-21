@@ -50,7 +50,7 @@ abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFra
 
     override fun onVisitCompleted(location: String, completedOffline: Boolean) {}
 
-    override fun onVisitErrorReceived(location: String, errorCode: Int) {}
+    override fun onVisitErrorReceived(location: String, visitHasCachedSnapshot: Boolean, errorCode: Int) {}
 
     override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {
         handler.cancel()

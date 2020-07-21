@@ -11,7 +11,7 @@ interface TurbolinksSessionCallback {
     fun onZoomed(newScale: Float)
     fun onZoomReset(newScale: Float)
     fun pageInvalidated()
-    fun requestFailedWithStatusCode(statusCode: Int)
+    fun requestFailedWithStatusCode(visitHasCachedSnapshot: Boolean, statusCode: Int)
     fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String)
     fun visitRendered()
     fun visitCompleted(completedOffline: Boolean)
@@ -39,6 +39,6 @@ interface TurbolinksWebFragmentCallback {
     fun onColdBootPageCompleted(location: String)
     fun onVisitStarted(location: String)
     fun onVisitCompleted(location: String, completedOffline: Boolean)
-    fun onVisitErrorReceived(location: String, errorCode: Int)
+    fun onVisitErrorReceived(location: String, visitHasCachedSnapshot: Boolean, errorCode: Int)
     fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String)
 }
