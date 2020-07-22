@@ -63,7 +63,7 @@ abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWeb
         delegate.showErrorView(errorCode)
     }
 
-    override fun onVisitErrorReceivedWithCachedSnapshotVisible(location: String, errorCode: Int) {
+    override fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, errorCode: Int) {
         // Allow app to display an indicator for (potentially) stale content
     }
 

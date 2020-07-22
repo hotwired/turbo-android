@@ -119,7 +119,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     override fun requestFailedWithStatusCode(visitHasCachedSnapshot: Boolean, statusCode: Int) {
         if (visitHasCachedSnapshot) {
-            callback.onVisitErrorReceivedWithCachedSnapshotVisible(location, statusCode)
+            callback.onVisitErrorReceivedWithCachedSnapshotAvailable(location, statusCode)
         } else {
             callback.onVisitErrorReceived(location, statusCode)
         }
