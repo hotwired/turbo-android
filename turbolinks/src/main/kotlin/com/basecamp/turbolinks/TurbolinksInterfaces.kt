@@ -39,6 +39,7 @@ interface TurbolinksWebFragmentCallback {
     fun onColdBootPageCompleted(location: String)
     fun onVisitStarted(location: String)
     fun onVisitCompleted(location: String, completedOffline: Boolean)
-    fun onVisitErrorReceived(location: String, visitHasCachedSnapshot: Boolean, errorCode: Int)
+    fun onVisitErrorReceived(location: String, errorCode: Int)
+    fun onVisitErrorReceivedWithCachedSnapshotVisible(location: String, errorCode: Int)
     fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String)
 }

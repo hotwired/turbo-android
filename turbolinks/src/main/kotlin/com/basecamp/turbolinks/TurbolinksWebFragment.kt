@@ -59,7 +59,13 @@ abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWeb
 
     override fun onVisitCompleted(location: String, completedOffline: Boolean) {}
 
-    override fun onVisitErrorReceived(location: String, visitHasCachedSnapshot: Boolean, errorCode: Int) {}
+    override fun onVisitErrorReceived(location: String, errorCode: Int) {
+        delegate.showErrorView(errorCode)
+    }
+
+    override fun onVisitErrorReceivedWithCachedSnapshotVisible(location: String, errorCode: Int) {
+        // Allow app to display an indicator for (potentially) stale content
+    }
 
     override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {
         handler.cancel()

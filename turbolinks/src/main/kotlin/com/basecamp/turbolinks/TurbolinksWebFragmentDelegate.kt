@@ -62,6 +62,11 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         return destination.session
     }
 
+    fun showErrorView(code: Int) {
+        val errorView = callback.createErrorView(code)
+        turbolinksView?.addErrorView(errorView)
+    }
+
     // -----------------------------------------------------------------------
     // TurbolinksSessionCallback interface
     // -----------------------------------------------------------------------
@@ -105,8 +110,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     override fun onReceivedError(errorCode: Int) {
-        callback.onVisitErrorReceived(location, false, errorCode)
-        showErrorView(errorCode)
+        callback.onVisitErrorReceived(location, errorCode)
     }
 
     override fun onRenderProcessGone() {
@@ -114,10 +118,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     override fun requestFailedWithStatusCode(visitHasCachedSnapshot: Boolean, statusCode: Int) {
-        callback.onVisitErrorReceived(location, visitHasCachedSnapshot, statusCode)
-
-        if (!visitHasCachedSnapshot) {
-            showErrorView(statusCode)
+        if (visitHasCachedSnapshot) {
+            callback.onVisitErrorReceivedWithCachedSnapshotVisible(location, statusCode)
+        } else {
+            callback.onVisitErrorReceived(location, statusCode)
         }
     }
 
@@ -263,11 +267,6 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     private fun showProgressView(location: String) {
         val progressView = callback.createProgressView(location)
         turbolinksView?.addProgressView(progressView)
-    }
-
-    private fun showErrorView(code: Int) {
-        val errorView = callback.createErrorView(code)
-        turbolinksView?.addErrorView(errorView)
     }
 
     private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
