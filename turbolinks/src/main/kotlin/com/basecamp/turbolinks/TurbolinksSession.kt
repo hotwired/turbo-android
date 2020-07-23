@@ -117,13 +117,14 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     }
 
     @JavascriptInterface
-    fun visitRequestFailedWithStatusCode(visitIdentifier: String, statusCode: Int) {
+    fun visitRequestFailedWithStatusCode(visitIdentifier: String, visitHasCachedSnapshot: Boolean, statusCode: Int) {
         logEvent("visitRequestFailedWithStatusCode",
                 "visitIdentifier" to visitIdentifier,
+                "visitHasCachedSnapshot" to visitHasCachedSnapshot,
                 "statusCode" to statusCode)
 
         if (visitIdentifier == currentVisit.identifier) {
-            callback { it.requestFailedWithStatusCode(statusCode) }
+            callback { it.requestFailedWithStatusCode(visitHasCachedSnapshot, statusCode) }
         }
     }
 
@@ -181,7 +182,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
         if (!isReady) {
             reset()
-            visitRequestFailedWithStatusCode(currentVisit.identifier, 500)
+            visitRequestFailedWithStatusCode(currentVisit.identifier, false, 0)
             return
         }
 

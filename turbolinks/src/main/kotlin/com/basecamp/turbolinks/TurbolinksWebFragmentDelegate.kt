@@ -3,6 +3,10 @@ package com.basecamp.turbolinks
 import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
 import android.webkit.WebView
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestination,
@@ -58,6 +62,11 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         return destination.session
     }
 
+    fun showErrorView(code: Int) {
+        val errorView = callback.createErrorView(code)
+        turbolinksView?.addErrorView(errorView)
+    }
+
     // -----------------------------------------------------------------------
     // TurbolinksSessionCallback interface
     // -----------------------------------------------------------------------
@@ -102,15 +111,18 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     override fun onReceivedError(errorCode: Int) {
         callback.onVisitErrorReceived(location, errorCode)
-        showErrorView(errorCode)
     }
 
     override fun onRenderProcessGone() {
         navigator.navigate(location, VisitOptions(action = VisitAction.REPLACE))
     }
 
-    override fun requestFailedWithStatusCode(statusCode: Int) {
-        showErrorView(statusCode)
+    override fun requestFailedWithStatusCode(visitHasCachedSnapshot: Boolean, statusCode: Int) {
+        if (visitHasCachedSnapshot) {
+            callback.onVisitErrorReceivedWithCachedSnapshotAvailable(location, statusCode)
+        } else {
+            callback.onVisitErrorReceived(location, statusCode)
+        }
     }
 
     override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {
@@ -211,14 +223,34 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
             else -> visitOptions
         }
 
-        session().visit(TurbolinksVisit(
+        destination.fragment.lifecycleScope.launch {
+            val snapshot = when (options.action) {
+                VisitAction.ADVANCE -> fetchCachedSnapshot()
+                else -> null
+            }
+
+            session().visit(TurbolinksVisit(
                 location = location,
                 destinationIdentifier = identifier,
                 restoreWithCachedSnapshot = restoreWithCachedSnapshot,
                 reload = reload,
-                callback = this,
-                options = options
-        ))
+                callback = this@TurbolinksWebFragmentDelegate,
+                options = options.copy(snapshotHTML = snapshot)
+            ))
+        }
+    }
+
+    private suspend fun fetchCachedSnapshot(): String? {
+        return withContext(Dispatchers.IO) {
+            val response = session().offlineRequestHandler?.getCachedResponse(
+                url = location,
+                allowStaleResponse = true
+            )
+
+            response?.data?.use {
+                String(it.readBytes())
+            }
+        }
     }
 
     private fun screenshotView() {
@@ -235,11 +267,6 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     private fun showProgressView(location: String) {
         val progressView = callback.createProgressView(location)
         turbolinksView?.addProgressView(progressView)
-    }
-
-    private fun showErrorView(code: Int) {
-        val errorView = callback.createErrorView(code)
-        turbolinksView?.addErrorView(errorView)
     }
 
     private fun initializePullToRefresh(turbolinksView: TurbolinksView) {

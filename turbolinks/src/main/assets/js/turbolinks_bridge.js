@@ -93,7 +93,7 @@
         },
 
         visitRequestFailedWithStatusCode: function(visit, statusCode) {
-            TurbolinksSession.visitRequestFailedWithStatusCode(visit.identifier, statusCode)
+            TurbolinksSession.visitRequestFailedWithStatusCode(visit.identifier, visit.hasCachedSnapshot(), statusCode)
         },
 
         visitRequestFinished: function(visit) {
