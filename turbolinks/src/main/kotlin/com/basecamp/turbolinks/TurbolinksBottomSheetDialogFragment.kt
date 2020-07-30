@@ -4,7 +4,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-abstract class TurbolinksNativeBottomSheetFragment : BottomSheetDialogFragment(), TurbolinksDestination {
+abstract class TurbolinksBottomSheetDialogFragment : BottomSheetDialogFragment(), TurbolinksDestination {
     private lateinit var delegate: TurbolinksFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
