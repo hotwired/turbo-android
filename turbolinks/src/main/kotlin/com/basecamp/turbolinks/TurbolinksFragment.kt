@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.basecamp.turbolinks.TurbolinksNavigator.PresentationContext
 
-abstract class TurbolinksNativeFragment : Fragment(), TurbolinksDestination {
+abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {
     private lateinit var delegate: TurbolinksFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {

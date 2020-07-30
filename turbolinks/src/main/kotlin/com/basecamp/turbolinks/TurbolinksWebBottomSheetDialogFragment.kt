@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.webkit.HttpAuthHandler
 
 @Suppress("unused")
-abstract class TurbolinksWebBottomSheetFragment : TurbolinksNativeBottomSheetFragment(), TurbolinksWebFragmentCallback {
+abstract class TurbolinksWebBottomSheetDialogFragment : TurbolinksBottomSheetDialogFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {

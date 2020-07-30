@@ -3,7 +3,7 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import android.webkit.HttpAuthHandler
 
-abstract class TurbolinksWebFragment : TurbolinksNativeFragment(), TurbolinksWebFragmentCallback {
+abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
