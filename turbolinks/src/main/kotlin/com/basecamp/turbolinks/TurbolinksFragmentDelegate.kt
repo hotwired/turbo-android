@@ -6,6 +6,7 @@ import androidx.navigation.ui.NavigationUI
 class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
     internal val fragment = destination.fragment
     internal val location = currentLocation()
+    internal val previousLocation = previousLocation()
     internal val sessionName = currentSessionName()
     internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
     internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
@@ -66,6 +67,10 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
         return requireNotNull(fragment.arguments?.getString("location")) {
             "A location argument must be provided"
         }
+    }
+
+    private fun previousLocation(): String? {
+        return fragment.arguments?.getString("previousLocation")
     }
 
     private fun currentSessionName(): String {
