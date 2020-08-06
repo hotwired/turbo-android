@@ -172,8 +172,17 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             val controller = currentControllerForLocation(location)
             val navDestination = checkNotNull(controller.currentDestination)
 
-            sendModalResult(location, options, properties, bundle)
-            controller.popBackStack(navDestination.id, true)
+            if (destination.isDialog) {
+                // Pop the backstack before sending the modal result, since the
+                // underlying fragment is still active and will receive the
+                // result immediately. This allows the modal result flow to
+                // behave exactly like full screen fragments.
+                controller.popBackStack(navDestination.id, true)
+                sendModalResult(location, options, properties, bundle)
+            } else {
+                sendModalResult(location, options, properties, bundle)
+                controller.popBackStack(navDestination.id, true)
+            }
         }
     }
 
