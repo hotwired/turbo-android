@@ -3,6 +3,7 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavOptions
@@ -45,6 +46,9 @@ interface TurbolinksDestination {
 
     val navigator: TurbolinksNavigator
         get() = delegate().navigator
+
+    val isDialog: Boolean
+        get() = fragment is DialogFragment
 
     fun delegate(): TurbolinksFragmentDelegate
 
