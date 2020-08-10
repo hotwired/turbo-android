@@ -242,9 +242,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     private suspend fun fetchCachedSnapshot(): String? {
         return withContext(Dispatchers.IO) {
-            val response = session().offlineRequestHandler?.getCachedResponse(
-                url = location,
-                allowStaleResponse = true
+            val response = session().offlineRequestHandler?.getCachedSnapshot(
+                url = location
             )
 
             response?.data?.use {
