@@ -26,6 +26,7 @@ enum class OfflineCacheControl {
 interface TurbolinksOfflineRequestHandler {
     fun getCacheStrategy(url: String): OfflineCacheStrategy
     fun getCacheControl(url: String): OfflineCacheControl
+    fun getCachedSnapshot(url: String): WebResourceResponse?
     fun getCachedResponse(url: String, allowStaleResponse: Boolean = false): WebResourceResponse?
     fun cacheResponse(url: String, response: WebResourceResponse)
 }
