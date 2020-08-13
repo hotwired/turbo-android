@@ -25,19 +25,18 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     internal val errorRefresh: SwipeRefreshLayout? get() = findViewById(R.id.turbolinks_error_refresh)
 
     internal fun attachWebView(webView: WebView, onAttachedToNewDestination: (Boolean) -> Unit) {
-        if (webView.parent != null) {
-            onAttachedToNewDestination(false)
-            return
-        }
-
-        // Match the WebView background with its new parent
-        if (background is ColorDrawable) {
-            webView.setBackgroundColor((background as ColorDrawable).color)
-        }
-
         webViewContainer.post {
-            webViewContainer.addView(webView)
-            onAttachedToNewDestination(true)
+            if (webView.parent == null) {
+                // Match the WebView background with its new parent
+                if (background is ColorDrawable) {
+                    webView.setBackgroundColor((background as ColorDrawable).color)
+                }
+
+                webViewContainer.addView(webView)
+                onAttachedToNewDestination(true)
+            } else {
+                onAttachedToNewDestination(false)
+            }
         }
     }
 
