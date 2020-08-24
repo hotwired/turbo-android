@@ -12,6 +12,7 @@ import androidx.navigation.*
 import androidx.navigation.fragment.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.isSubclassOf
 
 abstract class TurbolinksNavHost : NavHostFragment() {
     abstract val sessionName: String
@@ -19,7 +20,6 @@ abstract class TurbolinksNavHost : NavHostFragment() {
     abstract val pathConfigurationLocation: PathConfiguration.Location
     abstract val registeredActivities: List<KClass<out Activity>>
     abstract val registeredFragments: List<KClass<out Fragment>>
-    abstract val registeredDialogFragments: List<KClass<out DialogFragment>>
 
     lateinit var session: TurbolinksSession
         private set
@@ -34,12 +34,6 @@ abstract class TurbolinksNavHost : NavHostFragment() {
         val id: Int,
         val uri: Uri,
         val kClass: KClass<out Fragment>
-    )
-
-    private data class DialogFragmentDestination(
-        val id: Int,
-        val uri: Uri,
-        val kClass: KClass<out DialogFragment>
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,32 +86,20 @@ abstract class TurbolinksNavHost : NavHostFragment() {
             )
         }
 
-        val dialogFragmentDestinations = registeredDialogFragments.map {
-            DialogFragmentDestination(
-                id = currentId.also { currentId += 1 },
-                uri = it.turbolinksAnnotation().uri.toUri(),
-                kClass = it
-            )
-        }
-
-        val startDestinationUri = session.pathConfiguration.properties(startLocation).uri
-        val startDestinationId: Int = fragmentDestinations.first { it.uri == startDestinationUri }.id
-
         navController.apply {
             graph = buildGraph(
-                startDestinationId,
                 activityDestinations,
                 fragmentDestinations,
-                dialogFragmentDestinations
+                fragmentDestinations.startDestination().id
             )
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun buildGraph(
-        startDestinationId: Int,
         activityDestinations: List<ActivityDestination>,
         fragmentDestinations: List<FragmentDestination>,
-        dialogFragmentDestinations: List<DialogFragmentDestination>
+        startDestinationId: Int
     ): NavGraph {
         return createGraph(startDestination = startDestinationId) {
             activityDestinations.forEach {
@@ -128,14 +110,14 @@ abstract class TurbolinksNavHost : NavHostFragment() {
             }
 
             fragmentDestinations.forEach {
-                fragment(it.id, it.kClass) {
-                    deepLink(it.uri.toString())
-                }
-            }
-
-            dialogFragmentDestinations.forEach {
-                dialog(it.id, it.kClass) {
-                    deepLink(it.uri.toString())
+                if (it.kClass.isSubclassOf(DialogFragment::class)) {
+                    dialog(it.id, it.kClass as KClass<out DialogFragment>) {
+                        deepLink(it.uri.toString())
+                    }
+                } else {
+                    fragment(it.id, it.kClass) {
+                        deepLink(it.uri.toString())
+                    }
                 }
             }
 
@@ -146,6 +128,13 @@ abstract class TurbolinksNavHost : NavHostFragment() {
             argument("sessionName") {
                 defaultValue = sessionName
             }
+        }
+    }
+
+    private fun List<FragmentDestination>.startDestination(): FragmentDestination {
+        val startDestinationUri = session.pathConfiguration.properties(startLocation).uri
+        return requireNotNull(firstOrNull { it.uri == startDestinationUri }) {
+            "A start Fragment destination was not found for uri: $startDestinationUri"
         }
     }
 
