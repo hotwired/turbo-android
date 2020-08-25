@@ -72,7 +72,7 @@ abstract class TurbolinksNavHost : NavHostFragment() {
 
         val activityDestinations = registeredActivities.map {
             ActivityDestination(
-                id = currentId.also { currentId += 1 },
+                id = currentId.also { currentId++ },
                 uri = it.turbolinksAnnotation().uri.toUri(),
                 kClass = it
             )
@@ -80,7 +80,7 @@ abstract class TurbolinksNavHost : NavHostFragment() {
 
         val fragmentDestinations = registeredFragments.map {
             FragmentDestination(
-                id = currentId.also { currentId += 1 },
+                id = currentId.also { currentId++ },
                 uri = it.turbolinksAnnotation().uri.toUri(),
                 kClass = it
             )
@@ -109,15 +109,15 @@ abstract class TurbolinksNavHost : NavHostFragment() {
                 }
             }
 
-            fragmentDestinations.forEach {
-                if (it.kClass.isSubclassOf(DialogFragment::class)) {
-                    dialog(it.id, it.kClass as KClass<out DialogFragment>) {
-                        deepLink(it.uri.toString())
-                    }
-                } else {
-                    fragment(it.id, it.kClass) {
-                        deepLink(it.uri.toString())
-                    }
+            fragmentDestinations.withoutDialogs().forEach {
+                fragment(it.id, it.kClass) {
+                    deepLink(it.uri.toString())
+                }
+            }
+
+            fragmentDestinations.dialogs().forEach {
+                dialog(it.id, it.kClass as KClass<out DialogFragment>) {
+                    deepLink(it.uri.toString())
                 }
             }
 
@@ -129,6 +129,14 @@ abstract class TurbolinksNavHost : NavHostFragment() {
                 defaultValue = sessionName
             }
         }
+    }
+
+    private fun List<FragmentDestination>.dialogs(): List<FragmentDestination> {
+        return filter { it.kClass.isSubclassOf(DialogFragment::class) }
+    }
+
+    private fun List<FragmentDestination>.withoutDialogs(): List<FragmentDestination> {
+        return minus(dialogs())
     }
 
     private fun List<FragmentDestination>.startDestination(): FragmentDestination {
