@@ -10,13 +10,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.navOptions
 
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-@MustBeDocumented
-annotation class TurbolinksGraphDestination(
-    val uri: String
-)
-
 interface TurbolinksDestination {
     val fragment: Fragment
         get() = this as Fragment
