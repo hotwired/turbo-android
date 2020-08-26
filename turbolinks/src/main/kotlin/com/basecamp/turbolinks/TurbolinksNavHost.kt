@@ -1,19 +1,40 @@
 package com.basecamp.turbolinks
 
+import android.app.Activity
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
-import androidx.navigation.NavArgument
-import androidx.navigation.fragment.NavHostFragment
+import androidx.annotation.IdRes
+import androidx.core.net.toUri
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.navigation.*
+import androidx.navigation.fragment.*
+import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.isSubclassOf
 
 abstract class TurbolinksNavHost : NavHostFragment() {
     abstract val sessionName: String
     abstract val startLocation: String
-    abstract val startDestinationId: Int
-    abstract val navGraphId: Int
     abstract val pathConfigurationLocation: PathConfiguration.Location
+    abstract val registeredActivities: List<KClass<out Activity>>
+    abstract val registeredFragments: List<KClass<out Fragment>>
 
     lateinit var session: TurbolinksSession
         private set
+
+    private data class ActivityDestination(
+        val id: Int,
+        val uri: Uri,
+        val kClass: KClass<out Activity>
+    )
+
+    private data class FragmentDestination(
+        val id: Int,
+        val uri: Uri,
+        val kClass: KClass<out Fragment>
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,18 +68,111 @@ abstract class TurbolinksNavHost : NavHostFragment() {
     // Private
 
     private fun initControllerGraph() {
-        val location = NavArgument.Builder()
-            .setDefaultValue(startLocation)
-            .build()
+        var currentId = 1
 
-        val session = NavArgument.Builder()
-            .setDefaultValue(sessionName)
-            .build()
+        val activityDestinations = registeredActivities.map {
+            ActivityDestination(
+                id = currentId.also { currentId++ },
+                uri = it.turbolinksAnnotation().uri.toUri(),
+                kClass = it
+            )
+        }
 
-        navController.graph = navController.navInflater.inflate(navGraphId).apply {
-            this.addArgument("location", location)
-            this.addArgument("sessionName", session)
-            this.startDestination = startDestinationId
+        val fragmentDestinations = registeredFragments.map {
+            FragmentDestination(
+                id = currentId.also { currentId++ },
+                uri = it.turbolinksAnnotation().uri.toUri(),
+                kClass = it
+            )
+        }
+
+        navController.apply {
+            graph = buildGraph(
+                activityDestinations,
+                fragmentDestinations,
+                fragmentDestinations.startDestination().id
+            )
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun buildGraph(
+        activityDestinations: List<ActivityDestination>,
+        fragmentDestinations: List<FragmentDestination>,
+        startDestinationId: Int
+    ): NavGraph {
+        return createGraph(startDestination = startDestinationId) {
+            activityDestinations.forEach {
+                activity(it.id) {
+                    activityClass = it.kClass
+                    deepLink(it.uri.toString())
+                }
+            }
+
+            fragmentDestinations.withoutDialogs().forEach {
+                fragment(it.id, it.kClass) {
+                    deepLink(it.uri.toString())
+                }
+            }
+
+            fragmentDestinations.dialogs().forEach {
+                dialog(it.id, it.kClass as KClass<out DialogFragment>) {
+                    deepLink(it.uri.toString())
+                }
+            }
+
+            argument("location") {
+                defaultValue = startLocation
+            }
+
+            argument("sessionName") {
+                defaultValue = sessionName
+            }
+        }
+    }
+
+    private fun List<FragmentDestination>.dialogs(): List<FragmentDestination> {
+        return filter { it.kClass.isSubclassOf(DialogFragment::class) }
+    }
+
+    private fun List<FragmentDestination>.withoutDialogs(): List<FragmentDestination> {
+        return minus(dialogs())
+    }
+
+    private fun List<FragmentDestination>.startDestination(): FragmentDestination {
+        val startDestinationUri = session.pathConfiguration.properties(startLocation).uri
+        return requireNotNull(firstOrNull { it.uri == startDestinationUri }) {
+            "A start Fragment destination was not found for uri: $startDestinationUri"
+        }
+    }
+
+    private fun KClass<out Any>.turbolinksAnnotation(): TurbolinksNavGraphDestination {
+        return requireNotNull(findAnnotation()) {
+            "A TurbolinksNavGraphDestination annotation is required for the destination: ${this.simpleName}"
+        }
+    }
+
+    // Modified from AndroidX FragmentNavigatorDestinationBuilder extensions
+    internal inline fun NavGraphBuilder.fragment(
+        @IdRes id: Int,
+        fragmentClass: KClass<out Fragment>,
+        builder: FragmentNavigatorDestinationBuilder.() -> Unit
+    ) = destination(
+        FragmentNavigatorDestinationBuilder(
+        provider[FragmentNavigator::class],
+        id,
+        fragmentClass
+    ).apply(builder))
+
+    // Modified from AndroidX DialogFragmentNavigatorDestinationBuilder extensions
+    internal inline fun NavGraphBuilder.dialog(
+        @IdRes id: Int,
+        fragmentClass: KClass<out DialogFragment>,
+        builder: DialogFragmentNavigatorDestinationBuilder.() -> Unit
+    ) = destination(
+        DialogFragmentNavigatorDestinationBuilder(
+        provider[DialogFragmentNavigator::class],
+        id,
+        fragmentClass
+    ).apply(builder))
 }
