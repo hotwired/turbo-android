@@ -3,6 +3,6 @@ package com.basecamp.turbolinks
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-annotation class TurbolinksGraphDestination(
+annotation class TurbolinksNavGraphDestination(
     val uri: String
 )

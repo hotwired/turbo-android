@@ -146,12 +146,13 @@ abstract class TurbolinksNavHost : NavHostFragment() {
         }
     }
 
-    private fun KClass<out Any>.turbolinksAnnotation(): TurbolinksGraphDestination {
+    private fun KClass<out Any>.turbolinksAnnotation(): TurbolinksNavGraphDestination {
         return requireNotNull(findAnnotation()) {
-            "A TurbolinksGraphDestination annotation is required for the destination: ${this.simpleName}"
+            "A TurbolinksNavGraphDestination annotation is required for the destination: ${this.simpleName}"
         }
     }
 
+    // Modified from AndroidX FragmentNavigatorDestinationBuilder extensions
     internal inline fun NavGraphBuilder.fragment(
         @IdRes id: Int,
         fragmentClass: KClass<out Fragment>,
@@ -163,6 +164,7 @@ abstract class TurbolinksNavHost : NavHostFragment() {
         fragmentClass
     ).apply(builder))
 
+    // Modified from AndroidX DialogFragmentNavigatorDestinationBuilder extensions
     internal inline fun NavGraphBuilder.dialog(
         @IdRes id: Int,
         fragmentClass: KClass<out DialogFragment>,
