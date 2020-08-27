@@ -10,7 +10,6 @@ import java.io.IOException
 
 internal class PathConfigurationRepository {
     private val cacheFile = "turbolinks"
-    private val cacheKey = "configuration.json"
 
     suspend fun getRemoteConfiguration(url: String): String? {
         val request = Request.Builder().url(url).build()
@@ -24,13 +23,13 @@ internal class PathConfigurationRepository {
         return contentFromAsset(context, filePath)
     }
 
-    fun getCachedConfiguration(context: Context): String? {
-        return prefs(context).getString(cacheKey, null)
+    fun getCachedConfigurationForUrl(context: Context, url: String): String? {
+        return prefs(context).getString(url, null)
     }
 
-    fun cacheConfiguration(context: Context, pathConfiguration: PathConfiguration) {
+    fun cacheConfigurationForUrl(context: Context, url: String, pathConfiguration: PathConfiguration) {
         prefs(context).edit {
-            putString(cacheKey, pathConfiguration.toJson())
+            putString(url, pathConfiguration.toJson())
         }
     }
 

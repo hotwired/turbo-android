@@ -19,12 +19,12 @@ class PathConfigurationLoader(val context: Context) {
 
     private fun downloadRemoteConfiguration(url: String, onCompletion: (PathConfiguration) -> Unit) {
         // Always load the previously cached version first, if available
-        loadCachedConfiguration(onCompletion)
+        loadCachedConfigurationForUrl(url, onCompletion)
 
         context.coroutineScope().launch {
             repository.getRemoteConfiguration(url)?.let {
                 onCompletion(load(it))
-                cacheConfiguration(load(it))
+                cacheConfigurationForUrl(url, load(it))
             }
         }
     }
@@ -34,14 +34,14 @@ class PathConfigurationLoader(val context: Context) {
         onCompletion(load(configuration))
     }
 
-    private fun loadCachedConfiguration(onCompletion: (PathConfiguration) -> Unit) {
-        repository.getCachedConfiguration(context)?.let {
+    private fun loadCachedConfigurationForUrl(url: String, onCompletion: (PathConfiguration) -> Unit) {
+        repository.getCachedConfigurationForUrl(context, url)?.let {
             onCompletion(load(it))
         }
     }
 
-    private fun cacheConfiguration(pathConfiguration: PathConfiguration) {
-        repository.cacheConfiguration(context, pathConfiguration)
+    private fun cacheConfigurationForUrl(url: String, pathConfiguration: PathConfiguration) {
+        repository.cacheConfigurationForUrl(context, url, pathConfiguration)
     }
 
     private fun load(json: String): PathConfiguration {
