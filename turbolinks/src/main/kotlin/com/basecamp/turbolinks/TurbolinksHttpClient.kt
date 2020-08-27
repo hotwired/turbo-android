@@ -11,7 +11,7 @@ object TurbolinksHttpClient {
     private var cache: Cache? = null
     private var httpCacheSize = 100L * 1024L * 1024L // 100 MBs
 
-    internal val instance by lazy { buildNewHttpClient() }
+    internal var instance = buildNewHttpClient()
 
     @Suppress("unused")
     fun setCacheSize(maxSize: Long) {
@@ -27,10 +27,17 @@ object TurbolinksHttpClient {
         }
     }
 
+    internal fun reset() {
+        instance = buildNewHttpClient()
+    }
+
     internal fun enableCachingWith(context: Context) {
         if (cache == null) {
-            val dir = File(context.cacheDir, "turbolinks_cache")
-            cache = Cache(dir, httpCacheSize)
+            cache = Cache(
+                directory = File(context.cacheDir, "turbolinks_cache"),
+                maxSize = httpCacheSize
+            )
+            reset()
         }
     }
 

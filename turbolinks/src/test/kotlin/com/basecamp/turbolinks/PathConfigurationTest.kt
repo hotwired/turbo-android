@@ -2,9 +2,9 @@ package com.basecamp.turbolinks
 
 import android.content.Context
 import android.os.Build
+import androidx.test.core.app.ApplicationProvider
 import com.basecamp.turbolinks.PathConfiguration.Location
-import com.basecamp.turbolinks.PresentationContext.DEFAULT
-import com.basecamp.turbolinks.PresentationContext.MODAL
+import com.basecamp.turbolinks.TurbolinksNavigator.PresentationContext
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import kotlinx.coroutines.runBlocking
@@ -13,7 +13,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -25,7 +24,7 @@ class PathConfigurationTest {
 
     @Before
     fun setup() {
-        context = RuntimeEnvironment.application.applicationContext
+        context = ApplicationProvider.getApplicationContext()
         pathConfiguration = PathConfiguration(context).apply {
             load(Location(assetFilePath = "json/configuration.json"))
         }
@@ -40,9 +39,9 @@ class PathConfigurationTest {
     fun presentationContext() {
         val url = "http://example.com"
 
-        assertThat(pathConfiguration.properties("$url/home").context).isEqualTo(DEFAULT)
-        assertThat(pathConfiguration.properties("$url/new").context).isEqualTo(MODAL)
-        assertThat(pathConfiguration.properties("$url/edit").context).isEqualTo(MODAL)
+        assertThat(pathConfiguration.properties("$url/home").context).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(pathConfiguration.properties("$url/new").context).isEqualTo(PresentationContext.MODAL)
+        assertThat(pathConfiguration.properties("$url/edit").context).isEqualTo(PresentationContext.MODAL)
     }
 
     @Test
@@ -54,7 +53,7 @@ class PathConfigurationTest {
             val location = Location(remoteFileUrl = url)
 
             pathConfiguration.load(location)
-            verify(mockRepository).getCachedConfiguration(context)
+            verify(mockRepository).getCachedConfigurationForUrl(context, url)
             verify(mockRepository).getRemoteConfiguration(url)
         }
     }

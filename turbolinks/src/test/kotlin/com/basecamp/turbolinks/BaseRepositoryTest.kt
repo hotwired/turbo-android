@@ -3,6 +3,7 @@ package com.basecamp.turbolinks
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import okhttp3.Dispatcher
@@ -21,18 +22,18 @@ import java.util.concurrent.TimeUnit
 @ExperimentalCoroutinesApi
 open class BaseRepositoryTest : BaseUnitTest() {
     private val server = MockWebServer()
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
+    private val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
     override fun setup() {
         super.setup()
-        Dispatchers.setMain(mainThreadSurrogate)
+        Dispatchers.setMain(testDispatcher)
         server.start()
     }
 
     override fun teardown() {
         super.teardown()
         Dispatchers.resetMain()
-        mainThreadSurrogate.close()
+        testDispatcher.cleanupTestCoroutines()
         server.shutdown()
     }
 
@@ -62,7 +63,7 @@ open class BaseRepositoryTest : BaseUnitTest() {
                 ?: throw IllegalStateException("Couldn't load api response file")
     }
 
-    private inner class SynchronousExecutorService : ExecutorService {
+    private class SynchronousExecutorService : ExecutorService {
         override fun isShutdown(): Boolean = false
         override fun isTerminated(): Boolean = false
 

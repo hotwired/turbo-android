@@ -72,6 +72,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     fun setDebugLoggingEnabled(enabled: Boolean) {
         TurbolinksLog.enableDebugLogging = enabled
+        TurbolinksHttpClient.reset()
     }
 
     // Internal
