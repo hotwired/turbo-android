@@ -3,7 +3,6 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import com.basecamp.turbolinks.TurbolinksNavigator.PresentationContext
 
 abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {
@@ -57,21 +56,21 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {
     }
 
     private fun observeModalResult() {
-        delegate.sessionViewModel.modalResult.observe(viewLifecycleOwner, Observer { event ->
+        delegate.sessionViewModel.modalResult.observe(viewLifecycleOwner) { event ->
             if (shouldHandleModalResults()) {
                 event.getContentIfNotHandled()?.let {
                     onStartAfterModalResult(it)
                 }
             }
-        })
+        }
     }
 
     private fun observeDialogResult() {
-        delegate.sessionViewModel.dialogResult.observe(viewLifecycleOwner, Observer { event ->
+        delegate.sessionViewModel.dialogResult.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
                 onStartAfterDialogCancel()
             }
-        })
+        }
     }
 
     private fun shouldHandleModalResults(): Boolean {

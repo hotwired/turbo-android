@@ -3,6 +3,7 @@ package com.basecamp.turbolinks
 import android.content.Context
 import android.os.Build
 import androidx.core.content.edit
+import androidx.test.core.app.ApplicationProvider
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,7 +25,7 @@ class PathConfigurationRepositoryTest : BaseRepositoryTest() {
 
     override fun setup() {
         super.setup()
-        context = RuntimeEnvironment.application.applicationContext
+        context = ApplicationProvider.getApplicationContext()
         TurbolinksHttpClient.instance = client()
     }
 
@@ -54,23 +55,19 @@ class PathConfigurationRepositoryTest : BaseRepositoryTest() {
 
     @Test
     fun getCachedConfiguration() {
-        cache(json())
+        val url = "http://basecamp.com/configurations/android-v1.json"
+        val config = requireNotNull(load(json()))
+        repository.cacheConfigurationForUrl(context, url, config)
 
-        val json = repository.getCachedConfiguration(context)
+        val json = repository.getCachedConfigurationForUrl(context, url)
         assertThat(json).isNotNull()
 
-        val config = load(json)
-        assertThat(config?.rules?.size).isEqualTo(1)
+        val cachedConfig = load(json)
+        assertThat(cachedConfig?.rules?.size).isEqualTo(1)
     }
 
     private fun load(json: String?): PathConfiguration? {
         return json?.toObject(object : TypeToken<PathConfiguration>() {})
-    }
-
-    private fun cache(json: String) {
-        context.getSharedPreferences("turbolinks", Context.MODE_PRIVATE).edit(commit = true) {
-            putString("configuration.json", json)
-        }
     }
 
     private fun json(): String {

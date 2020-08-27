@@ -21,7 +21,10 @@ internal fun Context.color(@ColorRes id: Int): Int {
 }
 
 internal fun Context.runOnUiThread(func: () -> Unit) {
-    Handler(mainLooper).post { func() }
+    when (mainLooper.isCurrentThread) {
+        true -> func()
+        else -> Handler(mainLooper).post { func() }
+    }
 }
 
 internal fun Context.contentFromAsset(filePath: String): String {

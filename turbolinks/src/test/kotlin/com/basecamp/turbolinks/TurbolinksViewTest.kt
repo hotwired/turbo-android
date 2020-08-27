@@ -1,6 +1,5 @@
 package com.basecamp.turbolinks
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -26,7 +24,7 @@ class TurbolinksViewTest {
     private lateinit var context: Context
 
     @Before fun setup() {
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
 
         context = ApplicationProvider.getApplicationContext()
         view = LayoutInflater.from(context).inflate(R.layout.turbolinks_default, null) as ViewGroup
@@ -37,9 +35,9 @@ class TurbolinksViewTest {
     }
 
     @Test fun webviewAttachedToRefreshLayout() {
-        view.turbolinks_view.attachWebView(webView)
-
-        // Child at 0 is CircleImageView
-        assertThat(view.turbolinks_view.refreshLayout.getChildAt(1)).isEqualTo(webView)
+        view.turbolinks_view.attachWebView(webView) {
+            // Child at 0 is CircleImageView
+            assertThat(view.turbolinks_view.webViewRefresh?.getChildAt(1)).isEqualTo(webView)
+        }
     }
 }
