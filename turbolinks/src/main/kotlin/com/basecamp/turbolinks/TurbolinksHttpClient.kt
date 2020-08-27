@@ -33,11 +33,12 @@ object TurbolinksHttpClient {
 
     internal fun enableCachingWith(context: Context) {
         if (cache == null) {
-            val dir = File(context.cacheDir, "turbolinks_cache")
-            cache = Cache(dir, httpCacheSize)
+            cache = Cache(
+                directory = File(context.cacheDir, "turbolinks_cache"),
+                maxSize = httpCacheSize
+            )
+            reset()
         }
-
-        reset()
     }
 
     private fun buildNewHttpClient(): OkHttpClient {
