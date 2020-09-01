@@ -1,12 +1,46 @@
 {
   "rules": [
     {
-      "patterns": [".+"],
-      "properties": {"context": "default", "type": "web"}
+      "patterns": [
+        ".*"
+      ],
+      "properties": {
+        "context": "default",
+        "uri": "turbolinks://fragment/web"
+      }
     },
     {
-      "patterns": ["/new$", "/edit$"],
-      "properties": {"context": "modal"}
+      "patterns": [
+        "^$", "/orders$"
+      ],
+      "properties": {
+        "uri": "turbolinks://fragment/web/home"
+      }
+    },
+    {
+      "patterns": [
+        "/new$", "/edit$"
+      ],
+      "properties": {
+        "context": "modal",
+        "uri": "turbolinks://fragment/web/modal"
+      }
+    },
+    {
+      "patterns": [
+        "/profile$"
+      ],
+      "properties": {
+        "uri": "turbolinks://fragment/profile"
+      }
+    },
+    {
+      "patterns": [
+        ".+\\.(?:bmp|gif|heic|jpg|jpeg|png|svg|webp)"
+      ],
+      "properties": {
+        "uri": "turbolinks://fragment/image_viewer"
+      }
     }
   ]
 }

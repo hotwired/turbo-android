@@ -2,8 +2,8 @@
     <string name="app_name">TurboFood</string>
     <string name="section_food">Food</string>
     <string name="section_orders">Orders</string>
-    <string name="section_me">Me</string>
-    <string name="me_edit_profile">Edit Profile</string>
+    <string name="section_profile">Me</string>
+    <string name="profile_edit">Edit Profile</string>
     <string name="modal_submit">Save</string>
     <string name="modal_close">Close</string>
     <string name="server_ip_warning">Configure your IP Address</string>
