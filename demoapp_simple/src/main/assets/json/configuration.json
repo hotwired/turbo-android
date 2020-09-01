@@ -1,8 +1,29 @@
 {
   "rules": [
     {
-      "patterns": [".+"],
-      "properties": {"context": "default", "type": "web"}
+      "patterns": [
+        ".*"
+      ],
+      "properties": {
+        "context": "default",
+        "uri": "turbolinks://fragment/web"
+      }
+    },
+    {
+      "patterns": [
+        "^$"
+      ],
+      "properties": {
+        "uri": "turbolinks://fragment/web/home"
+      }
+    },
+    {
+      "patterns": [
+        ".+\\.(?:bmp|gif|heic|jpg|jpeg|png|svg|webp)"
+      ],
+      "properties": {
+        "uri": "turbolinks://fragment/image_viewer"
+      }
     }
   ]
 }

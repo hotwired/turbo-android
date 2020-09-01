@@ -7,21 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/section_food"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/main_nav_host"
+        android:name="com.basecamp.turbolinks.demosimple.MainNavHost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent">
-
-        <fragment
-            android:id="@+id/section_food_nav"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:defaultNavHost="false" />
-
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="parent"
+        app:defaultNavHost="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
