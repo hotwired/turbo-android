@@ -33,7 +33,7 @@ interface Destination : TurbolinksDestination {
                 .setShowTitle(true)
                 .enableUrlBarHiding()
                 .addDefaultShareMenuItem()
-                .setToolbarColor(context.color(R.color.white))
+                .setToolbarColor(context.getColor(R.color.white))
                 .build()
 
         intent.launchUrl(context, Uri.parse(location))

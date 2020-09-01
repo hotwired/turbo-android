@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_image_viewer.*
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/image_viewer")
-class ImageViewerFragment : TurbolinksFragment() {
+class ImageViewerFragment : TurbolinksFragment(), Destination {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         loadImage()
