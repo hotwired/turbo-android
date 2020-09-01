@@ -7,8 +7,4 @@ abstract class NativeFragment : TurbolinksFragment(), Destination {
         super.onResume()
         animateBottomNavVisibility()
     }
-
-    override fun displaysBottomTabs(): Boolean {
-        return true
-    }
 }

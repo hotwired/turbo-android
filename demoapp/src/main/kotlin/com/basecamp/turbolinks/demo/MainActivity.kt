@@ -1,7 +1,6 @@
 package com.basecamp.turbolinks.demo
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEachIndexed

@@ -2,11 +2,7 @@ package com.basecamp.turbolinks.demo
 
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import com.basecamp.turbolinks.*
-import com.basecamp.turbolinks.TurbolinksNavigator.PresentationContext
+import com.basecamp.turbolinks.TurbolinksDestination
 import java.net.MalformedURLException
 
 interface Destination : TurbolinksDestination {

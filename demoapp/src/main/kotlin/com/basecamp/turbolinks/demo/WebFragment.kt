@@ -5,13 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
-import com.basecamp.turbolinks.*
-import com.basecamp.turbolinks.TurbolinksNavigator.PresentationContext
+import com.basecamp.turbolinks.TurbolinksNavGraphDestination
+import com.basecamp.turbolinks.TurbolinksView
+import com.basecamp.turbolinks.TurbolinksWebFragment
 import kotlinx.android.synthetic.main.error.view.*
-import kotlinx.android.synthetic.main.fragment_web.*
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web")
 open class WebFragment : TurbolinksWebFragment(), Destination {
@@ -30,10 +27,6 @@ open class WebFragment : TurbolinksWebFragment(), Destination {
     override fun onResume() {
         super.onResume()
         animateBottomNavVisibility()
-    }
-
-    override fun displaysBottomTabs(): Boolean {
-        return true
     }
 
     override fun createProgressView(location: String): View {
