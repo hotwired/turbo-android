@@ -306,7 +306,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
     private fun isAtStartDestination(): Boolean {
         val controller = currentController()
-        return controller.graph.startDestination == controller.currentDestination?.id
+        return controller.previousBackStackEntry == null
     }
 
     private fun locationsAreSame(first: String?, second: String?): Boolean {
