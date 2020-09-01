@@ -11,14 +11,18 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_image_viewer.*
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/image_viewer")
-class ImageViewerFragment : TurbolinksFragment(), Destination {
+class ImageViewerFragment : NativeFragment() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_image_viewer, container, false)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         loadImage()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_image_viewer, container, false)
+    override fun displaysBottomTabs(): Boolean {
+        return false
     }
 
     override fun toolbarForNavigation(): Toolbar? {

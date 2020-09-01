@@ -2,8 +2,11 @@ package com.basecamp.turbolinks.demo
 
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
-import com.basecamp.turbolinks.PathProperties
-import com.basecamp.turbolinks.TurbolinksDestination
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import com.basecamp.turbolinks.*
+import com.basecamp.turbolinks.TurbolinksNavigator.PresentationContext
 import java.net.MalformedURLException
 
 interface Destination : TurbolinksDestination {
@@ -25,6 +28,16 @@ interface Destination : TurbolinksDestination {
                 launchCustomTab(newLocation)
                 false
             }
+        }
+    }
+
+    fun displaysBottomTabs(): Boolean {
+        return true
+    }
+
+    fun animateBottomNavVisibility() {
+        (fragment.activity as? MainActivity)?.apply {
+            animateBottomNavVisibility(fragment, displaysBottomTabs())
         }
     }
 

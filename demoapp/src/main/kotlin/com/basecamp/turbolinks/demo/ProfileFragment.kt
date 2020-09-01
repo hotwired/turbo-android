@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_me.*
 import kotlinx.android.synthetic.main.fragment_me.view.*
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/profile")
-class ProfileFragment : TurbolinksFragment(), Destination {
+class ProfileFragment : NativeFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_me, container, false)
     }

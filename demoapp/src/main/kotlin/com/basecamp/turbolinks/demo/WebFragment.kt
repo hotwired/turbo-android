@@ -9,11 +9,16 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.basecamp.turbolinks.*
+import com.basecamp.turbolinks.TurbolinksNavigator.PresentationContext
 import kotlinx.android.synthetic.main.error.view.*
 import kotlinx.android.synthetic.main.fragment_web.*
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web")
 open class WebFragment : TurbolinksWebFragment(), Destination {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_web, container, false)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -22,8 +27,13 @@ open class WebFragment : TurbolinksWebFragment(), Destination {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_web, container, false)
+    override fun onResume() {
+        super.onResume()
+        animateBottomNavVisibility()
+    }
+
+    override fun displaysBottomTabs(): Boolean {
+        return true
     }
 
     override fun createProgressView(location: String): View {

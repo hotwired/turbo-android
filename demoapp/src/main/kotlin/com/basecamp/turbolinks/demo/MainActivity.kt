@@ -1,10 +1,12 @@
 package com.basecamp.turbolinks.demo
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.TurbolinksActivity
 import com.basecamp.turbolinks.TurbolinksActivityDelegate
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,6 +31,12 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
 
         initBottomTabsListener()
         verifyServerIpAddress(this)
+    }
+
+    fun animateBottomNavVisibility(fragment: Fragment, visible: Boolean) {
+        if (fragment == delegate.currentDestination && visible != bottom_nav.isAlreadyVisible) {
+            bottom_nav.animateVisibility(visible)
+        }
     }
 
     private fun initBottomTabsListener() {
