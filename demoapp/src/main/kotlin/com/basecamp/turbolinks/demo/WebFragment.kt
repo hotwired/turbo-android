@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -11,50 +12,18 @@ import com.basecamp.turbolinks.*
 import kotlinx.android.synthetic.main.error.view.*
 import kotlinx.android.synthetic.main.fragment_web.*
 
-open class WebFragment : Fragment(), TurbolinksFragment {
-    protected val delegate by lazy { TurbolinksFragmentDelegate(this) }
-    private val viewModel by lazy { TurbolinksSharedViewModel.get(requireActivity()) }
+@TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web")
+open class WebFragment : TurbolinksWebFragment(), Destination {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(TurbolinksFragmentObserver(delegate))
+        pageViewModel.title.observe(viewLifecycleOwner) {
+            toolbarForNavigation()?.title = it
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_web, container, false)
-    }
-
-    // ----------------------------------------------------------------------------
-    // TurbolinksFragment interface
-    // ----------------------------------------------------------------------------
-
-    override fun onProvideDelegate(): TurbolinksFragmentDelegate {
-        return delegate
-    }
-
-    override fun onSetModalResult(result: TurbolinksModalResult) {
-        viewModel.modalResult = result
-    }
-
-    override fun onGetModalResult(): TurbolinksModalResult? {
-        return viewModel.modalResult
-    }
-
-    override fun onProvideTurbolinksView(): TurbolinksView? {
-        return view?.findViewById(R.id.turbolinks_view)
-    }
-
-    override fun onProvideErrorPlaceholder(): ViewGroup? {
-        return view?.findViewById(R.id.turbolinks_error_placeholder)
-    }
-
-    override fun onSetupToolbar() {
-        toolbar?.let {
-            NavigationUI.setupWithNavController(it, findNavController())
-            it.setNavigationOnClickListener {
-                delegate.navigateUp()
-            }
-        }
     }
 
     override fun createProgressView(location: String): View {
@@ -71,7 +40,10 @@ open class WebFragment : Fragment(), TurbolinksFragment {
         return true
     }
 
-    override fun onTitleChanged(title: String) {
-        toolbar?.title = title
+    override fun toolbarForNavigation(): Toolbar? {
+        return view?.findViewById(R.id.toolbar)
     }
+
+    override val turbolinksView: TurbolinksView?
+        get() = view?.findViewById(R.id.turbolinks_view)
 }

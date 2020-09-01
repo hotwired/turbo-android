@@ -36,7 +36,7 @@
 
     <fragment
         android:id="@+id/me_fragment"
-        android:name="com.basecamp.turbolinks.demo.MeFragment"
+        android:name="com.basecamp.turbolinks.demo.ProfileFragment"
         android:label=""
         tools:layout="@layout/fragment_me"/>
 
@@ -83,15 +83,15 @@
 
         <fragment
             android:id="@+id/modal_fragment_start"
-            android:name="com.basecamp.turbolinks.demo.ModalFragment"
+            android:name="com.basecamp.turbolinks.demo.WebModalFragment"
             android:label=""
-            tools:layout="@layout/fragment_modal"/>
+            tools:layout="@layout/fragment_web_modal"/>
 
         <fragment
             android:id="@+id/modal_fragment"
-            android:name="com.basecamp.turbolinks.demo.ModalFragment"
+            android:name="com.basecamp.turbolinks.demo.WebModalFragment"
             android:label=""
-            tools:layout="@layout/fragment_modal"/>
+            tools:layout="@layout/fragment_web_modal"/>
 
     </navigation>
 

@@ -7,61 +7,40 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/section_food"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/food_nav_host"
+        android:name="com.basecamp.turbolinks.demo.FoodNavHost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav">
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:defaultNavHost="false" />
 
-        <fragment
-            android:id="@+id/section_food_nav"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:defaultNavHost="false" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/section_orders"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/orders_nav_host"
+        android:name="com.basecamp.turbolinks.demo.OrdersNavHost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav">
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:defaultNavHost="false" />
 
-        <fragment
-            android:id="@+id/section_orders_nav"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:defaultNavHost="false" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/section_me"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/me_nav_host"
+        android:name="com.basecamp.turbolinks.demo.ProfileNavHost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav">
-
-        <fragment
-            android:id="@+id/section_me_nav"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:defaultNavHost="false" />
-
-    </FrameLayout>
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:defaultNavHost="false" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         style="@style/Widget.Design.BottomNavigationView"

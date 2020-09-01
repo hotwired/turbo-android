@@ -5,7 +5,7 @@ import android.webkit.WebView
 import com.basecamp.turbolinks.TurbolinksFragment
 import com.basecamp.turbolinks.TurbolinksFragmentDelegate
 
-class BridgeFragmentDelegate(fragment: TurbolinksFragment) : TurbolinksFragmentDelegate(fragment) {
+/*class BridgeFragmentDelegate(fragment: TurbolinksFragment) : TurbolinksFragmentDelegate(fragment) {
     private var bridge: NativeBridge? = null
 
     override fun onWebViewAttached() {
@@ -50,4 +50,4 @@ class BridgeFragmentDelegate(fragment: TurbolinksFragment) : TurbolinksFragmentD
             return webView
         }
     }
-}
+}*/

@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_modal.*
+import com.basecamp.turbolinks.TurbolinksNavGraphDestination
+import kotlinx.android.synthetic.main.fragment_web_modal.*
 
-class ModalFragment : WebFragment() {
+@TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web/modal")
+class WebModalFragment : WebFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_modal, container, false)
+        return inflater.inflate(R.layout.fragment_web_modal, container, false)
     }
 
     override fun onAttach(context: Context) {
@@ -32,8 +34,8 @@ class ModalFragment : WebFragment() {
     }
 
     private fun initView() {
-        modal_close.setOnClickListener { delegate.navigateBack() }
-        modal_submit.setOnClickListener { delegate.navigateBack() }
+        modal_close.setOnClickListener { navigateBack() }
+        modal_submit.setOnClickListener { navigateBack() }
     }
 
     private fun toggleModalPresentation(modal: Boolean) {
