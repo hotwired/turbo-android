@@ -2,26 +2,19 @@ package com.basecamp.turbolinks.demo
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.basecamp.turbolinks.TurbolinksNavGraphDestination
-import kotlinx.android.synthetic.main.fragment_web_modal.*
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web/modal")
 class WebModalFragment : WebFragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_web_modal, container, false)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        initToolbar()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         toggleModalPresentation(true)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        initView()
     }
 
     override fun onDetach() {
@@ -33,9 +26,9 @@ class WebModalFragment : WebFragment() {
         return false
     }
 
-    private fun initView() {
-        modal_close.setOnClickListener { navigateBack() }
-        modal_submit.setOnClickListener { navigateBack() }
+    private fun initToolbar() {
+        toolbarForNavigation()?.navigationIcon = context?.drawable(R.drawable.ic_close)
+        toolbarForNavigation()?.navigationContentDescription = getString(R.string.modal_close)
     }
 
     private fun toggleModalPresentation(modal: Boolean) {
@@ -45,8 +38,7 @@ class WebModalFragment : WebFragment() {
 
         view.translationYAnimator(
                 startY = startY.toFloat(),
-                endY = endY.toFloat(),
-                duration = 200
+                endY = endY.toFloat()
         ).start()
     }
 }
