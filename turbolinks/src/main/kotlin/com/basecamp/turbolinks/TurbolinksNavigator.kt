@@ -1,15 +1,11 @@
 package com.basecamp.turbolinks
 
-import android.net.Uri
 import android.os.Bundle
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
-import java.net.URI
 
 class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
@@ -64,64 +60,59 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             return
         }
 
-        val pathProperties = currentPathConfiguration().properties(location)
-        val currentContext = currentPresentationContext()
-        val newContext = pathProperties.context
-        val presentation = presentation(location, options, pathProperties)
-        val navigationMode = navigationMode(currentContext, newContext, presentation)
-
-        logEvent(
-            "navigate", "location" to location,
-            "options" to options, "currentContext" to currentContext,
-            "newContext" to newContext, "presentation" to presentation
+        val rule = TurbolinksNavigatorRule(
+                location = location,
+                visitOptions = options,
+                bundle = bundle,
+                extras = extras,
+                pathConfiguration = session.pathConfiguration,
+                controller = currentControllerForLocation(location)
         )
 
-        when (navigationMode) {
+        logEvent(
+            "navigate", "location" to rule.newLocation,
+            "options" to options, "currentContext" to rule.currentContext,
+            "newContext" to rule.newContext, "presentation" to rule.newPresentation
+        )
+
+        when (rule.newNavigationMode) {
             NavigationMode.DISMISS_MODAL -> {
-                dismissModalContextWithResult(location, options, pathProperties, bundle)
+                dismissModalContextWithResult(rule)
             }
             NavigationMode.TO_MODAL -> {
-                navigateToModalContext(location, options, pathProperties, presentation, bundle, extras)
+                navigateToModalContext(rule)
             }
             NavigationMode.IN_CONTEXT -> {
-                when (presentation) {
+                when (rule.newPresentation) {
                     Presentation.REFRESH -> {
                         // Refresh signals reloading the current destination
                         // url, ignoring the provided `location` url.
-                        navigate(currentLocation(), VisitOptions())
+                        navigate(rule.currentLocation, VisitOptions())
                     }
                     else -> {
-                        navigateWithinContext(location, options, pathProperties, presentation, bundle, extras)
+                        navigateWithinContext(rule)
                     }
                 }
             }
         }
     }
 
-    private fun navigateWithinContext(location: String,
-                                      options: VisitOptions,
-                                      properties: PathProperties,
-                                      presentation: Presentation,
-                                      bundle: Bundle?,
-                                      extras: FragmentNavigator.Extras?) {
+    private fun navigateWithinContext(rule: TurbolinksNavigatorRule) {
+        logEvent("navigateWithinContext", "location" to rule.newLocation, "presentation" to rule.newPresentation)
 
-        logEvent("navigateWithinContext", "location" to location, "presentation" to presentation)
-        val navBundle = bundle.withNavArguments(location, presentation)
-        val controller = currentControllerForLocation(location)
-
-        when (presentation) {
+        when (rule.newPresentation) {
             Presentation.POP -> onNavigationVisit {
-                controller.popBackStack()
+                rule.controller.popBackStack()
             }
             Presentation.REPLACE -> onNavigationVisit {
-                controller.popBackStack()
-                navigateToLocation(location, options, properties, navBundle, extras)
+                rule.controller.popBackStack()
+                navigateToLocation(rule)
             }
             Presentation.PUSH -> onNavigationVisit {
-                navigateToLocation(location, options, properties, navBundle, extras)
+                navigateToLocation(rule)
             }
             Presentation.REPLACE_ROOT -> onNavigationVisit {
-                replaceRootLocation(location, properties, navBundle)
+                replaceRootLocation(rule)
             }
             Presentation.REPLACE_ALL -> onNavigationVisit {
                 clearBackStack()
@@ -135,160 +126,89 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    private fun navigateToModalContext(location: String,
-                                       options: VisitOptions,
-                                       properties: PathProperties,
-                                       presentation: Presentation,
-                                       bundle: Bundle?,
-                                       extras: FragmentNavigator.Extras?) {
+    private fun navigateToModalContext(rule: TurbolinksNavigatorRule) {
+        logEvent("navigateToModalContext", "location" to rule.newLocation)
 
-        logEvent("navigateToModalContext", "location" to location)
-        val navBundle = bundle.withNavArguments(location, Presentation.PUSH)
-        val controller = currentControllerForLocation(location)
-
-        when (presentation) {
+        when (rule.newPresentation) {
             Presentation.REPLACE -> onNavigationVisit {
-                controller.popBackStack()
-                navigateToLocation(location, options, properties, navBundle, extras)
+                rule.controller.popBackStack()
+                navigateToLocation(rule)
             }
             else -> onNavigationVisit {
-                navigateToLocation(location, options, properties, navBundle, extras)
+                navigateToLocation(rule)
             }
         }
     }
 
-    private fun dismissModalContextWithResult(location: String,
-                                              options: VisitOptions,
-                                              properties: PathProperties,
-                                              bundle: Bundle?) {
-
+    private fun dismissModalContextWithResult(rule: TurbolinksNavigatorRule) {
         logEvent("dismissModalContextWithResult",
-            "location" to location,
-            "uri" to properties.uri,
-            "presentation" to properties.presentation
+            "location" to rule.newLocation,
+            "uri" to rule.newProperties.uri,
+            "presentation" to rule.newPresentation
         )
 
         onNavigationVisit {
-            val controller = currentControllerForLocation(location)
-            val navDestination = checkNotNull(controller.currentDestination)
-
             if (destination.isDialog) {
                 // Pop the backstack before sending the modal result, since the
                 // underlying fragment is still active and will receive the
                 // result immediately. This allows the modal result flow to
                 // behave exactly like full screen fragments.
-                controller.popBackStack(navDestination.id, true)
-                sendModalResult(location, options, properties, bundle)
+                rule.controller.popBackStack(rule.currentDestination.id, true)
+                sendModalResult(rule)
             } else {
-                sendModalResult(location, options, properties, bundle)
-                controller.popBackStack(navDestination.id, true)
+                sendModalResult(rule)
+                rule.controller.popBackStack(rule.currentDestination.id, true)
             }
         }
     }
 
-    private fun sendModalResult(location: String, options: VisitOptions, properties: PathProperties, bundle: Bundle?) {
+    private fun sendModalResult(rule: TurbolinksNavigatorRule) {
         // Save the modal result with VisitOptions so it can be retrieved
         // by the previous destination when the backstack is popped.
-        destination.sessionViewModel.sendModalResult(
-            TurbolinksModalResult(
-                location = location,
-                options = options,
-                bundle = bundle,
-                shouldNavigate = properties.presentation != Presentation.NONE
-            )
-        )
+        rule.newModalResult?.let {
+            destination.sessionViewModel.sendModalResult(it)
+        }
     }
 
-    private fun replaceRootLocation(location: String, properties: PathProperties, bundle: Bundle) {
-        val controller = currentControllerForLocation(location)
-        val destination = controller.destinationFor(properties.uri)
-
-        if (destination == null) {
+    private fun replaceRootLocation(rule: TurbolinksNavigatorRule) {
+        if (rule.newDestination == null) {
             logEvent("replaceRootLocation", "error" to "No destination found")
             return
         }
 
         val navOptions = navOptions {
-            popUpTo(destination.id) { inclusive = true }
+            popUpTo(rule.newDestination.id) { inclusive = true }
         }
 
-        logEvent("replaceRootLocation", "location" to location, "uri" to properties.uri)
-        controller.navigate(destination.id, bundle, navOptions)
+        logEvent("replaceRootLocation", "location" to rule.newLocation, "uri" to rule.newProperties.uri)
+        rule.controller.navigate(rule.newDestination.id, rule.newBundle, navOptions)
     }
 
-    private fun navigateToLocation(location: String,
-                                   options: VisitOptions,
-                                   properties: PathProperties,
-                                   bundle: Bundle,
-                                   extras: FragmentNavigator.Extras?) {
-
-        val controller = currentControllerForLocation(location)
-        val navOptions = navOptions(location, properties)
+    private fun navigateToLocation(rule: TurbolinksNavigatorRule) {
+        val navOptions = navOptions(rule.newLocation, rule.newProperties)
 
         // Save the VisitOptions so it can be retrieved by the next
         // destination. When response.responseHTML is present it is
         // too large to save directly within the args bundle.
-        destination.sessionViewModel.saveVisitOptions(options)
+        destination.sessionViewModel.saveVisitOptions(rule.newVisitOptions)
 
-        controller.destinationFor(properties.uri)?.let { destination ->
-            logEvent("navigateToLocation", "location" to location, "uri" to properties.uri)
-            controller.navigate(destination.id, bundle, navOptions, extras)
+        rule.newDestination?.let { destination ->
+            logEvent("navigateToLocation", "location" to rule.newLocation, "uri" to rule.newDestinationUri)
+            rule.controller.navigate(destination.id, rule.newBundle, navOptions, rule.newExtras)
             return
         }
 
-        logEvent("navigateToLocation", "location" to location,
-            "warning" to "No destination found", "uri" to properties.uri)
+        logEvent("navigateToLocation", "location" to rule.newLocation,
+            "warning" to "No destination found", "uri" to rule.newProperties.uri)
 
-        controller.destinationFor(properties.fallbackUri)?.let { destination ->
-            logEvent("navigateToLocation", "location" to location, "fallbackUri" to "${properties.fallbackUri}")
-            controller.navigate(destination.id, bundle, navOptions, extras)
+        rule.newFallbackDestination?.let { destination ->
+            logEvent("navigateToLocation", "location" to rule.newLocation, "fallbackUri" to "${rule.newFallbackUri}")
+            rule.controller.navigate(destination.id, rule.newBundle, navOptions, rule.newExtras)
             return
         }
 
-        logEvent("navigateToLocation", "location" to location,
+        logEvent("navigateToLocation", "location" to rule.newLocation,
             "error" to "No fallback destination found")
-    }
-
-    private fun presentation(location: String, options: VisitOptions, properties: PathProperties): Presentation {
-        val presentation = properties.presentation
-
-        logEvent("presentation", "location" to location, "presentation" to presentation)
-
-        if (presentation == Presentation.DEFAULT) {
-            val locationIsRoot = locationsAreSame(location, session.rootLocation)
-            val locationIsCurrent = locationsAreSame(location, currentLocation())
-            val locationIsPrevious = locationsAreSame(location, previousLocation())
-            val replace = options.action == VisitAction.REPLACE
-
-            return when {
-                locationIsRoot && locationIsCurrent -> Presentation.REPLACE_ROOT
-                locationIsPrevious -> Presentation.POP
-                locationIsRoot -> Presentation.REPLACE_ALL
-                locationIsCurrent || replace -> Presentation.REPLACE
-                else -> Presentation.PUSH
-            }
-        } else {
-            return presentation
-        }
-    }
-
-    private fun navigationMode(currentContext: PresentationContext,
-                               newContext: PresentationContext,
-                               presentation: Presentation): NavigationMode {
-
-        val dismissModalContext = currentContext == PresentationContext.MODAL &&
-                newContext == PresentationContext.DEFAULT &&
-                presentation != Presentation.REPLACE_ROOT
-
-        val navigateToModalContext = currentContext == PresentationContext.DEFAULT &&
-                newContext == PresentationContext.MODAL &&
-                presentation != Presentation.REPLACE_ROOT
-
-        return when {
-            dismissModalContext -> NavigationMode.DISMISS_MODAL
-            navigateToModalContext -> NavigationMode.TO_MODAL
-            else -> NavigationMode.IN_CONTEXT
-        }
     }
 
     private fun currentController(): NavController {
@@ -299,38 +219,9 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         return destination.navHostForNavigation(location).navController
     }
 
-    private fun NavController.destinationFor(uri: Uri?): NavDestination? {
-        uri ?: return null
-        return graph.find { it.hasDeepLink(uri) }
-    }
-
     private fun isAtStartDestination(): Boolean {
         val controller = currentController()
         return controller.previousBackStackEntry == null
-    }
-
-    private fun locationsAreSame(first: String?, second: String?): Boolean {
-        if (first == null || second == null) {
-            return false
-        }
-
-        return URI(first).path == URI(second).path
-    }
-
-    private fun Bundle?.withNavArguments(location: String, presentation: Presentation): Bundle {
-        val previousLocation = when (presentation) {
-            Presentation.PUSH -> currentLocation()
-            else -> previousLocation()
-        }
-
-        val bundle = this ?: bundleOf()
-        val navBundle = bundleOf(
-            "location" to location,
-            "previousLocation" to previousLocation,
-            "sessionName" to session.sessionName
-        )
-
-        return bundle.apply { putAll(navBundle) }
     }
 
     private fun shouldNavigate(location: String): Boolean {
@@ -345,27 +236,6 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             newLocation = location,
             newPathProperties = properties
         )
-    }
-
-    private fun currentLocation(): String {
-        val location = fragment.arguments?.getString("location")
-        return checkNotNull(location)
-    }
-
-    private fun previousLocation(): String? {
-        return fragment.arguments?.getString("previousLocation")
-    }
-
-    private fun currentPathConfiguration(): PathConfiguration {
-        return session.pathConfiguration
-    }
-
-    private fun currentPathProperties(): PathProperties {
-        return currentPathConfiguration().properties(currentLocation())
-    }
-
-    private fun currentPresentationContext(): PresentationContext {
-        return currentPathProperties().context
     }
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {

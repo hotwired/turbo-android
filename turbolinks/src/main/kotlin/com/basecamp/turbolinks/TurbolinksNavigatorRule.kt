@@ -1,0 +1,112 @@
+package com.basecamp.turbolinks
+
+import android.net.Uri
+import android.os.Bundle
+import androidx.core.os.bundleOf
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.fragment.FragmentNavigator
+import com.basecamp.turbolinks.TurbolinksNavigator.*
+import java.net.URI
+
+@Suppress("MemberVisibilityCanBePrivate")
+class TurbolinksNavigatorRule(
+        location: String,
+        visitOptions: VisitOptions,
+        bundle: Bundle?,
+        extras: FragmentNavigator.Extras?,
+        pathConfiguration: PathConfiguration,
+        val controller: NavController
+) {
+    // Current destination
+    val previousLocation = controller.previousBackStackEntry.location
+    val currentLocation = checkNotNull(controller.currentBackStackEntry.location)
+    val currentProperties = pathConfiguration.properties(currentLocation)
+    val currentContext = currentProperties.context
+    val currentDestination = checkNotNull(controller.currentDestination)
+    val isAtStartDestination = controller.previousBackStackEntry == null
+
+    // New destination
+    val newLocation = location
+    val newVisitOptions = visitOptions
+    val newBundle = bundle.withNavArguments()
+    val newExtras = extras
+    val newProperties = pathConfiguration.properties(newLocation)
+    val newContext = newProperties.context
+    val newPresentation = newPresentation()
+    val newNavigationMode = newNavigationMode()
+    val newModalResult = newModalResult()
+    val newDestinationUri = newProperties.uri
+    val newFallbackUri = newProperties.fallbackUri
+    val newDestination = controller.destinationFor(newDestinationUri)
+    val newFallbackDestination = controller.destinationFor(newFallbackUri)
+
+    private fun newPresentation(): Presentation {
+        // Use the custom presentation provided in the path configuration
+        if (newProperties.presentation != Presentation.DEFAULT) {
+            return newProperties.presentation
+        }
+
+        val locationIsCurrent = locationPathsAreEqual(newLocation, currentLocation)
+        val locationIsPrevious = locationPathsAreEqual(newLocation, previousLocation)
+        val replace = newVisitOptions.action == VisitAction.REPLACE
+
+        return when {
+            locationIsCurrent && isAtStartDestination -> Presentation.REPLACE_ROOT
+            locationIsPrevious -> Presentation.POP
+            locationIsCurrent || replace -> Presentation.REPLACE
+            else -> Presentation.PUSH
+        }
+    }
+
+    private fun newNavigationMode(): NavigationMode {
+        val dismissModalContext = currentContext == PresentationContext.MODAL &&
+                newContext == PresentationContext.DEFAULT &&
+                newPresentation != Presentation.REPLACE_ROOT
+
+        val navigateToModalContext = currentContext == PresentationContext.DEFAULT &&
+                newContext == PresentationContext.MODAL &&
+                newPresentation != Presentation.REPLACE_ROOT
+
+        return when {
+            dismissModalContext -> NavigationMode.DISMISS_MODAL
+            navigateToModalContext -> NavigationMode.TO_MODAL
+            else -> NavigationMode.IN_CONTEXT
+        }
+    }
+
+    private fun newModalResult(): TurbolinksModalResult? {
+        if (newNavigationMode != NavigationMode.DISMISS_MODAL) {
+            return null
+        }
+
+        return TurbolinksModalResult(
+                location = newLocation,
+                options = newVisitOptions,
+                bundle = newBundle,
+                shouldNavigate = newProperties.presentation != Presentation.NONE
+        )
+    }
+
+    private fun NavController.destinationFor(uri: Uri?): NavDestination? {
+        uri ?: return null
+        return graph.find { it.hasDeepLink(uri) }
+    }
+
+    private fun Bundle?.withNavArguments(): Bundle {
+        val bundle = this ?: bundleOf()
+        return bundle.apply { putString("location", newLocation) }
+    }
+
+    private val NavBackStackEntry?.location: String?
+        get() = this?.arguments?.getString("location")
+
+    private fun locationPathsAreEqual(first: String?, second: String?): Boolean {
+        if (first == null || second == null) {
+            return false
+        }
+
+        return URI(first).path == URI(second).path
+    }
+}

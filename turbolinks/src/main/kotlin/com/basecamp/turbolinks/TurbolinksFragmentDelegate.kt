@@ -69,6 +69,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
         }
     }
 
+    // TODO get these from back stack entries
     private fun previousLocation(): String? {
         return fragment.arguments?.getString("previousLocation")
     }
