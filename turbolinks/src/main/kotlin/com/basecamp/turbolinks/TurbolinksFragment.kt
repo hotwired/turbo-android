@@ -3,7 +3,7 @@ package com.basecamp.turbolinks
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.basecamp.turbolinks.TurbolinksNavigator.PresentationContext
+import com.basecamp.turbolinks.TurbolinksNavigatorRule.PresentationContext
 
 abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {
     private lateinit var delegate: TurbolinksFragmentDelegate

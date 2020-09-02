@@ -6,22 +6,12 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import com.basecamp.turbolinks.TurbolinksNavigatorRule.NavigationMode
+import com.basecamp.turbolinks.TurbolinksNavigatorRule.Presentation
 
 class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
     private val session = destination.session
-
-    enum class PresentationContext {
-        DEFAULT, MODAL
-    }
-
-    enum class Presentation {
-        DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, REFRESH, NONE
-    }
-
-    enum class NavigationMode {
-        IN_CONTEXT, TO_MODAL, DISMISS_MODAL
-    }
 
     var onNavigationVisit: (onNavigate: () -> Unit) -> Unit = { onReady ->
         destination.onBeforeNavigation()
@@ -61,12 +51,13 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
 
         val rule = TurbolinksNavigatorRule(
-                location = location,
-                visitOptions = options,
-                bundle = bundle,
-                extras = extras,
-                pathConfiguration = session.pathConfiguration,
-                controller = currentControllerForLocation(location)
+            location = location,
+            visitOptions = options,
+            bundle = bundle,
+            navOptions = navOptions(location),
+            extras = extras,
+            pathConfiguration = session.pathConfiguration,
+            controller = currentControllerForLocation(location)
         )
 
         logEvent(
@@ -83,16 +74,13 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                 navigateToModalContext(rule)
             }
             NavigationMode.IN_CONTEXT -> {
-                when (rule.newPresentation) {
-                    Presentation.REFRESH -> {
-                        // Refresh signals reloading the current destination
-                        // url, ignoring the provided `location` url.
-                        navigate(rule.currentLocation, VisitOptions())
-                    }
-                    else -> {
-                        navigateWithinContext(rule)
-                    }
-                }
+                navigateWithinContext(rule)
+            }
+            NavigationMode.REFRESH -> {
+                navigate(rule.currentLocation, VisitOptions())
+            }
+            NavigationMode.NONE -> {
+                // Do nothing
             }
         }
     }
@@ -116,9 +104,6 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             }
             Presentation.REPLACE_ALL -> onNavigationVisit {
                 clearBackStack()
-            }
-            Presentation.NONE -> {
-                // Do nothing
             }
             else -> {
                 throw IllegalStateException("Unexpected Presentation for navigating within context")
@@ -176,17 +161,11 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             return
         }
 
-        val navOptions = navOptions {
-            popUpTo(rule.newDestination.id) { inclusive = true }
-        }
-
         logEvent("replaceRootLocation", "location" to rule.newLocation, "uri" to rule.newProperties.uri)
-        rule.controller.navigate(rule.newDestination.id, rule.newBundle, navOptions)
+        rule.controller.navigate(rule.newDestination.id, rule.newBundle, rule.newNavOptions)
     }
 
     private fun navigateToLocation(rule: TurbolinksNavigatorRule) {
-        val navOptions = navOptions(rule.newLocation, rule.newProperties)
-
         // Save the VisitOptions so it can be retrieved by the next
         // destination. When response.responseHTML is present it is
         // too large to save directly within the args bundle.
@@ -194,7 +173,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
         rule.newDestination?.let { destination ->
             logEvent("navigateToLocation", "location" to rule.newLocation, "uri" to rule.newDestinationUri)
-            rule.controller.navigate(destination.id, rule.newBundle, navOptions, rule.newExtras)
+            rule.controller.navigate(destination.id, rule.newBundle, rule.newNavOptions, rule.newExtras)
             return
         }
 
@@ -203,7 +182,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
         rule.newFallbackDestination?.let { destination ->
             logEvent("navigateToLocation", "location" to rule.newLocation, "fallbackUri" to "${rule.newFallbackUri}")
-            rule.controller.navigate(destination.id, rule.newBundle, navOptions, rule.newExtras)
+            rule.controller.navigate(destination.id, rule.newBundle, rule.newNavOptions, rule.newExtras)
             return
         }
 
@@ -231,7 +210,9 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         return shouldNavigate
     }
 
-    private fun navOptions(location: String, properties: PathProperties): NavOptions {
+    private fun navOptions(location: String): NavOptions {
+        val properties = session.pathConfiguration.properties(location)
+
         return destination.getNavigationOptions(
             newLocation = location,
             newPathProperties = properties

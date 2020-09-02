@@ -3,22 +3,32 @@ package com.basecamp.turbolinks
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.os.bundleOf
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
+import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
-import com.basecamp.turbolinks.TurbolinksNavigator.*
 import java.net.URI
 
 @Suppress("MemberVisibilityCanBePrivate")
 class TurbolinksNavigatorRule(
-        location: String,
-        visitOptions: VisitOptions,
-        bundle: Bundle?,
-        extras: FragmentNavigator.Extras?,
-        pathConfiguration: PathConfiguration,
-        val controller: NavController
+    location: String,
+    visitOptions: VisitOptions,
+    bundle: Bundle?,
+    navOptions: NavOptions,
+    extras: FragmentNavigator.Extras?,
+    pathConfiguration: PathConfiguration,
+    val controller: NavController
 ) {
+    enum class PresentationContext {
+        DEFAULT, MODAL
+    }
+
+    enum class Presentation {
+        DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, REFRESH, NONE
+    }
+
+    enum class NavigationMode {
+        IN_CONTEXT, TO_MODAL, DISMISS_MODAL, REFRESH, NONE
+    }
+
     // Current destination
     val previousLocation = controller.previousBackStackEntry.location
     val currentLocation = checkNotNull(controller.currentBackStackEntry.location)
@@ -41,6 +51,7 @@ class TurbolinksNavigatorRule(
     val newFallbackUri = newProperties.fallbackUri
     val newDestination = controller.destinationFor(newDestinationUri)
     val newFallbackDestination = controller.destinationFor(newFallbackUri)
+    val newNavOptions = newNavOptions(navOptions)
 
     private fun newPresentation(): Presentation {
         // Use the custom presentation provided in the path configuration
@@ -60,16 +71,32 @@ class TurbolinksNavigatorRule(
         }
     }
 
+    private fun newNavOptions(navOptions: NavOptions): NavOptions {
+        // Use separate NavOptions if we need to pop up to the new root destination
+        if (newPresentation == Presentation.REPLACE_ROOT && newDestination != null) {
+            return navOptions {
+                popUpTo(newDestination.id) { inclusive = true }
+            }
+        }
+
+        return navOptions
+    }
+
     private fun newNavigationMode(): NavigationMode {
+        val presentationNone = newPresentation == Presentation.NONE
+        val presentationRefresh = newPresentation == Presentation.REFRESH
+
         val dismissModalContext = currentContext == PresentationContext.MODAL &&
-                newContext == PresentationContext.DEFAULT &&
-                newPresentation != Presentation.REPLACE_ROOT
+            newContext == PresentationContext.DEFAULT &&
+            newPresentation != Presentation.REPLACE_ROOT
 
         val navigateToModalContext = currentContext == PresentationContext.DEFAULT &&
-                newContext == PresentationContext.MODAL &&
-                newPresentation != Presentation.REPLACE_ROOT
+            newContext == PresentationContext.MODAL &&
+            newPresentation != Presentation.REPLACE_ROOT
 
         return when {
+            presentationNone -> NavigationMode.NONE
+            presentationRefresh -> NavigationMode.REFRESH
             dismissModalContext -> NavigationMode.DISMISS_MODAL
             navigateToModalContext -> NavigationMode.TO_MODAL
             else -> NavigationMode.IN_CONTEXT
@@ -82,10 +109,10 @@ class TurbolinksNavigatorRule(
         }
 
         return TurbolinksModalResult(
-                location = newLocation,
-                options = newVisitOptions,
-                bundle = newBundle,
-                shouldNavigate = newProperties.presentation != Presentation.NONE
+            location = newLocation,
+            options = newVisitOptions,
+            bundle = newBundle,
+            shouldNavigate = newProperties.presentation != Presentation.NONE
         )
     }
 

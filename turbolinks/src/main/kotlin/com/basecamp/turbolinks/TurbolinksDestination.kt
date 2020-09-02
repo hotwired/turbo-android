@@ -30,7 +30,7 @@ interface TurbolinksDestination {
         get() = delegate().pathProperties
 
     val sessionName: String
-        get() = delegate().sessionName
+        get() = session.sessionName
 
     val session: TurbolinksSession
         get() = navHost.session
