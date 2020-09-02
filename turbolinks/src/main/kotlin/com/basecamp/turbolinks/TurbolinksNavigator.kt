@@ -62,8 +62,10 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
         logEvent(
             "navigate", "location" to rule.newLocation,
-            "options" to options, "currentContext" to rule.currentContext,
-            "newContext" to rule.newContext, "presentation" to rule.newPresentation
+            "options" to options,
+            "currentContext" to rule.currentContext,
+            "newContext" to rule.newContext,
+            "presentation" to rule.newPresentation
         )
 
         when (rule.newNavigationMode) {
@@ -86,7 +88,10 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun navigateWithinContext(rule: TurbolinksNavigatorRule) {
-        logEvent("navigateWithinContext", "location" to rule.newLocation, "presentation" to rule.newPresentation)
+        logEvent("navigateWithinContext",
+            "location" to rule.newLocation,
+            "presentation" to rule.newPresentation
+        )
 
         when (rule.newPresentation) {
             Presentation.POP -> onNavigationVisit {
@@ -112,7 +117,9 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun navigateToModalContext(rule: TurbolinksNavigatorRule) {
-        logEvent("navigateToModalContext", "location" to rule.newLocation)
+        logEvent("navigateToModalContext",
+            "location" to rule.newLocation
+        )
 
         when (rule.newPresentation) {
             Presentation.REPLACE -> onNavigationVisit {
@@ -128,7 +135,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private fun dismissModalContextWithResult(rule: TurbolinksNavigatorRule) {
         logEvent("dismissModalContextWithResult",
             "location" to rule.newLocation,
-            "uri" to rule.newProperties.uri,
+            "uri" to rule.newDestinationUri,
             "presentation" to rule.newPresentation
         )
 
@@ -150,18 +157,23 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private fun sendModalResult(rule: TurbolinksNavigatorRule) {
         // Save the modal result with VisitOptions so it can be retrieved
         // by the previous destination when the backstack is popped.
-        rule.newModalResult?.let {
-            destination.sessionViewModel.sendModalResult(it)
-        }
+        destination.sessionViewModel.sendModalResult(checkNotNull(rule.newModalResult))
     }
 
     private fun replaceRootLocation(rule: TurbolinksNavigatorRule) {
         if (rule.newDestination == null) {
-            logEvent("replaceRootLocation", "error" to "No destination found")
+            logEvent("replaceRootLocation",
+                "location" to rule.newLocation,
+                "error" to "No destination found",
+                "uri" to rule.newDestinationUri
+            )
             return
         }
 
-        logEvent("replaceRootLocation", "location" to rule.newLocation, "uri" to rule.newProperties.uri)
+        logEvent("replaceRootLocation",
+            "location" to rule.newLocation,
+            "uri" to rule.newDestinationUri
+        )
         rule.controller.navigate(rule.newDestination.id, rule.newBundle, rule.newNavOptions)
     }
 
@@ -172,22 +184,33 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         destination.sessionViewModel.saveVisitOptions(rule.newVisitOptions)
 
         rule.newDestination?.let { destination ->
-            logEvent("navigateToLocation", "location" to rule.newLocation, "uri" to rule.newDestinationUri)
+            logEvent("navigateToLocation",
+                "location" to rule.newLocation,
+                "uri" to rule.newDestinationUri
+            )
             rule.controller.navigate(destination.id, rule.newBundle, rule.newNavOptions, rule.newExtras)
             return
         }
 
-        logEvent("navigateToLocation", "location" to rule.newLocation,
-            "warning" to "No destination found", "uri" to rule.newProperties.uri)
+        logEvent("navigateToLocation",
+            "location" to rule.newLocation,
+            "warning" to "No destination found",
+            "uri" to rule.newDestinationUri
+        )
 
         rule.newFallbackDestination?.let { destination ->
-            logEvent("navigateToLocation", "location" to rule.newLocation, "fallbackUri" to "${rule.newFallbackUri}")
+            logEvent("navigateToLocation",
+                "location" to rule.newLocation,
+                "fallbackUri" to "${rule.newFallbackUri}"
+            )
             rule.controller.navigate(destination.id, rule.newBundle, rule.newNavOptions, rule.newExtras)
             return
         }
 
-        logEvent("navigateToLocation", "location" to rule.newLocation,
-            "error" to "No fallback destination found")
+        logEvent("navigateToLocation",
+            "location" to rule.newLocation,
+            "error" to "No fallback destination found"
+        )
     }
 
     private fun currentController(): NavController {
@@ -206,7 +229,10 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private fun shouldNavigate(location: String): Boolean {
         val shouldNavigate = destination.shouldNavigateTo(location)
 
-        logEvent("shouldNavigateToLocation", "location" to location, "shouldNavigate" to shouldNavigate)
+        logEvent("shouldNavigateToLocation",
+            "location" to location,
+            "shouldNavigate" to shouldNavigate
+        )
         return shouldNavigate
     }
 
