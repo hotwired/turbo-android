@@ -67,7 +67,7 @@ class TurbolinksNavGraphBuilder(
         fragmentDestinations: List<FragmentDestination>,
         startDestinationId: Int
     ): NavGraph {
-        return navController.navigatorProvider.navigation(startDestination = startDestinationId) {
+        return navController.createGraph(startDestination = startDestinationId) {
             activityDestinations.forEach {
                 activity(it.id) {
                     activityClass = it.kClass

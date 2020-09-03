@@ -157,7 +157,9 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private fun sendModalResult(rule: TurbolinksNavigatorRule) {
         // Save the modal result with VisitOptions so it can be retrieved
         // by the previous destination when the backstack is popped.
-        destination.sessionViewModel.sendModalResult(checkNotNull(rule.newModalResult))
+        destination.sessionViewModel.sendModalResult(
+            checkNotNull(rule.newModalResult)
+        )
     }
 
     private fun replaceRootLocation(rule: TurbolinksNavigatorRule) {
@@ -183,12 +185,12 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         // too large to save directly within the args bundle.
         destination.sessionViewModel.saveVisitOptions(rule.newVisitOptions)
 
-        rule.newDestination?.let { destination ->
+        rule.newDestination?.let {
             logEvent("navigateToLocation",
                 "location" to rule.newLocation,
                 "uri" to rule.newDestinationUri
             )
-            rule.controller.navigate(destination.id, rule.newBundle, rule.newNavOptions, rule.newExtras)
+            rule.controller.navigate(it.id, rule.newBundle, rule.newNavOptions, rule.newExtras)
             return
         }
 
@@ -198,12 +200,12 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             "uri" to rule.newDestinationUri
         )
 
-        rule.newFallbackDestination?.let { destination ->
+        rule.newFallbackDestination?.let {
             logEvent("navigateToLocation",
                 "location" to rule.newLocation,
                 "fallbackUri" to "${rule.newFallbackUri}"
             )
-            rule.controller.navigate(destination.id, rule.newBundle, rule.newNavOptions, rule.newExtras)
+            rule.controller.navigate(it.id, rule.newBundle, rule.newNavOptions, rule.newExtras)
             return
         }
 
@@ -222,8 +224,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun isAtStartDestination(): Boolean {
-        val controller = currentController()
-        return controller.previousBackStackEntry == null
+        return currentController().previousBackStackEntry == null
     }
 
     private fun shouldNavigate(location: String): Boolean {
