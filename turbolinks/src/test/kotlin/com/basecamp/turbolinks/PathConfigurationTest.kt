@@ -26,13 +26,13 @@ class PathConfigurationTest {
     fun setup() {
         context = ApplicationProvider.getApplicationContext()
         pathConfiguration = PathConfiguration(context).apply {
-            load(Location(assetFilePath = "json/configuration.json"))
+            load(Location(assetFilePath = "json/test-configuration.json"))
         }
     }
 
     @Test
     fun assetConfigurationIsLoaded() {
-        assertThat(pathConfiguration.rules.size).isEqualTo(2)
+        assertThat(pathConfiguration.rules.size).isEqualTo(4)
     }
 
     @Test

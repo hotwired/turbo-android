@@ -2,7 +2,6 @@ package com.basecamp.turbolinks
 
 import android.content.Context
 import android.os.Build
-import androidx.core.content.edit
 import androidx.test.core.app.ApplicationProvider
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +12,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 @ExperimentalCoroutinesApi
@@ -31,7 +29,7 @@ class PathConfigurationRepositoryTest : BaseRepositoryTest() {
 
     @Test
     fun getRemoteConfiguration() {
-        enqueueResponse("configuration.json")
+        enqueueResponse("test-configuration.json")
 
         runBlocking {
             launch(Dispatchers.Main) {
@@ -46,11 +44,11 @@ class PathConfigurationRepositoryTest : BaseRepositoryTest() {
 
     @Test
     fun getBundledAssetConfiguration() {
-        val json = repository.getBundledConfiguration(context, "json/configuration.json")
+        val json = repository.getBundledConfiguration(context, "json/test-configuration.json")
         assertThat(json).isNotNull()
 
         val config = load(json)
-        assertThat(config?.rules?.size).isEqualTo(2)
+        assertThat(config?.rules?.size).isEqualTo(4)
     }
 
     @Test
