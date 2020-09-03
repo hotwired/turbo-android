@@ -48,7 +48,7 @@ class PathConfigurationRepositoryTest : BaseRepositoryTest() {
         assertThat(json).isNotNull()
 
         val config = load(json)
-        assertThat(config?.rules?.size).isEqualTo(4)
+        assertThat(config?.rules?.size).isEqualTo(5)
     }
 
     @Test

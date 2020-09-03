@@ -32,7 +32,7 @@ class PathConfigurationTest {
 
     @Test
     fun assetConfigurationIsLoaded() {
-        assertThat(pathConfiguration.rules.size).isEqualTo(4)
+        assertThat(pathConfiguration.rules.size).isEqualTo(5)
     }
 
     @Test

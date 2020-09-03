@@ -14,7 +14,8 @@
         "^$", "/home"
       ],
       "properties": {
-        "uri": "turbolinks://fragment/web/home"
+        "uri": "turbolinks://fragment/web/home",
+        "presentation": "replace_all"
       }
     },
     {
@@ -32,6 +33,14 @@
       ],
       "properties": {
         "uri": "turbolinks://fragment/image_viewer"
+      }
+    },
+    {
+      "patterns": [
+        "/custom/refresh"
+      ],
+      "properties": {
+        "presentation": "refresh"
       }
     }
   ]

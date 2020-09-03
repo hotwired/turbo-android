@@ -25,7 +25,13 @@ class TurbolinksNavigatorRuleTest {
 
     private val homeUrl = "http://example.com/home"
     private val featureUrl = "http://example.com/feature"
-    private val newUrl = "http://example.com/new"
+    private val newUrl = "http://example.com/feature/new"
+    private val editUrl = "http://example.com/feature/edit"
+    private val refreshUrl = "http://example.com/custom/refresh"
+
+    private val webDestinationId = 1
+    private val webModalDestinationId = 2
+    private val webHomeDestinationId = 3
 
     private val webUri = Uri.parse("turbolinks://fragment/web")
     private val webModalUri = Uri.parse("turbolinks://fragment/web/modal")
@@ -52,12 +58,13 @@ class TurbolinksNavigatorRuleTest {
 
     @Test
     fun `navigate within context`() {
-        val rule = getRule(featureUrl)
+        val rule = getNavigatorRule(featureUrl)
 
         // Current destination
         assertThat(rule.previousLocation).isNull()
         assertThat(rule.currentLocation).isEqualTo(homeUrl)
         assertThat(rule.currentContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isTrue()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(featureUrl)
@@ -72,12 +79,13 @@ class TurbolinksNavigatorRuleTest {
 
     @Test
     fun `navigate to modal context`() {
-        val rule = getRule(newUrl)
+        val rule = getNavigatorRule(newUrl)
 
         // Current destination
         assertThat(rule.previousLocation).isNull()
         assertThat(rule.currentLocation).isEqualTo(homeUrl)
         assertThat(rule.currentContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isTrue()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(newUrl)
@@ -92,18 +100,19 @@ class TurbolinksNavigatorRuleTest {
 
     @Test
     fun `navigate back to home from default context`() {
-        controller.navigate(1, bundleOf("location" to featureUrl))
-        val rule = getRule(homeUrl)
+        controller.navigate(webDestinationId, locationArgs(featureUrl))
+        val rule = getNavigatorRule(homeUrl)
 
         // Current destination
         assertThat(rule.previousLocation).isEqualTo(homeUrl)
         assertThat(rule.currentLocation).isEqualTo(featureUrl)
         assertThat(rule.currentContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isFalse()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(homeUrl)
         assertThat(rule.newContext).isEqualTo(PresentationContext.DEFAULT)
-        assertThat(rule.newPresentation).isEqualTo(Presentation.POP)
+        assertThat(rule.newPresentation).isEqualTo(Presentation.REPLACE_ALL)
         assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webHomeUri)
@@ -111,7 +120,96 @@ class TurbolinksNavigatorRuleTest {
         assertThat(rule.newNavOptions).isEqualTo(navOptions)
     }
 
-    private fun getRule(
+    @Test
+    fun `navigate back to feature from modal context`() {
+        controller.navigate(webDestinationId, locationArgs(featureUrl))
+        controller.navigate(webModalDestinationId, locationArgs(newUrl))
+        val rule = getNavigatorRule(featureUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(featureUrl)
+        assertThat(rule.currentLocation).isEqualTo(newUrl)
+        assertThat(rule.currentContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(featureUrl)
+        assertThat(rule.newContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(Presentation.POP)
+        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.DISMISS_MODAL)
+        assertThat(rule.newModalResult?.location).isEqualTo(featureUrl)
+        assertThat(rule.newDestinationUri).isEqualTo(webUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `navigate from modal to same modal`() {
+        controller.navigate(webModalDestinationId, locationArgs(newUrl))
+        val rule = getNavigatorRule(newUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentLocation).isEqualTo(newUrl)
+        assertThat(rule.currentContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(newUrl)
+        assertThat(rule.newContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.newPresentation).isEqualTo(Presentation.REPLACE)
+        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.IN_CONTEXT)
+        assertThat(rule.newModalResult).isNull()
+        assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `navigate from modal to new modal`() {
+        controller.navigate(webModalDestinationId, locationArgs(newUrl))
+        val rule = getNavigatorRule(editUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentLocation).isEqualTo(newUrl)
+        assertThat(rule.currentContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(editUrl)
+        assertThat(rule.newContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.newPresentation).isEqualTo(Presentation.PUSH)
+        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.IN_CONTEXT)
+        assertThat(rule.newModalResult).isNull()
+        assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `refresh the current destination`() {
+        controller.navigate(webDestinationId, locationArgs(featureUrl))
+        val rule = getNavigatorRule(refreshUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentLocation).isEqualTo(featureUrl)
+        assertThat(rule.currentContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(refreshUrl)
+        assertThat(rule.newContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(Presentation.REFRESH)
+        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.REFRESH)
+        assertThat(rule.newModalResult).isNull()
+        assertThat(rule.newDestinationUri).isEqualTo(webUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    private fun getNavigatorRule(
         location: String,
         visitOptions: VisitOptions = VisitOptions(),
         bundle: Bundle? = null
@@ -121,27 +219,36 @@ class TurbolinksNavigatorRuleTest {
         )
     }
 
-    private fun buildControllerWithGraph(): TestNavHostController {
-        val webId = 1
-        val webModalId = 2
-        val webHomeId = 3
+    private fun locationArgs(location: String): Bundle {
+        return bundleOf("location" to location)
+    }
 
+    private fun buildControllerWithGraph(): TestNavHostController {
         return TestNavHostController(context).apply {
-            graph = createGraph(startDestination = webHomeId) {
+            graph = createGraph(startDestination = webHomeDestinationId) {
                 destination(
-                    NavDestinationBuilder(provider.getNavigator<NavGraphNavigator>("test"), webId).apply {
+                    NavDestinationBuilder(
+                        navigator = provider.getNavigator<NavGraphNavigator>("test"),
+                        id = webDestinationId
+                    ).apply {
                         deepLink(webUri.toString())
                     }
                 )
 
                 destination(
-                    NavDestinationBuilder(provider.getNavigator<NavGraphNavigator>("test"), webModalId).apply {
+                    NavDestinationBuilder(
+                        navigator = provider.getNavigator<NavGraphNavigator>("test"),
+                        id = webModalDestinationId
+                    ).apply {
                         deepLink(webModalUri.toString())
                     }
                 )
 
                 destination(
-                    NavDestinationBuilder(provider.getNavigator<NavGraphNavigator>("test"), webHomeId).apply {
+                    NavDestinationBuilder(
+                        navigator = provider.getNavigator<NavGraphNavigator>("test"),
+                        id = webHomeDestinationId
+                    ).apply {
                         argument("location") { defaultValue = homeUrl }
                         deepLink(webHomeUri.toString())
                     }
