@@ -33,7 +33,7 @@ class TurbolinksNavigationRule(
     val previousLocation = controller.previousBackStackEntry.location
     val currentLocation = checkNotNull(controller.currentBackStackEntry.location)
     val currentProperties = pathConfiguration.properties(currentLocation)
-    val currentContext = currentProperties.context
+    val currentPresentationContext = currentProperties.context
     val currentDestination = checkNotNull(controller.currentDestination)
     val isAtStartDestination = controller.previousBackStackEntry == null
 
@@ -43,7 +43,7 @@ class TurbolinksNavigationRule(
     val newBundle = bundle.withNavArguments()
     val newExtras = extras
     val newProperties = pathConfiguration.properties(newLocation)
-    val newContext = newProperties.context
+    val newPresentationContext = newProperties.context
     val newPresentation = newPresentation()
     val newNavigationMode = newNavigationMode()
     val newModalResult = newModalResult()
@@ -86,12 +86,12 @@ class TurbolinksNavigationRule(
         val presentationNone = newPresentation == Presentation.NONE
         val presentationRefresh = newPresentation == Presentation.REFRESH
 
-        val dismissModalContext = currentContext == PresentationContext.MODAL &&
-            newContext == PresentationContext.DEFAULT &&
+        val dismissModalContext = currentPresentationContext == PresentationContext.MODAL &&
+            newPresentationContext == PresentationContext.DEFAULT &&
             newPresentation != Presentation.REPLACE_ROOT
 
-        val navigateToModalContext = currentContext == PresentationContext.DEFAULT &&
-            newContext == PresentationContext.MODAL &&
+        val navigateToModalContext = currentPresentationContext == PresentationContext.DEFAULT &&
+            newPresentationContext == PresentationContext.MODAL &&
             newPresentation != Presentation.REPLACE_ROOT
 
         return when {

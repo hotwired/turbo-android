@@ -62,8 +62,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         logEvent(
             "navigate", "location" to rule.newLocation,
             "options" to options,
-            "currentContext" to rule.currentContext,
-            "newContext" to rule.newContext,
+            "currentContext" to rule.currentPresentationContext,
+            "newContext" to rule.newPresentationContext,
             "presentation" to rule.newPresentation
         )
 
