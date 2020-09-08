@@ -14,8 +14,8 @@ interface TurbolinksDestination {
     val fragment: Fragment
         get() = this as Fragment
 
-    val navHost: TurbolinksNavHost
-        get() = fragment.parentFragment as TurbolinksNavHost
+    val navHostFragment: TurbolinksNavHostFragment
+        get() = fragment.parentFragment as TurbolinksNavHostFragment
 
     val location: String
         get() = delegate().location
@@ -33,7 +33,7 @@ interface TurbolinksDestination {
         get() = session.sessionName
 
     val session: TurbolinksSession
-        get() = navHost.session
+        get() = navHostFragment.session
 
     val webView: TurbolinksWebView
         get() = session.webView
@@ -56,8 +56,8 @@ interface TurbolinksDestination {
 
     fun onBeforeNavigation()
 
-    fun navHostForNavigation(newLocation: String): TurbolinksNavHost {
-        return navHost
+    fun navHostForNavigation(newLocation: String): TurbolinksNavHostFragment {
+        return navHostFragment
     }
 
     fun shouldNavigateTo(newLocation: String): Boolean {
@@ -99,14 +99,14 @@ interface TurbolinksDestination {
         navigator.clearBackStack()
     }
 
-    fun findNavHost(@IdRes navHostId: Int): TurbolinksNavHost {
-        return fragment.parentFragment?.childFragmentManager?.findNavHost(navHostId)
-            ?: fragment.parentFragment?.parentFragment?.childFragmentManager?.findNavHost(navHostId)
-            ?: fragment.requireActivity().supportFragmentManager.findNavHost(navHostId)
-            ?: throw IllegalStateException("No TurbolinksNavHost found with ID: $navHostId")
+    fun findNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksNavHostFragment {
+        return fragment.parentFragment?.childFragmentManager?.findNavHostFragment(navHostFragmentId)
+            ?: fragment.parentFragment?.parentFragment?.childFragmentManager?.findNavHostFragment(navHostFragmentId)
+            ?: fragment.requireActivity().supportFragmentManager.findNavHostFragment(navHostFragmentId)
+            ?: throw IllegalStateException("No TurbolinksNavHostFragment found with ID: $navHostFragmentId")
     }
 
-    private fun FragmentManager.findNavHost(navHostId: Int): TurbolinksNavHost? {
-        return findFragmentById(navHostId) as? TurbolinksNavHost
+    private fun FragmentManager.findNavHostFragment(navHostFragmentId: Int): TurbolinksNavHostFragment? {
+        return findFragmentById(navHostFragmentId) as? TurbolinksNavHostFragment
     }
 }

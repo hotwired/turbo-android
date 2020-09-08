@@ -31,7 +31,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     fun onActivityCreated() {
         if (session().isRenderProcessGone) {
-            destination.navHost.createNewSession()
+            destination.navHostFragment.createNewSession()
         }
 
         navigator.onNavigationVisit = { onReady ->

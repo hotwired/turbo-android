@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.*
 import kotlin.reflect.KClass
 
-abstract class TurbolinksNavHost : NavHostFragment() {
+abstract class TurbolinksNavHostFragment : NavHostFragment() {
     abstract val sessionName: String
     abstract val startLocation: String
     abstract val pathConfigurationLocation: PathConfiguration.Location

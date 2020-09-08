@@ -1,7 +1,7 @@
 package com.basecamp.turbolinks.demo
 
 @Suppress("unused")
-class OrdersNavHost : BaseNavHost() {
+class OrdersNavHostFragment : BaseNavHostFragment() {
     override val sessionName = "orders"
     override val startLocation = Constants.ORDERS_URL
 }
