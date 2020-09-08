@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import com.basecamp.turbolinks.PathConfiguration.Location
-import com.basecamp.turbolinks.TurbolinksNavigatorRule.PresentationContext
+import com.basecamp.turbolinks.TurbolinksNavigationRule.PresentationContext
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import kotlinx.coroutines.runBlocking

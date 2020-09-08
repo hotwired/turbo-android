@@ -3,8 +3,8 @@ package com.basecamp.turbolinks
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import com.basecamp.turbolinks.TurbolinksNavigatorRule.Presentation
-import com.basecamp.turbolinks.TurbolinksNavigatorRule.PresentationContext
+import com.basecamp.turbolinks.TurbolinksNavigationRule.Presentation
+import com.basecamp.turbolinks.TurbolinksNavigationRule.PresentationContext
 import com.google.gson.annotations.SerializedName
 import java.net.URL
 import java.util.regex.PatternSyntaxException

@@ -8,7 +8,7 @@ import androidx.navigation.fragment.FragmentNavigator
 import java.net.URI
 
 @Suppress("MemberVisibilityCanBePrivate")
-class TurbolinksNavigatorRule(
+class TurbolinksNavigationRule(
     location: String,
     visitOptions: VisitOptions,
     bundle: Bundle?,

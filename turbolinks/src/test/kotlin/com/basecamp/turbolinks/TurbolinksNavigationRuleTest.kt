@@ -8,7 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.*
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
-import com.basecamp.turbolinks.TurbolinksNavigatorRule.*
+import com.basecamp.turbolinks.TurbolinksNavigationRule.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -18,7 +18,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class TurbolinksNavigatorRuleTest {
+class TurbolinksNavigationRuleTest {
     private lateinit var context: Context
     private lateinit var controller: TestNavHostController
     private lateinit var pathConfiguration: PathConfiguration
@@ -213,8 +213,8 @@ class TurbolinksNavigatorRuleTest {
         location: String,
         visitOptions: VisitOptions = VisitOptions(),
         bundle: Bundle? = null
-    ): TurbolinksNavigatorRule {
-        return TurbolinksNavigatorRule(
+    ): TurbolinksNavigationRule {
+        return TurbolinksNavigationRule(
             location, visitOptions, bundle, navOptions, extras, pathConfiguration, controller
         )
     }

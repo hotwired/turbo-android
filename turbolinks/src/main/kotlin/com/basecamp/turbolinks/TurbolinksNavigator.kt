@@ -5,9 +5,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
-import com.basecamp.turbolinks.TurbolinksNavigatorRule.NavigationMode
-import com.basecamp.turbolinks.TurbolinksNavigatorRule.Presentation
+import com.basecamp.turbolinks.TurbolinksNavigationRule.NavigationMode
+import com.basecamp.turbolinks.TurbolinksNavigationRule.Presentation
 
 class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
@@ -50,7 +49,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             return
         }
 
-        val rule = TurbolinksNavigatorRule(
+        val rule = TurbolinksNavigationRule(
             location = location,
             visitOptions = options,
             bundle = bundle,
@@ -87,7 +86,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    private fun navigateWithinContext(rule: TurbolinksNavigatorRule) {
+    private fun navigateWithinContext(rule: TurbolinksNavigationRule) {
         logEvent("navigateWithinContext",
             "location" to rule.newLocation,
             "presentation" to rule.newPresentation
@@ -116,7 +115,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    private fun navigateToModalContext(rule: TurbolinksNavigatorRule) {
+    private fun navigateToModalContext(rule: TurbolinksNavigationRule) {
         logEvent("navigateToModalContext",
             "location" to rule.newLocation
         )
@@ -132,7 +131,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    private fun dismissModalContextWithResult(rule: TurbolinksNavigatorRule) {
+    private fun dismissModalContextWithResult(rule: TurbolinksNavigationRule) {
         logEvent("dismissModalContextWithResult",
             "location" to rule.newLocation,
             "uri" to rule.newDestinationUri,
@@ -154,7 +153,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    private fun sendModalResult(rule: TurbolinksNavigatorRule) {
+    private fun sendModalResult(rule: TurbolinksNavigationRule) {
         // Save the modal result with VisitOptions so it can be retrieved
         // by the previous destination when the backstack is popped.
         destination.sessionViewModel.sendModalResult(
@@ -162,7 +161,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         )
     }
 
-    private fun replaceRootLocation(rule: TurbolinksNavigatorRule) {
+    private fun replaceRootLocation(rule: TurbolinksNavigationRule) {
         if (rule.newDestination == null) {
             logEvent("replaceRootLocation",
                 "location" to rule.newLocation,
@@ -179,7 +178,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         rule.controller.navigate(rule.newDestination.id, rule.newBundle, rule.newNavOptions)
     }
 
-    private fun navigateToLocation(rule: TurbolinksNavigatorRule) {
+    private fun navigateToLocation(rule: TurbolinksNavigationRule) {
         // Save the VisitOptions so it can be retrieved by the next
         // destination. When response.responseHTML is present it is
         // too large to save directly within the args bundle.
