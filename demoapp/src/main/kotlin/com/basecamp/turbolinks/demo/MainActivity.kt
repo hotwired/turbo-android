@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
     override lateinit var delegate: TurbolinksActivityDelegate
 
-    private val navHosts = listOf(
+    private val navHostFragments = listOf(
             R.id.food_nav_host,
             R.id.orders_nav_host,
             R.id.me_nav_host
@@ -24,8 +24,8 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         setContentView(R.layout.activity_main)
 
         delegate = TurbolinksActivityDelegate(this, R.id.food_nav_host).apply {
-            registerNavHost(R.id.orders_nav_host)
-            registerNavHost(R.id.me_nav_host)
+            registerNavHostFragment(R.id.orders_nav_host)
+            registerNavHostFragment(R.id.me_nav_host)
         }
 
         initBottomTabsListener()
@@ -46,12 +46,12 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         bottom_nav.setOnNavigationItemSelectedListener { currentItem ->
             bottom_nav.menu.forEachIndexed { index, item ->
                 val isCurrentItem = item == currentItem
-                val navHostId = navHosts[index]
+                val navHostFragmentId = navHostFragments[index]
 
-                findViewById<View>(navHostId).isVisible = isCurrentItem
+                findViewById<View>(navHostFragmentId).isVisible = isCurrentItem
 
                 if (isCurrentItem) {
-                    delegate.currentNavHostId = navHostId
+                    delegate.currentNavHostFragmentId = navHostFragmentId
                 }
             }
             true

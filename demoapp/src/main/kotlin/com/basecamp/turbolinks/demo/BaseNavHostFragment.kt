@@ -4,10 +4,10 @@ import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.BuildConfig
 import com.basecamp.turbolinks.PathConfiguration
-import com.basecamp.turbolinks.TurbolinksNavHost
+import com.basecamp.turbolinks.TurbolinksNavHostFragment
 import kotlin.reflect.KClass
 
-abstract class BaseNavHost : TurbolinksNavHost() {
+abstract class BaseNavHostFragment : TurbolinksNavHostFragment() {
     override val registeredActivities: List<KClass<out Activity>>
         get() = listOf()
 

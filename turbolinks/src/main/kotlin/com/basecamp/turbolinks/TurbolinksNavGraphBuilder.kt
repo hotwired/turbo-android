@@ -1,29 +1,25 @@
 package com.basecamp.turbolinks
 
 import android.app.Activity
-import android.content.Context
 import android.net.Uri
-import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.*
-import androidx.navigation.fragment.*
+import androidx.navigation.fragment.DialogFragmentNavigator
+import androidx.navigation.fragment.DialogFragmentNavigatorDestinationBuilder
+import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.FragmentNavigatorDestinationBuilder
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
 
-abstract class TurbolinksNavHost : NavHostFragment() {
-    abstract val sessionName: String
-    abstract val startLocation: String
-    abstract val pathConfigurationLocation: PathConfiguration.Location
-    abstract val registeredActivities: List<KClass<out Activity>>
-    abstract val registeredFragments: List<KClass<out Fragment>>
-
-    lateinit var session: TurbolinksSession
-        private set
-
+class TurbolinksNavGraphBuilder(
+    private val startLocation: String,
+    private val navController: NavController,
+    private val pathConfiguration: PathConfiguration
+) {
     private data class ActivityDestination(
         val id: Int,
         val uri: Uri,
@@ -36,38 +32,10 @@ abstract class TurbolinksNavHost : NavHostFragment() {
         val kClass: KClass<out Fragment>
     )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        createNewSession()
-        initControllerGraph()
-    }
-
-    internal fun createNewSession() {
-        session = TurbolinksSession.getNew(sessionName, requireActivity(), onCreateWebView(requireActivity()))
-        onSessionCreated()
-    }
-
-    open fun onSessionCreated() {
-        session.pathConfiguration.load(pathConfigurationLocation)
-    }
-
-    open fun onCreateWebView(context: Context): TurbolinksWebView {
-        return TurbolinksWebView(context, null)
-    }
-
-    fun reset() {
-        session.reset()
-        session.rootLocation = startLocation
-        initControllerGraph()
-    }
-
-    val currentDestination: TurbolinksDestination
-        get() = childFragmentManager.primaryNavigationFragment as TurbolinksDestination?
-            ?: throw IllegalStateException("No current destination found in NavHostFragment")
-
-    // Private
-
-    private fun initControllerGraph() {
+    fun build(
+        registeredActivities: List<KClass<out Activity>>,
+        registeredFragments: List<KClass<out Fragment>>
+    ): NavGraph {
         var currentId = 1
 
         val activityDestinations = registeredActivities.map {
@@ -86,22 +54,20 @@ abstract class TurbolinksNavHost : NavHostFragment() {
             )
         }
 
-        navController.apply {
-            graph = buildGraph(
-                activityDestinations,
-                fragmentDestinations,
-                fragmentDestinations.startDestination().id
-            )
-        }
+        return createGraph(
+            activityDestinations,
+            fragmentDestinations,
+            fragmentDestinations.startDestination().id
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun buildGraph(
+    private fun createGraph(
         activityDestinations: List<ActivityDestination>,
         fragmentDestinations: List<FragmentDestination>,
         startDestinationId: Int
     ): NavGraph {
-        return createGraph(startDestination = startDestinationId) {
+        return navController.createGraph(startDestination = startDestinationId) {
             activityDestinations.forEach {
                 activity(it.id) {
                     activityClass = it.kClass
@@ -124,10 +90,6 @@ abstract class TurbolinksNavHost : NavHostFragment() {
             argument("location") {
                 defaultValue = startLocation
             }
-
-            argument("sessionName") {
-                defaultValue = sessionName
-            }
         }
     }
 
@@ -140,7 +102,7 @@ abstract class TurbolinksNavHost : NavHostFragment() {
     }
 
     private fun List<FragmentDestination>.startDestination(): FragmentDestination {
-        val startDestinationUri = session.pathConfiguration.properties(startLocation).uri
+        val startDestinationUri = pathConfiguration.properties(startLocation).uri
         return requireNotNull(firstOrNull { it.uri == startDestinationUri }) {
             "A start Fragment destination was not found for uri: $startDestinationUri"
         }
@@ -153,26 +115,26 @@ abstract class TurbolinksNavHost : NavHostFragment() {
     }
 
     // Modified from AndroidX FragmentNavigatorDestinationBuilder extensions
-    internal inline fun NavGraphBuilder.fragment(
+    private inline fun NavGraphBuilder.fragment(
         @IdRes id: Int,
         fragmentClass: KClass<out Fragment>,
         builder: FragmentNavigatorDestinationBuilder.() -> Unit
     ) = destination(
         FragmentNavigatorDestinationBuilder(
-        provider[FragmentNavigator::class],
-        id,
-        fragmentClass
-    ).apply(builder))
+            provider[FragmentNavigator::class],
+            id,
+            fragmentClass
+        ).apply(builder))
 
     // Modified from AndroidX DialogFragmentNavigatorDestinationBuilder extensions
-    internal inline fun NavGraphBuilder.dialog(
+    private inline fun NavGraphBuilder.dialog(
         @IdRes id: Int,
         fragmentClass: KClass<out DialogFragment>,
         builder: DialogFragmentNavigatorDestinationBuilder.() -> Unit
     ) = destination(
         DialogFragmentNavigatorDestinationBuilder(
-        provider[DialogFragmentNavigator::class],
-        id,
-        fragmentClass
-    ).apply(builder))
+            provider[DialogFragmentNavigator::class],
+            id,
+            fragmentClass
+        ).apply(builder))
 }

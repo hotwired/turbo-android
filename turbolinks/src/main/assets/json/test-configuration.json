@@ -1,0 +1,47 @@
+{
+  "rules": [
+    {
+      "patterns": [
+        ".*"
+      ],
+      "properties": {
+        "context": "default",
+        "uri": "turbolinks://fragment/web"
+      }
+    },
+    {
+      "patterns": [
+        "^$", "/home"
+      ],
+      "properties": {
+        "uri": "turbolinks://fragment/web/home",
+        "presentation": "replace_all"
+      }
+    },
+    {
+      "patterns": [
+        "/new$", "/edit$"
+      ],
+      "properties": {
+        "context": "modal",
+        "uri": "turbolinks://fragment/web/modal"
+      }
+    },
+    {
+      "patterns": [
+        ".+\\.(?:bmp|gif|heic|jpg|jpeg|png|svg|webp)"
+      ],
+      "properties": {
+        "uri": "turbolinks://fragment/image_viewer"
+      }
+    },
+    {
+      "patterns": [
+        "/custom/refresh"
+      ],
+      "properties": {
+        "presentation": "refresh"
+      }
+    }
+  ]
+}

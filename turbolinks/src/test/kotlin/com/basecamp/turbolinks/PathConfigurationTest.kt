@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import com.basecamp.turbolinks.PathConfiguration.Location
-import com.basecamp.turbolinks.TurbolinksNavigator.PresentationContext
+import com.basecamp.turbolinks.TurbolinksNavigationRule.PresentationContext
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import kotlinx.coroutines.runBlocking
@@ -26,13 +26,13 @@ class PathConfigurationTest {
     fun setup() {
         context = ApplicationProvider.getApplicationContext()
         pathConfiguration = PathConfiguration(context).apply {
-            load(Location(assetFilePath = "json/configuration.json"))
+            load(Location(assetFilePath = "json/test-configuration.json"))
         }
     }
 
     @Test
     fun assetConfigurationIsLoaded() {
-        assertThat(pathConfiguration.rules.size).isEqualTo(2)
+        assertThat(pathConfiguration.rules.size).isEqualTo(5)
     }
 
     @Test

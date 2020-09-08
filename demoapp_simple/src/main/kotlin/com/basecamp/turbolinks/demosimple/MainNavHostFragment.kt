@@ -1,16 +1,14 @@
 package com.basecamp.turbolinks.demosimple
 
 import android.app.Activity
-import android.content.Context
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.BuildConfig
 import com.basecamp.turbolinks.PathConfiguration
-import com.basecamp.turbolinks.TurbolinksNavHost
-import com.basecamp.turbolinks.TurbolinksWebView
+import com.basecamp.turbolinks.TurbolinksNavHostFragment
 import kotlin.reflect.KClass
 
 @Suppress("unused")
-class MainNavHost : TurbolinksNavHost() {
+class MainNavHostFragment : TurbolinksNavHostFragment() {
     override val sessionName = "main"
 
     override val startLocation
