@@ -1,13 +1,12 @@
 package com.basecamp.turbolinks
 
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 
 class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
     internal val fragment = destination.fragment
     internal val location = currentLocation()
-    internal val previousLocation = previousLocation()
+    internal val previousLocation get() = previousLocation()
     internal val sessionName = destination.sessionName
     internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
     internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
@@ -65,17 +64,14 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     }
 
     private fun currentLocation(): String {
-        return requireNotNull(fragment.findNavController().currentBackStackEntry?.location) {
+        return requireNotNull(fragment.arguments?.getString("location")) {
             "A location argument must be provided"
         }
     }
 
     private fun previousLocation(): String? {
-        return fragment.findNavController().previousBackStackEntry?.location
+        return fragment.findNavController().previousBackStackEntry?.arguments?.getString("location")
     }
-
-    private val NavBackStackEntry?.location: String?
-        get() = this?.arguments?.getString("location")
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply {
