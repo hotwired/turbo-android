@@ -95,10 +95,10 @@ class TurbolinksNavigationRule(
             newPresentation != Presentation.REPLACE_ROOT
 
         return when {
-            presentationNone -> NavigationMode.NONE
-            presentationRefresh -> NavigationMode.REFRESH
             dismissModalContext -> NavigationMode.DISMISS_MODAL
             navigateToModalContext -> NavigationMode.TO_MODAL
+            presentationRefresh -> NavigationMode.REFRESH
+            presentationNone -> NavigationMode.NONE
             else -> NavigationMode.IN_CONTEXT
         }
     }
