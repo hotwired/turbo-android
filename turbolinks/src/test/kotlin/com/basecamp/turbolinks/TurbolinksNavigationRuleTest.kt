@@ -5,7 +5,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.core.os.bundleOf
-import androidx.navigation.*
+import androidx.navigation.NavDestinationBuilder
+import androidx.navigation.NavGraphNavigator
+import androidx.navigation.createGraph
+import androidx.navigation.navOptions
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
 import com.basecamp.turbolinks.TurbolinksNavigationRule.*
@@ -16,6 +19,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
+@Suppress("UsePropertyAccessSyntax")
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
 class TurbolinksNavigationRuleTest {
@@ -28,6 +32,7 @@ class TurbolinksNavigationRuleTest {
     private val newUrl = "http://example.com/feature/new"
     private val editUrl = "http://example.com/feature/edit"
     private val refreshUrl = "http://example.com/custom/refresh"
+    private val resumeUrl = "http://example.com/custom/resume"
 
     private val webDestinationId = 1
     private val webModalDestinationId = 2
@@ -204,6 +209,31 @@ class TurbolinksNavigationRuleTest {
         assertThat(rule.newPresentation).isEqualTo(Presentation.REFRESH)
         assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.REFRESH)
         assertThat(rule.newModalResult).isNull()
+        assertThat(rule.newDestinationUri).isEqualTo(webUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `resume the previous destination after leaving modal context`() {
+        controller.navigate(webDestinationId, locationArgs(featureUrl))
+        controller.navigate(webModalDestinationId, locationArgs(newUrl))
+        val rule = getNavigatorRule(resumeUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(featureUrl)
+        assertThat(rule.currentLocation).isEqualTo(newUrl)
+        assertThat(rule.currentPresentationContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(resumeUrl)
+        assertThat(rule.newPresentationContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(Presentation.NONE)
+        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.DISMISS_MODAL)
+        assertThat(rule.newModalResult).isNotNull()
+        assertThat(rule.newModalResult?.location).isEqualTo(resumeUrl)
+        assertThat(rule.newModalResult?.shouldNavigate).isFalse()
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
         assertThat(rule.newDestination).isNotNull()
         assertThat(rule.newNavOptions).isEqualTo(navOptions)

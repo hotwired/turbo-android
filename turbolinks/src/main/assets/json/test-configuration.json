@@ -42,6 +42,14 @@
       "properties": {
         "presentation": "refresh"
       }
+    },
+    {
+      "patterns": [
+        "/custom/resume"
+      ],
+      "properties": {
+        "presentation": "none"
+      }
     }
   ]
 }
