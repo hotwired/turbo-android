@@ -1,26 +1,19 @@
 package com.basecamp.turbolinks
 
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 
 class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
-    internal val fragment = destination.fragment
-    internal val location = currentLocation()
-    internal val previousLocation = previousLocation()
-    internal val sessionName = destination.sessionName
+    private val fragment = destination.fragment
+    private val location = destination.location
+    private val sessionName = destination.sessionName
+
     internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
     internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
 
-    internal lateinit var pathConfiguration: PathConfiguration
-    internal lateinit var pathProperties: PathProperties
-    internal lateinit var session: TurbolinksSession
     internal lateinit var navigator: TurbolinksNavigator
 
     fun onActivityCreated() {
-        session = destination.session
-        pathConfiguration = session.pathConfiguration
-        pathProperties = pathConfiguration.properties(location)
         navigator = TurbolinksNavigator(destination)
 
         initToolbar()
@@ -64,22 +57,9 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
         }
     }
 
-    private fun currentLocation(): String {
-        return requireNotNull(fragment.findNavController().currentBackStackEntry?.location) {
-            "A location argument must be provided"
-        }
-    }
-
-    private fun previousLocation(): String? {
-        return fragment.findNavController().previousBackStackEntry?.location
-    }
-
-    private val NavBackStackEntry?.location: String?
-        get() = this?.arguments?.getString("location")
-
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply {
-            add(0, "session" to session.sessionName)
+            add(0, "session" to sessionName)
             add("fragment" to fragment.javaClass.simpleName)
         }
         logEvent(event, attributes)
