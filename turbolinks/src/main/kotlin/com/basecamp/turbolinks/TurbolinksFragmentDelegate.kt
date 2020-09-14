@@ -7,6 +7,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     private val fragment = destination.fragment
     private val location = destination.location
     private val sessionName = destination.sessionName
+
     internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
     internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
 
@@ -58,7 +59,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply {
-            add(0, "session" to destination.sessionName)
+            add(0, "session" to sessionName)
             add("fragment" to fragment.javaClass.simpleName)
         }
         logEvent(event, attributes)
