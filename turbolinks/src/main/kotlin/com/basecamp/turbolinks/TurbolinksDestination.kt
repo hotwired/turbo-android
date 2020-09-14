@@ -6,8 +6,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 
 interface TurbolinksDestination {
@@ -18,16 +20,16 @@ interface TurbolinksDestination {
         get() = fragment.parentFragment as TurbolinksNavHostFragment
 
     val location: String
-        get() = delegate().location
+        get() = requireNotNull(fragment.arguments?.location)
 
     val previousLocation: String?
-        get() = delegate().previousLocation
+        get() = navController()?.previousBackStackEntry?.arguments?.location
 
     val pathConfiguration: PathConfiguration
-        get() = delegate().pathConfiguration
+        get() = session.pathConfiguration
 
     val pathProperties: PathProperties
-        get() = delegate().pathProperties
+        get() = pathConfiguration.properties(location)
 
     val sessionName: String
         get() = navHostFragment.sessionName
@@ -104,6 +106,15 @@ interface TurbolinksDestination {
             ?: fragment.parentFragment?.parentFragment?.childFragmentManager?.findNavHostFragment(navHostFragmentId)
             ?: fragment.requireActivity().supportFragmentManager.findNavHostFragment(navHostFragmentId)
             ?: throw IllegalStateException("No TurbolinksNavHostFragment found with ID: $navHostFragmentId")
+    }
+
+    private val Bundle.location
+        get() = getString("location")
+
+    private fun navController(): NavController? {
+        // Retrieve the nav controller indirectly from the parent NavHostFragment,
+        // since it's only available when the fragment is attached to its parent
+        return fragment.parentFragment?.findNavController()
     }
 
     private fun FragmentManager.findNavHostFragment(navHostFragmentId: Int): TurbolinksNavHostFragment? {
