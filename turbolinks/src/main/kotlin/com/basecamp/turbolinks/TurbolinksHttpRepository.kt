@@ -3,19 +3,18 @@ package com.basecamp.turbolinks
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
-import com.basecamp.turbolinks.OfflineCacheStrategy.*
+import com.basecamp.turbolinks.OfflineCacheStrategy.APP
+import com.basecamp.turbolinks.OfflineCacheStrategy.NONE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.CacheControl
 import okhttp3.Request
 import okhttp3.Response
-import okhttp3.internal.cache.CacheStrategy
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
 
 enum class OfflineCacheStrategy {
-    APP, HTTP, NONE
+    APP, NONE
 }
 
 @Suppress("unused")
@@ -57,7 +56,6 @@ internal class TurbolinksHttpRepository {
 
         return when (requestHandler.getCacheStrategy(url)) {
             APP -> fetchAppCacheRequest(requestHandler, resourceRequest)
-            HTTP -> fetchHttpCacheRequest(resourceRequest)
             NONE -> Result(null, false)
         }
     }
@@ -67,6 +65,7 @@ internal class TurbolinksHttpRepository {
         val url = resourceRequest.url.toString()
         val cacheControl = requestHandler.getCacheControl(url)
 
+        // If the app has an immutable response cached, don't hit the network
         if (cacheControl == OfflineCacheControl.IMMUTABLE) {
             requestHandler.getCachedResponse(url)?.let {
                 return Result(it, false)
@@ -87,17 +86,9 @@ internal class TurbolinksHttpRepository {
         }
     }
 
-    private fun fetchHttpCacheRequest(resourceRequest: WebResourceRequest): Result {
-        return try {
-            Result(resourceResponse(issueRequest(resourceRequest)), false)
-        } catch (e: IOException) {
-            Result(resourceResponse(issueOfflineRequest(resourceRequest)), true)
-        }
-    }
-
     private fun issueRequest(resourceRequest: WebResourceRequest): HttpResponse? {
         return try {
-            val request = buildRequest(resourceRequest, forceCache = false)
+            val request = buildRequest(resourceRequest)
             getResponse(request)
         } catch (e: IOException) {
             throw e
@@ -107,17 +98,7 @@ internal class TurbolinksHttpRepository {
         }
     }
 
-    private fun issueOfflineRequest(resourceRequest: WebResourceRequest): HttpResponse? {
-        return try {
-            val request = buildRequest(resourceRequest, forceCache = true)
-            getResponse(request)
-        } catch (e: Exception) {
-            TurbolinksLog.e("Offline Request error: ${e.message}")
-            null
-        }
-    }
-
-    private fun buildRequest(resourceRequest: WebResourceRequest, forceCache: Boolean): Request {
+    private fun buildRequest(resourceRequest: WebResourceRequest): Request {
         val location = resourceRequest.url.toString()
         val headers = resourceRequest.requestHeaders
         val builder = Request.Builder().url(location)
@@ -126,17 +107,6 @@ internal class TurbolinksHttpRepository {
 
         getCookie(location)?.let {
             builder.header("Cookie", it)
-        }
-
-        // Don't include original WebView request conditions,
-        // so the built-in cache mechanics can be used.
-        builder
-            .removeHeader("If-Modified-Since")
-            .removeHeader("If-None-Match")
-
-        // Rewrite the Cache-Control header to only check the cache
-        if (forceCache) {
-            builder.cacheControl(CacheControl.FORCE_CACHE)
         }
 
         return builder.build()
@@ -148,22 +118,11 @@ internal class TurbolinksHttpRepository {
 
         return call.execute().use { response ->
             if (response.isSuccessful) {
-                logIfNotCached(response, request)
                 setCookies(location, response)
                 HttpResponse(response, response.body?.bytes())
             } else {
                 null
             }
-        }
-    }
-
-    private fun logIfNotCached(response: Response, request: Request) {
-        if (!CacheStrategy.isCacheable(response, request)) {
-            logEvent("responseNotCacheable", listOf(
-                "location" to request.url,
-                "code" to response.code,
-                "headers" to response.headers
-            ))
         }
     }
 
