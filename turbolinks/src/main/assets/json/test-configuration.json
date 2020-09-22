@@ -1,7 +1,7 @@
 {
   "settings": {
     "app_latest_version_code": 85,
-    "app_reviews_enabled": true
+    "custom_app_feature_enabled": true
   },
   "rules": [
     {
