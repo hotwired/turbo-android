@@ -28,8 +28,8 @@ interface TurbolinksDestination {
     val pathConfiguration: PathConfiguration
         get() = session.pathConfiguration
 
-    val globalRules: GlobalRules
-        get() = pathConfiguration.global_rules
+    val pathConfigurationSettings: PathConfigurationSettings
+        get() = pathConfiguration.settings
 
     val pathProperties: PathProperties
         get() = pathConfiguration.properties(location)

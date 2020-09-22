@@ -60,9 +60,9 @@ class PathConfigurationTest {
 
     @Test
     fun globalProperty() {
-        assertThat(pathConfiguration.global_rules.size).isEqualTo(2)
-        assertThat(pathConfiguration.global_rules["app_latest_version_code"]).isEqualTo("85")
-        assertThat(pathConfiguration.global_rules["app_reviews_enabled"]).isEqualTo("true")
-        assertThat(pathConfiguration.global_rules["no_such_key"]).isNull()
+        assertThat(pathConfiguration.settings.size).isEqualTo(2)
+        assertThat(pathConfiguration.settings["app_latest_version_code"]).isEqualTo("85")
+        assertThat(pathConfiguration.settings["app_reviews_enabled"]).isEqualTo("true")
+        assertThat(pathConfiguration.settings["no_such_key"]).isNull()
     }
 }
