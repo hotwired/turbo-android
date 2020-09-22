@@ -57,4 +57,12 @@ class PathConfigurationTest {
             verify(mockRepository).getRemoteConfiguration(url)
         }
     }
+
+    @Test
+    fun globalProperty() {
+        assertThat(pathConfiguration.settings.size).isEqualTo(2)
+        assertThat(pathConfiguration.settings["app_latest_version_code"]).isEqualTo("85")
+        assertThat(pathConfiguration.settings["app_reviews_enabled"]).isEqualTo("true")
+        assertThat(pathConfiguration.settings["no_such_key"]).isNull()
+    }
 }

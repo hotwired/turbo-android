@@ -1,4 +1,8 @@
 {
+  "settings": {
+    "app_latest_version_code": 85,
+    "custom_app_feature_enabled": true
+  },
   "rules": [
     {
       "patterns": [
@@ -11,7 +15,8 @@
     },
     {
       "patterns": [
-        "^$", "/home"
+        "^$",
+        "/home"
       ],
       "properties": {
         "uri": "turbolinks://fragment/web/home",
@@ -20,7 +25,8 @@
     },
     {
       "patterns": [
-        "/new$", "/edit$"
+        "/new$",
+        "/edit$"
       ],
       "properties": {
         "context": "modal",
