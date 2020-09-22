@@ -12,6 +12,7 @@ import kotlin.text.RegexOption.IGNORE_CASE
 
 class PathConfiguration(context: Context) {
     @SerializedName("rules") var rules: List<PathRule> = emptyList()
+    @SerializedName("settings") var settings: PathConfigurationSettings = PathConfigurationSettings()
 
     internal var loader = PathConfigurationLoader(context.applicationContext)
 
@@ -23,6 +24,7 @@ class PathConfiguration(context: Context) {
     fun load(location: Location) {
         loader.load(location) {
             rules = it.rules
+            settings = it.settings
         }
     }
 
@@ -64,6 +66,7 @@ data class PathRule(
 }
 
 typealias PathProperties = HashMap<String, String>
+typealias PathConfigurationSettings = HashMap<String, String>
 
 val PathProperties.presentation: Presentation
     @SuppressLint("DefaultLocale") get() = try {

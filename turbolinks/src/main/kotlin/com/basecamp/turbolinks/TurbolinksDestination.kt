@@ -28,6 +28,9 @@ interface TurbolinksDestination {
     val pathConfiguration: PathConfiguration
         get() = session.pathConfiguration
 
+    val pathConfigurationSettings: PathConfigurationSettings
+        get() = pathConfiguration.settings
+
     val pathProperties: PathProperties
         get() = pathConfiguration.properties(location)
 
