@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Request
 import okhttp3.Response
-import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
 
@@ -27,16 +26,11 @@ interface TurbolinksOfflineRequestHandler {
     fun getCacheControl(url: String): OfflineCacheControl
     fun getCachedSnapshot(url: String): WebResourceResponse?
     fun getCachedResponse(url: String, allowStaleResponse: Boolean = false): WebResourceResponse?
-    fun cacheResponse(url: String, response: WebResourceResponse)
+    fun cacheResponse(url: String, response: WebResourceResponse): WebResourceResponse?
 }
 
 internal class TurbolinksHttpRepository {
     private val cookieManager = CookieManager.getInstance()
-
-    private class HttpResponse(
-        val response: Response,
-        val responseBody: ByteArray?
-    )
 
     data class Result(
         val response: WebResourceResponse?,
@@ -76,17 +70,18 @@ internal class TurbolinksHttpRepository {
             val response = issueRequest(resourceRequest)
 
             // Let the app cache the response
-            resourceResponse(response)?.let {
+            val resourceResponse = resourceResponse(response)
+            val cachedResponse = resourceResponse?.let {
                 requestHandler.cacheResponse(url, it)
             }
 
-            Result(resourceResponse(response), false)
+            Result(cachedResponse ?: resourceResponse, false)
         } catch (e: IOException) {
             Result(requestHandler.getCachedResponse(url, allowStaleResponse = true), true)
         }
     }
 
-    private fun issueRequest(resourceRequest: WebResourceRequest): HttpResponse? {
+    private fun issueRequest(resourceRequest: WebResourceRequest): Response? {
         return try {
             val request = buildRequest(resourceRequest)
             getResponse(request)
@@ -112,14 +107,14 @@ internal class TurbolinksHttpRepository {
         return builder.build()
     }
 
-    private fun getResponse(request: Request): HttpResponse? {
+    private fun getResponse(request: Request): Response? {
         val location = request.url.toString()
         val call = TurbolinksHttpClient.instance.newCall(request)
 
-        return call.execute().use { response ->
+        return call.execute().let { response ->
             if (response.isSuccessful) {
                 setCookies(location, response)
-                HttpResponse(response, response.body?.bytes())
+                response
             } else {
                 null
             }
@@ -136,18 +131,18 @@ internal class TurbolinksHttpRepository {
         }
     }
 
-    private fun resourceResponse(response: HttpResponse?): WebResourceResponse? {
+    private fun resourceResponse(response: Response?): WebResourceResponse? {
         if (response == null) {
             return null
         }
 
         return WebResourceResponse(
-            mimeType(response.response),
+            mimeType(response),
             encoding(),
-            statusCode(response.response),
-            reasonPhrase(response.response),
-            responseHeaders(response.response),
-            data(response.responseBody)
+            statusCode(response),
+            reasonPhrase(response),
+            responseHeaders(response),
+            data(response)
         )
     }
 
@@ -186,9 +181,9 @@ internal class TurbolinksHttpRepository {
         return response.headers.toMap()
     }
 
-    private fun data(responseBody: ByteArray?): InputStream? {
+    private fun data(response: Response?): InputStream? {
         return try {
-            ByteArrayInputStream(responseBody)
+            response?.body?.byteStream()
         } catch (e: Exception) {
             TurbolinksLog.e("Byte stream error: ${e.message}")
             null
