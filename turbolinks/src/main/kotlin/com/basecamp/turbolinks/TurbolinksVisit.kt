@@ -5,7 +5,7 @@ data class TurbolinksVisit(
     val destinationIdentifier: Int,
     val restoreWithCachedSnapshot: Boolean,
     val reload: Boolean,
-    val callback: TurbolinksSessionCallback,
+    var callback: TurbolinksSessionCallback?,   // Available while current visit
     var identifier: String = "",                // Updated after visitStarted()
     var completedOffline: Boolean = false,      // Updated from shouldInterceptRequest()
     val options: VisitOptions

@@ -92,6 +92,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    internal fun removeCallback(callback: TurbolinksSessionCallback) {
+        if (currentVisit.callback == callback) {
+            currentVisit.callback = null
+        }
+    }
 
     // Callbacks from Turbolinks Core
 
@@ -307,8 +312,8 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     private fun callback(action: (TurbolinksSessionCallback) -> Unit) {
         context.runOnUiThread {
-            if (currentVisit.callback.isActive()) {
-                action(currentVisit.callback)
+            currentVisit.callback?.let {
+                if (it.isActive()) action(it)
             }
         }
     }
