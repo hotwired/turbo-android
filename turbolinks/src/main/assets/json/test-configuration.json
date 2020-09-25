@@ -11,7 +11,7 @@
       "properties": {
         "context": "default",
         "uri": "turbolinks://fragment/web",
-        "pull_to_request_enabled": true
+        "pull_to_refresh_enabled": true
       }
     },
     {
@@ -32,7 +32,7 @@
       "properties": {
         "context": "modal",
         "uri": "turbolinks://fragment/web/modal",
-        "pull_to_request_enabled": false
+        "pull_to_refresh_enabled": false
       }
     },
     {

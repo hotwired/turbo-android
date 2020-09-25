@@ -11,7 +11,7 @@
       "properties": {
         "context": "default",
         "uri": "turbolinks://fragment/web",
-        "pull_to_request_enabled": true
+        "pull_to_refresh_enabled": true
       }
     },
     {

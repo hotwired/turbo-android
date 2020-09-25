@@ -91,4 +91,4 @@ val PathProperties.fallbackUri: Uri?
     get() = get("fallback_uri")?.let { Uri.parse(it) }
 
 val PathProperties.pullToRefreshEnabled: Boolean
-    get() = get("pull_to_request_enabled")?.toBoolean() ?: false
+    get() = get("pull_to_refresh_enabled")?.toBoolean() ?: false
