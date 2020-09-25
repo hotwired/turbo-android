@@ -32,10 +32,6 @@ open class WebFragment : TurbolinksWebFragment(), Destination {
         }
     }
 
-    override fun shouldEnablePullToRefresh(): Boolean {
-        return true
-    }
-
     override fun toolbarForNavigation(): Toolbar? {
         return view?.findViewById(R.id.toolbar)
     }

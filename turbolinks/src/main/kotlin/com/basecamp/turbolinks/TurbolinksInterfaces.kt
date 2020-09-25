@@ -29,7 +29,6 @@ interface TurbolinksWebFragmentCallback {
     val turbolinksView: TurbolinksView?
     fun createErrorView(statusCode: Int): View
     fun createProgressView(location: String): View
-    fun shouldEnablePullToRefresh(): Boolean
 
     // Events
     fun onUpdateView()

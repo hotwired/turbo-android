@@ -10,7 +10,8 @@
       ],
       "properties": {
         "context": "default",
-        "uri": "turbolinks://fragment/web"
+        "uri": "turbolinks://fragment/web",
+        "pull_to_refresh_enabled": true
       }
     },
     {
@@ -29,7 +30,8 @@
       ],
       "properties": {
         "context": "modal",
-        "uri": "turbolinks://fragment/web/modal"
+        "uri": "turbolinks://fragment/web/modal",
+        "pull_to_refresh_enabled": false
       }
     },
     {

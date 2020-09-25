@@ -10,7 +10,8 @@
       ],
       "properties": {
         "context": "default",
-        "uri": "turbolinks://fragment/web"
+        "uri": "turbolinks://fragment/web",
+        "pull_to_refresh_enabled": true
       }
     },
     {
