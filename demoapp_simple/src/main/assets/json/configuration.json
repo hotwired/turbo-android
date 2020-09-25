@@ -1,4 +1,8 @@
 {
+  "settings": {
+    "app_latest_version_code": 85,
+    "custom_app_feature_enabled": true
+  },
   "rules": [
     {
       "patterns": [
