@@ -65,4 +65,12 @@ class PathConfigurationTest {
         assertThat(pathConfiguration.settings["app_reviews_enabled"]).isEqualTo("true")
         assertThat(pathConfiguration.settings["no_such_key"]).isNull()
     }
+
+    @Test
+    fun pullToRefresh() {
+        val url = "http://example.com"
+
+        assertThat(pathConfiguration.properties("$url/home").pullToRefreshEnabled).isTrue
+        assertThat(pathConfiguration.properties("$url/new").pullToRefreshEnabled).isFalse
+    }
 }

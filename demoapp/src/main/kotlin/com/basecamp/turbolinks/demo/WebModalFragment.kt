@@ -10,10 +10,6 @@ class WebModalFragment : WebFragment() {
         initToolbar()
     }
 
-    override fun shouldEnablePullToRefresh(): Boolean {
-        return false
-    }
-
     override fun displaysBottomTabs(): Boolean {
         return false
     }
