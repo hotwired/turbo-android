@@ -59,6 +59,14 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         detachWebView()
     }
 
+    fun onDialogDismiss() {
+        // The WebView is already detached in most circumstances, but sometimes
+        // fast user cancellation does not call onCancel() before onDismiss()
+        if (webViewIsAttached()) {
+            detachWebView()
+        }
+    }
+
     fun session(): TurbolinksSession {
         return destination.session
     }
@@ -210,6 +218,11 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
                 isInitialVisit = false
             }
         }
+    }
+
+    private fun webViewIsAttached(): Boolean {
+        val view = webView ?: return false
+        return turbolinksView?.webViewIsAttached(view) ?: false
     }
 
     private fun title(): String {

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.core.view.contains
 import androidx.core.view.drawToBitmap
 import androidx.core.view.isVisible
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -54,6 +55,10 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
                 onDetached()
             }
         }
+    }
+
+    internal fun webViewIsAttached(webView: WebView): Boolean {
+        return webViewContainer.contains(webView)
     }
 
     internal fun addProgressView(progressView: View) {
