@@ -87,7 +87,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     override fun onZoomReset(newScale: Float) {
         currentlyZoomed = false
-        pullToRefreshEnabled(callback.shouldEnablePullToRefresh())
+        pullToRefreshEnabled(destination.pathProperties.pullToRefreshEnabled)
     }
 
     override fun pageInvalidated() {}
@@ -271,7 +271,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
         turbolinksView.webViewRefresh?.apply {
-            isEnabled = callback.shouldEnablePullToRefresh()
+            isEnabled = destination.pathProperties.pullToRefreshEnabled
             setOnRefreshListener {
                 isWebViewAttachedToNewDestination = false
                 visit(location, restoreWithCachedSnapshot = false, reload = true)
