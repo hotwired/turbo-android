@@ -7,6 +7,8 @@ import com.basecamp.turbolinks.OfflineCacheStrategy.APP
 import com.basecamp.turbolinks.OfflineCacheStrategy.NONE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.CacheControl
+import okhttp3.Headers.Companion.toHeaders
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
@@ -16,16 +18,11 @@ enum class OfflineCacheStrategy {
     APP, NONE
 }
 
-@Suppress("unused")
-enum class OfflineCacheControl {
-    STALE_IF_ERROR, IMMUTABLE
-}
-
 interface TurbolinksOfflineRequestHandler {
     fun getCacheStrategy(url: String): OfflineCacheStrategy
-    fun getCacheControl(url: String): OfflineCacheControl
-    fun getCachedSnapshot(url: String): WebResourceResponse?
+    fun getCachedResponseHeaders(url: String): Map<String, String>?
     fun getCachedResponse(url: String, allowStaleResponse: Boolean = false): WebResourceResponse?
+    fun getCachedSnapshot(url: String): WebResourceResponse?
     fun cacheResponse(url: String, response: WebResourceResponse): WebResourceResponse?
 }
 
@@ -57,10 +54,11 @@ internal class TurbolinksHttpRepository {
     private fun fetchAppCacheRequest(requestHandler: TurbolinksOfflineRequestHandler,
                                      resourceRequest: WebResourceRequest): Result {
         val url = resourceRequest.url.toString()
-        val cacheControl = requestHandler.getCacheControl(url)
+        val headers = requestHandler.getCachedResponseHeaders(url) ?: emptyMap()
+        val cacheControl = CacheControl.parse(headers.toHeaders())
 
         // If the app has an immutable response cached, don't hit the network
-        if (cacheControl == OfflineCacheControl.IMMUTABLE) {
+        if (cacheControl.immutable) {
             requestHandler.getCachedResponse(url)?.let {
                 return Result(it, false)
             }
