@@ -28,6 +28,11 @@ abstract class TurbolinksWebBottomSheetDialogFragment : TurbolinksBottomSheetDia
         super.onCancel(dialog)
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        delegate.onDialogDismiss()
+        super.onDismiss(dialog)
+    }
+
     override fun onBeforeNavigation() {
         // Allow subclasses to do state cleanup
     }
