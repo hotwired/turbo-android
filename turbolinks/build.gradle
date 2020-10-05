@@ -226,7 +226,6 @@ uploadArchives {
 tasks.dokkaHtml.configure {
     dokkaSourceSets {
         named("main") {
-            outputDirectory = "$buildDir/javadoc"
             includeNonPublic = false
             skipEmptyPackages = true
             skipDeprecated = true
@@ -239,7 +238,6 @@ tasks.dokkaHtml.configure {
 tasks.dokkaGfm.configure {
     dokkaSourceSets {
         named("main") {
-            outputDirectory = "$buildDir/javadoc"
             includeNonPublic = false
             skipEmptyPackages = true
             skipDeprecated = true
@@ -252,7 +250,6 @@ tasks.dokkaGfm.configure {
 tasks.dokkaJavadoc.configure {
     dokkaSourceSets {
         named("main") {
-            outputDirectory = "$buildDir/javadoc"
             includeNonPublic = false
             skipEmptyPackages = true
             skipDeprecated = true
