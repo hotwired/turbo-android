@@ -1,7 +1,7 @@
 package com.basecamp.turbolinks.demo
 
 import android.os.Bundle
-import com.basecamp.turbolinks.TurbolinksNavGraphDestination
+import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web/modal")
 class WebModalFragment : WebFragment() {

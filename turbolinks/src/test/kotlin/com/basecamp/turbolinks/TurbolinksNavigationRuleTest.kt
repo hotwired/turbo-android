@@ -11,7 +11,10 @@ import androidx.navigation.createGraph
 import androidx.navigation.navOptions
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
-import com.basecamp.turbolinks.TurbolinksNavigationRule.*
+import com.basecamp.turbolinks.nav.TurbolinksNavigationRule.*
+import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.nav.TurbolinksNavigationRule
+import com.basecamp.turbolinks.core.VisitOptions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -240,9 +243,9 @@ class TurbolinksNavigationRuleTest {
     }
 
     private fun getNavigatorRule(
-        location: String,
-        visitOptions: VisitOptions = VisitOptions(),
-        bundle: Bundle? = null
+            location: String,
+            visitOptions: VisitOptions = VisitOptions(),
+            bundle: Bundle? = null
     ): TurbolinksNavigationRule {
         return TurbolinksNavigationRule(
             location, visitOptions, bundle, navOptions, extras, pathConfiguration, controller

@@ -2,7 +2,7 @@ package com.basecamp.turbolinks.demo
 
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
-import com.basecamp.turbolinks.TurbolinksDestination
+import com.basecamp.turbolinks.core.TurbolinksDestination
 import java.net.MalformedURLException
 
 interface Destination : TurbolinksDestination {

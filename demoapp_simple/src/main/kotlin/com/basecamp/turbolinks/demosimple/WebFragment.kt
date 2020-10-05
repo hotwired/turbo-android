@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import com.basecamp.turbolinks.*
+import com.basecamp.turbolinks.fragment.TurbolinksWebFragment
+import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
+import com.basecamp.turbolinks.views.TurbolinksView
 import kotlinx.android.synthetic.main.error.view.*
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web")

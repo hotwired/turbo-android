@@ -2,20 +2,22 @@ package com.basecamp.turbolinks
 
 import android.app.Activity
 import android.os.Build
-import android.webkit.WebView
+import com.basecamp.turbolinks.core.TurbolinksSession
+import com.basecamp.turbolinks.util.TurbolinksSessionCallback
+import com.basecamp.turbolinks.util.toJson
+import com.basecamp.turbolinks.views.TurbolinksWebView
+import com.basecamp.turbolinks.core.TurbolinksVisit
+import com.basecamp.turbolinks.core.VisitOptions
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
-import org.robolectric.Robolectric
 import org.robolectric.Robolectric.buildActivity
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)

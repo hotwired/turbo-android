@@ -3,8 +3,12 @@ package com.basecamp.turbolinks
 import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
-import com.basecamp.turbolinks.PathConfiguration.Location
-import com.basecamp.turbolinks.TurbolinksNavigationRule.PresentationContext
+import com.basecamp.turbolinks.config.PathConfiguration.Location
+import com.basecamp.turbolinks.nav.TurbolinksNavigationRule.PresentationContext
+import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.config.PathConfigurationRepository
+import com.basecamp.turbolinks.config.context
+import com.basecamp.turbolinks.config.pullToRefreshEnabled
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import kotlinx.coroutines.runBlocking

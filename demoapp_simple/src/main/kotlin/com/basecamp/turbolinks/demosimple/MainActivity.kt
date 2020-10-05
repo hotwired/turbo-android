@@ -2,12 +2,8 @@ package com.basecamp.turbolinks.demosimple
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.navigation.NavArgument
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import com.basecamp.turbolinks.*
-import com.basecamp.turbolinks.PathConfiguration.Location
+import com.basecamp.turbolinks.activity.TurbolinksActivityDelegate
+import com.basecamp.turbolinks.util.TurbolinksActivity
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
     override lateinit var delegate: TurbolinksActivityDelegate
