@@ -248,3 +248,16 @@ tasks.dokkaGfm.configure {
         }
     }
 }
+
+tasks.dokkaJavadoc.configure {
+    dokkaSourceSets {
+        named("main") {
+            outputDirectory = "$buildDir/javadoc"
+            includeNonPublic = false
+            skipEmptyPackages = true
+            skipDeprecated = true
+            reportUndocumented = true
+            jdkVersion = 8
+        }
+    }
+}
