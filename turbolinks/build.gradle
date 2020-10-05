@@ -222,15 +222,16 @@ uploadArchives {
     }
 }
 
-dokka {
-    outputFormat = 'html' // use 'javadoc' to get standard java docs
-    outputDirectory = "$buildDir/javadoc"
-
-    configuration {
-        includeNonPublic = false
-        skipEmptyPackages = true
-        skipDeprecated = true
-        reportUndocumented = true
-        jdkVersion = 8
+// configure only html format e.g.
+tasks.dokkaHtml.configure {
+    dokkaSourceSets {
+        named("main") {
+            outputDirectory = "$buildDir/javadoc"
+            includeNonPublic = false
+            skipEmptyPackages = true
+            skipDeprecated = true
+            reportUndocumented = true
+            jdkVersion = 8
+        }
     }
 }
