@@ -52,8 +52,8 @@ interface TurbolinksDestination {
     val webView: TurbolinksWebView
         get() = session.webView
 
-    val sessionViewModel: TurbolinksSessionViewModel
-        get() = delegate().sessionViewModel
+    val events: TurbolinksEvents
+        get() = delegate().events
 
     val pageViewModel: TurbolinksFragmentViewModel
         get() = delegate().pageViewModel

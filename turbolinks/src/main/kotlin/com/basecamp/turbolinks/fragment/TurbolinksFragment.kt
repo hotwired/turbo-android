@@ -30,7 +30,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {
     override fun onStart() {
         super.onStart()
 
-        if (!sessionViewModel.modalResultExists) {
+        if (!events.modalResultExists) {
             delegate.onStart()
         }
     }
@@ -45,7 +45,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {
     }
 
     open fun onStartAfterDialogCancel() {
-        if (!sessionViewModel.modalResultExists) {
+        if (!events.modalResultExists) {
             delegate.onStartAfterDialogCancel()
         }
     }
@@ -59,7 +59,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {
     }
 
     private fun observeModalResult() {
-        delegate.sessionViewModel.modalResult.observe(viewLifecycleOwner) { event ->
+        delegate.events.modalResult.observe(viewLifecycleOwner) { event ->
             if (shouldHandleModalResults()) {
                 event.getContentIfNotHandled()?.let {
                     onStartAfterModalResult(it)
@@ -69,7 +69,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {
     }
 
     private fun observeDialogResult() {
-        delegate.sessionViewModel.dialogResult.observe(viewLifecycleOwner) { event ->
+        delegate.events.dialogResult.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
                 onStartAfterDialogCancel()
             }

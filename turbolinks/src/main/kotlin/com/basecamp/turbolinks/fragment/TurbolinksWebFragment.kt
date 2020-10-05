@@ -21,7 +21,7 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
     override fun onStart() {
         super.onStart()
 
-        if (!sessionViewModel.modalResultExists) {
+        if (!events.modalResultExists) {
             delegate.onStart()
         }
     }
@@ -34,7 +34,7 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
     override fun onStartAfterDialogCancel() {
         super.onStartAfterDialogCancel()
 
-        if (!sessionViewModel.modalResultExists) {
+        if (!events.modalResultExists) {
             delegate.onStartAfterDialogCancel()
         }
     }

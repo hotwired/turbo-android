@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.basecamp.turbolinks.util.TurbolinksEvent
 
-class TurbolinksSessionViewModel : ViewModel() {
+class TurbolinksEvents : ViewModel() {
     // Visit options can only be read once
     var visitOptions: TurbolinksEvent<VisitOptions>? = null
 
@@ -37,9 +37,9 @@ class TurbolinksSessionViewModel : ViewModel() {
     }
 
     companion object {
-        fun get(sessionName: String, activity: FragmentActivity): TurbolinksSessionViewModel {
+        fun get(sessionName: String, activity: FragmentActivity): TurbolinksEvents {
             return ViewModelProvider(activity).get(
-                sessionName, TurbolinksSessionViewModel::class.java
+                sessionName, TurbolinksEvents::class.java
             )
         }
     }

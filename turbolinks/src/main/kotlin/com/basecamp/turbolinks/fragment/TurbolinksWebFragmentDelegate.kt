@@ -163,7 +163,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     // -----------------------------------------------------------------------
 
     private fun currentVisitOptions(): VisitOptions {
-        return destination.sessionViewModel.visitOptions?.getContentIfNotHandled() ?: VisitOptions()
+        return destination.events.visitOptions?.getContentIfNotHandled() ?: VisitOptions()
     }
 
     private fun initNavigationVisit() {

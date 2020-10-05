@@ -4,7 +4,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.basecamp.turbolinks.core.TurbolinksDestination
 import com.basecamp.turbolinks.core.TurbolinksModalResult
-import com.basecamp.turbolinks.core.TurbolinksSessionViewModel
+import com.basecamp.turbolinks.core.TurbolinksEvents
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
 
 class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
@@ -12,7 +12,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     private val location = destination.location
     private val sessionName = destination.sessionName
 
-    internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
+    internal val events = TurbolinksEvents.get(sessionName, fragment.requireActivity())
     internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
 
     internal lateinit var navigator: TurbolinksNavigator
@@ -45,8 +45,8 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
 
     fun onDialogCancel() {
         logEvent("fragment.onDialogCancel", "location" to location)
-        if (!sessionViewModel.modalResultExists) {
-            sessionViewModel.sendDialogResult()
+        if (!events.modalResultExists) {
+            events.sendDialogResult()
         }
     }
 
