@@ -3,8 +3,8 @@ package com.basecamp.turbolinks.demo
 import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.BuildConfig
-import com.basecamp.turbolinks.PathConfiguration
-import com.basecamp.turbolinks.TurbolinksNavHostFragment
+import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.nav.TurbolinksNavHostFragment
 import kotlin.reflect.KClass
 
 abstract class BaseNavHostFragment : TurbolinksNavHostFragment() {
