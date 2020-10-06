@@ -1,14 +1,10 @@
-package com.basecamp.turbolinks
+package com.basecamp.turbolinks.config
 
 import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import com.basecamp.turbolinks.config.PathConfiguration.Location
-import com.basecamp.turbolinks.nav.TurbolinksNavigationRule.PresentationContext
-import com.basecamp.turbolinks.config.PathConfiguration
-import com.basecamp.turbolinks.config.PathConfigurationRepository
-import com.basecamp.turbolinks.config.context
-import com.basecamp.turbolinks.config.pullToRefreshEnabled
+import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import kotlinx.coroutines.runBlocking
@@ -66,7 +62,7 @@ class PathConfigurationTest {
     fun globalProperty() {
         assertThat(pathConfiguration.settings.size).isEqualTo(2)
         assertThat(pathConfiguration.settings["app_latest_version_code"]).isEqualTo("85")
-        assertThat(pathConfiguration.settings["app_reviews_enabled"]).isEqualTo("true")
+        assertThat(pathConfiguration.settings["custom_app_feature_enabled"]).isEqualTo("true")
         assertThat(pathConfiguration.settings["no_such_key"]).isNull()
     }
 

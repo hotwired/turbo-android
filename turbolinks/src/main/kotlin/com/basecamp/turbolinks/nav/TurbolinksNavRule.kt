@@ -12,7 +12,7 @@ import com.basecamp.turbolinks.core.VisitOptions
 import java.net.URI
 
 @Suppress("MemberVisibilityCanBePrivate")
-class TurbolinksNavigationRule(
+class TurbolinksNavRule(
     location: String,
     visitOptions: VisitOptions,
     bundle: Bundle?,

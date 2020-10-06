@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.core.TurbolinksDestination
 import com.basecamp.turbolinks.core.TurbolinksModalResult
-import com.basecamp.turbolinks.nav.TurbolinksNavigationRule.PresentationContext
+import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
 import com.basecamp.turbolinks.config.context
 
 abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {

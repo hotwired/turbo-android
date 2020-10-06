@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks
+package com.basecamp.turbolinks.views
 
 import android.content.Context
 import android.os.Build
@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.test.core.app.ApplicationProvider
-import com.basecamp.turbolinks.views.TurbolinksSwipeRefreshLayout
+import com.basecamp.turbolinks.R
 import kotlinx.android.synthetic.main.turbolinks_view.view.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before

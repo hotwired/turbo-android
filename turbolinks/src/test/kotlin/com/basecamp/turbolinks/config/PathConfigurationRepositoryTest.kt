@@ -1,10 +1,9 @@
-package com.basecamp.turbolinks
+package com.basecamp.turbolinks.config
 
 import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
-import com.basecamp.turbolinks.config.PathConfiguration
-import com.basecamp.turbolinks.config.PathConfigurationRepository
+import com.basecamp.turbolinks.BaseRepositoryTest
 import com.basecamp.turbolinks.http.TurbolinksHttpClient
 import com.basecamp.turbolinks.util.toObject
 import com.google.gson.reflect.TypeToken

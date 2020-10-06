@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks
+package com.basecamp.turbolinks.nav
 
 import android.content.Context
 import android.net.Uri
@@ -11,10 +11,10 @@ import androidx.navigation.createGraph
 import androidx.navigation.navOptions
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
+import com.basecamp.turbolinks.R
 import com.basecamp.turbolinks.config.PathConfiguration
 import com.basecamp.turbolinks.core.VisitOptions
-import com.basecamp.turbolinks.nav.TurbolinksNavigationRule
-import com.basecamp.turbolinks.nav.TurbolinksNavigationRule.*
+import com.basecamp.turbolinks.nav.TurbolinksNavRule.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -25,7 +25,7 @@ import org.robolectric.annotation.Config
 @Suppress("UsePropertyAccessSyntax")
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class TurbolinksNavigationRuleTest {
+class TurbolinksNavRuleTest {
     private lateinit var context: Context
     private lateinit var controller: TestNavHostController
     private lateinit var pathConfiguration: PathConfiguration
@@ -246,8 +246,8 @@ class TurbolinksNavigationRuleTest {
         location: String,
         visitOptions: VisitOptions = VisitOptions(),
         bundle: Bundle? = null
-    ): TurbolinksNavigationRule {
-        return TurbolinksNavigationRule(
+    ): TurbolinksNavRule {
+        return TurbolinksNavRule(
             location, visitOptions, bundle, navOptions, extras, pathConfiguration, controller
         )
     }
