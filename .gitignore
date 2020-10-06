@@ -3,6 +3,17 @@
 .DS_Store
 /build
 
-.idea/*
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+/.idea/gradle.xml
 *.iml
 local.properties
+/.idea/vcs.xml
+/.idea/runConfigurations.xml
+/.idea/misc.xml
+/.idea/jarRepositories.xml
+/.idea/compiler.xml
