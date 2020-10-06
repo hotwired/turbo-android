@@ -5,21 +5,21 @@ import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
+import com.basecamp.turbolinks.config.*
 import com.basecamp.turbolinks.core.TurbolinksModalResult
 import com.basecamp.turbolinks.core.VisitAction
 import com.basecamp.turbolinks.core.VisitOptions
-import com.basecamp.turbolinks.config.*
 import java.net.URI
 
 @Suppress("MemberVisibilityCanBePrivate")
 class TurbolinksNavigationRule(
-        location: String,
-        visitOptions: VisitOptions,
-        bundle: Bundle?,
-        navOptions: NavOptions,
-        extras: FragmentNavigator.Extras?,
-        pathConfiguration: PathConfiguration,
-        val controller: NavController
+    location: String,
+    visitOptions: VisitOptions,
+    bundle: Bundle?,
+    navOptions: NavOptions,
+    extras: FragmentNavigator.Extras?,
+    pathConfiguration: PathConfiguration,
+    val controller: NavController
 ) {
     enum class PresentationContext {
         DEFAULT, MODAL
@@ -91,12 +91,12 @@ class TurbolinksNavigationRule(
         val presentationRefresh = newPresentation == Presentation.REFRESH
 
         val dismissModalContext = currentPresentationContext == PresentationContext.MODAL &&
-                                  newPresentationContext == PresentationContext.DEFAULT &&
-                                  newPresentation != Presentation.REPLACE_ROOT
+                newPresentationContext == PresentationContext.DEFAULT &&
+                newPresentation != Presentation.REPLACE_ROOT
 
         val navigateToModalContext = currentPresentationContext == PresentationContext.DEFAULT &&
-                                     newPresentationContext == PresentationContext.MODAL &&
-                                     newPresentation != Presentation.REPLACE_ROOT
+                newPresentationContext == PresentationContext.MODAL &&
+                newPresentation != Presentation.REPLACE_ROOT
 
         return when {
             dismissModalContext -> NavigationMode.DISMISS_MODAL

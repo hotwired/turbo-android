@@ -11,9 +11,9 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 
 data class VisitOptions(
-        @SerializedName("action") val action: VisitAction = ADVANCE,
-        @SerializedName("snapshotHTML") val snapshotHTML: String? = null,
-        @SerializedName("response") val response: VisitResponse? = null
+    @SerializedName("action") val action: VisitAction = ADVANCE,
+    @SerializedName("snapshotHTML") val snapshotHTML: String? = null,
+    @SerializedName("response") val response: VisitResponse? = null
 ) {
     companion object {
         fun fromJSON(json: String?): VisitOptions? = try {

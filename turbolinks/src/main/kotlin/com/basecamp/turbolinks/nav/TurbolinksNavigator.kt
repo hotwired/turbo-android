@@ -9,6 +9,7 @@ import com.basecamp.turbolinks.core.TurbolinksDestination
 import com.basecamp.turbolinks.core.VisitOptions
 import com.basecamp.turbolinks.nav.TurbolinksNavigationRule.NavigationMode
 import com.basecamp.turbolinks.nav.TurbolinksNavigationRule.Presentation
+import com.basecamp.turbolinks.util.logEvent
 
 class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
@@ -42,10 +43,12 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    fun navigate(location: String,
-                 options: VisitOptions,
-                 bundle: Bundle? = null,
-                 extras: FragmentNavigator.Extras? = null) {
+    fun navigate(
+        location: String,
+        options: VisitOptions,
+        bundle: Bundle? = null,
+        extras: FragmentNavigator.Extras? = null
+    ) {
 
         if (!shouldNavigate(location)) {
             return
@@ -89,7 +92,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun navigateWithinContext(rule: TurbolinksNavigationRule) {
-        logEvent("navigateWithinContext",
+        logEvent(
+            "navigateWithinContext",
             "location" to rule.newLocation,
             "presentation" to rule.newPresentation
         )
@@ -118,7 +122,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun navigateToModalContext(rule: TurbolinksNavigationRule) {
-        logEvent("navigateToModalContext",
+        logEvent(
+            "navigateToModalContext",
             "location" to rule.newLocation
         )
 
@@ -134,7 +139,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun dismissModalContextWithResult(rule: TurbolinksNavigationRule) {
-        logEvent("dismissModalContextWithResult",
+        logEvent(
+            "dismissModalContextWithResult",
             "location" to rule.newLocation,
             "uri" to rule.newDestinationUri,
             "presentation" to rule.newPresentation
@@ -165,7 +171,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
     private fun replaceRootLocation(rule: TurbolinksNavigationRule) {
         if (rule.newDestination == null) {
-            logEvent("replaceRootLocation",
+            logEvent(
+                "replaceRootLocation",
                 "location" to rule.newLocation,
                 "error" to "No destination found",
                 "uri" to rule.newDestinationUri
@@ -173,7 +180,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             return
         }
 
-        logEvent("replaceRootLocation",
+        logEvent(
+            "replaceRootLocation",
             "location" to rule.newLocation,
             "uri" to rule.newDestinationUri
         )
@@ -187,7 +195,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         destination.sessionViewModel.saveVisitOptions(rule.newVisitOptions)
 
         rule.newDestination?.let {
-            logEvent("navigateToLocation",
+            logEvent(
+                "navigateToLocation",
                 "location" to rule.newLocation,
                 "uri" to rule.newDestinationUri
             )
@@ -195,14 +204,16 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             return
         }
 
-        logEvent("navigateToLocation",
+        logEvent(
+            "navigateToLocation",
             "location" to rule.newLocation,
             "warning" to "No destination found",
             "uri" to rule.newDestinationUri
         )
 
         rule.newFallbackDestination?.let {
-            logEvent("navigateToLocation",
+            logEvent(
+                "navigateToLocation",
                 "location" to rule.newLocation,
                 "fallbackUri" to "${rule.newFallbackUri}"
             )
@@ -210,7 +221,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             return
         }
 
-        logEvent("navigateToLocation",
+        logEvent(
+            "navigateToLocation",
             "location" to rule.newLocation,
             "error" to "No fallback destination found"
         )
@@ -231,7 +243,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private fun shouldNavigate(location: String): Boolean {
         val shouldNavigate = destination.shouldNavigateTo(location)
 
-        logEvent("shouldNavigateToLocation",
+        logEvent(
+            "shouldNavigateToLocation",
             "location" to location,
             "shouldNavigate" to shouldNavigate
         )
@@ -252,6 +265,6 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             add(0, "session" to session.sessionName)
             add("fragment" to fragment.javaClass.simpleName)
         }
-        com.basecamp.turbolinks.util.logEvent(event, attributes)
+        logEvent(event, attributes)
     }
 }

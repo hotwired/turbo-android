@@ -6,6 +6,7 @@ import com.basecamp.turbolinks.core.TurbolinksDestination
 import com.basecamp.turbolinks.core.TurbolinksModalResult
 import com.basecamp.turbolinks.core.TurbolinksSessionViewModel
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
+import com.basecamp.turbolinks.util.logEvent
 
 class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
@@ -66,6 +67,6 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
             add(0, "session" to sessionName)
             add("fragment" to fragment.javaClass.simpleName)
         }
-        com.basecamp.turbolinks.util.logEvent(event, attributes)
+        logEvent(event, attributes)
     }
 }

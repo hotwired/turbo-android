@@ -79,10 +79,10 @@ interface TurbolinksDestination {
     }
 
     fun navigate(
-            location: String,
-            options: VisitOptions = VisitOptions(),
-            bundle: Bundle? = null,
-            extras: FragmentNavigator.Extras? = null
+        location: String,
+        options: VisitOptions = VisitOptions(),
+        bundle: Bundle? = null,
+        extras: FragmentNavigator.Extras? = null
     ) {
         navigator.navigate(location, options, bundle, extras)
     }

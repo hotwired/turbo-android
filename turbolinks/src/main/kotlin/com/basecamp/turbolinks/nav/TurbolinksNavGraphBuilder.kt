@@ -11,9 +11,9 @@ import androidx.navigation.fragment.DialogFragmentNavigator
 import androidx.navigation.fragment.DialogFragmentNavigatorDestinationBuilder
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorDestinationBuilder
-import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
 import com.basecamp.turbolinks.config.PathConfiguration
 import com.basecamp.turbolinks.config.uri
+import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
@@ -66,9 +66,9 @@ class TurbolinksNavGraphBuilder(
 
     @Suppress("UNCHECKED_CAST")
     private fun createGraph(
-            activityDestinations: List<ActivityDestination>,
-            fragmentDestinations: List<FragmentDestination>,
-            startDestinationId: Int
+        activityDestinations: List<ActivityDestination>,
+        fragmentDestinations: List<FragmentDestination>,
+        startDestinationId: Int
     ): NavGraph {
         return navController.createGraph(startDestination = startDestinationId) {
             activityDestinations.forEach {
@@ -127,7 +127,8 @@ class TurbolinksNavGraphBuilder(
             provider[FragmentNavigator::class],
             id,
             fragmentClass
-        ).apply(builder))
+        ).apply(builder)
+    )
 
     // Modified from AndroidX DialogFragmentNavigatorDestinationBuilder extensions
     private inline fun NavGraphBuilder.dialog(
@@ -139,5 +140,6 @@ class TurbolinksNavGraphBuilder(
             provider[DialogFragmentNavigator::class],
             id,
             fragmentClass
-        ).apply(builder))
+        ).apply(builder)
+    )
 }

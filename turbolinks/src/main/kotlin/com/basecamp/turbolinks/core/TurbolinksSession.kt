@@ -13,17 +13,13 @@ import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
-import com.basecamp.turbolinks.http.TurbolinksHttpRepository
-import com.basecamp.turbolinks.http.TurbolinksPreCacheRequest
-import com.basecamp.turbolinks.core.VisitAction.*
 import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.core.VisitAction.*
 import com.basecamp.turbolinks.http.TurbolinksHttpClient
+import com.basecamp.turbolinks.http.TurbolinksHttpRepository
 import com.basecamp.turbolinks.http.TurbolinksOfflineRequestHandler
+import com.basecamp.turbolinks.http.TurbolinksPreCacheRequest
 import com.basecamp.turbolinks.util.*
-import com.basecamp.turbolinks.util.TurbolinksLog
-import com.basecamp.turbolinks.util.coroutineScope
-import com.basecamp.turbolinks.util.runOnUiThread
-import com.basecamp.turbolinks.util.toJson
 import com.basecamp.turbolinks.views.TurbolinksWebView
 import kotlinx.coroutines.launch
 import java.util.*
@@ -63,9 +59,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
 
         activity.coroutineScope().launch {
-            httpRepository.preCache(requestHandler, TurbolinksPreCacheRequest(
-                url = location, userAgent = webView.settings.userAgentString
-            ))
+            httpRepository.preCache(
+                requestHandler, TurbolinksPreCacheRequest(
+                    url = location, userAgent = webView.settings.userAgentString
+                )
+            )
         }
     }
 
@@ -121,9 +119,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     @JavascriptInterface
     fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String) {
-        logEvent("visitStarted", "location" to location,
-                "visitIdentifier" to visitIdentifier,
-                "visitHasCachedSnapshot" to visitHasCachedSnapshot)
+        logEvent(
+            "visitStarted", "location" to location,
+            "visitIdentifier" to visitIdentifier,
+            "visitHasCachedSnapshot" to visitHasCachedSnapshot
+        )
 
         currentVisit.identifier = visitIdentifier
     }
@@ -135,10 +135,12 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     @JavascriptInterface
     fun visitRequestFailedWithStatusCode(visitIdentifier: String, visitHasCachedSnapshot: Boolean, statusCode: Int) {
-        logEvent("visitRequestFailedWithStatusCode",
-                "visitIdentifier" to visitIdentifier,
-                "visitHasCachedSnapshot" to visitHasCachedSnapshot,
-                "statusCode" to statusCode)
+        logEvent(
+            "visitRequestFailedWithStatusCode",
+            "visitIdentifier" to visitIdentifier,
+            "visitHasCachedSnapshot" to visitHasCachedSnapshot,
+            "statusCode" to statusCode
+        )
 
         if (visitIdentifier == currentVisit.identifier) {
             callback { it.requestFailedWithStatusCode(visitHasCachedSnapshot, statusCode) }
@@ -171,9 +173,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     @JavascriptInterface
     fun visitCompleted(visitIdentifier: String, restorationIdentifier: String) {
-        logEvent("visitCompleted",
+        logEvent(
+            "visitCompleted",
             "visitIdentifier" to visitIdentifier,
-            "restorationIdentifier" to restorationIdentifier)
+            "restorationIdentifier" to restorationIdentifier
+        )
 
         if (visitIdentifier == currentVisit.identifier) {
             restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
@@ -232,10 +236,12 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
             else -> visit.options
         }
 
-        logEvent("visitLocation",
-                "location" to visit.location,
-                "options" to options,
-                "restorationIdentifier" to restorationIdentifier)
+        logEvent(
+            "visitLocation",
+            "location" to visit.location,
+            "options" to options,
+            "restorationIdentifier" to restorationIdentifier
+        )
 
         webView.visitLocation(visit.location, options, restorationIdentifier)
     }
@@ -289,10 +295,12 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initializeWebView() {
-        logEvent("WebView info",
+        logEvent(
+            "WebView info",
             "package" to (webView.packageName ?: ""),
             "version" to (webView.versionName ?: ""),
-            "major version" to (webView.majorVersion ?: ""))
+            "major version" to (webView.majorVersion ?: "")
+        )
 
         webView.apply {
             addJavascriptInterface(this@TurbolinksSession, "TurbolinksSession")
@@ -331,7 +339,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply { add(0, "session" to sessionName) }
-        com.basecamp.turbolinks.util.logEvent(event, attributes)
+        logEvent(event, attributes)
     }
 
 
@@ -438,7 +446,8 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
             val requestHandler = offlineRequestHandler ?: return null
 
             if (!request.method.equals("GET", ignoreCase = true) ||
-                request.url.scheme?.startsWith("HTTP", ignoreCase = true) != true) {
+                request.url.scheme?.startsWith("HTTP", ignoreCase = true) != true
+            ) {
                 return null
             }
 

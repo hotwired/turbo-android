@@ -46,10 +46,10 @@ class TurbolinksSessionViewModel : ViewModel() {
 }
 
 data class TurbolinksModalResult(
-        val location: String,
-        val options: VisitOptions,
-        val bundle: Bundle?,
-        val shouldNavigate: Boolean
+    val location: String,
+    val options: VisitOptions,
+    val bundle: Bundle?,
+    val shouldNavigate: Boolean
 )
 
 data class TurbolinksDialogResult(
