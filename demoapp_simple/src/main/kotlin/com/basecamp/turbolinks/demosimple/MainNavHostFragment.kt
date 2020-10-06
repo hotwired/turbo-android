@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 
 @Suppress("unused")
 class MainNavHostFragment : TurbolinksNavHostFragment() {
-    override val sessionName = "main"
+    override val turbolinksName = "main"
 
     override val startLocation
         get() = Constants.FOOD_URL
@@ -29,8 +29,8 @@ class MainNavHostFragment : TurbolinksNavHostFragment() {
             assetFilePath = "json/configuration.json"
         )
 
-    override fun onSessionCreated() {
-        super.onSessionCreated()
-        session.setDebugLoggingEnabled(BuildConfig.DEBUG)
+    override fun onTurbolinksCreated() {
+        super.onTurbolinksCreated()
+        turbolinks.setDebugLoggingEnabled(BuildConfig.DEBUG)
     }
 }

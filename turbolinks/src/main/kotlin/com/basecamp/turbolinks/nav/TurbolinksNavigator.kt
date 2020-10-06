@@ -13,7 +13,7 @@ import com.basecamp.turbolinks.util.logEvent
 
 class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
-    private val session = destination.session
+    private val turbolinks = destination.turbolinks
 
     var onNavigationVisit: (onNavigate: () -> Unit) -> Unit = { onReady ->
         destination.onBeforeNavigation()
@@ -60,7 +60,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
             bundle = bundle,
             navOptions = navOptions(location),
             extras = extras,
-            pathConfiguration = session.pathConfiguration,
+            pathConfiguration = turbolinks.pathConfiguration,
             controller = currentControllerForLocation(location)
         )
 
@@ -164,7 +164,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private fun sendModalResult(rule: TurbolinksNavRule) {
         // Save the modal result with VisitOptions so it can be retrieved
         // by the previous destination when the backstack is popped.
-        destination.sessionViewModel.sendModalResult(
+        destination.viewModel.sendModalResult(
             checkNotNull(rule.newModalResult)
         )
     }
@@ -192,7 +192,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         // Save the VisitOptions so it can be retrieved by the next
         // destination. When response.responseHTML is present it is
         // too large to save directly within the args bundle.
-        destination.sessionViewModel.saveVisitOptions(rule.newVisitOptions)
+        destination.viewModel.saveVisitOptions(rule.newVisitOptions)
 
         rule.newDestination?.let {
             logEvent(
@@ -252,7 +252,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun navOptions(location: String): NavOptions {
-        val properties = session.pathConfiguration.properties(location)
+        val properties = turbolinks.pathConfiguration.properties(location)
 
         return destination.getNavigationOptions(
             newLocation = location,
@@ -262,7 +262,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply {
-            add(0, "session" to session.sessionName)
+            add(0, "session" to turbolinks.name)
             add("fragment" to fragment.javaClass.simpleName)
         }
         logEvent(event, attributes)

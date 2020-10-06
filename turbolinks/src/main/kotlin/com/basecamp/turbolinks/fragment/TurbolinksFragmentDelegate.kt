@@ -4,16 +4,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.basecamp.turbolinks.core.TurbolinksDestination
 import com.basecamp.turbolinks.core.TurbolinksModalResult
-import com.basecamp.turbolinks.core.TurbolinksSessionViewModel
+import com.basecamp.turbolinks.core.TurbolinksViewModel
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
 import com.basecamp.turbolinks.util.logEvent
 
 class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
     private val location = destination.location
-    private val sessionName = destination.sessionName
+    private val turbolinksName = destination.turbolinksName
 
-    internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
+    internal val turbolinksViewModel = TurbolinksViewModel.get(turbolinksName, fragment.requireActivity())
     internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
 
     internal lateinit var navigator: TurbolinksNavigator
@@ -46,8 +46,8 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
 
     fun onDialogCancel() {
         logEvent("fragment.onDialogCancel", "location" to location)
-        if (!sessionViewModel.modalResultExists) {
-            sessionViewModel.sendDialogResult()
+        if (!turbolinksViewModel.modalResultExists) {
+            turbolinksViewModel.sendDialogResult()
         }
     }
 
@@ -64,7 +64,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply {
-            add(0, "session" to sessionName)
+            add(0, "session" to turbolinksName)
             add("fragment" to fragment.javaClass.simpleName)
         }
         logEvent(event, attributes)

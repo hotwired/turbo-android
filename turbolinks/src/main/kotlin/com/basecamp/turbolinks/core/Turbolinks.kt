@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 @Suppress("unused")
-class TurbolinksSession private constructor(val sessionName: String, val activity: Activity, val webView: TurbolinksWebView) {
+class Turbolinks private constructor(val name: String, val activity: Activity, val webView: TurbolinksWebView) {
     internal lateinit var currentVisit: TurbolinksVisit
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
@@ -101,7 +101,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
-    internal fun removeCallback(callback: TurbolinksSessionCallback) {
+    internal fun removeCallback(callback: TurbolinksCallback) {
         if (currentVisit.callback == callback) {
             currentVisit.callback = null
         }
@@ -303,7 +303,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         )
 
         webView.apply {
-            addJavascriptInterface(this@TurbolinksSession, "TurbolinksSession")
+            addJavascriptInterface(this@Turbolinks, "TurbolinksSession")
             webChromeClient = WebChromeClient()
             webViewClient = TurbolinksWebViewClient()
             initDownloadListener()
@@ -329,7 +329,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         return hashCode().toLong()
     }
 
-    private fun callback(action: (TurbolinksSessionCallback) -> Unit) {
+    private fun callback(action: (TurbolinksCallback) -> Unit) {
         context.runOnUiThread {
             currentVisit.callback?.let {
                 if (it.isActive()) action(it)
@@ -338,7 +338,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     }
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
-        val attributes = params.toMutableList().apply { add(0, "session" to sessionName) }
+        val attributes = params.toMutableList().apply { add(0, "session" to name) }
         logEvent(event, attributes)
     }
 
@@ -529,8 +529,8 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     }
 
     companion object {
-        fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView): TurbolinksSession {
-            return TurbolinksSession(sessionName, activity, webView)
+        fun getNew(name: String, activity: Activity, webView: TurbolinksWebView): Turbolinks {
+            return Turbolinks(name, activity, webView)
         }
     }
 }

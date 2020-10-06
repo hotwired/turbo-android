@@ -6,7 +6,7 @@ import com.basecamp.turbolinks.core.VisitOptions
 import com.basecamp.turbolinks.activity.TurbolinksActivityDelegate
 import com.basecamp.turbolinks.views.TurbolinksView
 
-interface TurbolinksSessionCallback {
+interface TurbolinksCallback {
     fun onPageStarted(location: String)
     fun onPageFinished(location: String)
     fun onReceivedError(errorCode: Int)

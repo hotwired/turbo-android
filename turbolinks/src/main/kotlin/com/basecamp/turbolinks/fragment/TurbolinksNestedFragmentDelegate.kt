@@ -18,8 +18,8 @@ class TurbolinksNestedFragmentDelegate(val fragment: Fragment, navHostFragmentId
         navHostFragment.reset()
     }
 
-    fun resetSession() {
-        navHostFragment.session.reset()
+    fun resetTurbolinks() {
+        navHostFragment.turbolinks.reset()
     }
 
     fun navigate(location: String,

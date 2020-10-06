@@ -48,8 +48,8 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         navHostFragments.forEach { it.value.reset() }
     }
 
-    fun resetSessions() {
-        navHostFragments.forEach { it.value.session.reset() }
+    fun resetAllTurbolinksInstances() {
+        navHostFragments.forEach { it.value.turbolinks.reset() }
     }
 
     fun navigate(location: String,

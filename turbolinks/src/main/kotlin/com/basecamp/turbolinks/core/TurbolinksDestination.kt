@@ -35,7 +35,7 @@ interface TurbolinksDestination {
         get() = navController()?.previousBackStackEntry?.arguments?.location
 
     val pathConfiguration: PathConfiguration
-        get() = session.pathConfiguration
+        get() = turbolinks.pathConfiguration
 
     val pathConfigurationSettings: PathConfigurationSettings
         get() = pathConfiguration.settings
@@ -43,17 +43,17 @@ interface TurbolinksDestination {
     val pathProperties: PathProperties
         get() = pathConfiguration.properties(location)
 
-    val sessionName: String
-        get() = navHostFragment.sessionName
+    val turbolinksName: String
+        get() = navHostFragment.turbolinksName
 
-    val session: TurbolinksSession
-        get() = navHostFragment.session
+    val turbolinks: Turbolinks
+        get() = navHostFragment.turbolinks
 
     val webView: TurbolinksWebView
-        get() = session.webView
+        get() = turbolinks.webView
 
-    val sessionViewModel: TurbolinksSessionViewModel
-        get() = delegate().sessionViewModel
+    val viewModel: TurbolinksViewModel
+        get() = delegate().turbolinksViewModel
 
     val pageViewModel: TurbolinksFragmentViewModel
         get() = delegate().pageViewModel

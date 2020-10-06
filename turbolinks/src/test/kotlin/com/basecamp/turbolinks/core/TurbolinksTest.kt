@@ -2,7 +2,7 @@ package com.basecamp.turbolinks.core
 
 import android.app.Activity
 import android.os.Build
-import com.basecamp.turbolinks.util.TurbolinksSessionCallback
+import com.basecamp.turbolinks.util.TurbolinksCallback
 import com.basecamp.turbolinks.util.toJson
 import com.basecamp.turbolinks.views.TurbolinksWebView
 import com.nhaarman.mockito_kotlin.whenever
@@ -19,13 +19,13 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class TurbolinksSessionTest {
+class TurbolinksTest {
     @Mock
-    private lateinit var callback: TurbolinksSessionCallback
+    private lateinit var callback: TurbolinksCallback
     @Mock
     private lateinit var webView: TurbolinksWebView
     private lateinit var activity: Activity
-    private lateinit var session: TurbolinksSession
+    private lateinit var turbolinks: Turbolinks
     private lateinit var visit: TurbolinksVisit
 
     @Before
@@ -33,7 +33,7 @@ class TurbolinksSessionTest {
         MockitoAnnotations.openMocks(this)
 
         activity = buildActivity(TurbolinksTestActivity::class.java).get()
-        session = TurbolinksSession.getNew("test", activity, webView)
+        turbolinks = Turbolinks.getNew("test", activity, webView)
         visit = TurbolinksVisit(
             location = "https://basecamp.com",
             destinationIdentifier = 1,
@@ -49,18 +49,18 @@ class TurbolinksSessionTest {
 
     @Test
     fun getNewIsAlwaysNewInstance() {
-        val session = TurbolinksSession.getNew("test", activity, webView)
-        val newSession = TurbolinksSession.getNew("test", activity, webView)
+        val turbolinks = Turbolinks.getNew("test", activity, webView)
+        val newTurbolinks = Turbolinks.getNew("test", activity, webView)
 
-        assertThat(session).isNotEqualTo(newSession)
+        assertThat(turbolinks).isNotEqualTo(newTurbolinks)
     }
 
     @Test
     fun visitProposedToLocationFiresCallback() {
         val options = VisitOptions()
 
-        session.currentVisit = visit
-        session.visitProposedToLocation(visit.location, options.toJson())
+        turbolinks.currentVisit = visit
+        turbolinks.visitProposedToLocation(visit.location, options.toJson())
 
         verify(callback).visitProposedToLocation(visit.location, options)
     }
@@ -69,18 +69,18 @@ class TurbolinksSessionTest {
     fun visitStartedSavesCurrentVisitIdentifier() {
         val visitIdentifier = "12345"
 
-        session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.visitStarted(visitIdentifier, true, "https://basecamp.com")
+        turbolinks.currentVisit = visit.copy(identifier = visitIdentifier)
+        turbolinks.visitStarted(visitIdentifier, true, "https://basecamp.com")
 
-        assertThat(session.currentVisit.identifier).isEqualTo(visitIdentifier)
+        assertThat(turbolinks.currentVisit.identifier).isEqualTo(visitIdentifier)
     }
 
     @Test
     fun visitRequestFailedWithStatusCodeCallsAdapter() {
         val visitIdentifier = "12345"
 
-        session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.visitRequestFailedWithStatusCode(visitIdentifier, true, 500)
+        turbolinks.currentVisit = visit.copy(identifier = visitIdentifier)
+        turbolinks.visitRequestFailedWithStatusCode(visitIdentifier, true, 500)
 
         verify(callback).requestFailedWithStatusCode(true, 500)
     }
@@ -90,8 +90,8 @@ class TurbolinksSessionTest {
         val visitIdentifier = "12345"
         val restorationIdentifier = "67890"
 
-        session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.visitCompleted(visitIdentifier, restorationIdentifier)
+        turbolinks.currentVisit = visit.copy(identifier = visitIdentifier)
+        turbolinks.visitCompleted(visitIdentifier, restorationIdentifier)
 
         verify(callback).visitCompleted(false)
     }
@@ -100,59 +100,59 @@ class TurbolinksSessionTest {
     fun visitCompletedSavesRestorationIdentifier() {
         val visitIdentifier = "12345"
         val restorationIdentifier = "67890"
-        assertThat(session.restorationIdentifiers.size()).isEqualTo(0)
+        assertThat(turbolinks.restorationIdentifiers.size()).isEqualTo(0)
 
-        session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.visitCompleted(visitIdentifier, restorationIdentifier)
+        turbolinks.currentVisit = visit.copy(identifier = visitIdentifier)
+        turbolinks.visitCompleted(visitIdentifier, restorationIdentifier)
 
-        assertThat(session.restorationIdentifiers.size()).isEqualTo(1)
+        assertThat(turbolinks.restorationIdentifiers.size()).isEqualTo(1)
     }
 
     @Test
     fun pageLoadedSavesRestorationIdentifier() {
         val restorationIdentifier = "67890"
-        assertThat(session.restorationIdentifiers.size()).isEqualTo(0)
+        assertThat(turbolinks.restorationIdentifiers.size()).isEqualTo(0)
 
-        session.currentVisit = visit
-        session.pageLoaded(restorationIdentifier)
+        turbolinks.currentVisit = visit
+        turbolinks.pageLoaded(restorationIdentifier)
 
-        assertThat(session.restorationIdentifiers.size()).isEqualTo(1)
+        assertThat(turbolinks.restorationIdentifiers.size()).isEqualTo(1)
     }
 
     @Test
     fun pendingVisitIsVisitedWhenReady() {
-        session.currentVisit = visit
-        session.visitPending = true
+        turbolinks.currentVisit = visit
+        turbolinks.visitPending = true
 
-        session.turbolinksIsReady(true)
-        assertThat(session.visitPending).isFalse()
+        turbolinks.turbolinksIsReady(true)
+        assertThat(turbolinks.visitPending).isFalse()
     }
 
     @Test
     fun resetToColdBoot() {
-        session.currentVisit = visit
-        session.isReady = true
-        session.isColdBooting = false
-        session.reset()
+        turbolinks.currentVisit = visit
+        turbolinks.isReady = true
+        turbolinks.isColdBooting = false
+        turbolinks.reset()
 
-        assertThat(session.isReady).isFalse()
-        assertThat(session.isColdBooting).isFalse()
+        assertThat(turbolinks.isReady).isFalse()
+        assertThat(turbolinks.isColdBooting).isFalse()
     }
 
     @Test
     fun resetToColdBootClearsIdentifiers() {
         val visitIdentifier = "12345"
-        session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.coldBootVisitIdentifier = "0"
-        session.reset()
+        turbolinks.currentVisit = visit.copy(identifier = visitIdentifier)
+        turbolinks.coldBootVisitIdentifier = "0"
+        turbolinks.reset()
 
-        assertThat(session.coldBootVisitIdentifier).isEmpty()
-        assertThat(session.currentVisit.identifier).isEmpty()
+        assertThat(turbolinks.coldBootVisitIdentifier).isEmpty()
+        assertThat(turbolinks.currentVisit.identifier).isEmpty()
     }
 
     @Test
     fun webViewIsNotNull() {
-        assertThat(session.webView).isNotNull
+        assertThat(turbolinks.webView).isNotNull
     }
 }
 

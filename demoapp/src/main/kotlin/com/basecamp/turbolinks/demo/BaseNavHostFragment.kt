@@ -25,8 +25,8 @@ abstract class BaseNavHostFragment : TurbolinksNavHostFragment() {
             assetFilePath = "json/configuration.json"
         )
 
-    override fun onSessionCreated() {
-        super.onSessionCreated()
-        session.setDebugLoggingEnabled(BuildConfig.DEBUG)
+    override fun onTurbolinksCreated() {
+        super.onTurbolinksCreated()
+        turbolinks.setDebugLoggingEnabled(BuildConfig.DEBUG)
     }
 }
