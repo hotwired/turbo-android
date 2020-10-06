@@ -7,7 +7,7 @@ import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import androidx.webkit.WebViewCompat
-import com.basecamp.turbolinks.core.VisitOptions
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.util.contentFromAsset
 import com.basecamp.turbolinks.util.runOnUiThread
 import com.basecamp.turbolinks.util.toJson
@@ -32,7 +32,7 @@ open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: 
     val majorVersion: Int?
         get() = versionName?.substringBefore(".")?.toIntOrNull()
 
-    internal fun visitLocation(location: String, options: VisitOptions, restorationIdentifier: String) {
+    internal fun visitLocation(location: String, options: TurbolinksVisitOptions, restorationIdentifier: String) {
         val args = encodeArguments(location, options.toJson(), restorationIdentifier)
         runJavascript("webView.visitLocationWithOptionsAndRestorationIdentifier($args)")
     }

@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.core
+package com.basecamp.turbolinks.visit
 
 import com.basecamp.turbolinks.util.TurbolinksSessionCallback
 
@@ -10,5 +10,5 @@ data class TurbolinksVisit(
     var callback: TurbolinksSessionCallback?,   // Available while current visit
     var identifier: String = "",                // Updated after visitStarted()
     var completedOffline: Boolean = false,      // Updated from shouldInterceptRequest()
-    val options: VisitOptions
+    val options: TurbolinksVisitOptions
 )

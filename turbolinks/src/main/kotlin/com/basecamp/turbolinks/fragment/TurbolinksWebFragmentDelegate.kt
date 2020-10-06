@@ -6,10 +6,13 @@ import android.webkit.WebView
 import androidx.lifecycle.lifecycleScope
 import com.basecamp.turbolinks.config.pullToRefreshEnabled
 import com.basecamp.turbolinks.core.*
+import com.basecamp.turbolinks.visit.TurbolinksVisitAction
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
 import com.basecamp.turbolinks.util.TurbolinksSessionCallback
 import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
 import com.basecamp.turbolinks.views.TurbolinksView
+import com.basecamp.turbolinks.visit.TurbolinksVisit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -131,7 +134,7 @@ class TurbolinksWebFragmentDelegate(
     }
 
     override fun onRenderProcessGone() {
-        navigator.navigate(location, VisitOptions(action = VisitAction.REPLACE))
+        navigator.navigate(location, TurbolinksVisitOptions(action = TurbolinksVisitAction.REPLACE))
     }
 
     override fun requestFailedWithStatusCode(visitHasCachedSnapshot: Boolean, statusCode: Int) {
@@ -148,7 +151,7 @@ class TurbolinksWebFragmentDelegate(
 
     override fun visitProposedToLocation(
         location: String,
-        options: VisitOptions
+        options: TurbolinksVisitOptions
     ) {
         navigator.navigate(location, options)
     }
@@ -161,8 +164,8 @@ class TurbolinksWebFragmentDelegate(
     // Private
     // -----------------------------------------------------------------------
 
-    private fun currentVisitOptions(): VisitOptions {
-        return destination.sessionViewModel.visitOptions?.getContentIfNotHandled() ?: VisitOptions()
+    private fun currentVisitOptions(): TurbolinksVisitOptions {
+        return destination.sessionViewModel.visitOptions?.getContentIfNotHandled() ?: TurbolinksVisitOptions()
     }
 
     private fun initNavigationVisit() {
@@ -242,14 +245,14 @@ class TurbolinksWebFragmentDelegate(
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean, reload: Boolean) {
         val restore = restoreWithCachedSnapshot && !reload
         val options = when {
-            restore -> VisitOptions(action = VisitAction.RESTORE)
-            reload -> VisitOptions()
+            restore -> TurbolinksVisitOptions(action = TurbolinksVisitAction.RESTORE)
+            reload -> TurbolinksVisitOptions()
             else -> visitOptions
         }
 
         destination.fragment.lifecycleScope.launch {
             val snapshot = when (options.action) {
-                VisitAction.ADVANCE -> fetchCachedSnapshot()
+                TurbolinksVisitAction.ADVANCE -> fetchCachedSnapshot()
                 else -> null
             }
 

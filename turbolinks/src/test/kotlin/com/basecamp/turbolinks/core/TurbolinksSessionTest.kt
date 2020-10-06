@@ -5,6 +5,8 @@ import android.os.Build
 import com.basecamp.turbolinks.util.TurbolinksSessionCallback
 import com.basecamp.turbolinks.util.toJson
 import com.basecamp.turbolinks.views.TurbolinksWebView
+import com.basecamp.turbolinks.visit.TurbolinksVisit
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -41,7 +43,7 @@ class TurbolinksSessionTest {
             reload = false,
             callback = callback,
             identifier = "",
-            options = VisitOptions()
+            options = TurbolinksVisitOptions()
         )
 
         whenever(callback.isActive()).thenReturn(true)
@@ -57,7 +59,7 @@ class TurbolinksSessionTest {
 
     @Test
     fun visitProposedToLocationFiresCallback() {
-        val options = VisitOptions()
+        val options = TurbolinksVisitOptions()
 
         session.currentVisit = visit
         session.visitProposedToLocation(visit.location, options.toJson())

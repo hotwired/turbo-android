@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.basecamp.turbolinks.core.VisitAction
-import com.basecamp.turbolinks.core.VisitActionAdapter
+import com.basecamp.turbolinks.visit.TurbolinksVisitAction
+import com.basecamp.turbolinks.visit.TurbolinksVisitActionAdapter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -71,6 +71,6 @@ internal fun View.gone() {
 
 private fun gson(): Gson {
     return GsonBuilder()
-        .registerTypeAdapter(VisitAction::class.java, VisitActionAdapter())
+        .registerTypeAdapter(TurbolinksVisitAction::class.java, TurbolinksVisitActionAdapter())
         .create()
 }

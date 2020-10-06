@@ -7,14 +7,14 @@ import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
 import com.basecamp.turbolinks.config.*
 import com.basecamp.turbolinks.core.TurbolinksModalResult
-import com.basecamp.turbolinks.core.VisitAction
-import com.basecamp.turbolinks.core.VisitOptions
+import com.basecamp.turbolinks.visit.TurbolinksVisitAction
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import java.net.URI
 
 @Suppress("MemberVisibilityCanBePrivate")
 class TurbolinksNavRule(
     location: String,
-    visitOptions: VisitOptions,
+    visitOptions: TurbolinksVisitOptions,
     bundle: Bundle?,
     navOptions: NavOptions,
     extras: FragmentNavigator.Extras?,
@@ -65,7 +65,7 @@ class TurbolinksNavRule(
 
         val locationIsCurrent = locationPathsAreEqual(newLocation, currentLocation)
         val locationIsPrevious = locationPathsAreEqual(newLocation, previousLocation)
-        val replace = newVisitOptions.action == VisitAction.REPLACE
+        val replace = newVisitOptions.action == TurbolinksVisitAction.REPLACE
 
         return when {
             locationIsCurrent && isAtStartDestination -> Presentation.REPLACE_ROOT
