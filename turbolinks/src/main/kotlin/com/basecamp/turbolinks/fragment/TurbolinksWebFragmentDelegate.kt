@@ -5,23 +5,20 @@ import android.webkit.HttpAuthHandler
 import android.webkit.WebView
 import androidx.lifecycle.lifecycleScope
 import com.basecamp.turbolinks.config.pullToRefreshEnabled
+import com.basecamp.turbolinks.core.*
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
-import com.basecamp.turbolinks.core.TurbolinksDestination
-import com.basecamp.turbolinks.core.TurbolinksModalResult
-import com.basecamp.turbolinks.core.TurbolinksSession
 import com.basecamp.turbolinks.util.TurbolinksSessionCallback
 import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
-import com.basecamp.turbolinks.core.TurbolinksVisit
-import com.basecamp.turbolinks.core.VisitAction
-import com.basecamp.turbolinks.core.VisitOptions
 import com.basecamp.turbolinks.views.TurbolinksView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
-class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestination,
-                                    private val callback: TurbolinksWebFragmentCallback) : TurbolinksSessionCallback {
+class TurbolinksWebFragmentDelegate(
+    private val destination: TurbolinksDestination,
+    private val callback: TurbolinksWebFragmentCallback
+) : TurbolinksSessionCallback {
 
     private val location = destination.location
     private val visitOptions = currentVisitOptions()
@@ -149,8 +146,10 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         callback.onReceivedHttpAuthRequest(handler, host, realm)
     }
 
-    override fun visitProposedToLocation(location: String,
-                                         options: VisitOptions) {
+    override fun visitProposedToLocation(
+        location: String,
+        options: VisitOptions
+    ) {
         navigator.navigate(location, options)
     }
 
@@ -254,14 +253,16 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
                 else -> null
             }
 
-            session().visit(TurbolinksVisit(
-                location = location,
-                destinationIdentifier = identifier,
-                restoreWithCachedSnapshot = restoreWithCachedSnapshot,
-                reload = reload,
-                callback = this@TurbolinksWebFragmentDelegate,
-                options = options.copy(snapshotHTML = snapshot)
-            ))
+            session().visit(
+                TurbolinksVisit(
+                    location = location,
+                    destinationIdentifier = identifier,
+                    restoreWithCachedSnapshot = restoreWithCachedSnapshot,
+                    reload = reload,
+                    callback = this@TurbolinksWebFragmentDelegate,
+                    options = options.copy(snapshotHTML = snapshot)
+                )
+            )
         }
     }
 
@@ -318,7 +319,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
 
     private fun showScreenshotIfAvailable(turbolinksView: TurbolinksView) {
         if (screenshotOrientation == turbolinksView.screenshotOrientation() &&
-            screenshotZoomed == currentlyZoomed) {
+            screenshotZoomed == currentlyZoomed
+        ) {
             screenshot?.let { turbolinksView.addScreenshot(it) }
         }
     }

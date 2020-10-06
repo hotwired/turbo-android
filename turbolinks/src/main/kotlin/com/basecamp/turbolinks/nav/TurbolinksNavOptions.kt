@@ -6,8 +6,8 @@ import com.basecamp.turbolinks.config.PathProperties
 import com.basecamp.turbolinks.core.VisitOptions
 
 data class TurbolinksNavOptions(
-        val visitOptions: VisitOptions,
-        val pathProperties: PathProperties? = null,
-        val args: Bundle? = null,
-        val navExtras: FragmentNavigator.Extras? = null
+    val visitOptions: VisitOptions,
+    val pathProperties: PathProperties? = null,
+    val args: Bundle? = null,
+    val navExtras: FragmentNavigator.Extras? = null
 )
