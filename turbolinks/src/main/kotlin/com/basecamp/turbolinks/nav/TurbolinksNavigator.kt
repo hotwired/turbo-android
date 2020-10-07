@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks.nav
 
 import android.os.Bundle
+import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
@@ -147,7 +148,8 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         )
 
         onNavigationVisit {
-            if (destination.isDialog) {
+            val isDialog = fragment is DialogFragment
+            if (isDialog) {
                 // Pop the backstack before sending the modal result, since the
                 // underlying fragment is still active and will receive the
                 // result immediately. This allows the modal result flow to
