@@ -18,7 +18,6 @@ import com.basecamp.turbolinks.fragment.TurbolinksFragmentDelegate
 import com.basecamp.turbolinks.fragment.TurbolinksFragmentViewModel
 import com.basecamp.turbolinks.nav.TurbolinksNavHostFragment
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
-import com.basecamp.turbolinks.views.TurbolinksWebView
 
 interface TurbolinksDestination {
     val fragment: Fragment
@@ -44,9 +43,6 @@ interface TurbolinksDestination {
 
     val session: TurbolinksSession
         get() = navHostFragment.session
-
-    val webView: TurbolinksWebView
-        get() = session.webView
 
     val sessionViewModel: TurbolinksSessionViewModel
         get() = delegate().sessionViewModel
