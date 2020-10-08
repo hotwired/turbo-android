@@ -11,7 +11,7 @@ import com.basecamp.turbolinks.util.logEvent
 class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
     private val location = destination.location
-    private val sessionName = destination.sessionName
+    private val sessionName = destination.navHostFragment.sessionName
 
     internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
     internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)

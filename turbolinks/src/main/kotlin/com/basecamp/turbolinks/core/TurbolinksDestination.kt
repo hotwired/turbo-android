@@ -3,7 +3,6 @@ package com.basecamp.turbolinks.core
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
@@ -20,7 +19,6 @@ import com.basecamp.turbolinks.fragment.TurbolinksFragmentDelegate
 import com.basecamp.turbolinks.fragment.TurbolinksFragmentViewModel
 import com.basecamp.turbolinks.nav.TurbolinksNavHostFragment
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
-import com.basecamp.turbolinks.views.TurbolinksWebView
 
 interface TurbolinksDestination {
     val fragment: Fragment
@@ -44,14 +42,8 @@ interface TurbolinksDestination {
     val pathProperties: PathProperties
         get() = pathConfiguration.properties(location)
 
-    val sessionName: String
-        get() = navHostFragment.sessionName
-
     val session: TurbolinksSession
         get() = navHostFragment.session
-
-    val webView: TurbolinksWebView
-        get() = session.webView
 
     val sessionViewModel: TurbolinksSessionViewModel
         get() = delegate().sessionViewModel
@@ -61,9 +53,6 @@ interface TurbolinksDestination {
 
     val navigator: TurbolinksNavigator
         get() = delegate().navigator
-
-    val isDialog: Boolean
-        get() = fragment is DialogFragment
 
     fun delegate(): TurbolinksFragmentDelegate
 
