@@ -1,7 +1,8 @@
-package com.basecamp.turbolinks.demo
+package com.basecamp.turbolinks.demo.util
 
 import android.app.AlertDialog
 import android.content.Context
+import com.basecamp.turbolinks.demo.R
 
 @Suppress("ConstantConditionIf")
 fun verifyServerIpAddress(context: Context) {

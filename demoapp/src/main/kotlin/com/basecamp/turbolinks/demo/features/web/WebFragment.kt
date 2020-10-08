@@ -1,10 +1,13 @@
-package com.basecamp.turbolinks.demo
+package com.basecamp.turbolinks.demo.features.web
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import com.basecamp.turbolinks.demo.util.Error
+import com.basecamp.turbolinks.demo.base.NavDestination
+import com.basecamp.turbolinks.demo.R
 import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
 import com.basecamp.turbolinks.fragments.TurbolinksWebFragment
 import com.basecamp.turbolinks.views.TurbolinksView

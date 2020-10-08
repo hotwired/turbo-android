@@ -1,7 +1,10 @@
-package com.basecamp.turbolinks.demo
+package com.basecamp.turbolinks.demo.base
 
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import com.basecamp.turbolinks.demo.R
+import com.basecamp.turbolinks.demo.main.MainActivity
+import com.basecamp.turbolinks.demo.util.Constants
 import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import java.net.MalformedURLException
 

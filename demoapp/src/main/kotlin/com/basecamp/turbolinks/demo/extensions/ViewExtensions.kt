@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.demo
+package com.basecamp.turbolinks.demo.extensions
 
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet

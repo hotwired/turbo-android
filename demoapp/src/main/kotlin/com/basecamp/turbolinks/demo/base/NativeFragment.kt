@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.demo
+package com.basecamp.turbolinks.demo.base
 
 import com.basecamp.turbolinks.fragments.TurbolinksFragment
 

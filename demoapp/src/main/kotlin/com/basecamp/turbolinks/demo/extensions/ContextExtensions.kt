@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.demo
+package com.basecamp.turbolinks.demo.extensions
 
 import android.content.Context
 import android.graphics.drawable.Drawable

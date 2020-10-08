@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.demo
+package com.basecamp.turbolinks.demo.main
 
 import android.os.Bundle
 import android.view.View
@@ -8,15 +8,19 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.util.TurbolinksActivity
 import com.basecamp.turbolinks.delegates.TurbolinksActivityDelegate
+import com.basecamp.turbolinks.demo.R
+import com.basecamp.turbolinks.demo.extensions.animateVisibility
+import com.basecamp.turbolinks.demo.extensions.isAlreadyVisible
+import com.basecamp.turbolinks.demo.util.verifyServerIpAddress
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {
     override lateinit var delegate: TurbolinksActivityDelegate
 
     private val navHostFragments = listOf(
-            R.id.food_nav_host,
-            R.id.orders_nav_host,
-            R.id.me_nav_host
+        R.id.food_nav_host,
+        R.id.orders_nav_host,
+        R.id.me_nav_host
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

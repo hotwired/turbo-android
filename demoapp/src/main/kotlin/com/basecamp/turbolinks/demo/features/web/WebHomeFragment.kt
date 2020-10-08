@@ -1,9 +1,10 @@
-package com.basecamp.turbolinks.demo
+package com.basecamp.turbolinks.demo.features.web
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.basecamp.turbolinks.demo.R
 import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web/home")
