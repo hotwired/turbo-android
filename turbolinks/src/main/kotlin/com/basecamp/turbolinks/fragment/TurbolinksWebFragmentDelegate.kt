@@ -9,7 +9,7 @@ import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
-import com.basecamp.turbolinks.session.TurbolinksModalResult
+import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.session.TurbolinksSession
 import com.basecamp.turbolinks.util.TurbolinksSessionCallback
 import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
@@ -58,7 +58,7 @@ class TurbolinksWebFragmentDelegate(
         initNavigationVisit()
     }
 
-    fun onStartAfterModalResult(result: TurbolinksModalResult) {
+    fun onStartAfterModalResult(result: TurbolinksSessionModalResult) {
         if (!result.shouldNavigate) {
             initNavigationVisit()
         }

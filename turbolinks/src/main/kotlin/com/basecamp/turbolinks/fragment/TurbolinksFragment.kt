@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.nav.TurbolinksNavDestination
-import com.basecamp.turbolinks.session.TurbolinksModalResult
+import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
 import com.basecamp.turbolinks.config.context
 
@@ -40,7 +40,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksNavDestination {
         delegate.onStop()
     }
 
-    open fun onStartAfterModalResult(result: TurbolinksModalResult) {
+    open fun onStartAfterModalResult(result: TurbolinksSessionModalResult) {
         delegate.onStartAfterModalResult(result)
     }
 

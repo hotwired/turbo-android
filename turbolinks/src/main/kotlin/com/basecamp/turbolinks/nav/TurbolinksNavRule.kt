@@ -6,7 +6,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
 import com.basecamp.turbolinks.config.*
-import com.basecamp.turbolinks.session.TurbolinksModalResult
+import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import java.net.URI
@@ -107,12 +107,12 @@ class TurbolinksNavRule(
         }
     }
 
-    private fun newModalResult(): TurbolinksModalResult? {
+    private fun newModalResult(): TurbolinksSessionModalResult? {
         if (newNavigationMode != NavigationMode.DISMISS_MODAL) {
             return null
         }
 
-        return TurbolinksModalResult(
+        return TurbolinksSessionModalResult(
             location = newLocation,
             options = newVisitOptions,
             bundle = newBundle,

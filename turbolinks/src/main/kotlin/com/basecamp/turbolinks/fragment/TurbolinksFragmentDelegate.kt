@@ -3,7 +3,7 @@ package com.basecamp.turbolinks.fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.basecamp.turbolinks.nav.TurbolinksNavDestination
-import com.basecamp.turbolinks.session.TurbolinksModalResult
+import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.session.TurbolinksSessionViewModel
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
 import com.basecamp.turbolinks.util.logEvent
@@ -37,7 +37,7 @@ class TurbolinksFragmentDelegate(private val navDestination: TurbolinksNavDestin
         logEvent("fragment.onStartAfterDialogCancel", "location" to location)
     }
 
-    fun onStartAfterModalResult(result: TurbolinksModalResult) {
+    fun onStartAfterModalResult(result: TurbolinksSessionModalResult) {
         logEvent("fragment.onStartAfterModalResult", "location" to result.location, "options" to result.options)
         if (result.shouldNavigate) {
             navigator.navigate(result.location, result.options, result.bundle)
