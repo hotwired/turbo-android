@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.fragment
+package com.basecamp.turbolinks.delegates
 
 import android.os.Bundle
 import androidx.annotation.IdRes

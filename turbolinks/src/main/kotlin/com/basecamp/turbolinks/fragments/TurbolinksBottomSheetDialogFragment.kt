@@ -1,7 +1,8 @@
-package com.basecamp.turbolinks.fragment
+package com.basecamp.turbolinks.fragments
 
 import android.content.DialogInterface
 import android.os.Bundle
+import com.basecamp.turbolinks.delegates.TurbolinksFragmentDelegate
 import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 

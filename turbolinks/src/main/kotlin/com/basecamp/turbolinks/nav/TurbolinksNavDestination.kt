@@ -15,10 +15,9 @@ import com.basecamp.turbolinks.config.PathConfiguration
 import com.basecamp.turbolinks.config.PathConfigurationSettings
 import com.basecamp.turbolinks.config.PathProperties
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
-import com.basecamp.turbolinks.fragment.TurbolinksFragmentDelegate
-import com.basecamp.turbolinks.fragment.TurbolinksFragmentViewModel
+import com.basecamp.turbolinks.delegates.TurbolinksFragmentDelegate
+import com.basecamp.turbolinks.fragments.TurbolinksFragmentViewModel
 import com.basecamp.turbolinks.session.TurbolinksSessionNavHostFragment
-import com.basecamp.turbolinks.nav.TurbolinksNavigator
 import com.basecamp.turbolinks.session.TurbolinksSession
 import com.basecamp.turbolinks.session.TurbolinksSessionViewModel
 

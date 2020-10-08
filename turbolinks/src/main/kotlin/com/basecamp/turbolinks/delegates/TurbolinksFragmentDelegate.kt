@@ -1,7 +1,8 @@
-package com.basecamp.turbolinks.fragment
+package com.basecamp.turbolinks.delegates
 
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import com.basecamp.turbolinks.fragments.TurbolinksFragmentViewModel
 import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.session.TurbolinksSessionViewModel

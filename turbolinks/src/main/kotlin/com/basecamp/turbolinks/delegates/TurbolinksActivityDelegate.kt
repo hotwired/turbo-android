@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.activity
+package com.basecamp.turbolinks.delegates
 
 import android.os.Bundle
 import androidx.activity.addCallback

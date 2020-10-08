@@ -7,7 +7,7 @@ import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.util.TurbolinksActivity
-import com.basecamp.turbolinks.activity.TurbolinksActivityDelegate
+import com.basecamp.turbolinks.delegates.TurbolinksActivityDelegate
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {

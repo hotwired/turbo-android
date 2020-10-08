@@ -1,7 +1,8 @@
-package com.basecamp.turbolinks.fragment
+package com.basecamp.turbolinks.fragments
 
 import android.os.Bundle
 import android.webkit.HttpAuthHandler
+import com.basecamp.turbolinks.delegates.TurbolinksWebFragmentDelegate
 import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
 

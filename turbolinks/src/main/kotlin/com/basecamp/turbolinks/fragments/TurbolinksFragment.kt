@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.fragment
+package com.basecamp.turbolinks.fragments
 
 import android.os.Bundle
 import android.view.View
@@ -7,6 +7,7 @@ import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
 import com.basecamp.turbolinks.config.context
+import com.basecamp.turbolinks.delegates.TurbolinksFragmentDelegate
 
 abstract class TurbolinksFragment : Fragment(), TurbolinksNavDestination {
     private lateinit var delegate: TurbolinksFragmentDelegate

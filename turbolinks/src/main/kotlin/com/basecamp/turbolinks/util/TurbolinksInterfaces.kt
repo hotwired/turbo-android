@@ -2,7 +2,7 @@ package com.basecamp.turbolinks.util
 
 import android.view.View
 import android.webkit.HttpAuthHandler
-import com.basecamp.turbolinks.activity.TurbolinksActivityDelegate
+import com.basecamp.turbolinks.delegates.TurbolinksActivityDelegate
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.views.TurbolinksView
 
