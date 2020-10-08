@@ -1,8 +1,7 @@
-package com.basecamp.turbolinks.core
+package com.basecamp.turbolinks.session
 
 import android.app.Activity
 import android.os.Build
-import com.basecamp.turbolinks.session.TurbolinksSession
 import com.basecamp.turbolinks.util.TurbolinksSessionCallback
 import com.basecamp.turbolinks.util.toJson
 import com.basecamp.turbolinks.views.TurbolinksWebView
