@@ -6,7 +6,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
 import com.basecamp.turbolinks.config.*
-import com.basecamp.turbolinks.core.TurbolinksModalResult
+import com.basecamp.turbolinks.session.TurbolinksModalResult
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import java.net.URI

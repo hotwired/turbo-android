@@ -11,7 +11,7 @@ import com.basecamp.turbolinks.views.TurbolinksView
 import kotlinx.android.synthetic.main.error.view.*
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web")
-open class WebFragment : TurbolinksWebFragment(), Destination {
+open class WebFragment : TurbolinksWebFragment(), NavDestination {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_web, container, false)
     }

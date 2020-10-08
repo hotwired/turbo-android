@@ -3,7 +3,7 @@
 # The custom rule file must be defined using the 'consumerProguardFiles' property in your
 # build.gradle file.
 
--keepclassmembers class com.basecamp.turbolinks.core.TurbolinksSession {
+-keepclassmembers class com.basecamp.turbolinks.session.TurbolinksSession {
     @android.webkit.JavascriptInterface <methods>;
 }
 -keepattributes JavascriptInterface

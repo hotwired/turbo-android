@@ -2,10 +2,11 @@ package com.basecamp.turbolinks.fragment
 
 import android.content.DialogInterface
 import android.os.Bundle
-import com.basecamp.turbolinks.core.TurbolinksDestination
+import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-abstract class TurbolinksBottomSheetDialogFragment : BottomSheetDialogFragment(), TurbolinksDestination {
+abstract class TurbolinksBottomSheetDialogFragment : BottomSheetDialogFragment(),
+    TurbolinksNavDestination {
     private lateinit var delegate: TurbolinksFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {

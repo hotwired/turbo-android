@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.core
+package com.basecamp.turbolinks.session
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity

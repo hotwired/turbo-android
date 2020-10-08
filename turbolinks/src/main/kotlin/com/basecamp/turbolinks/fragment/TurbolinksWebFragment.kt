@@ -2,7 +2,7 @@ package com.basecamp.turbolinks.fragment
 
 import android.os.Bundle
 import android.webkit.HttpAuthHandler
-import com.basecamp.turbolinks.core.TurbolinksModalResult
+import com.basecamp.turbolinks.session.TurbolinksModalResult
 import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
 
 abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragmentCallback {

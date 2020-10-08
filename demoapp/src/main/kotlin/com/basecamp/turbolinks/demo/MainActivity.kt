@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
     }
 
     fun animateBottomNavVisibility(fragment: Fragment, visible: Boolean) {
-        if (fragment == delegate.currentDestination && visible != bottom_nav.isAlreadyVisible) {
+        if (fragment == delegate.currentNavDestination && visible != bottom_nav.isAlreadyVisible) {
             bottom_nav.animateVisibility(visible)
         }
     }

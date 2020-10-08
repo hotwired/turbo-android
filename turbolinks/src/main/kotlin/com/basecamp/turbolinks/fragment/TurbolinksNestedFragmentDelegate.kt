@@ -3,16 +3,16 @@ package com.basecamp.turbolinks.fragment
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
-import com.basecamp.turbolinks.core.TurbolinksDestination
+import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
-import com.basecamp.turbolinks.nav.TurbolinksNavHostFragment
+import com.basecamp.turbolinks.session.TurbolinksSessionNavHostFragment
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class TurbolinksNestedFragmentDelegate(val fragment: Fragment, navHostFragmentId: Int) {
     val navHostFragment by lazy { findNavHostFragment(navHostFragmentId) }
 
-    val currentDestination: TurbolinksDestination
-        get() = currentFragment as TurbolinksDestination
+    val currentNavDestination: TurbolinksNavDestination
+        get() = currentFragment as TurbolinksNavDestination
 
     fun resetNavHostFragment() {
         navHostFragment.reset()
@@ -25,26 +25,26 @@ class TurbolinksNestedFragmentDelegate(val fragment: Fragment, navHostFragmentId
     fun navigate(location: String,
                  options: TurbolinksVisitOptions = TurbolinksVisitOptions(),
                  bundle: Bundle? = null) {
-        currentDestination.navigate(location, options, bundle)
+        currentNavDestination.navigate(location, options, bundle)
     }
 
     fun navigateUp() {
-        currentDestination.navigateUp()
+        currentNavDestination.navigateUp()
     }
 
     fun navigateBack() {
-        currentDestination.navigateBack()
+        currentNavDestination.navigateBack()
     }
 
     fun clearBackStack() {
-        currentDestination.clearBackStack()
+        currentNavDestination.clearBackStack()
     }
 
     private val currentFragment: Fragment
         get() = navHostFragment.childFragmentManager.primaryNavigationFragment as Fragment
 
-    private fun findNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksNavHostFragment {
-        return fragment.childFragmentManager.findFragmentById(navHostFragmentId) as? TurbolinksNavHostFragment
+    private fun findNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksSessionNavHostFragment {
+        return fragment.childFragmentManager.findFragmentById(navHostFragmentId) as? TurbolinksSessionNavHostFragment
             ?: throw IllegalStateException("No TurbolinksNavHostFragment found with ID: $navHostFragmentId")
     }
 }

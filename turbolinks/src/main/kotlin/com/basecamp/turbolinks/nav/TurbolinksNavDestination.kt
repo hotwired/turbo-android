@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.core
+package com.basecamp.turbolinks.nav
 
 import android.os.Bundle
 import androidx.annotation.IdRes
@@ -17,15 +17,17 @@ import com.basecamp.turbolinks.config.PathProperties
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.fragment.TurbolinksFragmentDelegate
 import com.basecamp.turbolinks.fragment.TurbolinksFragmentViewModel
-import com.basecamp.turbolinks.nav.TurbolinksNavHostFragment
+import com.basecamp.turbolinks.session.TurbolinksSessionNavHostFragment
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
+import com.basecamp.turbolinks.session.TurbolinksSession
+import com.basecamp.turbolinks.session.TurbolinksSessionViewModel
 
-interface TurbolinksDestination {
+interface TurbolinksNavDestination {
     val fragment: Fragment
         get() = this as Fragment
 
-    val navHostFragment: TurbolinksNavHostFragment
-        get() = fragment.parentFragment as TurbolinksNavHostFragment
+    val sessionNavHostFragment: TurbolinksSessionNavHostFragment
+        get() = fragment.parentFragment as TurbolinksSessionNavHostFragment
 
     val location: String
         get() = requireNotNull(fragment.arguments?.location)
@@ -43,7 +45,7 @@ interface TurbolinksDestination {
         get() = pathConfiguration.properties(location)
 
     val session: TurbolinksSession
-        get() = navHostFragment.session
+        get() = sessionNavHostFragment.session
 
     val sessionViewModel: TurbolinksSessionViewModel
         get() = delegate().sessionViewModel
@@ -60,8 +62,8 @@ interface TurbolinksDestination {
 
     fun onBeforeNavigation()
 
-    fun navHostForNavigation(newLocation: String): TurbolinksNavHostFragment {
-        return navHostFragment
+    fun navHostForNavigation(newLocation: String): TurbolinksSessionNavHostFragment {
+        return sessionNavHostFragment
     }
 
     fun shouldNavigateTo(newLocation: String): Boolean {
@@ -103,7 +105,7 @@ interface TurbolinksDestination {
         navigator.clearBackStack()
     }
 
-    fun findNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksNavHostFragment {
+    fun findNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksSessionNavHostFragment {
         return fragment.parentFragment?.childFragmentManager?.findNavHostFragment(navHostFragmentId)
             ?: fragment.parentFragment?.parentFragment?.childFragmentManager?.findNavHostFragment(navHostFragmentId)
             ?: fragment.requireActivity().supportFragmentManager.findNavHostFragment(navHostFragmentId)
@@ -119,7 +121,7 @@ interface TurbolinksDestination {
         return fragment.parentFragment?.findNavController()
     }
 
-    private fun FragmentManager.findNavHostFragment(navHostFragmentId: Int): TurbolinksNavHostFragment? {
-        return findFragmentById(navHostFragmentId) as? TurbolinksNavHostFragment
+    private fun FragmentManager.findNavHostFragment(navHostFragmentId: Int): TurbolinksSessionNavHostFragment? {
+        return findFragmentById(navHostFragmentId) as? TurbolinksSessionNavHostFragment
     }
 }

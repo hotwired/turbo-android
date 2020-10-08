@@ -3,12 +3,12 @@ package com.basecamp.turbolinks.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.basecamp.turbolinks.core.TurbolinksDestination
-import com.basecamp.turbolinks.core.TurbolinksModalResult
+import com.basecamp.turbolinks.nav.TurbolinksNavDestination
+import com.basecamp.turbolinks.session.TurbolinksModalResult
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
 import com.basecamp.turbolinks.config.context
 
-abstract class TurbolinksFragment : Fragment(), TurbolinksDestination {
+abstract class TurbolinksFragment : Fragment(), TurbolinksNavDestination {
     private lateinit var delegate: TurbolinksFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
