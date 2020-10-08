@@ -1,9 +1,13 @@
-package com.basecamp.turbolinks.demosimple
+package com.basecamp.turbolinks.demosimple.main
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.BuildConfig
 import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.demosimple.features.imageviewer.ImageViewerFragment
+import com.basecamp.turbolinks.demosimple.features.web.WebFragment
+import com.basecamp.turbolinks.demosimple.features.web.WebHomeFragment
+import com.basecamp.turbolinks.demosimple.util.Constants
 import com.basecamp.turbolinks.session.TurbolinksSessionNavHostFragment
 import kotlin.reflect.KClass
 

@@ -1,8 +1,10 @@
-package com.basecamp.turbolinks.demosimple
+package com.basecamp.turbolinks.demosimple.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.basecamp.turbolinks.delegates.TurbolinksActivityDelegate
+import com.basecamp.turbolinks.demosimple.R
+import com.basecamp.turbolinks.demosimple.util.verifyServerIpAddress
 import com.basecamp.turbolinks.util.TurbolinksActivity
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {

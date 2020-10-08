@@ -1,10 +1,12 @@
-package com.basecamp.turbolinks.demosimple
+package com.basecamp.turbolinks.demosimple.features.imageviewer
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import com.basecamp.turbolinks.demosimple.base.NavDestination
+import com.basecamp.turbolinks.demosimple.R
 import com.basecamp.turbolinks.fragments.TurbolinksFragment
 import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
 import com.bumptech.glide.Glide

@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.demosimple
+package com.basecamp.turbolinks.demosimple.util
 
 object Constants {
     const val IP_ADDRESS = "x.x.x.x"

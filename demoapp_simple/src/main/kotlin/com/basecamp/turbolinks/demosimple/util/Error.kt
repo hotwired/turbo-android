@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.demosimple
+package com.basecamp.turbolinks.demosimple.util
 
 class Error {
     companion object {
