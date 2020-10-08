@@ -1,17 +1,17 @@
-package com.basecamp.turbolinks.nav
+package com.basecamp.turbolinks.session
 
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.*
-import com.basecamp.turbolinks.core.TurbolinksDestination
-import com.basecamp.turbolinks.core.TurbolinksSession
+import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.views.TurbolinksWebView
 import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.nav.TurbolinksNavGraphBuilder
 import kotlin.reflect.KClass
 
-abstract class TurbolinksNavHostFragment : NavHostFragment() {
+abstract class TurbolinksSessionNavHostFragment : NavHostFragment() {
     abstract val sessionName: String
     abstract val startLocation: String
     abstract val pathConfigurationLocation: PathConfiguration.Location
@@ -46,8 +46,8 @@ abstract class TurbolinksNavHostFragment : NavHostFragment() {
         initControllerGraph()
     }
 
-    val currentDestination: TurbolinksDestination
-        get() = childFragmentManager.primaryNavigationFragment as TurbolinksDestination?
+    val currentNavDestination: TurbolinksNavDestination
+        get() = childFragmentManager.primaryNavigationFragment as TurbolinksNavDestination?
             ?: throw IllegalStateException("No current destination found in NavHostFragment")
 
     private fun initControllerGraph() {

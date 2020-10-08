@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.core
+package com.basecamp.turbolinks.session
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
@@ -13,28 +13,28 @@ class TurbolinksSessionViewModel : ViewModel() {
     var visitOptions: TurbolinksEvent<TurbolinksVisitOptions>? = null
 
     // Modal result can only be observed once
-    val modalResult: MutableLiveData<TurbolinksEvent<TurbolinksModalResult>> by lazy {
-        MutableLiveData<TurbolinksEvent<TurbolinksModalResult>>()
+    val modalResult: MutableLiveData<TurbolinksEvent<TurbolinksSessionModalResult>> by lazy {
+        MutableLiveData<TurbolinksEvent<TurbolinksSessionModalResult>>()
     }
 
     val modalResultExists: Boolean
         get() = modalResult.value?.hasBeenHandled == false
 
     // Dialog result can only be observed once
-    val dialogResult: MutableLiveData<TurbolinksEvent<TurbolinksDialogResult>> by lazy {
-        MutableLiveData<TurbolinksEvent<TurbolinksDialogResult>>()
+    val dialogResult: MutableLiveData<TurbolinksEvent<TurbolinksSessionDialogResult>> by lazy {
+        MutableLiveData<TurbolinksEvent<TurbolinksSessionDialogResult>>()
     }
 
     fun saveVisitOptions(options: TurbolinksVisitOptions) {
         visitOptions = TurbolinksEvent(options)
     }
 
-    fun sendModalResult(result: TurbolinksModalResult) {
+    fun sendModalResult(result: TurbolinksSessionModalResult) {
         modalResult.value = TurbolinksEvent(result)
     }
 
     fun sendDialogResult() {
-        dialogResult.value = TurbolinksEvent(TurbolinksDialogResult(true))
+        dialogResult.value = TurbolinksEvent(TurbolinksSessionDialogResult(true))
     }
 
     companion object {
@@ -45,14 +45,3 @@ class TurbolinksSessionViewModel : ViewModel() {
         }
     }
 }
-
-data class TurbolinksModalResult(
-    val location: String,
-    val options: TurbolinksVisitOptions,
-    val bundle: Bundle?,
-    val shouldNavigate: Boolean
-)
-
-data class TurbolinksDialogResult(
-    val cancelled: Boolean
-)

@@ -6,18 +6,17 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
-import com.basecamp.turbolinks.core.TurbolinksDestination
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.NavigationMode
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.Presentation
 import com.basecamp.turbolinks.util.logEvent
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 
-class TurbolinksNavigator(private val destination: TurbolinksDestination) {
-    private val fragment = destination.fragment
-    private val session = destination.session
+class TurbolinksNavigator(private val navDestination: TurbolinksNavDestination) {
+    private val fragment = navDestination.fragment
+    private val session = navDestination.session
 
     var onNavigationVisit: (onNavigate: () -> Unit) -> Unit = { onReady ->
-        destination.onBeforeNavigation()
+        navDestination.onBeforeNavigation()
         onReady()
     }
 
@@ -166,7 +165,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private fun sendModalResult(rule: TurbolinksNavRule) {
         // Save the modal result with VisitOptions so it can be retrieved
         // by the previous destination when the backstack is popped.
-        destination.sessionViewModel.sendModalResult(
+        navDestination.sessionViewModel.sendModalResult(
             checkNotNull(rule.newModalResult)
         )
     }
@@ -194,7 +193,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         // Save the VisitOptions so it can be retrieved by the next
         // destination. When response.responseHTML is present it is
         // too large to save directly within the args bundle.
-        destination.sessionViewModel.saveVisitOptions(rule.newVisitOptions)
+        navDestination.sessionViewModel.saveVisitOptions(rule.newVisitOptions)
 
         rule.newDestination?.let {
             logEvent(
@@ -235,7 +234,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun currentControllerForLocation(location: String): NavController {
-        return destination.navHostForNavigation(location).navController
+        return navDestination.navHostForNavigation(location).navController
     }
 
     private fun isAtStartDestination(): Boolean {
@@ -243,7 +242,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     }
 
     private fun shouldNavigate(location: String): Boolean {
-        val shouldNavigate = destination.shouldNavigateTo(location)
+        val shouldNavigate = navDestination.shouldNavigateTo(location)
 
         logEvent(
             "shouldNavigateToLocation",
@@ -256,7 +255,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private fun navOptions(location: String): NavOptions {
         val properties = session.pathConfiguration.properties(location)
 
-        return destination.getNavigationOptions(
+        return navDestination.getNavigationOptions(
             newLocation = location,
             newPathProperties = properties
         )

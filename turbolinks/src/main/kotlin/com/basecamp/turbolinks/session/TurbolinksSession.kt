@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.core
+package com.basecamp.turbolinks.session
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi

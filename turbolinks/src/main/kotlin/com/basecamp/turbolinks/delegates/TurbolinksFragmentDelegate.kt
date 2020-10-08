@@ -1,17 +1,18 @@
-package com.basecamp.turbolinks.fragment
+package com.basecamp.turbolinks.delegates
 
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import com.basecamp.turbolinks.core.TurbolinksDestination
-import com.basecamp.turbolinks.core.TurbolinksModalResult
-import com.basecamp.turbolinks.core.TurbolinksSessionViewModel
+import com.basecamp.turbolinks.fragments.TurbolinksFragmentViewModel
+import com.basecamp.turbolinks.nav.TurbolinksNavDestination
+import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
+import com.basecamp.turbolinks.session.TurbolinksSessionViewModel
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
 import com.basecamp.turbolinks.util.logEvent
 
-class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination) {
-    private val fragment = destination.fragment
-    private val location = destination.location
-    private val sessionName = destination.navHostFragment.sessionName
+class TurbolinksFragmentDelegate(private val navDestination: TurbolinksNavDestination) {
+    private val fragment = navDestination.fragment
+    private val location = navDestination.location
+    private val sessionName = navDestination.sessionNavHostFragment.sessionName
 
     internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
     internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
@@ -19,7 +20,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     internal lateinit var navigator: TurbolinksNavigator
 
     fun onActivityCreated() {
-        navigator = TurbolinksNavigator(destination)
+        navigator = TurbolinksNavigator(navDestination)
 
         initToolbar()
         logEvent("fragment.onActivityCreated", "location" to location)
@@ -37,7 +38,7 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
         logEvent("fragment.onStartAfterDialogCancel", "location" to location)
     }
 
-    fun onStartAfterModalResult(result: TurbolinksModalResult) {
+    fun onStartAfterModalResult(result: TurbolinksSessionModalResult) {
         logEvent("fragment.onStartAfterModalResult", "location" to result.location, "options" to result.options)
         if (result.shouldNavigate) {
             navigator.navigate(result.location, result.options, result.bundle)
@@ -56,9 +57,9 @@ class TurbolinksFragmentDelegate(private val destination: TurbolinksDestination)
     // ----------------------------------------------------------------------------
 
     private fun initToolbar() {
-        destination.toolbarForNavigation()?.let {
+        navDestination.toolbarForNavigation()?.let {
             NavigationUI.setupWithNavController(it, fragment.findNavController())
-            it.setNavigationOnClickListener { destination.navigateUp() }
+            it.setNavigationOnClickListener { navDestination.navigateUp() }
         }
     }
 

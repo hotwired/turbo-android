@@ -1,8 +1,9 @@
-package com.basecamp.turbolinks.fragment
+package com.basecamp.turbolinks.fragments
 
 import android.os.Bundle
 import android.webkit.HttpAuthHandler
-import com.basecamp.turbolinks.core.TurbolinksModalResult
+import com.basecamp.turbolinks.delegates.TurbolinksWebFragmentDelegate
+import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
 
 abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragmentCallback {
@@ -26,7 +27,7 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
         }
     }
 
-    override fun onStartAfterModalResult(result: TurbolinksModalResult) {
+    override fun onStartAfterModalResult(result: TurbolinksSessionModalResult) {
         super.onStartAfterModalResult(result)
         delegate.onStartAfterModalResult(result)
     }

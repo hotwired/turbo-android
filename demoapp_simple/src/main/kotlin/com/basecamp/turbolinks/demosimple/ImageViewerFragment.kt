@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import com.basecamp.turbolinks.fragment.TurbolinksFragment
+import com.basecamp.turbolinks.fragments.TurbolinksFragment
 import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_image_viewer.*
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/image_viewer")
-class ImageViewerFragment : TurbolinksFragment(), Destination {
+class ImageViewerFragment : TurbolinksFragment(), NavDestination {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         loadImage()

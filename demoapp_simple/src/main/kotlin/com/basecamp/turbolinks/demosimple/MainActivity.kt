@@ -2,7 +2,7 @@ package com.basecamp.turbolinks.demosimple
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.basecamp.turbolinks.activity.TurbolinksActivityDelegate
+import com.basecamp.turbolinks.delegates.TurbolinksActivityDelegate
 import com.basecamp.turbolinks.util.TurbolinksActivity
 
 class MainActivity : AppCompatActivity(), TurbolinksActivity {

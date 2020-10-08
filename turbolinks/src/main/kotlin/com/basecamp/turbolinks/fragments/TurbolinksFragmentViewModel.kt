@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.fragment
+package com.basecamp.turbolinks.fragments
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.core
+package com.basecamp.turbolinks.session
 
 import android.app.Activity
 import android.os.Build

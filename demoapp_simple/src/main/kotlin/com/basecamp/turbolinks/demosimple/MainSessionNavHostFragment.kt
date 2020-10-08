@@ -4,11 +4,11 @@ import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.BuildConfig
 import com.basecamp.turbolinks.config.PathConfiguration
-import com.basecamp.turbolinks.nav.TurbolinksNavHostFragment
+import com.basecamp.turbolinks.session.TurbolinksSessionNavHostFragment
 import kotlin.reflect.KClass
 
 @Suppress("unused")
-class MainNavHostFragment : TurbolinksNavHostFragment() {
+class MainSessionNavHostFragment : TurbolinksSessionNavHostFragment() {
     override val sessionName = "main"
 
     override val startLocation

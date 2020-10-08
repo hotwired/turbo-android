@@ -1,25 +1,25 @@
-package com.basecamp.turbolinks.activity
+package com.basecamp.turbolinks.delegates
 
 import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.basecamp.turbolinks.core.TurbolinksDestination
+import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
-import com.basecamp.turbolinks.nav.TurbolinksNavHostFragment
+import com.basecamp.turbolinks.session.TurbolinksSessionNavHostFragment
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class TurbolinksActivityDelegate(val activity: AppCompatActivity,
                                  var currentNavHostFragmentId: Int) {
 
-    private val navHostFragments = mutableMapOf<Int, TurbolinksNavHostFragment>()
+    private val navHostFragments = mutableMapOf<Int, TurbolinksSessionNavHostFragment>()
 
-    val currentNavHostFragment: TurbolinksNavHostFragment
+    val currentSessionNavHostFragment: TurbolinksSessionNavHostFragment
         get() = navHostFragment(currentNavHostFragmentId)
 
-    val currentDestination: TurbolinksDestination?
-        get() = currentFragment as TurbolinksDestination?
+    val currentNavDestination: TurbolinksNavDestination?
+        get() = currentFragment as TurbolinksNavDestination?
 
     /*
      * Initialize the Activity with a BackPressedDispatcher that
@@ -32,13 +32,13 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         }
     }
 
-    fun registerNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksNavHostFragment {
+    fun registerNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksSessionNavHostFragment {
         return findNavHostFragment(navHostFragmentId).also {
             navHostFragments[navHostFragmentId] = it
         }
     }
 
-    fun navHostFragment(@IdRes navHostFragmentId: Int): TurbolinksNavHostFragment {
+    fun navHostFragment(@IdRes navHostFragmentId: Int): TurbolinksSessionNavHostFragment {
         return requireNotNull(navHostFragments[navHostFragmentId]) {
             "No registered TurbolinksNavHostFragment found"
         }
@@ -55,32 +55,32 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
     fun navigate(location: String,
                  options: TurbolinksVisitOptions = TurbolinksVisitOptions(),
                  bundle: Bundle? = null) {
-        currentDestination?.navigate(location, options, bundle)
+        currentNavDestination?.navigate(location, options, bundle)
     }
 
     fun navigateUp() {
-        currentDestination?.navigateUp()
+        currentNavDestination?.navigateUp()
     }
 
     fun navigateBack() {
-        currentDestination?.navigateBack()
+        currentNavDestination?.navigateBack()
     }
 
     fun clearBackStack() {
-        currentDestination?.clearBackStack()
+        currentNavDestination?.clearBackStack()
     }
 
     private val currentFragment: Fragment?
         get() {
-            return if (currentNavHostFragment.isAdded && !currentNavHostFragment.isDetached) {
-                currentNavHostFragment.childFragmentManager.primaryNavigationFragment
+            return if (currentSessionNavHostFragment.isAdded && !currentSessionNavHostFragment.isDetached) {
+                currentSessionNavHostFragment.childFragmentManager.primaryNavigationFragment
             } else {
                 null
             }
         }
 
-    private fun findNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksNavHostFragment {
-        return activity.supportFragmentManager.findFragmentById(navHostFragmentId) as? TurbolinksNavHostFragment
+    private fun findNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksSessionNavHostFragment {
+        return activity.supportFragmentManager.findFragmentById(navHostFragmentId) as? TurbolinksSessionNavHostFragment
             ?: throw IllegalStateException("No TurbolinksNavHostFragment found with ID: $navHostFragmentId")
     }
 }

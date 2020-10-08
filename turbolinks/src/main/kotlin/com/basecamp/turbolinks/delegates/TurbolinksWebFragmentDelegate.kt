@@ -1,14 +1,16 @@
-package com.basecamp.turbolinks.fragment
+package com.basecamp.turbolinks.delegates
 
 import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
 import android.webkit.WebView
 import androidx.lifecycle.lifecycleScope
 import com.basecamp.turbolinks.config.pullToRefreshEnabled
-import com.basecamp.turbolinks.core.*
+import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
+import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
+import com.basecamp.turbolinks.session.TurbolinksSession
 import com.basecamp.turbolinks.util.TurbolinksSessionCallback
 import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
 import com.basecamp.turbolinks.views.TurbolinksView
@@ -19,11 +21,11 @@ import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 class TurbolinksWebFragmentDelegate(
-    private val destination: TurbolinksDestination,
+    private val navDestination: TurbolinksNavDestination,
     private val callback: TurbolinksWebFragmentCallback
 ) : TurbolinksSessionCallback {
 
-    private val location = destination.location
+    private val location = navDestination.location
     private val visitOptions = currentVisitOptions()
     private val identifier = generateIdentifier()
     private var isInitialVisit = true
@@ -33,7 +35,7 @@ class TurbolinksWebFragmentDelegate(
     private var screenshotZoomed = false
     private var currentlyZoomed = false
     private val navigator: TurbolinksNavigator
-        get() = destination.navigator
+        get() = navDestination.navigator
     private val turbolinksView: TurbolinksView?
         get() = callback.turbolinksView
 
@@ -42,11 +44,11 @@ class TurbolinksWebFragmentDelegate(
 
     fun onActivityCreated() {
         if (session().isRenderProcessGone) {
-            destination.navHostFragment.createNewSession()
+            navDestination.sessionNavHostFragment.createNewSession()
         }
 
         navigator.onNavigationVisit = { onReady ->
-            destination.onBeforeNavigation()
+            navDestination.onBeforeNavigation()
             session().removeCallback(this)
             detachWebView(onReady)
         }
@@ -56,7 +58,7 @@ class TurbolinksWebFragmentDelegate(
         initNavigationVisit()
     }
 
-    fun onStartAfterModalResult(result: TurbolinksModalResult) {
+    fun onStartAfterModalResult(result: TurbolinksSessionModalResult) {
         if (!result.shouldNavigate) {
             initNavigationVisit()
         }
@@ -79,7 +81,7 @@ class TurbolinksWebFragmentDelegate(
     }
 
     fun session(): TurbolinksSession {
-        return destination.session
+        return navDestination.session
     }
 
     fun showErrorView(code: Int) {
@@ -106,7 +108,7 @@ class TurbolinksWebFragmentDelegate(
 
     override fun onZoomReset(newScale: Float) {
         currentlyZoomed = false
-        pullToRefreshEnabled(destination.pathProperties.pullToRefreshEnabled)
+        pullToRefreshEnabled(navDestination.pathProperties.pullToRefreshEnabled)
     }
 
     override fun pageInvalidated() {}
@@ -120,13 +122,13 @@ class TurbolinksWebFragmentDelegate(
     }
 
     override fun visitRendered() {
-        destination.pageViewModel.setTitle(title())
+        navDestination.pageViewModel.setTitle(title())
         removeTransitionalViews()
     }
 
     override fun visitCompleted(completedOffline: Boolean) {
         callback.onVisitCompleted(location, completedOffline)
-        destination.pageViewModel.setTitle(title())
+        navDestination.pageViewModel.setTitle(title())
     }
 
     override fun onReceivedError(errorCode: Int) {
@@ -157,7 +159,7 @@ class TurbolinksWebFragmentDelegate(
     }
 
     override fun isActive(): Boolean {
-        return destination.fragment.isAdded
+        return navDestination.fragment.isAdded
     }
 
     // -----------------------------------------------------------------------
@@ -165,7 +167,7 @@ class TurbolinksWebFragmentDelegate(
     // -----------------------------------------------------------------------
 
     private fun currentVisitOptions(): TurbolinksVisitOptions {
-        return destination.sessionViewModel.visitOptions?.getContentIfNotHandled() ?: TurbolinksVisitOptions()
+        return navDestination.sessionViewModel.visitOptions?.getContentIfNotHandled() ?: TurbolinksVisitOptions()
     }
 
     private fun initNavigationVisit() {
@@ -250,7 +252,7 @@ class TurbolinksWebFragmentDelegate(
             else -> visitOptions
         }
 
-        destination.fragment.lifecycleScope.launch {
+        navDestination.fragment.lifecycleScope.launch {
             val snapshot = when (options.action) {
                 TurbolinksVisitAction.ADVANCE -> fetchCachedSnapshot()
                 else -> null
@@ -299,7 +301,7 @@ class TurbolinksWebFragmentDelegate(
 
     private fun initializePullToRefresh(turbolinksView: TurbolinksView) {
         turbolinksView.webViewRefresh?.apply {
-            isEnabled = destination.pathProperties.pullToRefreshEnabled
+            isEnabled = navDestination.pathProperties.pullToRefreshEnabled
             setOnRefreshListener {
                 isWebViewAttachedToNewDestination = false
                 visit(location, restoreWithCachedSnapshot = false, reload = true)
