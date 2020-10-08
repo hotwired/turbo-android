@@ -3,8 +3,6 @@ package com.basecamp.turbolinks.http
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
-import com.basecamp.turbolinks.http.OfflineCacheStrategy.APP
-import com.basecamp.turbolinks.http.OfflineCacheStrategy.NONE
 import com.basecamp.turbolinks.util.TurbolinksLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,12 +13,8 @@ import okhttp3.Response
 import java.io.IOException
 import java.io.InputStream
 
-enum class OfflineCacheStrategy {
-    APP, NONE
-}
-
 interface TurbolinksOfflineRequestHandler {
-    fun getCacheStrategy(url: String): OfflineCacheStrategy
+    fun getCacheStrategy(url: String): TurbolinksOfflineCacheStrategy
     fun getCachedResponseHeaders(url: String): Map<String, String>?
     fun getCachedResponse(url: String, allowStaleResponse: Boolean = false): WebResourceResponse?
     fun getCachedSnapshot(url: String): WebResourceResponse?
@@ -47,8 +41,8 @@ internal class TurbolinksHttpRepository {
         val url = resourceRequest.url.toString()
 
         return when (requestHandler.getCacheStrategy(url)) {
-            APP -> fetchAppCacheRequest(requestHandler, resourceRequest)
-            NONE -> Result(null, false)
+            TurbolinksOfflineCacheStrategy.APP -> fetchAppCacheRequest(requestHandler, resourceRequest)
+            TurbolinksOfflineCacheStrategy.NONE -> Result(null, false)
         }
     }
 
