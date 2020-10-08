@@ -5,12 +5,6 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 
-enum class TurbolinksVisitAction {
-    ADVANCE,
-    REPLACE,
-    RESTORE
-}
-
 @SuppressLint("DefaultLocale")
 class TurbolinksVisitActionAdapter : TypeAdapter<TurbolinksVisitAction>() {
     override fun read(reader: JsonReader): TurbolinksVisitAction {

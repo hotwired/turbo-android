@@ -14,7 +14,6 @@ import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import com.basecamp.turbolinks.config.PathConfiguration
-import com.basecamp.turbolinks.visit.TurbolinksVisitAction
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.http.TurbolinksHttpClient
 import com.basecamp.turbolinks.http.TurbolinksHttpRepository
@@ -23,6 +22,7 @@ import com.basecamp.turbolinks.http.TurbolinksPreCacheRequest
 import com.basecamp.turbolinks.util.*
 import com.basecamp.turbolinks.views.TurbolinksWebView
 import com.basecamp.turbolinks.visit.TurbolinksVisit
+import com.basecamp.turbolinks.visit.TurbolinksVisitAction
 import kotlinx.coroutines.launch
 import java.util.*
 
