@@ -14,7 +14,7 @@ import java.io.IOException
 import java.io.InputStream
 
 interface TurbolinksOfflineRequestHandler {
-    fun getCacheStrategy(url: String): OfflineCacheStrategy
+    fun getCacheStrategy(url: String): TurbolinksOfflineCacheStrategy
     fun getCachedResponseHeaders(url: String): Map<String, String>?
     fun getCachedResponse(url: String, allowStaleResponse: Boolean = false): WebResourceResponse?
     fun getCachedSnapshot(url: String): WebResourceResponse?
@@ -41,8 +41,8 @@ internal class TurbolinksHttpRepository {
         val url = resourceRequest.url.toString()
 
         return when (requestHandler.getCacheStrategy(url)) {
-            OfflineCacheStrategy.APP -> fetchAppCacheRequest(requestHandler, resourceRequest)
-            OfflineCacheStrategy.NONE -> Result(null, false)
+            TurbolinksOfflineCacheStrategy.APP -> fetchAppCacheRequest(requestHandler, resourceRequest)
+            TurbolinksOfflineCacheStrategy.NONE -> Result(null, false)
         }
     }
 

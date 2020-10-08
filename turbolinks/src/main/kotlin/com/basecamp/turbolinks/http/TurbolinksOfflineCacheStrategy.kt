@@ -1,5 +1,5 @@
 package com.basecamp.turbolinks.http
 
-enum class OfflineCacheStrategy {
+enum class TurbolinksOfflineCacheStrategy {
     APP, NONE
 }
