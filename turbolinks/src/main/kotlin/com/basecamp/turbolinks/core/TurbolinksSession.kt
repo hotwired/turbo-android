@@ -14,13 +14,15 @@ import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import com.basecamp.turbolinks.config.PathConfiguration
-import com.basecamp.turbolinks.core.VisitAction.*
+import com.basecamp.turbolinks.visit.TurbolinksVisitAction
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.http.TurbolinksHttpClient
 import com.basecamp.turbolinks.http.TurbolinksHttpRepository
 import com.basecamp.turbolinks.http.TurbolinksOfflineRequestHandler
 import com.basecamp.turbolinks.http.TurbolinksPreCacheRequest
 import com.basecamp.turbolinks.util.*
 import com.basecamp.turbolinks.views.TurbolinksWebView
+import com.basecamp.turbolinks.visit.TurbolinksVisit
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -111,7 +113,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     @JavascriptInterface
     fun visitProposedToLocation(location: String, optionsJson: String) {
-        val options = VisitOptions.fromJSON(optionsJson) ?: return
+        val options = TurbolinksVisitOptions.fromJSON(optionsJson) ?: return
 
         logEvent("visitProposedToLocation", "location" to location, "options" to options)
         callback { it.visitProposedToLocation(location, options) }
@@ -226,13 +228,13 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     private fun visitLocation(visit: TurbolinksVisit) {
         val restorationIdentifier = when (visit.options.action) {
-            RESTORE -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
-            ADVANCE -> ""
+            TurbolinksVisitAction.RESTORE -> restorationIdentifiers[visit.destinationIdentifier] ?: ""
+            TurbolinksVisitAction.ADVANCE -> ""
             else -> ""
         }
 
         val options = when (restorationIdentifier) {
-            "" -> visit.options.copy(action = ADVANCE)
+            "" -> visit.options.copy(action = TurbolinksVisitAction.ADVANCE)
             else -> visit.options
         }
 
@@ -313,7 +315,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     private fun WebView.initDownloadListener() {
         setDownloadListener { url, _, _, _, _ ->
             logEvent("downloadListener", "location" to url)
-            visitProposedToLocation(url, VisitOptions().toJson())
+            visitProposedToLocation(url, TurbolinksVisitOptions().toJson())
         }
     }
 
@@ -428,8 +430,8 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
                 // Replace the cold boot destination on a redirect
                 // since the original url isn't visitable.
                 val options = when (isColdBootRedirect) {
-                    true -> VisitOptions(action = REPLACE)
-                    else -> VisitOptions(action = ADVANCE)
+                    true -> TurbolinksVisitOptions(action = TurbolinksVisitAction.REPLACE)
+                    else -> TurbolinksVisitOptions(action = TurbolinksVisitAction.ADVANCE)
                 }
                 visitProposedToLocation(location, options.toJson())
             }

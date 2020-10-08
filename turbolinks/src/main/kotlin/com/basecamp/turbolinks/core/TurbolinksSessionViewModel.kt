@@ -5,11 +5,12 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.util.TurbolinksEvent
 
 class TurbolinksSessionViewModel : ViewModel() {
     // Visit options can only be read once
-    var visitOptions: TurbolinksEvent<VisitOptions>? = null
+    var visitOptions: TurbolinksEvent<TurbolinksVisitOptions>? = null
 
     // Modal result can only be observed once
     val modalResult: MutableLiveData<TurbolinksEvent<TurbolinksModalResult>> by lazy {
@@ -24,7 +25,7 @@ class TurbolinksSessionViewModel : ViewModel() {
         MutableLiveData<TurbolinksEvent<TurbolinksDialogResult>>()
     }
 
-    fun saveVisitOptions(options: VisitOptions) {
+    fun saveVisitOptions(options: TurbolinksVisitOptions) {
         visitOptions = TurbolinksEvent(options)
     }
 
@@ -47,7 +48,7 @@ class TurbolinksSessionViewModel : ViewModel() {
 
 data class TurbolinksModalResult(
     val location: String,
-    val options: VisitOptions,
+    val options: TurbolinksVisitOptions,
     val bundle: Bundle?,
     val shouldNavigate: Boolean
 )

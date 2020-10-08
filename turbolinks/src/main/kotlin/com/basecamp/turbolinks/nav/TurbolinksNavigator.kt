@@ -6,10 +6,10 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import com.basecamp.turbolinks.core.TurbolinksDestination
-import com.basecamp.turbolinks.core.VisitOptions
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.NavigationMode
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.Presentation
 import com.basecamp.turbolinks.util.logEvent
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 
 class TurbolinksNavigator(private val destination: TurbolinksDestination) {
     private val fragment = destination.fragment
@@ -45,7 +45,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
 
     fun navigate(
         location: String,
-        options: VisitOptions,
+        options: TurbolinksVisitOptions,
         bundle: Bundle? = null,
         extras: FragmentNavigator.Extras? = null
     ) {
@@ -83,7 +83,7 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
                 navigateWithinContext(rule)
             }
             NavigationMode.REFRESH -> {
-                navigate(rule.currentLocation, VisitOptions())
+                navigate(rule.currentLocation, TurbolinksVisitOptions())
             }
             NavigationMode.NONE -> {
                 // Do nothing

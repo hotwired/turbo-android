@@ -6,7 +6,7 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.core.TurbolinksDestination
-import com.basecamp.turbolinks.core.VisitOptions
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.nav.TurbolinksNavHostFragment
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
@@ -53,7 +53,7 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
     }
 
     fun navigate(location: String,
-                 options: VisitOptions = VisitOptions(),
+                 options: TurbolinksVisitOptions = TurbolinksVisitOptions(),
                  bundle: Bundle? = null) {
         currentDestination?.navigate(location, options, bundle)
     }

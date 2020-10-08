@@ -15,6 +15,7 @@ import com.basecamp.turbolinks.R
 import com.basecamp.turbolinks.config.PathConfiguration
 import com.basecamp.turbolinks.config.PathConfigurationSettings
 import com.basecamp.turbolinks.config.PathProperties
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.fragment.TurbolinksFragmentDelegate
 import com.basecamp.turbolinks.fragment.TurbolinksFragmentViewModel
 import com.basecamp.turbolinks.nav.TurbolinksNavHostFragment
@@ -80,7 +81,7 @@ interface TurbolinksDestination {
 
     fun navigate(
         location: String,
-        options: VisitOptions = VisitOptions(),
+        options: TurbolinksVisitOptions = TurbolinksVisitOptions(),
         bundle: Bundle? = null,
         extras: FragmentNavigator.Extras? = null
     ) {
