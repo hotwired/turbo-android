@@ -1,12 +1,11 @@
 package com.basecamp.turbolinks.session
 
-import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.util.TurbolinksEvent
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 
 class TurbolinksSessionViewModel : ViewModel() {
     // Visit options can only be read once

@@ -12,7 +12,7 @@ enum class TurbolinksVisitAction {
 }
 
 @SuppressLint("DefaultLocale")
-class TurbolinksVisitActionAdapter : TypeAdapter<TurbolinksVisitAction>() {
+internal class TurbolinksVisitActionAdapter : TypeAdapter<TurbolinksVisitAction>() {
     override fun read(reader: JsonReader): TurbolinksVisitAction {
         return try {
             TurbolinksVisitAction.valueOf(reader.nextString().toUpperCase())
