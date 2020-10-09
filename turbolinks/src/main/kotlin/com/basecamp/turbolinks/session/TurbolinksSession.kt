@@ -36,7 +36,7 @@ import java.util.*
  * @constructor Create empty Turbolinks session
  */
 @Suppress("unused")
-class TurbolinksSession private constructor(val sessionName: String, val activity: Activity, val webView: TurbolinksWebView) {
+class TurbolinksSession private constructor(internal val sessionName: String, internal val activity: Activity, val webView: TurbolinksWebView) {
     internal lateinit var currentVisit: TurbolinksVisit
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
@@ -47,12 +47,12 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     // User accessible
 
-    val context: Context = activity.applicationContext
-    var rootLocation: String? = null
+    internal val context: Context = activity.applicationContext
+    internal var rootLocation: String? = null
     var pathConfiguration = TurbolinksPathConfiguration(context)
     var offlineRequestHandler: TurbolinksOfflineRequestHandler? = null
     var enableScreenshots = true
-    var isColdBooting = false
+    internal var isColdBooting = false
         internal set
     var isReady = false
         internal set
