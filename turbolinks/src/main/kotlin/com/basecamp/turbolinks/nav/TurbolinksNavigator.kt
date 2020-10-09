@@ -6,12 +6,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.NavigationMode
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.Presentation
 import com.basecamp.turbolinks.util.logEvent
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 
-class TurbolinksNavigator(private val navDestination: TurbolinksNavDestination) {
+internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDestination) {
     private val fragment = navDestination.fragment
     private val session = navDestination.session
 
@@ -73,19 +71,19 @@ class TurbolinksNavigator(private val navDestination: TurbolinksNavDestination) 
         )
 
         when (rule.newNavigationMode) {
-            NavigationMode.DISMISS_MODAL -> {
+            TurbolinksNavMode.DISMISS_MODAL -> {
                 dismissModalContextWithResult(rule)
             }
-            NavigationMode.TO_MODAL -> {
+            TurbolinksNavMode.TO_MODAL -> {
                 navigateToModalContext(rule)
             }
-            NavigationMode.IN_CONTEXT -> {
+            TurbolinksNavMode.IN_CONTEXT -> {
                 navigateWithinContext(rule)
             }
-            NavigationMode.REFRESH -> {
+            TurbolinksNavMode.REFRESH -> {
                 navigate(rule.currentLocation, TurbolinksVisitOptions())
             }
-            NavigationMode.NONE -> {
+            TurbolinksNavMode.NONE -> {
                 // Do nothing
             }
         }
@@ -99,20 +97,20 @@ class TurbolinksNavigator(private val navDestination: TurbolinksNavDestination) 
         )
 
         when (rule.newPresentation) {
-            Presentation.POP -> onNavigationVisit {
+            TurbolinksNavPresentation.POP -> onNavigationVisit {
                 rule.controller.popBackStack()
             }
-            Presentation.REPLACE -> onNavigationVisit {
+            TurbolinksNavPresentation.REPLACE -> onNavigationVisit {
                 rule.controller.popBackStack()
                 navigateToLocation(rule)
             }
-            Presentation.PUSH -> onNavigationVisit {
+            TurbolinksNavPresentation.PUSH -> onNavigationVisit {
                 navigateToLocation(rule)
             }
-            Presentation.REPLACE_ROOT -> onNavigationVisit {
+            TurbolinksNavPresentation.REPLACE_ROOT -> onNavigationVisit {
                 replaceRootLocation(rule)
             }
-            Presentation.REPLACE_ALL -> onNavigationVisit {
+            TurbolinksNavPresentation.REPLACE_ALL -> onNavigationVisit {
                 clearBackStack()
             }
             else -> {
@@ -128,7 +126,7 @@ class TurbolinksNavigator(private val navDestination: TurbolinksNavDestination) 
         )
 
         when (rule.newPresentation) {
-            Presentation.REPLACE -> onNavigationVisit {
+            TurbolinksNavPresentation.REPLACE -> onNavigationVisit {
                 rule.controller.popBackStack()
                 navigateToLocation(rule)
             }

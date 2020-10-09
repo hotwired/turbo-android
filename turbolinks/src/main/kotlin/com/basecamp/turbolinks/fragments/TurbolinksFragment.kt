@@ -3,11 +3,11 @@ package com.basecamp.turbolinks.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.basecamp.turbolinks.nav.TurbolinksNavDestination
-import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
 import com.basecamp.turbolinks.config.context
 import com.basecamp.turbolinks.delegates.TurbolinksFragmentDelegate
+import com.basecamp.turbolinks.nav.TurbolinksNavPresentationContext
+import com.basecamp.turbolinks.nav.TurbolinksNavDestination
+import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 
 abstract class TurbolinksFragment : Fragment(), TurbolinksNavDestination {
     private lateinit var delegate: TurbolinksFragmentDelegate
@@ -79,6 +79,6 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksNavDestination {
 
     private fun shouldHandleModalResults(): Boolean {
         // Only handle modal results in non-modal contexts
-        return pathProperties.context != PresentationContext.MODAL
+        return pathProperties.context != TurbolinksNavPresentationContext.MODAL
     }
 }

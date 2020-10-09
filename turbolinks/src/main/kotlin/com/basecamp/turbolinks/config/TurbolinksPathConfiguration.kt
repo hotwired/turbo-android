@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import com.basecamp.turbolinks.BuildConfig
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.Presentation
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
+import com.basecamp.turbolinks.nav.TurbolinksNavPresentation
+import com.basecamp.turbolinks.nav.TurbolinksNavPresentationContext
 import com.basecamp.turbolinks.util.TurbolinksLog
 import com.google.gson.annotations.SerializedName
 import java.net.URL
@@ -13,14 +13,17 @@ import java.util.regex.PatternSyntaxException
 import kotlin.text.RegexOption.IGNORE_CASE
 
 class TurbolinksPathConfiguration(context: Context) {
-    @SerializedName("rules") var rules: List<PathRule> = emptyList()
-    @SerializedName("settings") var settings: PathConfigurationSettings = PathConfigurationSettings()
+    @SerializedName("rules")
+    var rules: List<PathRule> = emptyList()
+
+    @SerializedName("settings")
+    var settings: PathConfigurationSettings = PathConfigurationSettings()
 
     internal var loader = TurbolinksPathConfigurationLoader(context.applicationContext)
 
     data class Location(
-            val assetFilePath: String? = null,
-            val remoteFileUrl: String? = null
+        val assetFilePath: String? = null,
+        val remoteFileUrl: String? = null
     )
 
     fun load(location: Location) {
@@ -53,7 +56,8 @@ class TurbolinksPathConfiguration(context: Context) {
 
 data class PathRule(
     @SerializedName("patterns") val patterns: List<String>,
-    @SerializedName("properties") val properties: PathProperties) {
+    @SerializedName("properties") val properties: PathProperties
+) {
 
     fun matches(path: String): Boolean {
         return patterns.any { numberOfMatches(path, it) > 0 }
@@ -70,21 +74,21 @@ data class PathRule(
 typealias PathProperties = HashMap<String, String>
 typealias PathConfigurationSettings = HashMap<String, String>
 
-val PathProperties.presentation: Presentation
+val PathProperties.presentation: TurbolinksNavPresentation
     @SuppressLint("DefaultLocale") get() = try {
         val value = get("presentation") ?: "default"
-        Presentation.valueOf(value.toUpperCase())
+        TurbolinksNavPresentation.valueOf(value.toUpperCase())
     } catch (e: IllegalArgumentException) {
-        Presentation.DEFAULT
+        TurbolinksNavPresentation.DEFAULT
     }
 
-val PathProperties.context: PresentationContext
+val PathProperties.context: TurbolinksNavPresentationContext
     @SuppressLint("DefaultLocale") get() = try {
-    val value = get("context") ?: "default"
-    PresentationContext.valueOf(value.toUpperCase())
-} catch (e: IllegalArgumentException) {
-    PresentationContext.DEFAULT
-}
+        val value = get("context") ?: "default"
+        TurbolinksNavPresentationContext.valueOf(value.toUpperCase())
+    } catch (e: IllegalArgumentException) {
+        TurbolinksNavPresentationContext.DEFAULT
+    }
 
 val PathProperties.uri: Uri
     get() = Uri.parse(get("uri"))

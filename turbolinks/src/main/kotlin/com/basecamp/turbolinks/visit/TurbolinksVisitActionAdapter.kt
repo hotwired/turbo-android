@@ -6,7 +6,7 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 
 @SuppressLint("DefaultLocale")
-class TurbolinksVisitActionAdapter : TypeAdapter<TurbolinksVisitAction>() {
+internal class TurbolinksVisitActionAdapter : TypeAdapter<TurbolinksVisitAction>() {
     override fun read(reader: JsonReader): TurbolinksVisitAction {
         return try {
             TurbolinksVisitAction.valueOf(reader.nextString().toUpperCase())

@@ -12,7 +12,7 @@ import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import java.net.URI
 
 @Suppress("MemberVisibilityCanBePrivate")
-class TurbolinksNavRule(
+internal class TurbolinksNavRule(
     location: String,
     visitOptions: TurbolinksVisitOptions,
     bundle: Bundle?,
@@ -21,18 +21,6 @@ class TurbolinksNavRule(
     pathConfiguration: TurbolinksPathConfiguration,
     val controller: NavController
 ) {
-    enum class PresentationContext {
-        DEFAULT, MODAL
-    }
-
-    enum class Presentation {
-        DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, REFRESH, NONE
-    }
-
-    enum class NavigationMode {
-        IN_CONTEXT, TO_MODAL, DISMISS_MODAL, REFRESH, NONE
-    }
-
     // Current destination
     val previousLocation = controller.previousBackStackEntry.location
     val currentLocation = checkNotNull(controller.currentBackStackEntry.location)
@@ -57,9 +45,9 @@ class TurbolinksNavRule(
     val newFallbackDestination = controller.destinationFor(newFallbackUri)
     val newNavOptions = newNavOptions(navOptions)
 
-    private fun newPresentation(): Presentation {
+    private fun newPresentation(): TurbolinksNavPresentation {
         // Use the custom presentation provided in the path configuration
-        if (newProperties.presentation != Presentation.DEFAULT) {
+        if (newProperties.presentation != TurbolinksNavPresentation.DEFAULT) {
             return newProperties.presentation
         }
 
@@ -68,16 +56,16 @@ class TurbolinksNavRule(
         val replace = newVisitOptions.action == TurbolinksVisitAction.REPLACE
 
         return when {
-            locationIsCurrent && isAtStartDestination -> Presentation.REPLACE_ROOT
-            locationIsPrevious -> Presentation.POP
-            locationIsCurrent || replace -> Presentation.REPLACE
-            else -> Presentation.PUSH
+            locationIsCurrent && isAtStartDestination -> TurbolinksNavPresentation.REPLACE_ROOT
+            locationIsPrevious -> TurbolinksNavPresentation.POP
+            locationIsCurrent || replace -> TurbolinksNavPresentation.REPLACE
+            else -> TurbolinksNavPresentation.PUSH
         }
     }
 
     private fun newNavOptions(navOptions: NavOptions): NavOptions {
         // Use separate NavOptions if we need to pop up to the new root destination
-        if (newPresentation == Presentation.REPLACE_ROOT && newDestination != null) {
+        if (newPresentation == TurbolinksNavPresentation.REPLACE_ROOT && newDestination != null) {
             return navOptions {
                 popUpTo(newDestination.id) { inclusive = true }
             }
@@ -86,29 +74,29 @@ class TurbolinksNavRule(
         return navOptions
     }
 
-    private fun newNavigationMode(): NavigationMode {
-        val presentationNone = newPresentation == Presentation.NONE
-        val presentationRefresh = newPresentation == Presentation.REFRESH
+    private fun newNavigationMode(): TurbolinksNavMode {
+        val presentationNone = newPresentation == TurbolinksNavPresentation.NONE
+        val presentationRefresh = newPresentation == TurbolinksNavPresentation.REFRESH
 
-        val dismissModalContext = currentPresentationContext == PresentationContext.MODAL &&
-                newPresentationContext == PresentationContext.DEFAULT &&
-                newPresentation != Presentation.REPLACE_ROOT
+        val dismissModalContext = currentPresentationContext == TurbolinksNavPresentationContext.MODAL &&
+                newPresentationContext == TurbolinksNavPresentationContext.DEFAULT &&
+                newPresentation != TurbolinksNavPresentation.REPLACE_ROOT
 
-        val navigateToModalContext = currentPresentationContext == PresentationContext.DEFAULT &&
-                newPresentationContext == PresentationContext.MODAL &&
-                newPresentation != Presentation.REPLACE_ROOT
+        val navigateToModalContext = currentPresentationContext == TurbolinksNavPresentationContext.DEFAULT &&
+                newPresentationContext == TurbolinksNavPresentationContext.MODAL &&
+                newPresentation != TurbolinksNavPresentation.REPLACE_ROOT
 
         return when {
-            dismissModalContext -> NavigationMode.DISMISS_MODAL
-            navigateToModalContext -> NavigationMode.TO_MODAL
-            presentationRefresh -> NavigationMode.REFRESH
-            presentationNone -> NavigationMode.NONE
-            else -> NavigationMode.IN_CONTEXT
+            dismissModalContext -> TurbolinksNavMode.DISMISS_MODAL
+            navigateToModalContext -> TurbolinksNavMode.TO_MODAL
+            presentationRefresh -> TurbolinksNavMode.REFRESH
+            presentationNone -> TurbolinksNavMode.NONE
+            else -> TurbolinksNavMode.IN_CONTEXT
         }
     }
 
     private fun newModalResult(): TurbolinksSessionModalResult? {
-        if (newNavigationMode != NavigationMode.DISMISS_MODAL) {
+        if (newNavigationMode != TurbolinksNavMode.DISMISS_MODAL) {
             return null
         }
 
@@ -116,7 +104,7 @@ class TurbolinksNavRule(
             location = newLocation,
             options = newVisitOptions,
             bundle = newBundle,
-            shouldNavigate = newProperties.presentation != Presentation.NONE
+            shouldNavigate = newProperties.presentation != TurbolinksNavPresentation.NONE
         )
     }
 

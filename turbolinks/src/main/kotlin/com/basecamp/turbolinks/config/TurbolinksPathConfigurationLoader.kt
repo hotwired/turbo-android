@@ -6,7 +6,7 @@ import com.basecamp.turbolinks.util.toObject
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 
-class TurbolinksPathConfigurationLoader(val context: Context) {
+internal class TurbolinksPathConfigurationLoader(val context: Context) {
     internal var repository = TurbolinksPathConfigurationRepository()
 
     fun load(location: TurbolinksPathConfiguration.Location, onCompletion: (TurbolinksPathConfiguration) -> Unit) {
