@@ -14,7 +14,6 @@ import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
-import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.http.TurbolinksHttpClient
 import com.basecamp.turbolinks.http.TurbolinksHttpRepository
 import com.basecamp.turbolinks.http.TurbolinksOfflineRequestHandler
@@ -23,9 +22,19 @@ import com.basecamp.turbolinks.util.*
 import com.basecamp.turbolinks.views.TurbolinksWebView
 import com.basecamp.turbolinks.visit.TurbolinksVisit
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import kotlinx.coroutines.launch
 import java.util.*
 
+/**
+ * The class that's primarily responsible for managing an instance of an Android WebView that will be shared between fragments.
+ * The framework will provide a session to you via a [TurbolinksSessionNavHostFragment].
+ *
+ * @property sessionName An arbitrary name to be used as an identifier for a given session.
+ * @property activity The activity to which the session will be bound to.
+ * @property webView An instance of a [TurbolinksWebView] to be shared/managed.
+ * @constructor Create empty Turbolinks session
+ */
 @Suppress("unused")
 class TurbolinksSession private constructor(val sessionName: String, val activity: Activity, val webView: TurbolinksWebView) {
     internal lateinit var currentVisit: TurbolinksVisit
@@ -55,6 +64,12 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     // Public
 
+    /**
+     * Fetches a given location and returns the response to the [TurbolinksOfflineRequestHandler]
+     * Allows an offline cache to contain specific items instead of solely relying on visited items.
+     *
+     * @param location Location to cache.
+     */
     fun preCacheLocation(location: String) {
         val requestHandler = checkNotNull(offlineRequestHandler) {
             "An offline request handler must be provided to pre-cache $location"
@@ -69,6 +84,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Resets this session to a cold boot state. Calling this will result in the first subsequent
+     * visit to execute a full cold boot (reloading of all resources).
+     *
+     */
     fun reset() {
         if (::currentVisit.isInitialized) {
             logEvent("reset")
@@ -81,6 +101,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Enables/disables debug logging. Disabled by default.
+     *
+     * @param enabled Whether to enable debug logging.
+     */
     fun setDebugLoggingEnabled(enabled: Boolean) {
         TurbolinksLog.enableDebugLogging = enabled
         TurbolinksHttpClient.reset()
@@ -88,6 +113,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     // Internal
 
+    /**
+     * Visit
+     *
+     * @param visit
+     */
     internal fun visit(visit: TurbolinksVisit) {
         this.currentVisit = visit
         callback { it.visitLocationStarted(visit.location) }
@@ -103,6 +133,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Remove callback
+     *
+     * @param callback
+     */
     internal fun removeCallback(callback: TurbolinksSessionCallback) {
         if (currentVisit.callback == callback) {
             currentVisit.callback = null
@@ -111,6 +146,12 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     // Callbacks from Turbolinks Core
 
+    /**
+     * Visit proposed to location
+     *
+     * @param location
+     * @param optionsJson
+     */
     @JavascriptInterface
     fun visitProposedToLocation(location: String, optionsJson: String) {
         val options = TurbolinksVisitOptions.fromJSON(optionsJson) ?: return
@@ -119,6 +160,13 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         callback { it.visitProposedToLocation(location, options) }
     }
 
+    /**
+     * Visit started
+     *
+     * @param visitIdentifier
+     * @param visitHasCachedSnapshot
+     * @param location
+     */
     @JavascriptInterface
     fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String) {
         logEvent(
@@ -130,11 +178,23 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         currentVisit.identifier = visitIdentifier
     }
 
+    /**
+     * Visit request completed
+     *
+     * @param visitIdentifier
+     */
     @JavascriptInterface
     fun visitRequestCompleted(visitIdentifier: String) {
         logEvent("visitRequestCompleted", "visitIdentifier" to visitIdentifier)
     }
 
+    /**
+     * Visit request failed with status code
+     *
+     * @param visitIdentifier
+     * @param visitHasCachedSnapshot
+     * @param statusCode
+     */
     @JavascriptInterface
     fun visitRequestFailedWithStatusCode(visitIdentifier: String, visitHasCachedSnapshot: Boolean, statusCode: Int) {
         logEvent(
@@ -149,17 +209,32 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Visit request finished
+     *
+     * @param visitIdentifier
+     */
     @JavascriptInterface
     fun visitRequestFinished(visitIdentifier: String) {
         logEvent("visitRequestFinished", "visitIdentifier" to visitIdentifier)
     }
 
+    /**
+     * Page loaded
+     *
+     * @param restorationIdentifier
+     */
     @JavascriptInterface
     fun pageLoaded(restorationIdentifier: String) {
         logEvent("pageLoaded", "restorationIdentifier" to restorationIdentifier)
         restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
     }
 
+    /**
+     * Visit rendered
+     *
+     * @param visitIdentifier
+     */
     @JavascriptInterface
     fun visitRendered(visitIdentifier: String) {
         logEvent("visitRendered", "visitIdentifier" to visitIdentifier)
@@ -173,6 +248,12 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Visit completed
+     *
+     * @param visitIdentifier
+     * @param restorationIdentifier
+     */
     @JavascriptInterface
     fun visitCompleted(visitIdentifier: String, restorationIdentifier: String) {
         logEvent(
@@ -187,6 +268,10 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Page invalidated
+     *
+     */
     @JavascriptInterface
     fun pageInvalidated() {
         logEvent("pageInvalidated")
@@ -197,6 +282,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Turbolinks is ready
+     *
+     * @param isReady
+     */
     @JavascriptInterface
     fun turbolinksIsReady(isReady: Boolean) {
         logEvent("turbolinksIsReady", "isReady" to isReady)
@@ -217,6 +307,10 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Turbolinks failed to load
+     *
+     */
     @JavascriptInterface
     fun turbolinksFailedToLoad() {
         logEvent("turbolinksFailedToLoad")
