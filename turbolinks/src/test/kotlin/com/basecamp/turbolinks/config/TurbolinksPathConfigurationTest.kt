@@ -3,7 +3,7 @@ package com.basecamp.turbolinks.config
 import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
-import com.basecamp.turbolinks.config.PathConfiguration.Location
+import com.basecamp.turbolinks.config.TurbolinksPathConfiguration.Location
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
@@ -17,15 +17,15 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class PathConfigurationTest {
+class TurbolinksPathConfigurationTest {
     private lateinit var context: Context
-    private lateinit var pathConfiguration: PathConfiguration
-    private val mockRepository = mock<PathConfigurationRepository>()
+    private lateinit var pathConfiguration: TurbolinksPathConfiguration
+    private val mockRepository = mock<TurbolinksPathConfigurationRepository>()
 
     @Before
     fun setup() {
         context = ApplicationProvider.getApplicationContext()
-        pathConfiguration = PathConfiguration(context).apply {
+        pathConfiguration = TurbolinksPathConfiguration(context).apply {
             load(Location(assetFilePath = "json/test-configuration.json"))
         }
     }

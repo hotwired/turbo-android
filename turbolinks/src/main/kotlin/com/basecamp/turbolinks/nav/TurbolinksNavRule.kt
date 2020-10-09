@@ -18,7 +18,7 @@ class TurbolinksNavRule(
     bundle: Bundle?,
     navOptions: NavOptions,
     extras: FragmentNavigator.Extras?,
-    pathConfiguration: PathConfiguration,
+    pathConfiguration: TurbolinksPathConfiguration,
     val controller: NavController
 ) {
     enum class PresentationContext {

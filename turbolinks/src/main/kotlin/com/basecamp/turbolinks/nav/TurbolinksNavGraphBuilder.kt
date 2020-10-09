@@ -11,7 +11,7 @@ import androidx.navigation.fragment.DialogFragmentNavigator
 import androidx.navigation.fragment.DialogFragmentNavigatorDestinationBuilder
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorDestinationBuilder
-import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
 import com.basecamp.turbolinks.config.uri
 import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
 import kotlin.reflect.KClass
@@ -21,7 +21,7 @@ import kotlin.reflect.full.isSubclassOf
 class TurbolinksNavGraphBuilder(
     private val startLocation: String,
     private val navController: NavController,
-    private val pathConfiguration: PathConfiguration
+    private val pathConfiguration: TurbolinksPathConfiguration
 ) {
     private data class ActivityDestination(
         val id: Int,

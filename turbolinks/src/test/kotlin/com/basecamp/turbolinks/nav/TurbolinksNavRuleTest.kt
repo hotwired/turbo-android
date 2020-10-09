@@ -12,7 +12,7 @@ import androidx.navigation.navOptions
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
 import com.basecamp.turbolinks.R
-import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.*
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import org.assertj.core.api.Assertions.assertThat
@@ -28,7 +28,7 @@ import org.robolectric.annotation.Config
 class TurbolinksNavRuleTest {
     private lateinit var context: Context
     private lateinit var controller: TestNavHostController
-    private lateinit var pathConfiguration: PathConfiguration
+    private lateinit var pathConfiguration: TurbolinksPathConfiguration
 
     private val homeUrl = "http://example.com/home"
     private val featureUrl = "http://example.com/feature"
@@ -59,8 +59,8 @@ class TurbolinksNavRuleTest {
     fun setup() {
         context = ApplicationProvider.getApplicationContext()
         controller = buildControllerWithGraph()
-        pathConfiguration = PathConfiguration(context).apply {
-            load(PathConfiguration.Location(assetFilePath = "json/test-configuration.json"))
+        pathConfiguration = TurbolinksPathConfiguration(context).apply {
+            load(TurbolinksPathConfiguration.Location(assetFilePath = "json/test-configuration.json"))
         }
     }
 

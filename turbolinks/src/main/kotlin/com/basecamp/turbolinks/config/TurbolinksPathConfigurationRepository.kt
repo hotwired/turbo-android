@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.Request
 import java.io.IOException
 
-internal class PathConfigurationRepository {
+internal class TurbolinksPathConfigurationRepository {
     private val cacheFile = "turbolinks"
 
     suspend fun getRemoteConfiguration(url: String): String? {
@@ -29,7 +29,7 @@ internal class PathConfigurationRepository {
         return prefs(context).getString(url, null)
     }
 
-    fun cacheConfigurationForUrl(context: Context, url: String, pathConfiguration: PathConfiguration) {
+    fun cacheConfigurationForUrl(context: Context, url: String, pathConfiguration: TurbolinksPathConfiguration) {
         prefs(context).edit {
             putString(url, pathConfiguration.toJson())
         }

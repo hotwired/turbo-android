@@ -6,10 +6,10 @@ import com.basecamp.turbolinks.util.toObject
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 
-class PathConfigurationLoader(val context: Context) {
-    internal var repository = PathConfigurationRepository()
+class TurbolinksPathConfigurationLoader(val context: Context) {
+    internal var repository = TurbolinksPathConfigurationRepository()
 
-    fun load(location: PathConfiguration.Location, onCompletion: (PathConfiguration) -> Unit) {
+    fun load(location: TurbolinksPathConfiguration.Location, onCompletion: (TurbolinksPathConfiguration) -> Unit) {
         location.assetFilePath?.let {
             loadBundledAssetConfiguration(it, onCompletion)
         }
@@ -19,7 +19,7 @@ class PathConfigurationLoader(val context: Context) {
         }
     }
 
-    private fun downloadRemoteConfiguration(url: String, onCompletion: (PathConfiguration) -> Unit) {
+    private fun downloadRemoteConfiguration(url: String, onCompletion: (TurbolinksPathConfiguration) -> Unit) {
         // Always load the previously cached version first, if available
         loadCachedConfigurationForUrl(url, onCompletion)
 
@@ -31,22 +31,22 @@ class PathConfigurationLoader(val context: Context) {
         }
     }
 
-    private fun loadBundledAssetConfiguration(filePath: String, onCompletion: (PathConfiguration) -> Unit) {
+    private fun loadBundledAssetConfiguration(filePath: String, onCompletion: (TurbolinksPathConfiguration) -> Unit) {
         val configuration = repository.getBundledConfiguration(context, filePath)
         onCompletion(load(configuration))
     }
 
-    private fun loadCachedConfigurationForUrl(url: String, onCompletion: (PathConfiguration) -> Unit) {
+    private fun loadCachedConfigurationForUrl(url: String, onCompletion: (TurbolinksPathConfiguration) -> Unit) {
         repository.getCachedConfigurationForUrl(context, url)?.let {
             onCompletion(load(it))
         }
     }
 
-    private fun cacheConfigurationForUrl(url: String, pathConfiguration: PathConfiguration) {
+    private fun cacheConfigurationForUrl(url: String, pathConfiguration: TurbolinksPathConfiguration) {
         repository.cacheConfigurationForUrl(context, url, pathConfiguration)
     }
 
-    private fun load(json: String): PathConfiguration {
-        return json.toObject(object : TypeToken<PathConfiguration>() {})
+    private fun load(json: String): TurbolinksPathConfiguration {
+        return json.toObject(object : TypeToken<TurbolinksPathConfiguration>() {})
     }
 }

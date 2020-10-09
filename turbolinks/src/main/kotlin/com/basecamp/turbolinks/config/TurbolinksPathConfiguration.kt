@@ -4,19 +4,19 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import com.basecamp.turbolinks.BuildConfig
-import com.basecamp.turbolinks.util.TurbolinksLog
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.Presentation
 import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
+import com.basecamp.turbolinks.util.TurbolinksLog
 import com.google.gson.annotations.SerializedName
 import java.net.URL
 import java.util.regex.PatternSyntaxException
 import kotlin.text.RegexOption.IGNORE_CASE
 
-class PathConfiguration(context: Context) {
+class TurbolinksPathConfiguration(context: Context) {
     @SerializedName("rules") var rules: List<PathRule> = emptyList()
     @SerializedName("settings") var settings: PathConfigurationSettings = PathConfigurationSettings()
 
-    internal var loader = PathConfigurationLoader(context.applicationContext)
+    internal var loader = TurbolinksPathConfigurationLoader(context.applicationContext)
 
     data class Location(
             val assetFilePath: String? = null,

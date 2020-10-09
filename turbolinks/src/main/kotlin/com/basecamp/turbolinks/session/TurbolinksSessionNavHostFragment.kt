@@ -7,14 +7,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.*
 import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.views.TurbolinksWebView
-import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
 import com.basecamp.turbolinks.nav.TurbolinksNavGraphBuilder
 import kotlin.reflect.KClass
 
 abstract class TurbolinksSessionNavHostFragment : NavHostFragment() {
     abstract val sessionName: String
     abstract val startLocation: String
-    abstract val pathConfigurationLocation: PathConfiguration.Location
+    abstract val pathConfigurationLocation: TurbolinksPathConfiguration.Location
     abstract val registeredActivities: List<KClass<out Activity>>
     abstract val registeredFragments: List<KClass<out Fragment>>
 

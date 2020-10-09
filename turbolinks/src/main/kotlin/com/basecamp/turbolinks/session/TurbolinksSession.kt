@@ -13,7 +13,7 @@ import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
-import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.http.TurbolinksHttpClient
 import com.basecamp.turbolinks.http.TurbolinksHttpRepository
@@ -40,7 +40,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     val context: Context = activity.applicationContext
     var rootLocation: String? = null
-    var pathConfiguration = PathConfiguration(context)
+    var pathConfiguration = TurbolinksPathConfiguration(context)
     var offlineRequestHandler: TurbolinksOfflineRequestHandler? = null
     var enableScreenshots = true
     var isColdBooting = false
