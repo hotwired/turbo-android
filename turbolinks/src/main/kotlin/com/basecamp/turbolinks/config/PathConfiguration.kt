@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import com.basecamp.turbolinks.BuildConfig
+import com.basecamp.turbolinks.nav.Presentation
+import com.basecamp.turbolinks.nav.PresentationContext
 import com.basecamp.turbolinks.util.TurbolinksLog
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.Presentation
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
 import com.google.gson.annotations.SerializedName
 import java.net.URL
 import java.util.regex.PatternSyntaxException

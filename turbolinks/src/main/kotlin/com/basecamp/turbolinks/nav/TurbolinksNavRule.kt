@@ -10,9 +10,21 @@ import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import java.net.URI
+enum class PresentationContext {
+    DEFAULT, MODAL
+}
+
+enum class Presentation {
+    DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, REFRESH, NONE
+}
+
+enum class NavigationMode {
+    IN_CONTEXT, TO_MODAL, DISMISS_MODAL, REFRESH, NONE
+}
+
 
 @Suppress("MemberVisibilityCanBePrivate")
-class TurbolinksNavRule(
+internal class TurbolinksNavRule(
     location: String,
     visitOptions: TurbolinksVisitOptions,
     bundle: Bundle?,
@@ -21,18 +33,6 @@ class TurbolinksNavRule(
     pathConfiguration: PathConfiguration,
     val controller: NavController
 ) {
-    enum class PresentationContext {
-        DEFAULT, MODAL
-    }
-
-    enum class Presentation {
-        DEFAULT, PUSH, POP, REPLACE, REPLACE_ALL, REPLACE_ROOT, REFRESH, NONE
-    }
-
-    enum class NavigationMode {
-        IN_CONTEXT, TO_MODAL, DISMISS_MODAL, REFRESH, NONE
-    }
-
     // Current destination
     val previousLocation = controller.previousBackStackEntry.location
     val currentLocation = checkNotNull(controller.currentBackStackEntry.location)
