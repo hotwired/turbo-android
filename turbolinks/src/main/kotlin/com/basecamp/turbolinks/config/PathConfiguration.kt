@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import com.basecamp.turbolinks.BuildConfig
+import com.basecamp.turbolinks.nav.TurbolinksNavPresentation
+import com.basecamp.turbolinks.nav.TurbolinksNavPresentationContext
 import com.basecamp.turbolinks.util.TurbolinksLog
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.Presentation
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
 import com.google.gson.annotations.SerializedName
 import java.net.URL
 import java.util.regex.PatternSyntaxException
@@ -70,20 +70,20 @@ data class PathRule(
 typealias PathProperties = HashMap<String, String>
 typealias PathConfigurationSettings = HashMap<String, String>
 
-val PathProperties.presentation: Presentation
+val PathProperties.presentation: TurbolinksNavPresentation
     @SuppressLint("DefaultLocale") get() = try {
         val value = get("presentation") ?: "default"
-        Presentation.valueOf(value.toUpperCase())
+        TurbolinksNavPresentation.valueOf(value.toUpperCase())
     } catch (e: IllegalArgumentException) {
-        Presentation.DEFAULT
+        TurbolinksNavPresentation.DEFAULT
     }
 
-val PathProperties.context: PresentationContext
+val PathProperties.context: TurbolinksNavPresentationContext
     @SuppressLint("DefaultLocale") get() = try {
     val value = get("context") ?: "default"
-    PresentationContext.valueOf(value.toUpperCase())
+    TurbolinksNavPresentationContext.valueOf(value.toUpperCase())
 } catch (e: IllegalArgumentException) {
-    PresentationContext.DEFAULT
+    TurbolinksNavPresentationContext.DEFAULT
 }
 
 val PathProperties.uri: Uri

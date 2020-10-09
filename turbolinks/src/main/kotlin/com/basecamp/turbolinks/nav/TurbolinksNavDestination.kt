@@ -14,12 +14,12 @@ import com.basecamp.turbolinks.R
 import com.basecamp.turbolinks.config.PathConfiguration
 import com.basecamp.turbolinks.config.PathConfigurationSettings
 import com.basecamp.turbolinks.config.PathProperties
-import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.delegates.TurbolinksFragmentDelegate
 import com.basecamp.turbolinks.fragments.TurbolinksFragmentViewModel
-import com.basecamp.turbolinks.session.TurbolinksSessionNavHostFragment
 import com.basecamp.turbolinks.session.TurbolinksSession
+import com.basecamp.turbolinks.session.TurbolinksSessionNavHostFragment
 import com.basecamp.turbolinks.session.TurbolinksSessionViewModel
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 
 interface TurbolinksNavDestination {
     val fragment: Fragment
@@ -51,9 +51,6 @@ interface TurbolinksNavDestination {
 
     val pageViewModel: TurbolinksFragmentViewModel
         get() = delegate().pageViewModel
-
-    val navigator: TurbolinksNavigator
-        get() = delegate().navigator
 
     fun delegate(): TurbolinksFragmentDelegate
 
@@ -113,6 +110,9 @@ interface TurbolinksNavDestination {
 
     private val Bundle.location
         get() = getString("location")
+
+    private val navigator: TurbolinksNavigator
+        get() = delegate().navigator
 
     private fun navController(): NavController? {
         // Retrieve the nav controller indirectly from the parent NavHostFragment,

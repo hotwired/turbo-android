@@ -13,7 +13,6 @@ import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
 import com.basecamp.turbolinks.R
 import com.basecamp.turbolinks.config.PathConfiguration
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.*
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -71,14 +70,14 @@ class TurbolinksNavRuleTest {
         // Current destination
         assertThat(rule.previousLocation).isNull()
         assertThat(rule.currentLocation).isEqualTo(homeUrl)
-        assertThat(rule.currentPresentationContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
         assertThat(rule.isAtStartDestination).isTrue()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(featureUrl)
-        assertThat(rule.newPresentationContext).isEqualTo(PresentationContext.DEFAULT)
-        assertThat(rule.newPresentation).isEqualTo(Presentation.PUSH)
-        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.IN_CONTEXT)
+        assertThat(rule.newPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.PUSH)
+        assertThat(rule.newNavigationMode).isEqualTo(TurbolinksNavMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
         assertThat(rule.newDestination).isNotNull()
@@ -92,14 +91,14 @@ class TurbolinksNavRuleTest {
         // Current destination
         assertThat(rule.previousLocation).isNull()
         assertThat(rule.currentLocation).isEqualTo(homeUrl)
-        assertThat(rule.currentPresentationContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
         assertThat(rule.isAtStartDestination).isTrue()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(newUrl)
-        assertThat(rule.newPresentationContext).isEqualTo(PresentationContext.MODAL)
-        assertThat(rule.newPresentation).isEqualTo(Presentation.PUSH)
-        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.TO_MODAL)
+        assertThat(rule.newPresentationContext).isEqualTo(TurbolinksNavPresentationContext.MODAL)
+        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.PUSH)
+        assertThat(rule.newNavigationMode).isEqualTo(TurbolinksNavMode.TO_MODAL)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
         assertThat(rule.newDestination).isNotNull()
@@ -114,14 +113,14 @@ class TurbolinksNavRuleTest {
         // Current destination
         assertThat(rule.previousLocation).isEqualTo(homeUrl)
         assertThat(rule.currentLocation).isEqualTo(featureUrl)
-        assertThat(rule.currentPresentationContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
         assertThat(rule.isAtStartDestination).isFalse()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(homeUrl)
-        assertThat(rule.newPresentationContext).isEqualTo(PresentationContext.DEFAULT)
-        assertThat(rule.newPresentation).isEqualTo(Presentation.REPLACE_ALL)
-        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.IN_CONTEXT)
+        assertThat(rule.newPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.REPLACE_ALL)
+        assertThat(rule.newNavigationMode).isEqualTo(TurbolinksNavMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webHomeUri)
         assertThat(rule.newDestination).isNotNull()
@@ -137,14 +136,14 @@ class TurbolinksNavRuleTest {
         // Current destination
         assertThat(rule.previousLocation).isEqualTo(featureUrl)
         assertThat(rule.currentLocation).isEqualTo(newUrl)
-        assertThat(rule.currentPresentationContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurbolinksNavPresentationContext.MODAL)
         assertThat(rule.isAtStartDestination).isFalse()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(featureUrl)
-        assertThat(rule.newPresentationContext).isEqualTo(PresentationContext.DEFAULT)
-        assertThat(rule.newPresentation).isEqualTo(Presentation.POP)
-        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.DISMISS_MODAL)
+        assertThat(rule.newPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.POP)
+        assertThat(rule.newNavigationMode).isEqualTo(TurbolinksNavMode.DISMISS_MODAL)
         assertThat(rule.newModalResult?.location).isEqualTo(featureUrl)
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
         assertThat(rule.newDestination).isNotNull()
@@ -159,14 +158,14 @@ class TurbolinksNavRuleTest {
         // Current destination
         assertThat(rule.previousLocation).isEqualTo(homeUrl)
         assertThat(rule.currentLocation).isEqualTo(newUrl)
-        assertThat(rule.currentPresentationContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurbolinksNavPresentationContext.MODAL)
         assertThat(rule.isAtStartDestination).isFalse()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(newUrl)
-        assertThat(rule.newPresentationContext).isEqualTo(PresentationContext.MODAL)
-        assertThat(rule.newPresentation).isEqualTo(Presentation.REPLACE)
-        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.IN_CONTEXT)
+        assertThat(rule.newPresentationContext).isEqualTo(TurbolinksNavPresentationContext.MODAL)
+        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.REPLACE)
+        assertThat(rule.newNavigationMode).isEqualTo(TurbolinksNavMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
         assertThat(rule.newDestination).isNotNull()
@@ -181,14 +180,14 @@ class TurbolinksNavRuleTest {
         // Current destination
         assertThat(rule.previousLocation).isEqualTo(homeUrl)
         assertThat(rule.currentLocation).isEqualTo(newUrl)
-        assertThat(rule.currentPresentationContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurbolinksNavPresentationContext.MODAL)
         assertThat(rule.isAtStartDestination).isFalse()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(editUrl)
-        assertThat(rule.newPresentationContext).isEqualTo(PresentationContext.MODAL)
-        assertThat(rule.newPresentation).isEqualTo(Presentation.PUSH)
-        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.IN_CONTEXT)
+        assertThat(rule.newPresentationContext).isEqualTo(TurbolinksNavPresentationContext.MODAL)
+        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.PUSH)
+        assertThat(rule.newNavigationMode).isEqualTo(TurbolinksNavMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
         assertThat(rule.newDestination).isNotNull()
@@ -203,14 +202,14 @@ class TurbolinksNavRuleTest {
         // Current destination
         assertThat(rule.previousLocation).isEqualTo(homeUrl)
         assertThat(rule.currentLocation).isEqualTo(featureUrl)
-        assertThat(rule.currentPresentationContext).isEqualTo(PresentationContext.DEFAULT)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
         assertThat(rule.isAtStartDestination).isFalse()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(refreshUrl)
-        assertThat(rule.newPresentationContext).isEqualTo(PresentationContext.DEFAULT)
-        assertThat(rule.newPresentation).isEqualTo(Presentation.REFRESH)
-        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.REFRESH)
+        assertThat(rule.newPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.REFRESH)
+        assertThat(rule.newNavigationMode).isEqualTo(TurbolinksNavMode.REFRESH)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
         assertThat(rule.newDestination).isNotNull()
@@ -226,14 +225,14 @@ class TurbolinksNavRuleTest {
         // Current destination
         assertThat(rule.previousLocation).isEqualTo(featureUrl)
         assertThat(rule.currentLocation).isEqualTo(newUrl)
-        assertThat(rule.currentPresentationContext).isEqualTo(PresentationContext.MODAL)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurbolinksNavPresentationContext.MODAL)
         assertThat(rule.isAtStartDestination).isFalse()
 
         // New destination
         assertThat(rule.newLocation).isEqualTo(resumeUrl)
-        assertThat(rule.newPresentationContext).isEqualTo(PresentationContext.DEFAULT)
-        assertThat(rule.newPresentation).isEqualTo(Presentation.NONE)
-        assertThat(rule.newNavigationMode).isEqualTo(NavigationMode.DISMISS_MODAL)
+        assertThat(rule.newPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.NONE)
+        assertThat(rule.newNavigationMode).isEqualTo(TurbolinksNavMode.DISMISS_MODAL)
         assertThat(rule.newModalResult).isNotNull()
         assertThat(rule.newModalResult?.location).isEqualTo(resumeUrl)
         assertThat(rule.newModalResult?.shouldNavigate).isFalse()

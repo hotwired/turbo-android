@@ -6,8 +6,8 @@ import com.basecamp.turbolinks.util.toObject
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 
-class PathConfigurationLoader(val context: Context) {
-    internal var repository = PathConfigurationRepository()
+internal class PathConfigurationLoader(val context: Context) {
+    var repository = PathConfigurationRepository()
 
     fun load(location: PathConfiguration.Location, onCompletion: (PathConfiguration) -> Unit) {
         location.assetFilePath?.let {

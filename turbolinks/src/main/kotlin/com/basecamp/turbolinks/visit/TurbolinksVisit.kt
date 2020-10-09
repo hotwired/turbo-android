@@ -2,7 +2,7 @@ package com.basecamp.turbolinks.visit
 
 import com.basecamp.turbolinks.util.TurbolinksSessionCallback
 
-data class TurbolinksVisit(
+internal data class TurbolinksVisit(
     val location: String,
     val destinationIdentifier: Int,
     val restoreWithCachedSnapshot: Boolean,

@@ -6,15 +6,15 @@ import android.webkit.WebView
 import androidx.lifecycle.lifecycleScope
 import com.basecamp.turbolinks.config.pullToRefreshEnabled
 import com.basecamp.turbolinks.nav.TurbolinksNavDestination
-import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
-import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.session.TurbolinksSession
+import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.util.TurbolinksSessionCallback
 import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
 import com.basecamp.turbolinks.views.TurbolinksView
 import com.basecamp.turbolinks.visit.TurbolinksVisit
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -35,7 +35,7 @@ class TurbolinksWebFragmentDelegate(
     private var screenshotZoomed = false
     private var currentlyZoomed = false
     private val navigator: TurbolinksNavigator
-        get() = navDestination.navigator
+        get() = navDestination.delegate().navigator
     private val turbolinksView: TurbolinksView?
         get() = callback.turbolinksView
 
