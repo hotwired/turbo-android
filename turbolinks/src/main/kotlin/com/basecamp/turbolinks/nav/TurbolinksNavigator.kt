@@ -71,19 +71,19 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
         )
 
         when (rule.newNavigationMode) {
-            NavigationMode.DISMISS_MODAL -> {
+            TurbolinksNavMode.DISMISS_MODAL -> {
                 dismissModalContextWithResult(rule)
             }
-            NavigationMode.TO_MODAL -> {
+            TurbolinksNavMode.TO_MODAL -> {
                 navigateToModalContext(rule)
             }
-            NavigationMode.IN_CONTEXT -> {
+            TurbolinksNavMode.IN_CONTEXT -> {
                 navigateWithinContext(rule)
             }
-            NavigationMode.REFRESH -> {
+            TurbolinksNavMode.REFRESH -> {
                 navigate(rule.currentLocation, TurbolinksVisitOptions())
             }
-            NavigationMode.NONE -> {
+            TurbolinksNavMode.NONE -> {
                 // Do nothing
             }
         }
@@ -97,20 +97,20 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
         )
 
         when (rule.newPresentation) {
-            Presentation.POP -> onNavigationVisit {
+            TurbolinksNavPresentation.POP -> onNavigationVisit {
                 rule.controller.popBackStack()
             }
-            Presentation.REPLACE -> onNavigationVisit {
+            TurbolinksNavPresentation.REPLACE -> onNavigationVisit {
                 rule.controller.popBackStack()
                 navigateToLocation(rule)
             }
-            Presentation.PUSH -> onNavigationVisit {
+            TurbolinksNavPresentation.PUSH -> onNavigationVisit {
                 navigateToLocation(rule)
             }
-            Presentation.REPLACE_ROOT -> onNavigationVisit {
+            TurbolinksNavPresentation.REPLACE_ROOT -> onNavigationVisit {
                 replaceRootLocation(rule)
             }
-            Presentation.REPLACE_ALL -> onNavigationVisit {
+            TurbolinksNavPresentation.REPLACE_ALL -> onNavigationVisit {
                 clearBackStack()
             }
             else -> {
@@ -126,7 +126,7 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
         )
 
         when (rule.newPresentation) {
-            Presentation.REPLACE -> onNavigationVisit {
+            TurbolinksNavPresentation.REPLACE -> onNavigationVisit {
                 rule.controller.popBackStack()
                 navigateToLocation(rule)
             }
