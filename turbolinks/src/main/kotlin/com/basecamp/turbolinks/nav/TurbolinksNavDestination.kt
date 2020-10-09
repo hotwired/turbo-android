@@ -52,9 +52,6 @@ interface TurbolinksNavDestination {
     val pageViewModel: TurbolinksFragmentViewModel
         get() = delegate().pageViewModel
 
-    private val navigator: TurbolinksNavigator
-        get() = delegate().navigator
-
     fun delegate(): TurbolinksFragmentDelegate
 
     fun toolbarForNavigation(): Toolbar?
@@ -113,6 +110,9 @@ interface TurbolinksNavDestination {
 
     private val Bundle.location
         get() = getString("location")
+
+    private val navigator: TurbolinksNavigator
+        get() = delegate().navigator
 
     private fun navController(): NavController? {
         // Retrieve the nav controller indirectly from the parent NavHostFragment,
