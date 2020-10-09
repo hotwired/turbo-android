@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.basecamp.turbolinks.demo.R
-import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
+import com.basecamp.turbolinks.nav.TurbolinksNavGraphDestination
 
 @TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web/home")
 class WebHomeFragment : WebFragment() {

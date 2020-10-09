@@ -1,6 +1,7 @@
 package com.basecamp.turbolinks.visit
 
-import com.basecamp.turbolinks.util.TurbolinksSessionCallback
+import com.basecamp.turbolinks.session.TurbolinksSessionCallback
+
 
 internal data class TurbolinksVisit(
     val location: String,

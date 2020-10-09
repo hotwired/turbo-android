@@ -8,7 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import com.basecamp.turbolinks.demo.util.Error
 import com.basecamp.turbolinks.demo.base.NavDestination
 import com.basecamp.turbolinks.demo.R
-import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
+import com.basecamp.turbolinks.nav.TurbolinksNavGraphDestination
 import com.basecamp.turbolinks.fragments.TurbolinksWebFragment
 import com.basecamp.turbolinks.views.TurbolinksView
 import kotlinx.android.synthetic.main.error.view.*

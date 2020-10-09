@@ -9,7 +9,7 @@ import com.basecamp.turbolinks.demosimple.base.NavDestination
 import com.basecamp.turbolinks.demosimple.R
 import com.basecamp.turbolinks.demosimple.util.Error
 import com.basecamp.turbolinks.fragments.TurbolinksWebFragment
-import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
+import com.basecamp.turbolinks.nav.TurbolinksNavGraphDestination
 import com.basecamp.turbolinks.views.TurbolinksView
 import kotlinx.android.synthetic.main.error.view.*
 

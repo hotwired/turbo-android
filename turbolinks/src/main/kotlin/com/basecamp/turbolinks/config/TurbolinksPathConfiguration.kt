@@ -3,21 +3,17 @@ package com.basecamp.turbolinks.config
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import com.basecamp.turbolinks.BuildConfig
 import com.basecamp.turbolinks.nav.TurbolinksNavPresentation
 import com.basecamp.turbolinks.nav.TurbolinksNavPresentationContext
-import com.basecamp.turbolinks.util.TurbolinksLog
 import com.google.gson.annotations.SerializedName
 import java.net.URL
-import java.util.regex.PatternSyntaxException
-import kotlin.text.RegexOption.IGNORE_CASE
 
 class TurbolinksPathConfiguration(context: Context) {
     @SerializedName("rules")
-    var rules: List<PathRule> = emptyList()
+    internal var rules: List<TurbolinksPathConfigurationRule> = emptyList()
 
     @SerializedName("settings")
-    var settings: PathConfigurationSettings = PathConfigurationSettings()
+    var settings: TurbolinksPathConfigurationSettings = TurbolinksPathConfigurationSettings()
 
     internal var loader = TurbolinksPathConfigurationLoader(context.applicationContext)
 
@@ -33,8 +29,8 @@ class TurbolinksPathConfiguration(context: Context) {
         }
     }
 
-    fun properties(location: String): PathProperties {
-        val properties = PathProperties()
+    fun properties(location: String): TurbolinksPathConfigurationProperties {
+        val properties = TurbolinksPathConfigurationProperties()
         val path = path(location)
 
         for (rule in rules) when (rule.matches(path)) {
@@ -54,27 +50,10 @@ class TurbolinksPathConfiguration(context: Context) {
     }
 }
 
-data class PathRule(
-    @SerializedName("patterns") val patterns: List<String>,
-    @SerializedName("properties") val properties: PathProperties
-) {
+typealias TurbolinksPathConfigurationProperties = HashMap<String, String>
+typealias TurbolinksPathConfigurationSettings = HashMap<String, String>
 
-    fun matches(path: String): Boolean {
-        return patterns.any { numberOfMatches(path, it) > 0 }
-    }
-
-    private fun numberOfMatches(path: String, patternRegex: String): Int = try {
-        Regex(patternRegex, IGNORE_CASE).find(path)?.groups?.size ?: 0
-    } catch (e: PatternSyntaxException) {
-        TurbolinksLog.e("PathConfiguration pattern error: ${e.description}")
-        if (BuildConfig.DEBUG) throw e else 0
-    }
-}
-
-typealias PathProperties = HashMap<String, String>
-typealias PathConfigurationSettings = HashMap<String, String>
-
-val PathProperties.presentation: TurbolinksNavPresentation
+val TurbolinksPathConfigurationProperties.presentation: TurbolinksNavPresentation
     @SuppressLint("DefaultLocale") get() = try {
         val value = get("presentation") ?: "default"
         TurbolinksNavPresentation.valueOf(value.toUpperCase())
@@ -82,7 +61,7 @@ val PathProperties.presentation: TurbolinksNavPresentation
         TurbolinksNavPresentation.DEFAULT
     }
 
-val PathProperties.context: TurbolinksNavPresentationContext
+val TurbolinksPathConfigurationProperties.context: TurbolinksNavPresentationContext
     @SuppressLint("DefaultLocale") get() = try {
         val value = get("context") ?: "default"
         TurbolinksNavPresentationContext.valueOf(value.toUpperCase())
@@ -90,11 +69,11 @@ val PathProperties.context: TurbolinksNavPresentationContext
         TurbolinksNavPresentationContext.DEFAULT
     }
 
-val PathProperties.uri: Uri
+val TurbolinksPathConfigurationProperties.uri: Uri
     get() = Uri.parse(get("uri"))
 
-val PathProperties.fallbackUri: Uri?
+val TurbolinksPathConfigurationProperties.fallbackUri: Uri?
     get() = get("fallback_uri")?.let { Uri.parse(it) }
 
-val PathProperties.pullToRefreshEnabled: Boolean
+val TurbolinksPathConfigurationProperties.pullToRefreshEnabled: Boolean
     get() = get("pull_to_refresh_enabled")?.toBoolean() ?: false
