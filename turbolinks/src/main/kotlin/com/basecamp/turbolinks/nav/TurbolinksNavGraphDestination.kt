@@ -1,4 +1,4 @@
-package com.basecamp.turbolinks.util
+package com.basecamp.turbolinks.nav
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)

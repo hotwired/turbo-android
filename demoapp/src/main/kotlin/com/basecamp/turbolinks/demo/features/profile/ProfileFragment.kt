@@ -8,7 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import com.basecamp.turbolinks.demo.base.NativeFragment
 import com.basecamp.turbolinks.demo.R
 import com.basecamp.turbolinks.demo.util.Constants
-import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
+import com.basecamp.turbolinks.nav.TurbolinksNavGraphDestination
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions

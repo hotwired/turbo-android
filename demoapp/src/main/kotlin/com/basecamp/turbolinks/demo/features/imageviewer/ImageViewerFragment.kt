@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import com.basecamp.turbolinks.demo.R
 import com.basecamp.turbolinks.demo.base.NativeFragment
-import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
+import com.basecamp.turbolinks.nav.TurbolinksNavGraphDestination
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_image_viewer.*
 

@@ -4,36 +4,35 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.basecamp.turbolinks.util.TurbolinksEvent
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 
 class TurbolinksSessionViewModel : ViewModel() {
     // Visit options can only be read once
-    var visitOptions: TurbolinksEvent<TurbolinksVisitOptions>? = null
+    var visitOptions: TurbolinksSessionEvent<TurbolinksVisitOptions>? = null
 
     // Modal result can only be observed once
-    val modalResult: MutableLiveData<TurbolinksEvent<TurbolinksSessionModalResult>> by lazy {
-        MutableLiveData<TurbolinksEvent<TurbolinksSessionModalResult>>()
+    val modalResult: MutableLiveData<TurbolinksSessionEvent<TurbolinksSessionModalResult>> by lazy {
+        MutableLiveData<TurbolinksSessionEvent<TurbolinksSessionModalResult>>()
     }
 
     val modalResultExists: Boolean
         get() = modalResult.value?.hasBeenHandled == false
 
     // Dialog result can only be observed once
-    val dialogResult: MutableLiveData<TurbolinksEvent<TurbolinksSessionDialogResult>> by lazy {
-        MutableLiveData<TurbolinksEvent<TurbolinksSessionDialogResult>>()
+    val dialogResult: MutableLiveData<TurbolinksSessionEvent<TurbolinksSessionDialogResult>> by lazy {
+        MutableLiveData<TurbolinksSessionEvent<TurbolinksSessionDialogResult>>()
     }
 
     fun saveVisitOptions(options: TurbolinksVisitOptions) {
-        visitOptions = TurbolinksEvent(options)
+        visitOptions = TurbolinksSessionEvent(options)
     }
 
     fun sendModalResult(result: TurbolinksSessionModalResult) {
-        modalResult.value = TurbolinksEvent(result)
+        modalResult.value = TurbolinksSessionEvent(result)
     }
 
     fun sendDialogResult() {
-        dialogResult.value = TurbolinksEvent(TurbolinksSessionDialogResult(true))
+        dialogResult.value = TurbolinksSessionEvent(TurbolinksSessionDialogResult(true))
     }
 
     companion object {

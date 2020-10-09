@@ -8,7 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import com.basecamp.turbolinks.demosimple.base.NavDestination
 import com.basecamp.turbolinks.demosimple.R
 import com.basecamp.turbolinks.fragments.TurbolinksFragment
-import com.basecamp.turbolinks.util.TurbolinksNavGraphDestination
+import com.basecamp.turbolinks.nav.TurbolinksNavGraphDestination
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_image_viewer.*
 
