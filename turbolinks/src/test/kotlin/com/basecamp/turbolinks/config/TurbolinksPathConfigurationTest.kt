@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import com.basecamp.turbolinks.config.TurbolinksPathConfiguration.Location
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.PresentationContext
+import com.basecamp.turbolinks.nav.TurbolinksNavPresentationContext
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import kotlinx.coroutines.runBlocking
@@ -39,9 +39,9 @@ class TurbolinksPathConfigurationTest {
     fun presentationContext() {
         val url = "http://example.com"
 
-        assertThat(pathConfiguration.properties("$url/home").context).isEqualTo(PresentationContext.DEFAULT)
-        assertThat(pathConfiguration.properties("$url/new").context).isEqualTo(PresentationContext.MODAL)
-        assertThat(pathConfiguration.properties("$url/edit").context).isEqualTo(PresentationContext.MODAL)
+        assertThat(pathConfiguration.properties("$url/home").context).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
+        assertThat(pathConfiguration.properties("$url/new").context).isEqualTo(TurbolinksNavPresentationContext.MODAL)
+        assertThat(pathConfiguration.properties("$url/edit").context).isEqualTo(TurbolinksNavPresentationContext.MODAL)
     }
 
     @Test
