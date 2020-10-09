@@ -12,8 +12,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.basecamp.turbolinks.R
 import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
-import com.basecamp.turbolinks.config.PathConfigurationSettings
-import com.basecamp.turbolinks.config.PathProperties
+import com.basecamp.turbolinks.config.TurbolinksPathConfigurationSettings
+import com.basecamp.turbolinks.config.TurbolinksPathConfigurationProperties
 import com.basecamp.turbolinks.delegates.TurbolinksFragmentDelegate
 import com.basecamp.turbolinks.fragments.TurbolinksFragmentViewModel
 import com.basecamp.turbolinks.session.TurbolinksSession
@@ -37,10 +37,10 @@ interface TurbolinksNavDestination {
     val pathConfiguration: TurbolinksPathConfiguration
         get() = session.pathConfiguration
 
-    val pathConfigurationSettings: PathConfigurationSettings
+    val pathConfigurationSettings: TurbolinksPathConfigurationSettings
         get() = pathConfiguration.settings
 
-    val pathProperties: PathProperties
+    val pathProperties: TurbolinksPathConfigurationProperties
         get() = pathConfiguration.properties(location)
 
     val session: TurbolinksSession
@@ -77,7 +77,7 @@ interface TurbolinksNavDestination {
 
     fun getNavigationOptions(
         newLocation: String,
-        newPathProperties: PathProperties
+        newPathProperties: TurbolinksPathConfigurationProperties
     ): NavOptions {
         return navOptions {
             anim {
