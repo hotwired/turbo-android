@@ -6,12 +6,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.NavigationMode
-import com.basecamp.turbolinks.nav.TurbolinksNavRule.Presentation
 import com.basecamp.turbolinks.util.logEvent
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 
-class TurbolinksNavigator(private val navDestination: TurbolinksNavDestination) {
+internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDestination) {
     private val fragment = navDestination.fragment
     private val session = navDestination.session
 
