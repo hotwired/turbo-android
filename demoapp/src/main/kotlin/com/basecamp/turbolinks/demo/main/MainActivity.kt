@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.basecamp.turbolinks.util.TurbolinksActivity
+import com.basecamp.turbolinks.activities.TurbolinksActivity
 import com.basecamp.turbolinks.delegates.TurbolinksActivityDelegate
 import com.basecamp.turbolinks.demo.R
 import com.basecamp.turbolinks.demo.extensions.animateVisibility

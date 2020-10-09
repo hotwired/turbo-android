@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.webkit.HttpAuthHandler
 import com.basecamp.turbolinks.delegates.TurbolinksWebFragmentDelegate
 import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
-import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
 
 abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate

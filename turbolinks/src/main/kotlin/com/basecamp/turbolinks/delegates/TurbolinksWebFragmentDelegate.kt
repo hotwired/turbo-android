@@ -5,12 +5,12 @@ import android.webkit.HttpAuthHandler
 import android.webkit.WebView
 import androidx.lifecycle.lifecycleScope
 import com.basecamp.turbolinks.config.pullToRefreshEnabled
+import com.basecamp.turbolinks.fragments.TurbolinksWebFragmentCallback
 import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.nav.TurbolinksNavigator
 import com.basecamp.turbolinks.session.TurbolinksSession
+import com.basecamp.turbolinks.session.TurbolinksSessionCallback
 import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
-import com.basecamp.turbolinks.util.TurbolinksSessionCallback
-import com.basecamp.turbolinks.util.TurbolinksWebFragmentCallback
 import com.basecamp.turbolinks.views.TurbolinksView
 import com.basecamp.turbolinks.visit.TurbolinksVisit
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
