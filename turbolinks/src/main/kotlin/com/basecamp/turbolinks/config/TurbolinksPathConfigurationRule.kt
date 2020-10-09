@@ -5,7 +5,7 @@ import com.basecamp.turbolinks.util.TurbolinksLog
 import com.google.gson.annotations.SerializedName
 import java.util.regex.PatternSyntaxException
 
-data class TurbolinksPathConfigurationRule(
+internal data class TurbolinksPathConfigurationRule(
     @SerializedName("patterns") val patterns: List<String>,
     @SerializedName("properties") val properties: TurbolinksPathConfigurationProperties
 ) {

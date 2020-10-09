@@ -3,18 +3,14 @@ package com.basecamp.turbolinks.config
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import com.basecamp.turbolinks.BuildConfig
 import com.basecamp.turbolinks.nav.TurbolinksNavPresentation
 import com.basecamp.turbolinks.nav.TurbolinksNavPresentationContext
-import com.basecamp.turbolinks.util.TurbolinksLog
 import com.google.gson.annotations.SerializedName
 import java.net.URL
-import java.util.regex.PatternSyntaxException
-import kotlin.text.RegexOption.IGNORE_CASE
 
 class TurbolinksPathConfiguration(context: Context) {
     @SerializedName("rules")
-    var rules: List<TurbolinksPathConfigurationRule> = emptyList()
+    internal var rules: List<TurbolinksPathConfigurationRule> = emptyList()
 
     @SerializedName("settings")
     var settings: TurbolinksPathConfigurationSettings = TurbolinksPathConfigurationSettings()
