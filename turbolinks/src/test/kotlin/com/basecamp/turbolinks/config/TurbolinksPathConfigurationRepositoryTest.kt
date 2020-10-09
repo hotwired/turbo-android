@@ -20,9 +20,9 @@ import org.robolectric.annotation.Config
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class PathConfigurationRepositoryTest : BaseRepositoryTest() {
+class TurbolinksPathConfigurationRepositoryTest : BaseRepositoryTest() {
     private lateinit var context: Context
-    private val repository = PathConfigurationRepository()
+    private val repository = TurbolinksPathConfigurationRepository()
 
     override fun setup() {
         super.setup()
@@ -67,8 +67,8 @@ class PathConfigurationRepositoryTest : BaseRepositoryTest() {
         assertThat(cachedConfig?.rules?.size).isEqualTo(1)
     }
 
-    private fun load(json: String?): PathConfiguration? {
-        return json?.toObject(object : TypeToken<PathConfiguration>() {})
+    private fun load(json: String?): TurbolinksPathConfiguration? {
+        return json?.toObject(object : TypeToken<TurbolinksPathConfiguration>() {})
     }
 
     private fun json(): String {

@@ -3,7 +3,7 @@ package com.basecamp.turbolinks.demo.base
 import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.basecamp.turbolinks.BuildConfig
-import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
 import com.basecamp.turbolinks.demo.features.imageviewer.ImageViewerFragment
 import com.basecamp.turbolinks.demo.features.profile.ProfileFragment
 import com.basecamp.turbolinks.demo.features.web.WebFragment
@@ -25,8 +25,8 @@ abstract class BaseSessionNavHostFragment : TurbolinksSessionNavHostFragment() {
             ImageViewerFragment::class
         )
 
-    override val pathConfigurationLocation: PathConfiguration.Location
-        get() = PathConfiguration.Location(
+    override val pathConfigurationLocation: TurbolinksPathConfiguration.Location
+        get() = TurbolinksPathConfiguration.Location(
             assetFilePath = "json/configuration.json"
         )
 

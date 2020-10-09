@@ -11,7 +11,7 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.basecamp.turbolinks.R
-import com.basecamp.turbolinks.config.PathConfiguration
+import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
 import com.basecamp.turbolinks.config.PathConfigurationSettings
 import com.basecamp.turbolinks.config.PathProperties
 import com.basecamp.turbolinks.delegates.TurbolinksFragmentDelegate
@@ -34,7 +34,7 @@ interface TurbolinksNavDestination {
     val previousLocation: String?
         get() = navController()?.previousBackStackEntry?.arguments?.location
 
-    val pathConfiguration: PathConfiguration
+    val pathConfiguration: TurbolinksPathConfiguration
         get() = session.pathConfiguration
 
     val pathConfigurationSettings: PathConfigurationSettings

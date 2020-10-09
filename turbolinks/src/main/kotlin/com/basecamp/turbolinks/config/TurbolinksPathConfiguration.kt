@@ -12,15 +12,18 @@ import java.net.URL
 import java.util.regex.PatternSyntaxException
 import kotlin.text.RegexOption.IGNORE_CASE
 
-class PathConfiguration(context: Context) {
-    @SerializedName("rules") var rules: List<PathRule> = emptyList()
-    @SerializedName("settings") var settings: PathConfigurationSettings = PathConfigurationSettings()
+class TurbolinksPathConfiguration(context: Context) {
+    @SerializedName("rules")
+    var rules: List<PathRule> = emptyList()
 
-    internal var loader = PathConfigurationLoader(context.applicationContext)
+    @SerializedName("settings")
+    var settings: PathConfigurationSettings = PathConfigurationSettings()
+
+    internal var loader = TurbolinksPathConfigurationLoader(context.applicationContext)
 
     data class Location(
-            val assetFilePath: String? = null,
-            val remoteFileUrl: String? = null
+        val assetFilePath: String? = null,
+        val remoteFileUrl: String? = null
     )
 
     fun load(location: Location) {
@@ -53,7 +56,8 @@ class PathConfiguration(context: Context) {
 
 data class PathRule(
     @SerializedName("patterns") val patterns: List<String>,
-    @SerializedName("properties") val properties: PathProperties) {
+    @SerializedName("properties") val properties: PathProperties
+) {
 
     fun matches(path: String): Boolean {
         return patterns.any { numberOfMatches(path, it) > 0 }
@@ -80,11 +84,11 @@ val PathProperties.presentation: TurbolinksNavPresentation
 
 val PathProperties.context: TurbolinksNavPresentationContext
     @SuppressLint("DefaultLocale") get() = try {
-    val value = get("context") ?: "default"
-    TurbolinksNavPresentationContext.valueOf(value.toUpperCase())
-} catch (e: IllegalArgumentException) {
-    TurbolinksNavPresentationContext.DEFAULT
-}
+        val value = get("context") ?: "default"
+        TurbolinksNavPresentationContext.valueOf(value.toUpperCase())
+    } catch (e: IllegalArgumentException) {
+        TurbolinksNavPresentationContext.DEFAULT
+    }
 
 val PathProperties.uri: Uri
     get() = Uri.parse(get("uri"))
