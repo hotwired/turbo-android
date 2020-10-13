@@ -21,73 +21,85 @@ import com.basecamp.turbolinks.session.TurbolinksSessionViewModel
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 
 /**
- * The primary interface that every navigable Fragment must implement to provide the library with
+ * The primary interface that a navigable Fragment must implement to provide the library with
  * the information it needs to properly navigate.
  *
  * @constructor Create empty Turbolinks nav destination
  */
 interface TurbolinksNavDestination {
     /**
-     * Convenience property to cast the implementing class as a Fragment.
+     * Convenience property that casts the this destination as a Fragment.
      */
     val fragment: Fragment
         get() = this as Fragment
 
     /**
-     * Convenience property to access the Turbolinks Session nav host fragment associated with this
-     * destination.
+     * Provides access to the Turbolinks Session nav host fragment associated with this destination.
      */
     val sessionNavHostFragment: TurbolinksSessionNavHostFragment
         get() = fragment.parentFragment as TurbolinksSessionNavHostFragment
 
     /**
-     * Convenience property to access the location stored in the Fragment's arguments.
+     * Provides access to the location stored in the Fragment's arguments.
      */
     val location: String
         get() = requireNotNull(fragment.arguments?.location)
 
     /**
-     * Convenience property to access the previous back stack entry's location from the nav controller.
+     * Provides access to the previous back stack entry's location from the nav controller.
      */
     val previousLocation: String?
         get() = navController()?.previousBackStackEntry?.arguments?.location
 
+    /**
+     * Provides access to the path configuration properties for the location associated with this
+     * destination.
+     */
     val pathProperties: TurbolinksPathConfigurationProperties
         get() = pathConfiguration.properties(location)
 
+    /**
+     * Provides access to the TurbolinksSession associated with this destination.
+     */
     val session: TurbolinksSession
         get() = sessionNavHostFragment.session
 
+    /**
+     * Provides access to the TurbolinksSessionViewModel associated with this destination.
+     */
     val sessionViewModel: TurbolinksSessionViewModel
         get() = delegate().sessionViewModel
 
+    /**
+     * Provides access to the TurbolinksFragmentViewModel associated with this destination.
+     */
     val pageViewModel: TurbolinksFragmentViewModel
         get() = delegate().pageViewModel
 
     /**
-     * Delegate
+     * Returns the fragment delegate provided by the implementing class.
      *
      * @return
      */
     fun delegate(): TurbolinksFragmentDelegate
 
     /**
-     * Toolbar for navigation
+     * Returns the [Toolbar] used for navigation by the given view.
      *
      * @return
      */
     fun toolbarForNavigation(): Toolbar?
 
     /**
-     * On before navigation
+     * Any actions that should be consistently executed before navigating (e.g., any state clean up).
      *
      */
     fun onBeforeNavigation()
 
     /**
-     * Nav host for navigation
+     * Provides access to the [TurbolinksSessionNavHostFragment] used by this destination's session.
      *
-     * @param newLocation
+     * @param newLocation The destination's new location.
      * @return
      */
     fun navHostForNavigation(newLocation: String): TurbolinksSessionNavHostFragment {
@@ -95,7 +107,9 @@ interface TurbolinksNavDestination {
     }
 
     /**
-     * Should navigate to
+     * Implementing fragments can determine their own rules for when navigation should or shouldn't
+     * execute (e.g., certains paths like mailto:'s may not be appropriate to send through the
+     * normal navigation flow).
      *
      * @param newLocation
      * @return
@@ -105,12 +119,12 @@ interface TurbolinksNavDestination {
     }
 
     /**
-     * Navigate
+     * Executes the navigation via the [TurbolinksNavigator].
      *
-     * @param location
-     * @param options
-     * @param bundle
-     * @param extras
+     * @param location The location to navigate to.
+     * @param options The visit options to use to process the navigation.
+     * @param bundle Any bundle arguments to pass along to the Android navigation components.
+     * @param extras Any extras to pass along to the Android navigation components.
      */
     fun navigate(
         location: String,
@@ -122,7 +136,8 @@ interface TurbolinksNavDestination {
     }
 
     /**
-     * Get navigation options
+     * Provides a default set of navigation options (basic enter/exit animations) for the Android
+     * Navigation components to use to execute a navigation event.
      *
      * @param newLocation
      * @param newPathProperties
@@ -143,7 +158,7 @@ interface TurbolinksNavDestination {
     }
 
     /**
-     * Navigate up
+     * Tells the [TurbolinksNavigator] to navigate up.
      *
      */
     fun navigateUp() {
@@ -151,7 +166,7 @@ interface TurbolinksNavDestination {
     }
 
     /**
-     * Navigate back
+     * Tells the [TurbolinksNavigator] to navigate back.
      *
      */
     fun navigateBack() {
@@ -159,7 +174,8 @@ interface TurbolinksNavDestination {
     }
 
     /**
-     * Clear back stack
+     * Tells the [TurbolinksNavigator] to clear the back stack. Will not clear if already at the
+     * start destination for the nav host.
      *
      */
     fun clearBackStack() {
@@ -167,7 +183,7 @@ interface TurbolinksNavDestination {
     }
 
     /**
-     * Find nav host fragment
+     * Finds the nav host fragment with the given ID.
      *
      * @param navHostFragmentId
      * @return
@@ -188,9 +204,14 @@ interface TurbolinksNavDestination {
     private val pathConfiguration: TurbolinksPathConfiguration
         get() = session.pathConfiguration
 
+    /**
+     * Retrieve the nav controller indirectly from the parent NavHostFragment,
+     * since it's only available when the fragment is attached to its parent
+     *
+     * @return
+     */
     private fun navController(): NavController? {
-        // Retrieve the nav controller indirectly from the parent NavHostFragment,
-        // since it's only available when the fragment is attached to its parent
+
         return fragment.parentFragment?.findNavController()
     }
 
