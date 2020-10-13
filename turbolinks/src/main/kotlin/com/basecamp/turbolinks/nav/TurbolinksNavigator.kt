@@ -9,6 +9,12 @@ import androidx.navigation.fragment.findNavController
 import com.basecamp.turbolinks.util.logEvent
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 
+/**
+ * Turbolinks navigator
+ *
+ * @property navDestination
+ * @constructor Create empty Turbolinks navigator
+ */
 internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDestination) {
     private val fragment = navDestination.fragment
     private val session = navDestination.session
@@ -18,12 +24,20 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
         onReady()
     }
 
+    /**
+     * Navigate up
+     *
+     */
     fun navigateUp() {
         onNavigationVisit {
             currentController().navigateUp()
         }
     }
 
+    /**
+     * Navigate back
+     *
+     */
     fun navigateBack() {
         onNavigationVisit {
             if (!currentController().popBackStack()) {
@@ -32,6 +46,10 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
         }
     }
 
+    /**
+     * Clear back stack
+     *
+     */
     fun clearBackStack() {
         if (isAtStartDestination()) return
 
@@ -41,6 +59,14 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
         }
     }
 
+    /**
+     * Navigate
+     *
+     * @param location
+     * @param options
+     * @param bundle
+     * @param extras
+     */
     fun navigate(
         location: String,
         options: TurbolinksVisitOptions,
