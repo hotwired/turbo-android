@@ -11,6 +11,19 @@ import com.basecamp.turbolinks.visit.TurbolinksVisitAction
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import java.net.URI
 
+/**
+ * Turbolinks nav rule
+ *
+ * @property controller
+ * @constructor
+ *
+ * @param location
+ * @param visitOptions
+ * @param bundle
+ * @param navOptions
+ * @param extras
+ * @param pathConfiguration
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 internal class TurbolinksNavRule(
     location: String,
