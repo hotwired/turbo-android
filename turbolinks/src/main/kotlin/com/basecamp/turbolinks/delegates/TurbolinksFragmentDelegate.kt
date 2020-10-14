@@ -21,7 +21,7 @@ class TurbolinksFragmentDelegate(private val navDestination: TurbolinksNavDestin
     private val sessionName = navDestination.sessionNavHostFragment.sessionName
 
     internal val sessionViewModel = TurbolinksSessionViewModel.get(sessionName, fragment.requireActivity())
-    internal val pageViewModel = TurbolinksFragmentViewModel.get(location, fragment)
+    internal val fragmentViewModel = TurbolinksFragmentViewModel.get(location, fragment)
 
     internal lateinit var navigator: TurbolinksNavigator
 

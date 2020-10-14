@@ -176,13 +176,13 @@ class TurbolinksWebFragmentDelegate(
     }
 
     override fun visitRendered() {
-        navDestination.pageViewModel.setTitle(title())
+        navDestination.fragmentViewModel.setTitle(title())
         removeTransitionalViews()
     }
 
     override fun visitCompleted(completedOffline: Boolean) {
         callback.onVisitCompleted(location, completedOffline)
-        navDestination.pageViewModel.setTitle(title())
+        navDestination.fragmentViewModel.setTitle(title())
     }
 
     override fun onReceivedError(errorCode: Int) {

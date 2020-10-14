@@ -73,8 +73,8 @@ interface TurbolinksNavDestination {
     /**
      * Provides access to the TurbolinksFragmentViewModel associated with this destination.
      */
-    val pageViewModel: TurbolinksFragmentViewModel
-        get() = delegate().pageViewModel
+    val fragmentViewModel: TurbolinksFragmentViewModel
+        get() = delegate().fragmentViewModel
 
     /**
      * Returns the fragment delegate provided by the implementing class.
