@@ -5,38 +5,72 @@ import android.os.Bundle
 import android.webkit.HttpAuthHandler
 import com.basecamp.turbolinks.delegates.TurbolinksWebFragmentDelegate
 
+/**
+ * The base class from which all bottom sheet web fragments in a Turbolinks driven app
+ * should extend from.
+ *
+ * @constructor Create empty Turbolinks web bottom sheet dialog fragment
+ */
 @Suppress("unused")
 abstract class TurbolinksWebBottomSheetDialogFragment : TurbolinksBottomSheetDialogFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
 
+    /**
+     * Instantiates a [TurbolinksWebFragmentDelegate].
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         delegate = TurbolinksWebFragmentDelegate(this, this)
     }
 
+    /**
+     * Passes this lifecycle call through to [TurbolinksWebFragmentDelegate.onActivityCreated].
+     *
+     * @param savedInstanceState
+     */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         delegate.onActivityCreated()
     }
 
+    /**
+     * Passes this lifecycle call through to [TurbolinksWebFragmentDelegate.onStart] if there is no
+     * modal result to process.
+     *
+     */
     override fun onStart() {
         super.onStart()
         delegate.onStart()
     }
 
+    /**
+     * Passes this call through to [TurbolinksWebFragmentDelegate.onDialogCancel].
+     *
+     * @param result
+     */
     override fun onCancel(dialog: DialogInterface) {
         delegate.onDialogCancel()
         super.onCancel(dialog)
     }
 
+    /**
+     * Passes this call through to [TurbolinksWebFragmentDelegate.onDialogDismiss].
+     *
+     * @param result
+     */
     override fun onDismiss(dialog: DialogInterface) {
         delegate.onDialogDismiss()
         super.onDismiss(dialog)
     }
 
-    override fun onBeforeNavigation() {
-        // Allow subclasses to do state cleanup
-    }
+    /**
+     * Implementing classes can execute state cleanup by overriding this. Will always be called
+     * before any navigation action takes place.
+     *
+     */
+    override fun onBeforeNavigation() {}
 
     // ----------------------------------------------------------------------------
     // TurbolinksWebFragmentCallback interface
