@@ -10,8 +10,10 @@ import com.basecamp.turbolinks.nav.TurbolinksNavPresentationContext
 import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 
 /**
- * The base class from which all "standard" fragments (non-dialogs) in a Turbolinks driven app
+ * The base class from which all "standard" native fragments (non-dialogs) in a Turbolinks driven app
  * should extend from.
+ *
+ * For web fragments, refer to [TurbolinksWebFragment].
  *
  * @constructor Create empty Turbolinks fragment
  */
@@ -19,7 +21,7 @@ abstract class TurbolinksFragment : Fragment(), TurbolinksNavDestination {
     private lateinit var delegate: TurbolinksFragmentDelegate
 
     /**
-     * Creates the [TurbolinksFragmentDelegate] instance.
+     * Instantiates a [TurbolinksFragmentDelegate].
      *
      * @param savedInstanceState
      */
