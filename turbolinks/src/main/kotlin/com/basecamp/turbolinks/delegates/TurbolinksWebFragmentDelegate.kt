@@ -20,6 +20,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
+/**
+ * Provides all the hooks for a web fragment to communicate with Turbolinks (and vice versa).
+ *
+ * @property navDestination
+ * @property callback
+ * @constructor Create empty Turbolinks web fragment delegate
+ */
 class TurbolinksWebFragmentDelegate(
     private val navDestination: TurbolinksNavDestination,
     private val callback: TurbolinksWebFragmentCallback
@@ -39,9 +46,17 @@ class TurbolinksWebFragmentDelegate(
     private val turbolinksView: TurbolinksView?
         get() = callback.turbolinksView
 
+    /**
+     * Convenience accessor to the Turbolinks session's WebView.
+     */
     val webView: WebView?
         get() = session().webView
 
+    /**
+     * Should be called by the implementing Fragment during [androidx.fragment.app.Fragment.onActivityCreated].
+     * Does a variety of WebView checks and state clean up before any navigation takes place.
+     *
+     */
     fun onActivityCreated() {
         if (session().isRenderProcessGone) {
             navDestination.sessionNavHostFragment.createNewSession()
@@ -54,24 +69,53 @@ class TurbolinksWebFragmentDelegate(
         }
     }
 
+    /**
+     * Should be called by the implementing Fragment during [androidx.fragment.app.Fragment.onStart].
+     * Initializes all necessary views and executes the Turbolinks visit.
+     *
+     */
     fun onStart() {
         initNavigationVisit()
     }
 
+    /**
+     * Provides a hook to Turbolinks when a fragment has been started again after receiving a
+     * modal result. Will navigate if the result indicates it should.
+     *
+     * @param result
+     */
     fun onStartAfterModalResult(result: TurbolinksSessionModalResult) {
         if (!result.shouldNavigate) {
             initNavigationVisit()
         }
     }
 
+    /**
+     * Provides a hook to Turbolinks when the fragment has been started again after a dialog has
+     * been dismissed/canceled and no result is passed back. Initializes all necessary views and
+     * executes the Turbolinks visit.
+     *
+     */
     fun onStartAfterDialogCancel() {
         initNavigationVisit()
     }
 
+    /**
+     * Provides a hook to Turbolinks when the dialog has been canceled. Detaches the WebView
+     * so that [onStartAfterDialogCancel] or [onStartAfterModalResult] can reattach it and execute
+     * a Turbolinks visit.
+     *
+     */
     fun onDialogCancel() {
         detachWebView()
     }
 
+    /**
+     * Provides a hook to Turbolinks when the dialog has been dismissed. Detaches the WebView
+     * if it's still attached so that [onStartAfterDialogCancel] or [onStartAfterModalResult] can
+     * reattach it and execute a Turbolinks visit.
+     *
+     */
     fun onDialogDismiss() {
         // The WebView is already detached in most circumstances, but sometimes
         // fast user cancellation does not call onCancel() before onDismiss()
@@ -80,10 +124,20 @@ class TurbolinksWebFragmentDelegate(
         }
     }
 
+    /**
+     * Retrieves the Turbolinks session from the destination.
+     *
+     * @return
+     */
     fun session(): TurbolinksSession {
         return navDestination.session
     }
 
+    /**
+     * Adds and shows the error view that's implemented via [TurbolinksWebFragmentCallback.createErrorView].
+     *
+     * @param code
+     */
     fun showErrorView(code: Int) {
         val errorView = callback.createErrorView(code)
         turbolinksView?.addErrorView(errorView)
