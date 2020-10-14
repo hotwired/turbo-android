@@ -47,16 +47,36 @@ class TurbolinksActivityDelegate(
         }
     }
 
-    internal fun registerNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksSessionNavHostFragment {
+    /**
+     * Provides the ability to register additional nav host fragments.
+     *
+     * @param navHostFragmentId
+     * @return
+     */
+    fun registerNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksSessionNavHostFragment {
         return findNavHostFragment(navHostFragmentId).also {
             navHostFragments[navHostFragmentId] = it
         }
     }
 
-    internal fun navHostFragment(@IdRes navHostFragmentId: Int): TurbolinksSessionNavHostFragment {
+    /**
+     * Finds the nav host fragment associated with the provided ID.
+     *
+     * @param navHostFragmentId
+     * @return
+     */
+    fun navHostFragment(@IdRes navHostFragmentId: Int): TurbolinksSessionNavHostFragment {
         return requireNotNull(navHostFragments[navHostFragmentId]) {
             "No registered TurbolinksNavHostFragment found"
         }
+    }
+
+    /**
+     * Resets the Turbolinks sessions associated with each nav host fragment.
+     *
+     */
+    fun resetSessions() {
+        navHostFragments.forEach { it.value.session.reset() }
     }
 
     /**
@@ -68,11 +88,11 @@ class TurbolinksActivityDelegate(
     }
 
     /**
-     * Navigate
+     * Navigates to the specified location using the current destination as the starting point.
      *
-     * @param location
-     * @param options
-     * @param bundle
+     * @param location The location to navigate to.
+     * @param options Any options to apply to the visit.
+     * @param bundle Any additional bundled data to pass to the navigation components.
      */
     fun navigate(
         location: String,
@@ -83,23 +103,23 @@ class TurbolinksActivityDelegate(
     }
 
     /**
-     * Navigate up
+     * Navigates up using the current destination as the starting point.
      *
      */
-    fun navigateUp() {
+    internal fun navigateUp() {
         currentNavDestination?.navigateUp()
     }
 
     /**
-     * Navigate back
+     * Navigates back using the current destination as the starting point.
      *
      */
-    fun navigateBack() {
+    internal fun navigateBack() {
         currentNavDestination?.navigateBack()
     }
 
     /**
-     * Clear back stack
+     * Clears the nav back stack.
      *
      */
     fun clearBackStack() {
