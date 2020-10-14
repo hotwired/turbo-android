@@ -7,40 +7,82 @@ import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import androidx.webkit.WebViewCompat
-import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.util.contentFromAsset
 import com.basecamp.turbolinks.util.runOnUiThread
 import com.basecamp.turbolinks.util.toJson
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.google.gson.GsonBuilder
 
+/**
+ * A Turbolinks specific WebView that configures required settings and exposes some helpful info.
+ *
+ * Generally you are not creating this view manually — it will be provided to you via the appropriate
+ * delegate.
+ *
+ * @constructor
+ *
+ * @param context
+ * @param attrs
+ */
 @SuppressLint("SetJavaScriptEnabled")
-open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : WebView(context, attrs) {
+open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+    WebView(context, attrs) {
     private val gson = GsonBuilder().disableHtmlEscaping().create()
 
+    /**
+     * Basic initialization of the WebView, including enabling JavaScript, DOM Storage, etc.
+     */
     init {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
     }
 
+    /**
+     * Provides the WebView's package name.
+     */
     val packageName: String?
         get() = WebViewCompat.getCurrentWebViewPackage(context)?.packageName
 
+    /**
+     * Provides the WebView's version name.
+     */
     val versionName: String?
         get() = WebViewCompat.getCurrentWebViewPackage(context)?.versionName
 
+    /**
+     * Provides the WebView's major version.
+     */
     val majorVersion: Int?
         get() = versionName?.substringBefore(".")?.toIntOrNull()
 
+    /**
+     * Visit location
+     *
+     * @param location
+     * @param options
+     * @param restorationIdentifier
+     */
     internal fun visitLocation(location: String, options: TurbolinksVisitOptions, restorationIdentifier: String) {
         val args = encodeArguments(location, options.toJson(), restorationIdentifier)
         runJavascript("webView.visitLocationWithOptionsAndRestorationIdentifier($args)")
     }
 
+    /**
+     * Visit rendered for cold boot
+     *
+     * @param coldBootVisitIdentifier
+     */
     internal fun visitRenderedForColdBoot(coldBootVisitIdentifier: String) {
         runJavascript("webView.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
     }
 
+    /**
+     * Install bridge
+     *
+     * @param onBridgeInstalled
+     * @receiver
+     */
     internal fun installBridge(onBridgeInstalled: () -> Unit) {
         val script = "window.webView == null"
         val bridge = context.contentFromAsset("js/turbolinks_bridge.js")
