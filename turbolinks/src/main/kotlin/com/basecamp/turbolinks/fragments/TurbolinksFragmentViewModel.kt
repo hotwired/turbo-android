@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 /**
- * Turbolinks fragment view model
+ * Holds onto fragment-level state data.
  *
  * @constructor Create empty Turbolinks fragment view model
  */
@@ -14,7 +14,7 @@ class TurbolinksFragmentViewModel : ViewModel() {
     val title: MutableLiveData<String> = MutableLiveData()
 
     /**
-     * Set title
+     * Set's the page title.
      *
      * @param newTitle
      */
