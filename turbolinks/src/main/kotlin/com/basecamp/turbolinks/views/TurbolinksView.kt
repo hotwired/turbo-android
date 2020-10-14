@@ -15,8 +15,17 @@ import androidx.core.view.isVisible
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.basecamp.turbolinks.R
 
+/**
+ * Turbolinks view
+ *
+ * @constructor
+ *
+ * @param context
+ * @param attrs
+ * @param defStyleAttr
+ */
 class TurbolinksView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-        FrameLayout(context, attrs, defStyleAttr) {
+    FrameLayout(context, attrs, defStyleAttr) {
 
     private val webViewContainer: ViewGroup get() = findViewById(R.id.turbolinks_webView_container)
     private val progressContainer: ViewGroup get() = findViewById(R.id.turbolinks_progress_container)
@@ -26,6 +35,13 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
     internal val webViewRefresh: SwipeRefreshLayout? get() = webViewContainer as? SwipeRefreshLayout
     internal val errorRefresh: SwipeRefreshLayout? get() = findViewById(R.id.turbolinks_error_refresh)
 
+    /**
+     * Attach web view
+     *
+     * @param webView
+     * @param onAttachedToNewDestination
+     * @receiver
+     */
     internal fun attachWebView(webView: WebView, onAttachedToNewDestination: (Boolean) -> Unit) {
         if (webView.parent != null) {
             onAttachedToNewDestination(false)
@@ -43,6 +59,13 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
+    /**
+     * Detach web view
+     *
+     * @param webView
+     * @param onDetached
+     * @receiver
+     */
     internal fun detachWebView(webView: WebView, onDetached: () -> Unit) {
         // If the view is already detached from the window (like
         // when dismissing a bottom sheet), detach immediately,
@@ -58,10 +81,21 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
+    /**
+     * Web view is attached
+     *
+     * @param webView
+     * @return
+     */
     internal fun webViewIsAttached(webView: WebView): Boolean {
         return webViewContainer.contains(webView)
     }
 
+    /**
+     * Add progress view
+     *
+     * @param progressView
+     */
     internal fun addProgressView(progressView: View) {
         // Don't show the progress view if a screenshot is available
         if (screenshotView.isVisible) return
@@ -73,11 +107,20 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         progressContainer.isVisible = true
     }
 
+    /**
+     * Remove progress view
+     *
+     */
     internal fun removeProgressView() {
         progressContainer.removeAllViews()
         progressContainer.isVisible = false
     }
 
+    /**
+     * Add screenshot
+     *
+     * @param screenshot
+     */
     internal fun addScreenshot(screenshot: Bitmap?) {
         if (screenshot == null) return
 
@@ -85,11 +128,20 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         screenshotView.isVisible = true
     }
 
+    /**
+     * Remove screenshot
+     *
+     */
     internal fun removeScreenshot() {
         screenshotView.setImageBitmap(null)
         screenshotView.isVisible = false
     }
 
+    /**
+     * Add error view
+     *
+     * @param errorView
+     */
     internal fun addErrorView(errorView: View) {
         check(errorView.parent == null) { "Error view cannot be attached to another parent" }
 
@@ -104,6 +156,10 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
+    /**
+     * Remove error view
+     *
+     */
     internal fun removeErrorView() {
         errorContainer.removeAllViews()
         errorContainer.isVisible = false
@@ -115,7 +171,12 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
-    fun createScreenshot(): Bitmap? {
+    /**
+     * Create screenshot
+     *
+     * @return
+     */
+    internal fun createScreenshot(): Bitmap? {
         if (!isLaidOut) return null
         if (!hasEnoughMemoryForScreenshot()) return null
         if (width <= 0 || height <= 0) return null
@@ -130,7 +191,12 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
-    fun screenshotOrientation(): Int {
+    /**
+     * Screenshot orientation
+     *
+     * @return
+     */
+    internal fun screenshotOrientation(): Int {
         return context.resources.configuration.orientation
     }
 
