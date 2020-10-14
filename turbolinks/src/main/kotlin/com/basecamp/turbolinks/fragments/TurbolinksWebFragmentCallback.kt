@@ -31,12 +31,6 @@ interface TurbolinksWebFragmentCallback {
     fun createProgressView(location: String): View
 
     /**
-     * On update view
-     *
-     */
-    fun onUpdateView()
-
-    /**
      * Called when the WebView has been attached to its new parent.
      *
      */

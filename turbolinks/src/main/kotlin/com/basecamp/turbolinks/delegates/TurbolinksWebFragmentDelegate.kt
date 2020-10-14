@@ -231,7 +231,6 @@ class TurbolinksWebFragmentDelegate(
 
     private fun initView() {
         currentlyZoomed = false
-        callback.onUpdateView()
         turbolinksView?.apply {
             initializePullToRefresh(this)
             initializeErrorPullToRefresh(this)

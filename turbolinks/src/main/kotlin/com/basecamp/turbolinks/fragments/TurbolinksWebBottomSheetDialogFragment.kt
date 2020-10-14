@@ -42,7 +42,6 @@ abstract class TurbolinksWebBottomSheetDialogFragment : TurbolinksBottomSheetDia
     // TurbolinksWebFragmentCallback interface
     // ----------------------------------------------------------------------------
 
-    override fun onUpdateView() {}
 
     override fun onWebViewAttached() {}
 

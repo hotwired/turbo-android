@@ -83,7 +83,6 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
     // TurbolinksWebFragmentCallback interface
     // ----------------------------------------------------------------------------
 
-    override fun onUpdateView() {}
 
     override fun onWebViewAttached() {}
 
