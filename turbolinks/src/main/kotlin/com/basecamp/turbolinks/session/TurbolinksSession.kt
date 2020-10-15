@@ -14,6 +14,7 @@ import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
+import com.basecamp.turbolinks.config.screenshotsEnabled
 import com.basecamp.turbolinks.http.TurbolinksHttpClient
 import com.basecamp.turbolinks.http.TurbolinksHttpRepository
 import com.basecamp.turbolinks.http.TurbolinksOfflineRequestHandler
@@ -64,7 +65,7 @@ class TurbolinksSession private constructor(internal val sessionName: String, in
     /**
      * Enables/disables transitional screenshots for this session. Default is `true`.
      */
-    var enableScreenshots = true
+    var enableScreenshots = pathConfiguration.settings.screenshotsEnabled
 
 
     /**
