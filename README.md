@@ -4,13 +4,11 @@ Turbolinks Android is a native adapter for any [Turbolinks 6](https://github.com
 
 This library has been in use and tested in the wild since June 2020 in the all-new [HEY Android](https://play.google.com/store/apps/details?id=com.basecamp.hey&hl=en_US) app.
 
-Our goal for this library is that it not only be straightforward to get started, but that it aligns with and uses 2020 (and beyond) Android conventions as much as possible.
-
 ## Contents
 
 1. [Installation](#installation)
 1. [Getting Started](#getting)
-1. [Advanced Configuration](#advanced-configuration)
+1. [Additional Configuration](#advanced-configuration)
 1. [Running the Demo App](#running-the-demo-app)
 1. [Contributing](#contributing)
 
@@ -34,10 +32,12 @@ dependencies {
 1. Android API 24+ is required as the `minSdkVersion` in your build.gradle.
 1. In order for a  [WebView](https://developer.android.com/reference/android/webkit/WebView.html) to access the Internet and load web pages, your application must have the `INTERNET` permission. Make sure you have `<uses-permission android:name="android.permission.INTERNET" />` in your Android manifest.
 
-### Create a configuration
-A configuration file is what determines a variety of rules Turbolinks will follow to navigate and present views. It consists of both global settings and path specific rules that determine how and when a particular fragment will be navigated to.
+### Create a Configuration
+A configuration file determines the set of rules Turbolinks will follow to navigate and present views. It consists of both application-level settings as well as path specific rules that determine how and when a particular URI will be navigated to.
 
-At very minimum, you will need a `src/main/assets/json/configuration.json` file that Turbolinks can read, with at least a single path configuration.
+At minimum you will need a `src/main/assets/json/configuration.json` (or similar) file that Turbolinks can read, with at least one path configuration.
+
+Note that the configuration file is processed in order and cascades downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, while each subsequent rule can override for specific behavior.
 
 Example:
 
@@ -51,29 +51,29 @@ Example:
       "properties": {
         "context": "default",
         "uri": "turbolinks://fragment/web",
-        "pull_to_refresh_enabled": true
+        "pull_to_refresh_enabled": true,
+        "screenshots_enabled": true
       }
     }
   ]
 }
 ```
 
-The `pattern` attribute defines a standard Regex pattern that will be compared against any `location` provided.
+The `pattern` attribute defines a Regex pattern that will be used to determine if a provided URI matches (and as a result, which `properties` should be applied).
 
-There are a few `properties` that Turbolinks supports out of the box.
+The `properties` that Turbolinks supports out of the box are:
 
-* `uri`: Required. Must map to a Fragment that has implemented the `TurbolinksNavGraphDestination` annotation with a matching `uri` value.
-* `context`: Optional. Possible values are `default` or `modal`. Describes the presentation context under which the view should be displayed. Allows Turbolinks to determine what the navigation behavior should be. Unless you are specifically showing a modal-style view (often forms are modal), `default` is usually sufficient. Defaults to `default`.
-* `presentation`: Optional. Possible values are `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, or `none`. Allows Turbolinks to determine (along with the `context`) what the navigation behavior should be. In most cases `default` should be sufficient, but you may find cases where your app needs specific beahvior. Defaults to `default`.
-* `fallback_uri`: Optional. Provides a fallback in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be deployed yet.
+* `uri`: **Required**. Must map to an Activity or Fragment that has implemented the `TurbolinksNavGraphDestination` annotation with a matching `uri` value.
+* `context`: Optional. Possible values are `default` or `modal`. Describes the presentation context in which the view should be displayed. Turbolinks will determine what the navigation behavior should be based on this value + `presenentation`. Unless you are specifically showing a modal-style view (e.g., a form), `default` is usually sufficient. Defaults to `default`.
+* `presentation`: Optional. Possible values are `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, or `none`. Turbolinks will determine what the navigation behavior should be based on this value + `context`. In most cases `default` should be sufficient, but you may find cases where your app needs specific beahvior. Defaults to `default`.
+* `fallback_uri`: Optional. Provides a fallback URI in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be deployed yet.
 * `pull_to_refresh_enabled`: Optional. Whether or not pull to refresh should be enabled for a given path. Defaults to `false`.
+* `screenshots_enabled`: Optional. Whether or not transitional screenshots (when returning to a previous screen) should be used. This gives the appearance of a much faster experience going back, but does require more performance overhead. Defaults to `true`.
 
-Note that the configuration file is processed in order and cascade downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, and then each subsequent rule can override for specific behavior. That is, the last rule in the file will override anything above it.
+### Create a Layout
+You'll need a basic layout for your fragment to inflate. Refer to `fragment_web.xml` and feel free to copy that as a starting point.
 
-### Create a layout
-You'll need a basic layout for your fragment to inflate. Take a look at `fragment_web.xml` and feel free to copy that as your baseline.
-
-The key element here is to include a reference to `turbolinks_default`, which automatically adds the necessary view hierarchy that Turbolinks expects for attaching a WebView, progress view, and error view.
+The most important thing is to include a reference to the `turbolinks_default` resource. This is a view provided by the library which automatically add the necessary view hierarchy that Turbolinks expects for attaching a WebView, progress view, and error view.
 
 ```xml
 <include
@@ -84,60 +84,45 @@ The key element here is to include a reference to `turbolinks_default`, which au
     app:layout_constraintTop_toBottomOf="@+id/app_bar" />
 ```
 
-### Create a custom destination interface
-This step isn't completely necessary, but can provide some flexibility in navigation rules that your app will likely need. The standard `TurbolinksNavDestination` offers most of what you need, but extending this interface and creating your own can offer some benefits.
+### Create a Destination Interface (Optional)
+The standard `TurbolinksNavDestination` provides most of what you need, but extending this interface and creating your own can provide some navigational flexibility that many, more complex apps will need.
 
-A good starting point is to look at (and copy) `NavDestination`, where we show some common additional logic you may to help determine how to handle certain navigational scenarios.
+Refer to `NavDestination` as an example, which shows some common additional logic that might be helpful. Feel free to copy that as a starting point.
 
-### Create a fragment
-You'll need at least one fragment to represent the main body of your view. A `WebFragment` would be a good option since you're here and are probably interested in WebViews. :)
+### Create a Fragment
+You'll need at least one fragment to represent the main body of your view. 
 
-This fragment should implement your custom destination interface as mentioned above, or, if you haven't created one, simply implement `TurbolinksNavDestination`.
+A `WebFragment` would be a good option to handle all standard WebViews in your app. This fragment...
 
-Your fragment must extend one of the base fragments provided by Turbolinks. In this case, as a web fragment, you should extend `TurbolinksWebFragment`.
+* Should implement your custom destination interface as mentioned above, or, if you haven't created one, simply implement `TurbolinksNavDestination`.
+* Must extend one of the base fragments provided by Turbolinks. In this case, as a web fragment, you should extend `TurbolinksWebFragment`.
 
-A good starting point is to look at (and copy) `WebFragment`. It outlines the very basics of what every fragment will need to do — annotating it appropriately as a nav graph destination, inflating a view, setting up progress and error views, and setting up a toolbar.
+Refer to `WebFragment` as an example and feel free to copy it as a starting point. It outlines the very basics of what every fragment will need to implement — a nav graph annotation, inflating a view, setting up progress and error views, and setting up a toolbar.
 
-### Create an activity
-Turbolinks assumes a single-activity per Turbolinks session architecture. So generally you'll have one activity and many fragments that swap into that activity's nav host.
+### Create an Activity
+Turbolinks assumes a single-activity per Turbolinks session architecture. Generally you'll have one activity and many fragments, which will swap into that activity's nav host.
 
-Turbolinks activities are fairly straightforward to begin with, and simply need to extend `TurbolinksActivity` in order to provide a `TurbolinksDelegate` that can interact with Turbolinks.
+Turbolinks activities are fairly straightforward and simply need to extend `TurbolinksActivity` in order to provide a `TurbolinksDelegate`.
 
-Take a look at `MainActivity` and feel free to copy that as a starting point.
+Refer to `MainActivity` and feel free to copy that as a starting point.
 
-### Create a session nav host fragment
-A session nav host fragment is ultimately an extension of the Android Navigation component's `NavHostFragment`, and as such is primarily responsible for providing "an area in your layout for self-contained navigation to occurr." 
+### Create a Nav Host Fragment
+A nav host fragment is ultimately an extension of the Android Navigation component's `NavHostFragment`, and as such is primarily responsible for providing "an area in your layout for self-contained navigation to occurr." 
 
-In the Turbolinks version, this nav host fragment is bound to a given Turbolinks session, and you will need to implement just a few things.
+The Turbolinks version of this class is bound to a single Turbolinks session, and you will need to implement just a few things.
 
 * The name of the Turbolinks session
-* The start location
-* A list of activities where Turbolinks will look for the destinations
-* A list of fragments that Turbolinks will register as destinations
+* The URI of a starting location
+* A list of activities that Turbolinks will be able to navigate to
+* A list of fragments that Turbolinks will be able to navigate to
 * A path configuration to provide navigation configuration
-* Any additional setup upon creating the session
+* Any additional custom setup steps to execute upon creating the session
 
-Refer to `MainSessionnavHostFragment` for an example.
+Refer to `MainSessionNavHostFragment` for an example.
 
-🎉**Congratulations, you're using Turbolinks on Android!** 👏
+🎉 **Congratulations, you're using Turbolinks on Android!** 🎉
 
 ## Additional Configuration
-
-### Disabling transitional screenshots
-When the Turbolinks `WebView` is detached from an activity, a bitmap screenshot of the view is automatically created and later displayed when the activity is resumed. When a cached version of the page is restored, the screenshot is removed. This makes transitions appear very fast while the cached item is loading.
-
-If you don't want this behavior, it can be disabled with a global setting in the configuration file:
-
-```json
-{
-  "settings": {
-    "screenshots_enabled": false
-  },
-  "rules": [
-    ...
-  ]
-}
-```
 
 ### Multiple instances of TurbolinksSession
 
@@ -176,35 +161,14 @@ The Java object being passed in can be anything, as long as it has at least one 
 
 ## Running the Demo App
 
-A demo app is bundled with the library, and works in two parts:
-
-1. A tiny Turbolinks-enabled Sinatra web app that you can run locally.
-1. A tiny Android app that connects to the Sinatra web app.
-
-### Prerequisites
-
-- [Ruby installed](https://www.ruby-lang.org/en/downloads/)
-- [RubyGems installed](https://rubygems.org/pages/download)
-- [Bundler installed](http://bundler.io/)
-- [Sinatra installed](http://www.sinatrarb.com/)
-- [Rack installed](https://github.com/rack/rack#installing-with-rubygems)
-- Your IP address
-
-### Start the Demo Sinatra Web App
-
-- From the command line, change directories to `<project-root>/demoapp/server`.
-- Run `bundle`
-- Run `rackup --host 0.0.0.0`
-
-You should see a message saying what port the demo web app is running on. It usually looks like:
-
-`Listening on 0.0.0.0:9292`
+The demo apps bundled with the library work best with the [Turbolinks Demo App](https://github.com/basecamp/turbolinks-demo). You can follow the instructions in that repo to start up the server.
 
 ### Start the Demo Android App
 
-- Ensure your web app and Android device are on the same network.
-- Go to [`MainActivity`](/demoapp/src/main/java/com/basecamp/turbolinks/demo/MainActivity.java).
-- Find the `BASE_URL` String at the top of the class. Change the IP and port of that string to match your IP and the port the Sinatra web app is running on.
+- Ensure the demo server and Android device are on the same network.
+- Start up the demo server per its instructions.
+- Go to `Contants.kt`.
+- Find the `BASE_URL` String at the top of the class. Change the IP to your IP.
 - Build/run the app to your device.
 
 ## Contributing
@@ -213,7 +177,7 @@ Turbolinks Android is open-source software, freely distributable under the terms
 
 We welcome contributions in the form of bug reports, pull requests, or thoughtful discussions in the [GitHub issue tracker](https://github.com/turbolinks/turbolinks-android/issues). Please see the [Code of Conduct](CONDUCT.md) for our pledge to contributors.
 
-Turbolinks Android was created by [Dan Kim](https://twitter.com/dankim) and [Jay Ohms](https://twitter.com/jayohms), with guidance and help from [Sam Stephenson](https://twitter.com/sstephenson) and [Jeffrey Hardy](https://twitter.com/packagethief). Development is sponsored by [Basecamp](https://basecamp.com/).
+Turbolinks Android's development is sponsored by [Basecamp](https://basecamp.com/).
 
 ### Building from Source
 
