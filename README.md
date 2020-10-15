@@ -1,26 +1,21 @@
 # Turbolinks Android
-[![Build Status on Travis:](https://travis-ci.org/turbolinks/turbolinks-android.svg?branch=master)](https://travis-ci.org/turbolinks/turbolinks-android) [ ![Download](https://api.bintray.com/packages/basecamp/maven/turbolinks-android/images/download.svg) ](https://bintray.com/basecamp/maven/turbolinks-android/_latestVersion)
 
-Turbolinks Android is a native adapter for any [Turbolinks 5](https://github.com/turbolinks/turbolinks#readme) enabled web app. It's built entirely using standard Android tools and conventions.
+Turbolinks Android is a native adapter for any [Turbolinks 6](https://github.com/turbolinks/turbolinks#readme) enabled web app. It's built entirely using standard Android tools and conventions.
 
-This library has been in use and tested in the wild since November 2015 in the all-new [Basecamp 3 for Android](https://play.google.com/store/apps/details?id=com.basecamp.bc3).
+This library has been in use and tested in the wild since June 2020 in the all-new [HEY Android](https://play.google.com/store/apps/details?id=com.basecamp.hey&hl=en_US) app.
 
-Our goal for this library was that it'd be easy on our fellow programmers:
-
-- **Easy to start**: one jCenter dependency, one custom view, one adapter interface to implement. No other requirements.
-- **Easy to use**: full access to the TurbolinksSession, along with a convenience default instance.
-- **Easy to understand**: tidy code backed by solid documentation via [Javadocs](http://turbolinks.github.io/turbolinks-android/) and this README.
+Our goal for this library is that it not only be straightforward to get started, but that it aligns with and uses 2020 (and beyond) Android conventions as much as possible.
 
 ## Contents
 
-1. [Installation](#installation-one-step)
-1. [Getting Started](#getting-started-three-steps)
+1. [Installation](#installation)
+1. [Getting Started](#getting)
 1. [Advanced Configuration](#advanced-configuration)
 1. [Running the Demo App](#running-the-demo-app)
 1. [Contributing](#contributing)
 
-## Installation (One Step)
-Add the dependency from jCenter to your app's (not project) `build.gradle` file.
+## Installation
+Add the dependency from jCenter to your module's (not top-level) `build.gradle` file.	
 
 ```groovy
 repositories {
@@ -28,17 +23,52 @@ repositories {
 }
 
 dependencies {
-    compile 'com.basecamp:turbolinks:1.0.6'
+    implementation 'com.basecamp:turbolinks:2.0.0'
 }
 ```
 
-## Getting Started (Three Steps)
+## Getting Started
 
 ### Prerequisites
 
-1. We recommend using Turbolinks from an activity or an extension of your activity, like a custom controller. This library hasn't been tested with Android Fragments (we don't use them). We'd recommend avoiding Fragments with this library, as they might produce unintended results.
-2. Android API 19+ is required as the `minSdkVersion` in your build.gradle.
-3. In order for a  [WebView](https://developer.android.com/reference/android/webkit/WebView.html) to access the Internet and load web pages, your application must have the `INTERNET` permission. Make sure you have `<uses-permission android:name="android.permission.INTERNET" />` in your Android manifest.
+1. Android API 24+ is required as the `minSdkVersion` in your build.gradle.
+1. In order for a  [WebView](https://developer.android.com/reference/android/webkit/WebView.html) to access the Internet and load web pages, your application must have the `INTERNET` permission. Make sure you have `<uses-permission android:name="android.permission.INTERNET" />` in your Android manifest.
+
+### Create a configuration
+A configuration file is what determines a variety of rules Turbolinks will follow to navigate and present views. It consists of both global settings and path specific rules that determine how and when a particular fragment will be navigated to.
+
+At very minimum, you will need a `src/main/assets/json/configuration.json` file that Turbolinks can read, with at least a single path configuration.
+
+Example:
+
+```json
+{
+  "rules": [
+    {
+      "patterns": [
+        ".*"
+      ],
+      "properties": {
+        "context": "default",
+        "uri": "turbolinks://fragment/web",
+        "pull_to_refresh_enabled": true
+      }
+    }
+  ]
+}
+```
+
+The `pattern` attribute defines a standard Regex pattern that will be compared against any `location` provided.
+
+There are a few `properties` that Turbolinks supports out of the box.
+
+* `uri`: Required. Must map to a Fragment that has implemented the `TurbolinksNavGraphDestination` annotation with a matching `uri` value.
+* `context`: Optional. Possible values are `default` or `modal`. Describes the presentation context under which the view should be displayed. Allows Turbolinks to determine what the navigation behavior should be. Unless you are specifically showing a modal-style view (often forms are modal), `default` is usually sufficient. Defaults to `default`.
+* `presentation`: Optional. Possible values are `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, or `none`. Allows Turbolinks to determine (along with the `context`) what the navigation behavior should be. In most cases `default` should be sufficient, but you may find cases where your app needs specific beahvior. Defaults to `default`.
+* `fallback_uri`: Optional. Provides a fallback in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be deployed yet.
+* `pull_to_refresh_enabled`: Optional. Whether or not pull to refresh should be enabled for a given path. Defaults to `false`.
+
+Note that the configuration file is processed in order and cascade downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, and then each subsequent rule can override for specific behavior. That is, the last rule in the file will override anything above it.
 
 ### 1. Add TurbolinksView to a Layout
 
