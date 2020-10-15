@@ -70,56 +70,56 @@ There are a few `properties` that Turbolinks supports out of the box.
 
 Note that the configuration file is processed in order and cascade downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, and then each subsequent rule can override for specific behavior. That is, the last rule in the file will override anything above it.
 
-### 1. Add TurbolinksView to a Layout
+### Create a layout
+You'll need a basic layout for your fragment to inflate. Take a look at `fragment_web.xml` and feel free to copy that as your baseline.
 
-In your activity's layout, insert the `TurbolinksView` custom view.
-
-`TurbolinksView` extends `FrameLayout`, so all of its standard attributes are available to you.
+The key element here is to include a reference to `turbolinks_default`, which automatically adds the necessary view hierarchy that Turbolinks expects for attaching a WebView, progress view, and error view.
 
 ```xml
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <com.basecamp.turbolinks.TurbolinksView
-        android:id="@+id/turbolinks_view"
+    <include
+        layout="@layout/turbolinks_default"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar" />
+ ```
 
-</LinearLayout>
-```
+### Create a custom destination interface
+This step isn't completely necessary, but can provide some flexibility in navigation rules that your app will likely need. The standard `TurbolinksNavDestination` offers most of what you need, but extending this interface and creating your own can offer some benefits.
 
-### 2. Implement the TurbolinksAdapter Interface
+A good starting point is to look at (and copy) `NavDestination`, where we show some common additional logic you may to help determine how to handle certain navigational scenarios.
 
-Implement the `TurbolinksAdapter` interface in your activity, which will require implementing a handful of callback methods. These callbacks are [outlined in greater detail below](#handling-adapter-callbacks).
+### Create a fragment
+You'll need at least one fragment to represent the main body of your view. A `WebFragment` would be a good option since you're here and are probably interested in WebViews. :)
 
-Right off the bat, you don't need to worry about handling every callback, especially if you're starting off with a simple app. Most can be left as empty methods for now.
+This fragment should implement your custom destination interface as mentioned above, or, if you haven't created one, simply implement `TurbolinksNavDestination`.
 
-**But at the very minimum, you must handle the [visitProposedToLocationWithAction](#visitproposedtolocationwithaction)**. Otherwise your app won't know what to do when a link is clicked inside a WebView.
+Your fragment must extend one of the base fragments provided by Turbolinks. In this case, as a web fragment, you should extend `TurbolinksWebFragment`.
 
-Beyond this README, you can get a good feel for the callbacks from the [Javadoc](http://turbolinks.github.io/turbolinks-android/) and the [demo app](/demoapp).
+A good starting point is to look at (and copy) `WebFragment`. It outlines the very basics of what every fragment will need to do — annotating it appropriately as a nav graph destination, inflating a view, setting up progress and error views, and setting up a toolbar.
 
-### 3. Get the Default TurbolinksSession and Visit a Location
+### Create an activity
+Turbolinks assumes a single-activity per Turbolinks session architecture. So generally you'll have one activity and many fragments that swap into that activity's nav host.
 
-From your activity that implements the `TurbolinksAdapter` interface, here's how you tell Turbolinks to visit a location:
+Turbolinks activities are fairly straightforward to begin with, and simply need to extend `TurbolinksActivity` in order to provide a `TurbolinksDelegate` that can interact with Turbolinks.
 
-```java
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-    // Standard activity boilerplate here...
+Take a look at `MainActivity` and feel free to copy that as a starting point.
 
-    // Assumes an instance variable is defined. Find the view you added to your
-    // layout in step 1.
-    turbolinksView = (TurbolinksView) findViewById(R.id.turbolinks_view);
+### Create a session nav host fragment
+A session nav host fragment is ultimately an extension of the Android Navigation component's `NavHostFragment`, and as such is primarily responsible for providing "an area in your layout for self-contained navigation to occurr." 
 
-    TurbolinksSession.getDefault(this)
-                     .activity(this)
-                     .adapter(this)
-                     .view(turbolinksView)
-                     .visit("https://basecamp.com");
-}
-```
+In the Turbolinks version, this nav host fragment is bound to a given Turbolinks session, and you will need to implement just a few things.
+
+* The name of the Turbolinks session
+* The start location
+* A list of activities where Turbolinks will look for the destinations
+* A list of fragments that Turbolinks will register as destinations
+* A path configuration to provide navigation configuration
+* Any additional setup upon creating the session
+
+Refer to `MainSessionnavHostFragment` for an example.
+
+Once all those component pieces are created and wired together, you will have a basic, but fully functioning Turbolinks app!
 
 🎉**Congratulations, you're using Turbolinks on Android!** 👏
 
