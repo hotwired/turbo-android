@@ -76,13 +76,13 @@ You'll need a basic layout for your fragment to inflate. Take a look at `fragmen
 The key element here is to include a reference to `turbolinks_default`, which automatically adds the necessary view hierarchy that Turbolinks expects for attaching a WebView, progress view, and error view.
 
 ```xml
-    <include
-        layout="@layout/turbolinks_default"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_bar" />
- ```
+<include
+    layout="@layout/turbolinks_default"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/app_bar" />
+```
 
 ### Create a custom destination interface
 This step isn't completely necessary, but can provide some flexibility in navigation rules that your app will likely need. The standard `TurbolinksNavDestination` offers most of what you need, but extending this interface and creating your own can offer some benefits.
@@ -124,60 +124,6 @@ Once all those component pieces are created and wired together, you will have a 
 🎉**Congratulations, you're using Turbolinks on Android!** 👏
 
 ## Advanced Configuration
-
-### Handling Adapter Callbacks
-
-The `TurbolinksAdapter` class provides callback events directly from the WebView and Turbolinks itself. This gives you the opportunity to intercept those events and inject your own native actions -- things like routing logic, displaying UI elements, and error handling.
-
-As mentioned earlier, you must implement `visitProposedToLocationWithAction`, or your app won't know what to do when a link is clicked inside a WebView.
-
-You can of course choose to leave the rest of the adapter callbacks blank, but we'd recommend implementing the two error handling callbacks (`onReceivedError` and `requestFailedWithStatusCode`) for when things go wrong.
-
-#### visitProposedToLocationWithAction
-
-This is a callback from Turbolinks telling you that a visit has been proposed and is about to begin. **This is the most important callback that you must implement.**
-
-This callback provides your app the opportunity to figure out what it should do and where it should go. At the very minimum, you can create an `Intent` to open another `Activity` that fires another Turbolinks call with the provided location, like so:
-
-```java
-Intent intent = new Intent(this, MainActivity.class);
-intent.putExtra(INTENT_URL, location);
-this.startActivity(intent);
-```
-
-In more complex apps, you'll most likely want to do some routing logic here. Should you open another WebView Activity? Should you open a native Activity in certain cases? This is the place to do that logic.
-
-#### onPageFinished
-
-This is a callback that's executed at the end of the standard [WebViewClient's onPageFinished](http://developer.android.com/reference/android/webkit/WebViewClient.html#onPageFinished(android.webkit.WebView, java.lang.String)) method.
-
-This callback will only be fired once upon cold booting. If there is any action you need to take after the first full page load is complete, just once, this is the place to do it.
-
-The reason this is only called once is because the first location that Turbolinks loads after initialization is always a "cold boot" -- a full page load of all resources that's executed through a normal `WebView.loadUrl(url)`. Every subsequent location visit (with the exception of an error condition or page invalidation) will fire through Turbolinks, without a full page load.
-
-#### visitCompleted
-
-This is a callback from Turbolinks telling you it considers the visit completed. The request has been fulfilled successfully and the page fully rendered.
-
-It's similar conceptually to onPageFinished, except this callback will be called for every Turbolinks visit. This is a good time to take actions that you need on every page, such as reading data-attributes (or other metadata) from the loaded page.
-
-#### onReceivedError
-
-This is a callback that's executed at the end of the standard [WebViewClient's onReceivedError](http://developer.android.com/reference/android/webkit/WebViewClient.html#onReceivedError(android.webkit.WebView, int, java.lang.String, java.lang.String)) method.
-
-**We recommend you implement this method.** Otherwise, your user will see an endless progress view/spinner without something that handles the error. You can handle the error however you like -- send the user to a different page, show a native error screen, etc.
-
-#### requestFailedWithStatusCode
-
-This is a callback from Turbolinks telling you that an XHR request has failed.
-
-**We recommend you implement this method.** Otherwise, your user will see an endless progress view/spinner without something that handles the error. You can handle the error however you like -- send the user to a different page, show a native error screen, etc.
-
-#### pageInvalidated
-
-This is a callback from Turbolinks telling you that a change has been detected in a resource/asset in the `<HEAD>`, and as a result the Turbolinks state has been invalidated. Most likely the web app has been updated while the app was using it.
-
-The library will automatically fall back to cold booting the location (which it must do since resources have been changed) and then will notify you via this callback that the page was invalidated. This is an opportunity for you to clean up any UI state that you might have lingering around that may no longer be valid (title data, etc.)
 
 ### Overriding Default TurbolinksSession Settings
 There are some optional features in TurbolinksSession that are enabled by default.
