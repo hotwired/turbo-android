@@ -136,7 +136,7 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
             TurbolinksNavPresentation.REPLACE_ROOT -> onNavigationVisit {
                 replaceRootLocation(rule)
             }
-            TurbolinksNavPresentation.REPLACE_ALL -> onNavigationVisit {
+            TurbolinksNavPresentation.CLEAR_ALL -> onNavigationVisit {
                 clearBackStack()
             }
             else -> {

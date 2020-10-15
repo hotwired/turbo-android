@@ -119,7 +119,7 @@ class TurbolinksNavRuleTest {
         // New destination
         assertThat(rule.newLocation).isEqualTo(homeUrl)
         assertThat(rule.newPresentationContext).isEqualTo(TurbolinksNavPresentationContext.DEFAULT)
-        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.REPLACE_ALL)
+        assertThat(rule.newPresentation).isEqualTo(TurbolinksNavPresentation.CLEAR_ALL)
         assertThat(rule.newNavigationMode).isEqualTo(TurbolinksNavMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webHomeUri)

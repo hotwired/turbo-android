@@ -42,7 +42,7 @@ enum class TurbolinksNavPresentation {
      *
      * @constructor
      */
-    REPLACE_ALL,
+    CLEAR_ALL,
 
     /**
      * Pops up to the given destination first (clearing anything that doesn't match), then navigates.
