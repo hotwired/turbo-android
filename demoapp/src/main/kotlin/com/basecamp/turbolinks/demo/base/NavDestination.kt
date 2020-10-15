@@ -54,7 +54,7 @@ interface NavDestination : TurbolinksNavDestination {
 
     private fun isInvalidUrl(location: String): Boolean {
         return try {
-            pathConfiguration.properties(location)
+            session.pathConfiguration.properties(location)
             false
         } catch (e: MalformedURLException) {
             true

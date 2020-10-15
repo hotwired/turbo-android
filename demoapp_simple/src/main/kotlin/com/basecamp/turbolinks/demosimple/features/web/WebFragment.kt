@@ -18,7 +18,7 @@ open class WebFragment : TurbolinksWebFragment(), NavDestination {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        pageViewModel.title.observe(viewLifecycleOwner) {
+        fragmentViewModel.title.observe(viewLifecycleOwner) {
             toolbarForNavigation()?.title = it
         }
     }
