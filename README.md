@@ -119,85 +119,45 @@ In the Turbolinks version, this nav host fragment is bound to a given Turbolinks
 
 Refer to `MainSessionnavHostFragment` for an example.
 
-Once all those component pieces are created and wired together, you will have a basic, but fully functioning Turbolinks app!
-
 🎉**Congratulations, you're using Turbolinks on Android!** 👏
 
-## Advanced Configuration
+## Additional Configuration
 
-### Overriding Default TurbolinksSession Settings
-There are some optional features in TurbolinksSession that are enabled by default.
+### Disabling transitional screenshots
+When the Turbolinks `WebView` is detached from an activity, a bitmap screenshot of the view is automatically created and later displayed when the activity is resumed. When a cached version of the page is restored, the screenshot is removed. This makes transitions appear very fast while the cached item is loading.
 
-#### Bitmap Screenshots
-When the Turbolinks `WebView` is detached from an activity, a bitmap screenshot of the view is automatically created and later displayed when the activity is resumed - until a copy of the page is restored from cache in the `WebView`. This gives the illusion that the `WebView` was never detached and no visual flicker is seen. To disable this behavior, simply call:
-```java
-turbolinksSession.setScreenshotsEnabled(false);
+If you don't want this behavior, it can be disabled with a global setting in the configuration file:
+
+```json
+{
+  "settings": {
+    "screenshots_enabled": false
+  },
+  "rules": [
+    ...
+  ]
+}
 ```
 
-#### Pull To Refresh
-Refreshes the TurbolinksView when a user swipes down from the top of the view.
-To disable simply call:
-```java
-turbolinksSession.setPullToRefreshEnabled(false);
-```
+### Multiple instances of TurbolinksSession
 
-### Custom Instance(s) of TurbolinksSession
+There is a 1-1-1 relationship between an activity, its nav host fragment, and its Turbolinks session. The nav host fragment automatically creates a `TurbolinksSession` for you.
 
-We provide a single, reusable instance of TurbolinksSession that you can access through this convenience method:
+You may encounter situations where a truly single activity app may not be feasible — that is, you may need an activity, for example, for logged out state vs. logged in state. Or perhaps it's safer to send inactive users to an entirely different activity to guard access controls.
 
-```java
-TurbolinksSession turbolinksSession = TurbolinksSession.getDefault(context);
-```
-
-If you need greater control, you can always create your own instance(s) with:
-
-```java
-TurbolinksSession myTurbolinksSession = TurbolinksSession.getNew(context);
-```
-
-Some things to keep in mind if you create your own instance of TurbolinksSession:
-
-- You'll be responsible for managing the lifecycle of the TurbolinksSession instance you create and ensure it's being reused for each subsequent Turbolinks call. In other words, if you call `.getNew(context)` accidentally on every visit, you'll be getting a new session instance and cold-booting every time, thereby defeating the purpose of Turbolinks.
-- The best places to manage the lifecycle of your instance is most likely in one of two places:
-  - A singleton helper class that instantiates once/returns always
-  - A custom object that extends `Application`
-
-You'll need to weigh the benefits and complexities of those options, but the bottom line is that you'll want to carefully manage the lifecycle of your Turbolinks instance(s).
-
-### Custom Progress View
-
-By default the library will provide you with a progress view with a progress bar -- a simple `FrameLayout` that covers the `WebView` while it's loading, and shows a spinner after 500ms.
-
-If that doesn't meet your needs, you can also pass in your own custom progress view like so:
-
-```java
-TurbolinksSession.getDefault(this)
-                 .activity(this)
-                 .adapter(this)
-                 .progressView(progressView, resourceIdOfProgressBar, progressBarDelay)
-                 .view(turbolinksView)
-                 .visit("https://basecamp.com");
-```
-
-Some notes about using a custom progress view:
-
-- It doesn't matter what kind of layout view you use, but you'll want to do something that covers the entire `WebView` and uses `match_parent` for the height and width.
-- We ask you to provide the resource ID of the progress bar *inside your progress view* so that we can internally handle when to display it. The library has a mechanism that can delay showing the progress bar to improve perceived loading times (a slight delay in showing the progress bar makes apps feel faster), so we need a handle to that view.
-- In conjunction with the progress bar resource ID, you can also specify the delay in milliseconds before it's displayed. The default progress bar shows after 500 ms.
+In such cases you, simply need to create a new activity + nav host fragment, which will in turn create its own Turbolinks session. You will need to be sure to register all these activities as `TurbolinksSessionNavHostFragment().registeredActivities` so that you can navigate between them.
 
 ### Custom WebView WebSettings
 
-By default the library sets some minimally intrusive WebSettings on the shared WebView. Some are required while others serve as reasonable defaults for modern web applications. They are:
+By default the library sets a few WebSettings on the shared WebView for a given session. Some are required while others serve as reasonable defaults for modern web applications. They are:
 
 - `setJavaScriptEnabled(true)` (required)
 - `setDomStorageEnabled(true)`
 
-If however these are not to your liking, you can always override them. The `WebView` is always available to you via `getWebView()`, and you can update the `WebSettings` to your liking:
+If however these are not to your liking, you can always override them from your `TurbolinksWebFragment`. The `WebView` is always available to you via `TurbolinksWebFragmentDelegate.webView()`, and you can update the `WebSettings` to your liking.
 
-```java
-WebSettings settings = TurbolinksSession.getDefault().getWebView().getSettings();
-settings.setDomStorageEnabled(false);
-settings.setAllowFileAccess(false);
+```kotlin
+delegate.webView.settings.domStorageEnabled = false
 ```
 
 **If you do update the WebView settings, be sure not to override `setJavaScriptEnabled(false)`. Doing so would break Turbolinks, which relies heavily on JavaScript.**
@@ -207,10 +167,12 @@ settings.setAllowFileAccess(false);
 If you have custom JavaScript on your pages that you want to access as JavascriptInterfaces, you can add them like so:
 
 ```java
-TurbolinksSession.getDefault().addJavascriptInterface(this, "MyCustomJavascriptInterface");
+delegate.webView.addJavascriptInterface(this, "MyCustomJavascriptInterface");
 ```
 
 The Java object being passed in can be anything, as long as it has at least one method annotated with `@android.webkit.JavascriptInterface`. Names of interfaces must be unique, or they will be overwritten in the library's map.
+
+**Do not use the reserved name `TurbolinksSession` for your JavaScriptInterface, as that is used by the library.**
 
 ## Running the Demo App
 
