@@ -6,14 +6,20 @@ This library has been in use and tested in the wild since June 2020 in the all-n
 
 ## Contents
 
+1. [Prerequisites](#prerequisites)
 1. [Installation](#installation)
-1. [Getting Started](#getting)
-1. [Additional Configuration](#advanced-configuration)
+1. [Getting Started](#getting-started)
+1. [Additional Configuration](#additional-configuration)
 1. [Running the Demo App](#running-the-demo-app)
 1. [Contributing](#contributing)
 
+### Prerequisites
+
+1. Android API 24+ is required as the `minSdkVersion` in your build.gradle.
+1. In order for a [WebView](https://developer.android.com/reference/android/webkit/WebView.html) to access the Internet and load web pages, your application must have the `INTERNET` permission. Make sure you have `<uses-permission android:name="android.permission.INTERNET" />` in your Android manifest.
+
 ## Installation
-Add the dependency from jCenter to your module's (not top-level) `build.gradle` file.	
+Add the dependency from jCenter to your module's (not top-level) `build.gradle` file.
 
 ```groovy
 repositories {
@@ -27,17 +33,15 @@ dependencies {
 
 ## Getting Started
 
-### Prerequisites
-
-1. Android API 24+ is required as the `minSdkVersion` in your build.gradle.
-1. In order for a  [WebView](https://developer.android.com/reference/android/webkit/WebView.html) to access the Internet and load web pages, your application must have the `INTERNET` permission. Make sure you have `<uses-permission android:name="android.permission.INTERNET" />` in your Android manifest.
-
 ### Create a Configuration
-A configuration file determines the set of rules Turbolinks will follow to navigate and present views. It consists of both application-level settings as well as path specific rules that determine how and when a particular URI will be navigated to.
+A configuration file specifies the set of rules Turbolinks will follow to navigate and present views. It has two sections: 
 
-At minimum you will need a `src/main/assets/json/configuration.json` (or similar) file that Turbolinks can read, with at least one path configuration.
+1. Application-level settings
+1. Path-specific rules 
 
-Note that the configuration file is processed in order and cascades downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, while each subsequent rule can override for specific behavior.
+Typically path-specific rules will do most of the work in determining how and when a particular URI will be navigated to, but additional application-level settings can also be applied to customize navigation logic (see [Create a destination interface](#create-a-destination-interface)).
+
+At minimum you will need a `src/main/assets/json/configuration.json` file that Turbolinks can read, with at least one path configuration. Note that the configuration file is processed in order and cascades downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, while each subsequent rule can override for specific behavior.
 
 Example:
 
@@ -59,11 +63,15 @@ Example:
 }
 ```
 
+#### Patterns
+
 The `pattern` attribute defines a Regex pattern that will be used to determine if a provided URI matches (and as a result, which `properties` should be applied).
+
+#### Properties
 
 The `properties` that Turbolinks supports out of the box are:
 
-* `uri`: **Required**. Must map to an Activity or Fragment that has implemented the `TurbolinksNavGraphDestination` annotation with a matching `uri` value.
+* `uri`: **Required**. Must map to an Activity or Fragment that has implemented the [TurbolinksNavGraphDestination](/turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavGraphDestination.kt) annotation with a matching `uri` value.
 * `context`: Optional. Possible values are `default` or `modal`. Describes the presentation context in which the view should be displayed. Turbolinks will determine what the navigation behavior should be based on this value + `presenentation`. Unless you are specifically showing a modal-style view (e.g., a form), `default` is usually sufficient. Defaults to `default`.
 * `presentation`: Optional. Possible values are `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, or `none`. Turbolinks will determine what the navigation behavior should be based on this value + `context`. In most cases `default` should be sufficient, but you may find cases where your app needs specific beahvior. Defaults to `default`.
 * `fallback_uri`: Optional. Provides a fallback URI in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be deployed yet.
@@ -84,7 +92,9 @@ The most important thing is to include a reference to the `turbolinks_default` r
     app:layout_constraintTop_toBottomOf="@+id/app_bar" />
 ```
 
-### Create a Destination Interface (Optional)
+### Create a Destination Interface
+This step is optional.
+
 The standard `TurbolinksNavDestination` provides most of what you need, but extending this interface and creating your own can provide some navigational flexibility that many, more complex apps will need.
 
 Refer to `NavDestination` as an example, which shows some common additional logic that might be helpful. Feel free to copy that as a starting point.
