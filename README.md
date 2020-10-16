@@ -41,7 +41,7 @@ A configuration file specifies the set of rules Turbolinks will follow to naviga
 
 Typically path-specific rules will do most of the work in determining how and when a particular URI will be navigated to, but additional application-level settings can also be applied to customize navigation logic (see [Create a destination interface](#create-a-destination-interface)).
 
-At minimum you will need a `src/main/assets/json/configuration.json` file that Turbolinks can read, with at least one path configuration. Note that the configuration file is processed in order and cascades downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, while each subsequent rule can override for specific behavior.
+At minimum you will need a [src/main/assets/json/configuration.json](/demoapp_simple/src/main/assets/json/configuration.json) file that Turbolinks can read, with at least one path configuration. Note that the configuration file is processed in order and cascades downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, while each subsequent rule can override for specific behavior.
 
 Example:
 
@@ -65,23 +65,35 @@ Example:
 
 #### Patterns
 
-The `pattern` attribute defines a Regex pattern that will be used to determine if a provided URI matches (and as a result, which `properties` should be applied).
+The `pattern` array defines a Regex pattern that will be used to determine if a provided URI matches (and as a result, which `properties` should be applied).
 
 #### Properties
 
-The `properties` that Turbolinks supports out of the box are:
+The `properties` object contains a handful of key/value pairs that Turbolinks supports out of the box. You are free to add more properties as your app needs, but these are the ones the framework is aware of and will handle automatically.
 
-* `uri`: **Required**. Must map to an Activity or Fragment that has implemented the [TurbolinksNavGraphDestination](/turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavGraphDestination.kt) annotation with a matching `uri` value.
-* `context`: Optional. Possible values are `default` or `modal`. Describes the presentation context in which the view should be displayed. Turbolinks will determine what the navigation behavior should be based on this value + `presenentation`. Unless you are specifically showing a modal-style view (e.g., a form), `default` is usually sufficient. Defaults to `default`.
-* `presentation`: Optional. Possible values are `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, or `none`. Turbolinks will determine what the navigation behavior should be based on this value + `context`. In most cases `default` should be sufficient, but you may find cases where your app needs specific beahvior. Defaults to `default`.
-* `fallback_uri`: Optional. Provides a fallback URI in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be deployed yet.
-* `pull_to_refresh_enabled`: Optional. Whether or not pull to refresh should be enabled for a given path. Defaults to `false`.
-* `screenshots_enabled`: Optional. Whether or not transitional screenshots (when returning to a previous screen) should be used. This gives the appearance of a much faster experience going back, but does require more performance overhead. Defaults to `true`.
+* `uri` — The target destination to navigate to. Must map to an Activity or Fragment that has implemented the [TurbolinksNavGraphDestination](/turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavGraphDestination.kt) annotation with a matching `uri` value.
+	* **Required**. 
+	* No explicit value options. No default value.
+* `context` — Specifies the presentation context in which the view should be displayed. Turbolinks will determine what the navigation behavior should be based on this value + the `presentation` value. Unless you are specifically showing a modal-style view (e.g., a form, wizard, navigation, etc.), `default` is usually sufficient. 
+	* Optional. 
+	* Possible values: `default` or `modal`. Defaults to `default`. 
+* `presentation` — Specifies what "action" to use to present the given `uri`. Turbolinks will determine what the navigation behavior should be based on this value + the `context` value. In most cases `default` should be sufficient, but you may find cases where your app needs specific beahvior. 
+	* Optional. 
+	* Possible values: `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, `none`. Defaults to `default`.
+* `fallback_uri` — Provides a fallback URI in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be available yet.
+	* Optional.
+	* No explicit value options. No default value. 
+* `pull_to_refresh_enabled` — Whether or not pull to refresh should be enabled for a given path.
+	* Optional.
+	* Possible values: `true`, `false`. Defaults to `false`.
+* `screenshots_enabled` — Whether or not transitional screenshots (when returning to a previous screen) should be used. This gives the appearance of a much faster experience going back, but does require more performance overhead. 
+	* Optional.
+	* Possible values: `true`, `false`. Defaults to `true`.
 
 ### Create a Layout
-You'll need a basic layout for your fragment to inflate. Refer to `fragment_web.xml` and feel free to copy that as a starting point.
+You'll need a basic layout for your fragment to inflate. Refer to [fragment_web.xml](/demoapp_simple/src/main/res/layout/fragment_web.xml) and feel free to copy that as a starting point.
 
-The most important thing is to include a reference to the `turbolinks_default` resource. This is a view provided by the library which automatically add the necessary view hierarchy that Turbolinks expects for attaching a WebView, progress view, and error view.
+The most important thing is that your layout `include` a reference to the [turbolinks_default](turbolinks/src/main/res/layout/turbolinks_default.xml) resource. This is a view provided by the library which automatically add the necessary view hierarchy that Turbolinks expects for attaching a WebView, progress view, and error view.
 
 ```xml
 <include
@@ -95,29 +107,29 @@ The most important thing is to include a reference to the `turbolinks_default` r
 ### Create a Destination Interface
 This step is optional.
 
-The standard `TurbolinksNavDestination` provides most of what you need, but extending this interface and creating your own can provide some navigational flexibility that many, more complex apps will need.
+The standard [TurbolinksNavDestination](turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavDestination.kt) provides the basic logic for determining whether to navigate, but extending this interface and creating your own can provide some navigational flexibility that more complex apps will need.
 
-Refer to `NavDestination` as an example, which shows some common additional logic that might be helpful. Feel free to copy that as a starting point.
+Refer to [NavDestination](turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavDestination.kt) which shows some common additional logic that might be helpful. Feel free to copy that as a starting point.
 
 ### Create a Fragment
 You'll need at least one fragment to represent the main body of your view. 
 
-A `WebFragment` would be a good option to handle all standard WebViews in your app. This fragment...
+A [WebFragment](demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/features/web/WebFragment.kt) would be a good option to handle all standard WebViews in your app. This fragment:
 
-* Should implement your custom destination interface as mentioned above, or, if you haven't created one, simply implement `TurbolinksNavDestination`.
-* Must extend one of the base fragments provided by Turbolinks. In this case, as a web fragment, you should extend `TurbolinksWebFragment`.
+* Should implement your custom destination interface as mentioned above, or, if you haven't created one, simply implement [TurbolinksNavDestination](turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavDestination.kt).
+* Must extend one of the base fragments provided by Turbolinks. In this case, as a web fragment, you should extend [TurbolinksWebFragment](turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragment.kt).
 
-Refer to `WebFragment` as an example and feel free to copy it as a starting point. It outlines the very basics of what every fragment will need to implement — a nav graph annotation, inflating a view, setting up progress and error views, and setting up a toolbar.
+Refer to [WebFragment](demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/features/web/WebFragment.kt) as an example and feel free to copy it as a starting point. It outlines the very basics of what every fragment will need to implement — a nav graph annotation, inflating a view, setting up progress and error views, and setting up a toolbar.
 
 ### Create an Activity
 Turbolinks assumes a single-activity per Turbolinks session architecture. Generally you'll have one activity and many fragments, which will swap into that activity's nav host.
 
-Turbolinks activities are fairly straightforward and simply need to extend `TurbolinksActivity` in order to provide a `TurbolinksDelegate`.
+Turbolinks activities are fairly straightforward and simply need to extend [TurbolinksActivity](turbolinks/src/main/kotlin/com/basecamp/turbolinks/activities/TurbolinksActivity.kt) in order to provide a [TurbolinksActivityDelegate](turbolinks/src/main/kotlin/com/basecamp/turbolinks/delegates/TurbolinksActivityDelegate.kt).
 
-Refer to `MainActivity` and feel free to copy that as a starting point.
+Refer to [MainActivity](demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/main/MainActivity.kt) and feel free to copy that as a starting point.
 
 ### Create a Nav Host Fragment
-A nav host fragment is ultimately an extension of the Android Navigation component's `NavHostFragment`, and as such is primarily responsible for providing "an area in your layout for self-contained navigation to occurr." 
+A nav host fragment is ultimately an extension of the Android Navigation component's [NavHostFragment](https://developer.android.com/reference/androidx/navigation/fragment/NavHostFragment), and as such is primarily responsible for providing "an area in your layout for self-contained navigation to occurr." 
 
 The Turbolinks version of this class is bound to a single Turbolinks session, and you will need to implement just a few things.
 
@@ -128,7 +140,7 @@ The Turbolinks version of this class is bound to a single Turbolinks session, an
 * A path configuration to provide navigation configuration
 * Any additional custom setup steps to execute upon creating the session
 
-Refer to `MainSessionNavHostFragment` for an example.
+Refer to [MainSessionNavHostFragment](demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/main/MainSessionNavHostFragment.kt) for an example.
 
 🎉 **Congratulations, you're using Turbolinks on Android!** 🎉
 
@@ -136,20 +148,20 @@ Refer to `MainSessionNavHostFragment` for an example.
 
 ### Multiple instances of TurbolinksSession
 
-There is a 1-1-1 relationship between an activity, its nav host fragment, and its Turbolinks session. The nav host fragment automatically creates a `TurbolinksSession` for you.
+There is a 1-1-1 relationship between an activity, its nav host fragment, and its Turbolinks session. The nav host fragment automatically creates a [TurbolinksSession](turbolinks/src/main/kotlin/com/basecamp/turbolinks/session/TurbolinksSession.kt) for you.
 
 You may encounter situations where a truly single activity app may not be feasible — that is, you may need an activity, for example, for logged out state vs. logged in state. Or perhaps it's safer to send inactive users to an entirely different activity to guard access controls.
 
-In such cases you, simply need to create a new activity + nav host fragment, which will in turn create its own Turbolinks session. You will need to be sure to register all these activities as `TurbolinksSessionNavHostFragment().registeredActivities` so that you can navigate between them.
+In such cases you, simply need to create a new activity + nav host fragment, which will in turn create its own Turbolinks session. You will need to be sure to register all these activities as [TurbolinksSessionNavHostFragment().registeredActivities](turbolinks/src/main/kotlin/com/basecamp/turbolinks/session/TurbolinksSessionNavHostFragment.kt) so that you can navigate between them.
 
 ### Custom WebView WebSettings
 
-By default the library sets a few WebSettings on the shared WebView for a given session. Some are required while others serve as reasonable defaults for modern web applications. They are:
+By default the library sets a few [WebSettings](https://developer.android.com/reference/android/webkit/WebSettings) on the shared `WebView` for a given session. Some are required while others serve as reasonable defaults for modern web applications. They are:
 
-- `setJavaScriptEnabled(true)` (required)
-- `setDomStorageEnabled(true)`
+- [setJavaScriptEnabled(true)](https://developer.android.com/reference/android/webkit/WebSettings#setJavaScriptEnabled(boolean)) (required)
+- [setDomStorageEnabled(true)](https://developer.android.com/reference/android/webkit/WebSettings#setDomStorageEnabled(boolean))
 
-If however these are not to your liking, you can always override them from your `TurbolinksWebFragment`. The `WebView` is always available to you via `TurbolinksWebFragmentDelegate.webView()`, and you can update the `WebSettings` to your liking.
+If however these are not to your liking, you can always override them from your [TurbolinksWebFragment](turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragment.kt). The `WebView` is always available to you via [TurbolinksWebFragmentDelegate.webView()](turbolinks/src/main/kotlin/com/basecamp/turbolinks/delegates/TurbolinksWebFragmentDelegate.kt), and you can update the `WebSettings` to your liking.
 
 ```kotlin
 delegate.webView.settings.domStorageEnabled = false
@@ -177,7 +189,7 @@ The demo apps bundled with the library work best with the [Turbolinks Demo App](
 
 - Ensure the demo server and Android device are on the same network.
 - Start up the demo server per its instructions.
-- Go to `Contants.kt`.
+- Go to [Contants.kt](demoapp/src/main/kotlin/com/basecamp/turbolinks/demo/util/Constants.kt).
 - Find the `BASE_URL` String at the top of the class. Change the IP to your IP.
 - Build/run the app to your device.
 
