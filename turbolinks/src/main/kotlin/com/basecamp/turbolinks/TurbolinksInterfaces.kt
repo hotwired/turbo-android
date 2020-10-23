@@ -32,8 +32,8 @@ interface TurbolinksWebFragmentCallback {
 
     // Events
     fun onUpdateView()
-    fun onWebViewAttached()
-    fun onWebViewDetached()
+    fun onWebViewAttached(webView: TurbolinksWebView)
+    fun onWebViewDetached(webView: TurbolinksWebView)
     fun onColdBootPageStarted(location: String)
     fun onColdBootPageCompleted(location: String)
     fun onVisitStarted(location: String)

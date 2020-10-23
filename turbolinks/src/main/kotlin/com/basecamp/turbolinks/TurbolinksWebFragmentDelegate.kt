@@ -2,7 +2,6 @@ package com.basecamp.turbolinks
 
 import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
-import android.webkit.WebView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +25,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     private val turbolinksView: TurbolinksView?
         get() = callback.turbolinksView
 
-    val webView: WebView?
+    val webView: TurbolinksWebView?
         get() = session().webView
 
     fun onActivityCreated() {
@@ -185,7 +184,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
             onReady(attachedToNewDestination)
 
             if (attachedToNewDestination) {
-                callback.onWebViewAttached()
+                callback.onWebViewAttached(requireNotNull(webView))
             }
         }
     }
@@ -201,8 +200,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
         screenshotView()
 
         turbolinksView?.detachWebView(view) {
+            callback.onWebViewDetached(view)
             onReady()
-            callback.onWebViewDetached()
         }
     }
 

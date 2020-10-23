@@ -47,9 +47,9 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
 
     override fun onUpdateView() {}
 
-    override fun onWebViewAttached() {}
+    override fun onWebViewAttached(webView: TurbolinksWebView) {}
 
-    override fun onWebViewDetached() {}
+    override fun onWebViewDetached(webView: TurbolinksWebView) {}
 
     override fun onColdBootPageStarted(location: String) {}
 

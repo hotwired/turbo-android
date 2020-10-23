@@ -100,8 +100,8 @@ interface TurbolinksDestination {
         navigator.navigateBack()
     }
 
-    fun clearBackStack() {
-        navigator.clearBackStack()
+    fun clearBackStack(onCleared: () -> Unit = {}) {
+        navigator.clearBackStack(onCleared)
     }
 
     fun findNavHostFragment(@IdRes navHostFragmentId: Int): TurbolinksNavHostFragment {
