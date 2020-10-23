@@ -178,8 +178,8 @@ interface TurbolinksNavDestination {
      * start destination for the nav host.
      *
      */
-    fun clearBackStack() {
-        navigator.clearBackStack()
+    fun clearBackStack(onCleared: () -> Unit = {}) {
+        navigator.clearBackStack(onCleared)
     }
 
     /**

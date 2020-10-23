@@ -122,8 +122,8 @@ class TurbolinksActivityDelegate(
      * Clears the nav back stack.
      *
      */
-    fun clearBackStack() {
-        currentNavDestination?.clearBackStack()
+    fun clearBackStack(onCleared: () -> Unit = {}) {
+        currentNavDestination?.clearBackStack(onCleared)
     }
 
     private val currentFragment: Fragment?

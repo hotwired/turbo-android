@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.webkit.HttpAuthHandler
 import com.basecamp.turbolinks.delegates.TurbolinksWebFragmentDelegate
 import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
+import com.basecamp.turbolinks.views.TurbolinksWebView
 
 /**
  * The base class from which all web "standard" fragments (non-dialogs) in a Turbolinks driven app
@@ -84,9 +85,9 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
     // ----------------------------------------------------------------------------
 
 
-    override fun onWebViewAttached() {}
+    override fun onWebViewAttached(webView: TurbolinksWebView) {}
 
-    override fun onWebViewDetached() {}
+    override fun onWebViewDetached(webView: TurbolinksWebView) {}
 
     override fun onColdBootPageStarted(location: String) {}
 

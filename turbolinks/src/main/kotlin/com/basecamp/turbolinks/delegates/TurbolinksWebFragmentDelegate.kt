@@ -2,7 +2,6 @@ package com.basecamp.turbolinks.delegates
 
 import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
-import android.webkit.WebView
 import androidx.lifecycle.lifecycleScope
 import com.basecamp.turbolinks.config.pullToRefreshEnabled
 import com.basecamp.turbolinks.fragments.TurbolinksWebFragmentCallback
@@ -12,6 +11,7 @@ import com.basecamp.turbolinks.session.TurbolinksSession
 import com.basecamp.turbolinks.session.TurbolinksSessionCallback
 import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.views.TurbolinksView
+import com.basecamp.turbolinks.views.TurbolinksWebView
 import com.basecamp.turbolinks.visit.TurbolinksVisit
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
 import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
@@ -49,7 +49,7 @@ class TurbolinksWebFragmentDelegate(
     /**
      * Convenience accessor to the Turbolinks session's WebView.
      */
-    val webView: WebView?
+    val webView: TurbolinksWebView?
         get() = session().webView
 
     /**
@@ -253,7 +253,7 @@ class TurbolinksWebFragmentDelegate(
             onReady(attachedToNewDestination)
 
             if (attachedToNewDestination) {
-                callback.onWebViewAttached()
+                callback.onWebViewAttached(requireNotNull(webView))
             }
         }
     }
@@ -265,12 +265,12 @@ class TurbolinksWebFragmentDelegate(
      * new view hierarchy, it needs to already be detached from the previous screen.
      */
     private fun detachWebView(onReady: () -> Unit = {}) {
-        val view = webView ?: return
+        val webView = webView ?: return
         screenshotView()
 
-        turbolinksView?.detachWebView(view) {
+        turbolinksView?.detachWebView(webView) {
+            callback.onWebViewDetached(webView)
             onReady()
-            callback.onWebViewDetached()
         }
     }
 
@@ -289,8 +289,8 @@ class TurbolinksWebFragmentDelegate(
     }
 
     private fun webViewIsAttached(): Boolean {
-        val view = webView ?: return false
-        return turbolinksView?.webViewIsAttached(view) ?: false
+        val webView = webView ?: return false
+        return turbolinksView?.webViewIsAttached(webView) ?: false
     }
 
     private fun title(): String {

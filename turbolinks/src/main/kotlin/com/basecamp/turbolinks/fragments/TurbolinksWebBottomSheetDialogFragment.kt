@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.webkit.HttpAuthHandler
 import com.basecamp.turbolinks.delegates.TurbolinksWebFragmentDelegate
+import com.basecamp.turbolinks.views.TurbolinksWebView
 
 /**
  * The base class from which all bottom sheet web fragments in a Turbolinks driven app
@@ -77,9 +78,9 @@ abstract class TurbolinksWebBottomSheetDialogFragment : TurbolinksBottomSheetDia
     // ----------------------------------------------------------------------------
 
 
-    override fun onWebViewAttached() {}
+    override fun onWebViewAttached(webView: TurbolinksWebView) {}
 
-    override fun onWebViewDetached() {}
+    override fun onWebViewDetached(webView: TurbolinksWebView) {}
 
     override fun onColdBootPageStarted(location: String) {}
 

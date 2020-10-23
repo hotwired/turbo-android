@@ -3,6 +3,7 @@ package com.basecamp.turbolinks.fragments
 import android.view.View
 import android.webkit.HttpAuthHandler
 import com.basecamp.turbolinks.views.TurbolinksView
+import com.basecamp.turbolinks.views.TurbolinksWebView
 
 /**
  * Callback interface to be implemented by a [TurbolinksWebFragment], [TurbolinksWebBottomSheetDialogFragment],
@@ -30,17 +31,18 @@ interface TurbolinksWebFragmentCallback {
      */
     fun createProgressView(location: String): View
 
+    // Events
     /**
      * Called when the WebView has been attached to its new parent.
      *
      */
-    fun onWebViewAttached()
+    fun onWebViewAttached(webView: TurbolinksWebView)
 
     /**
      * Called when the WebView has been detached from its previous parent.
      *
      */
-    fun onWebViewDetached()
+    fun onWebViewDetached(webView: TurbolinksWebView)
 
     /**
      * Called when Turbolinks begins a cold boot (fresh resources).
