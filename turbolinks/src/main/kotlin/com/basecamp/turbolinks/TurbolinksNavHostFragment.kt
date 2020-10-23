@@ -4,7 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.*
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import kotlin.reflect.KClass
 
 abstract class TurbolinksNavHostFragment : NavHostFragment() {
@@ -36,10 +37,13 @@ abstract class TurbolinksNavHostFragment : NavHostFragment() {
         return TurbolinksWebView(context, null)
     }
 
-    fun reset() {
-        session.reset()
-        session.rootLocation = startLocation
-        initControllerGraph()
+    fun reset(onReset: () -> Unit = {}) {
+        currentDestination.clearBackStack {
+            session.reset()
+            session.rootLocation = startLocation
+            initControllerGraph()
+            onReset()
+        }
     }
 
     val currentDestination: TurbolinksDestination

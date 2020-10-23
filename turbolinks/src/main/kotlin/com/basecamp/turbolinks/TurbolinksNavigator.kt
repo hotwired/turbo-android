@@ -31,12 +31,16 @@ class TurbolinksNavigator(private val destination: TurbolinksDestination) {
         }
     }
 
-    fun clearBackStack() {
-        if (isAtStartDestination()) return
+    fun clearBackStack(onCleared: () -> Unit = {}) {
+        if (isAtStartDestination()) {
+            onCleared()
+            return
+        }
 
         onNavigationVisit {
             val controller = currentController()
             controller.popBackStack(controller.graph.startDestination, false)
+            onCleared()
         }
     }
 

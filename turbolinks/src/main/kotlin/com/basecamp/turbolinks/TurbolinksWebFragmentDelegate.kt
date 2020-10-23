@@ -2,7 +2,6 @@ package com.basecamp.turbolinks
 
 import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
-import android.webkit.WebView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +25,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     private val turbolinksView: TurbolinksView?
         get() = callback.turbolinksView
 
-    val webView: WebView?
+    val webView: TurbolinksWebView?
         get() = session().webView
 
     fun onActivityCreated() {
@@ -185,7 +184,7 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
             onReady(attachedToNewDestination)
 
             if (attachedToNewDestination) {
-                callback.onWebViewAttached()
+                callback.onWebViewAttached(requireNotNull(webView))
             }
         }
     }
@@ -197,12 +196,12 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
      * new view hierarchy, it needs to already be detached from the previous screen.
      */
     private fun detachWebView(onReady: () -> Unit = {}) {
-        val view = webView ?: return
+        val webView = webView ?: return
         screenshotView()
 
-        turbolinksView?.detachWebView(view) {
+        turbolinksView?.detachWebView(webView) {
+            callback.onWebViewDetached(webView)
             onReady()
-            callback.onWebViewDetached()
         }
     }
 
@@ -221,8 +220,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     private fun webViewIsAttached(): Boolean {
-        val view = webView ?: return false
-        return turbolinksView?.webViewIsAttached(view) ?: false
+        val webView = webView ?: return false
+        return turbolinksView?.webViewIsAttached(webView) ?: false
     }
 
     private fun title(): String {
