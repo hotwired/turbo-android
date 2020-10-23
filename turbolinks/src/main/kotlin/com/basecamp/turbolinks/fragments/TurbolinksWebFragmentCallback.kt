@@ -3,6 +3,7 @@ package com.basecamp.turbolinks.fragments
 import android.view.View
 import android.webkit.HttpAuthHandler
 import com.basecamp.turbolinks.views.TurbolinksView
+import com.basecamp.turbolinks.views.TurbolinksWebView
 
 interface TurbolinksWebFragmentCallback {
     // View
@@ -12,8 +13,8 @@ interface TurbolinksWebFragmentCallback {
 
     // Events
     fun onUpdateView()
-    fun onWebViewAttached()
-    fun onWebViewDetached()
+    fun onWebViewAttached(webView: TurbolinksWebView)
+    fun onWebViewDetached(webView: TurbolinksWebView)
     fun onColdBootPageStarted(location: String)
     fun onColdBootPageCompleted(location: String)
     fun onVisitStarted(location: String)

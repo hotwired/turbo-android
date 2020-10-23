@@ -66,8 +66,8 @@ class TurbolinksActivityDelegate(val activity: AppCompatActivity,
         currentNavDestination?.navigateBack()
     }
 
-    fun clearBackStack() {
-        currentNavDestination?.clearBackStack()
+    fun clearBackStack(onCleared: () -> Unit = {}) {
+        currentNavDestination?.clearBackStack(onCleared)
     }
 
     private val currentFragment: Fragment?

@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.webkit.HttpAuthHandler
 import com.basecamp.turbolinks.delegates.TurbolinksWebFragmentDelegate
+import com.basecamp.turbolinks.views.TurbolinksWebView
 
 @Suppress("unused")
 abstract class TurbolinksWebBottomSheetDialogFragment : TurbolinksBottomSheetDialogFragment(), TurbolinksWebFragmentCallback {
@@ -44,9 +45,9 @@ abstract class TurbolinksWebBottomSheetDialogFragment : TurbolinksBottomSheetDia
 
     override fun onUpdateView() {}
 
-    override fun onWebViewAttached() {}
+    override fun onWebViewAttached(webView: TurbolinksWebView) {}
 
-    override fun onWebViewDetached() {}
+    override fun onWebViewDetached(webView: TurbolinksWebView) {}
 
     override fun onColdBootPageStarted(location: String) {}
 

@@ -4,11 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.*
-import com.basecamp.turbolinks.nav.TurbolinksNavDestination
-import com.basecamp.turbolinks.views.TurbolinksWebView
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
+import com.basecamp.turbolinks.nav.TurbolinksNavDestination
 import com.basecamp.turbolinks.nav.TurbolinksNavGraphBuilder
+import com.basecamp.turbolinks.views.TurbolinksWebView
 import kotlin.reflect.KClass
 
 abstract class TurbolinksSessionNavHostFragment : NavHostFragment() {
@@ -40,10 +41,13 @@ abstract class TurbolinksSessionNavHostFragment : NavHostFragment() {
         return TurbolinksWebView(context, null)
     }
 
-    fun reset() {
-        session.reset()
-        session.rootLocation = startLocation
-        initControllerGraph()
+    fun reset(onReset: () -> Unit = {}) {
+        currentNavDestination.clearBackStack {
+            session.reset()
+            session.rootLocation = startLocation
+            initControllerGraph()
+            onReset()
+        }
     }
 
     val currentNavDestination: TurbolinksNavDestination
