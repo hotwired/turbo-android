@@ -196,11 +196,11 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
      * new view hierarchy, it needs to already be detached from the previous screen.
      */
     private fun detachWebView(onReady: () -> Unit = {}) {
-        val view = webView ?: return
+        val webView = webView ?: return
         screenshotView()
 
-        turbolinksView?.detachWebView(view) {
-            callback.onWebViewDetached(view)
+        turbolinksView?.detachWebView(webView) {
+            callback.onWebViewDetached(webView)
             onReady()
         }
     }
@@ -220,8 +220,8 @@ class TurbolinksWebFragmentDelegate(private val destination: TurbolinksDestinati
     }
 
     private fun webViewIsAttached(): Boolean {
-        val view = webView ?: return false
-        return turbolinksView?.webViewIsAttached(view) ?: false
+        val webView = webView ?: return false
+        return turbolinksView?.webViewIsAttached(webView) ?: false
     }
 
     private fun title(): String {
