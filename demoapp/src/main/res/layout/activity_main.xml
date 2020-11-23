@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".main.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/food_nav_host"
-        android:name="com.basecamp.turbolinks.demo.FoodNavHostFragment"
+        android:name="com.basecamp.turbolinks.demo.features.food.FoodSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,7 +20,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/orders_nav_host"
-        android:name="com.basecamp.turbolinks.demo.OrdersNavHostFragment"
+        android:name="com.basecamp.turbolinks.demo.features.orders.OrdersSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
@@ -32,7 +32,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/me_nav_host"
-        android:name="com.basecamp.turbolinks.demo.ProfileNavHostFragment"
+        android:name="com.basecamp.turbolinks.demo.features.profile.ProfileSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

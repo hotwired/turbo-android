@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 //apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'org.jetbrains.dokka'
 
 // Update when releasing a new library version
 ext.libVersionCode = 82
@@ -17,8 +18,9 @@ buildscript {
 
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
-    //  classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        //  classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.29.0'
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.4.10"
     }
 }
 
@@ -217,6 +219,43 @@ uploadArchives {
             groupId 'com.basecamp'
             artifactId 'turbolinks-android'
             version libVersionName
+        }
+    }
+}
+
+// configure only html format e.g.
+tasks.dokkaHtml.configure {
+    dokkaSourceSets {
+        named("main") {
+            includeNonPublic = false
+            skipEmptyPackages = true
+            skipDeprecated = true
+            reportUndocumented = true
+            jdkVersion = 8
+        }
+    }
+}
+
+tasks.dokkaGfm.configure {
+    dokkaSourceSets {
+        named("main") {
+            includeNonPublic = false
+            skipEmptyPackages = true
+            skipDeprecated = true
+            reportUndocumented = true
+            jdkVersion = 8
+        }
+    }
+}
+
+tasks.dokkaJavadoc.configure {
+    dokkaSourceSets {
+        named("main") {
+            includeNonPublic = false
+            skipEmptyPackages = true
+            skipDeprecated = true
+            reportUndocumented = true
+            jdkVersion = 8
         }
     }
 }
