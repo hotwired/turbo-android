@@ -1,5 +1,6 @@
 package com.basecamp.turbolinks.delegates
 
+import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.basecamp.turbolinks.fragments.TurbolinksFragmentViewModel
@@ -89,6 +90,10 @@ class TurbolinksFragmentDelegate(private val navDestination: TurbolinksNavDestin
         }
     }
 
+    fun onDialogDismiss() {
+        logEvent("fragment.onDialogDismiss", "location" to location)
+    }
+
     // ----------------------------------------------------------------------------
     // Private
     // ----------------------------------------------------------------------------
@@ -96,7 +101,12 @@ class TurbolinksFragmentDelegate(private val navDestination: TurbolinksNavDestin
     private fun initToolbar() {
         navDestination.toolbarForNavigation()?.let {
             NavigationUI.setupWithNavController(it, fragment.findNavController())
-            it.setNavigationOnClickListener { navDestination.navigateUp() }
+            it.setNavigationOnClickListener {
+                when (fragment) {
+                    is DialogFragment -> fragment.requireDialog().cancel()
+                    else -> navDestination.navigateUp()
+                }
+            }
         }
     }
 

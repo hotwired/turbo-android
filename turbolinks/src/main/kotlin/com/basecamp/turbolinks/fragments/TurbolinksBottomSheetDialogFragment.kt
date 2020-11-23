@@ -70,6 +70,11 @@ abstract class TurbolinksBottomSheetDialogFragment : BottomSheetDialogFragment()
      */
     override fun onBeforeNavigation() {}
 
+    override fun onDismiss(dialog: DialogInterface) {
+        delegate.onDialogDismiss()
+        super.onDismiss(dialog)
+    }
+
     /**
      * Returns the delegate instantiated in [onCreate].
      *
