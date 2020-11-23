@@ -60,8 +60,7 @@ class TurbolinksPathConfigurationTest {
 
     @Test
     fun globalProperty() {
-        assertThat(pathConfiguration.settings.size).isEqualTo(2)
-        assertThat(pathConfiguration.settings["app_latest_version_code"]).isEqualTo("85")
+        assertThat(pathConfiguration.settings.size).isEqualTo(1)
         assertThat(pathConfiguration.settings["custom_app_feature_enabled"]).isEqualTo("true")
         assertThat(pathConfiguration.settings["no_such_key"]).isNull()
     }
