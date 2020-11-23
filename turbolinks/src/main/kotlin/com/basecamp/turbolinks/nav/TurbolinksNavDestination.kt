@@ -49,8 +49,8 @@ interface TurbolinksNavDestination {
     val sessionViewModel: TurbolinksSessionViewModel
         get() = delegate().sessionViewModel
 
-    val pageViewModel: TurbolinksFragmentViewModel
-        get() = delegate().pageViewModel
+    val fragmentViewModel: TurbolinksFragmentViewModel
+        get() = delegate().fragmentViewModel
 
     fun delegate(): TurbolinksFragmentDelegate
 
