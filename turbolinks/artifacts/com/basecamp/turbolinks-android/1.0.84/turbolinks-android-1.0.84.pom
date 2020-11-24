@@ -16,13 +16,13 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>
-      <version>1.4.20</version>
+      <version>1.4.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-reflect</artifactId>
-      <version>1.4.20</version>
+      <version>1.4.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
