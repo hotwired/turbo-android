@@ -39,7 +39,6 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     // User accessible
 
     val context: Context = activity.applicationContext
-    var rootLocation: String? = null
     var pathConfiguration = TurbolinksPathConfiguration(context)
     var offlineRequestHandler: TurbolinksOfflineRequestHandler? = null
     var enableScreenshots = true

@@ -44,7 +44,6 @@ abstract class TurbolinksSessionNavHostFragment : NavHostFragment() {
     fun reset(onReset: () -> Unit = {}) {
         currentNavDestination.clearBackStack {
             session.reset()
-            session.rootLocation = startLocation
             initControllerGraph()
             onReset()
         }
