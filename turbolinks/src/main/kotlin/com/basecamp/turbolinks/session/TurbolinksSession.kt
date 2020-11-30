@@ -14,7 +14,6 @@ import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
-import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.http.TurbolinksHttpClient
 import com.basecamp.turbolinks.http.TurbolinksHttpRepository
 import com.basecamp.turbolinks.http.TurbolinksOfflineRequestHandler
@@ -23,12 +22,13 @@ import com.basecamp.turbolinks.util.*
 import com.basecamp.turbolinks.views.TurbolinksWebView
 import com.basecamp.turbolinks.visit.TurbolinksVisit
 import com.basecamp.turbolinks.visit.TurbolinksVisitAction
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import kotlinx.coroutines.launch
 import java.util.*
 
 @Suppress("unused")
 class TurbolinksSession private constructor(val sessionName: String, val activity: Activity, val webView: TurbolinksWebView) {
-    internal lateinit var currentVisit: TurbolinksVisit
+    internal var currentVisit: TurbolinksVisit? = null
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
     internal var visitPending = false
@@ -70,15 +70,13 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     }
 
     fun reset() {
-        if (::currentVisit.isInitialized) {
-            logEvent("reset")
-            currentVisit.identifier = ""
-            coldBootVisitIdentifier = ""
-            restorationIdentifiers.clear()
-            visitPending = false
-            isReady = false
-            isColdBooting = false
-        }
+        logEvent("reset")
+        currentVisit?.identifier = ""
+        coldBootVisitIdentifier = ""
+        restorationIdentifiers.clear()
+        visitPending = false
+        isReady = false
+        isColdBooting = false
     }
 
     fun setDebugLoggingEnabled(enabled: Boolean) {
@@ -104,8 +102,10 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     }
 
     internal fun removeCallback(callback: TurbolinksSessionCallback) {
-        if (currentVisit.callback == callback) {
-            currentVisit.callback = null
+        currentVisit?.let { visit ->
+            if (visit.callback == callback) {
+                visit.callback = null
+            }
         }
     }
 
@@ -127,7 +127,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
             "visitHasCachedSnapshot" to visitHasCachedSnapshot
         )
 
-        currentVisit.identifier = visitIdentifier
+        currentVisit?.identifier = visitIdentifier
     }
 
     @JavascriptInterface
@@ -144,8 +144,10 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
             "statusCode" to statusCode
         )
 
-        if (visitIdentifier == currentVisit.identifier) {
-            callback { it.requestFailedWithStatusCode(visitHasCachedSnapshot, statusCode) }
+        currentVisit?.let { visit ->
+            if (visitIdentifier == visit.identifier) {
+                callback { it.requestFailedWithStatusCode(visitHasCachedSnapshot, statusCode) }
+            }
         }
     }
 
@@ -157,18 +159,23 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     @JavascriptInterface
     fun pageLoaded(restorationIdentifier: String) {
         logEvent("pageLoaded", "restorationIdentifier" to restorationIdentifier)
-        restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
+
+        currentVisit?.let { visit ->
+            restorationIdentifiers.put(visit.destinationIdentifier, restorationIdentifier)
+        }
     }
 
     @JavascriptInterface
     fun visitRendered(visitIdentifier: String) {
         logEvent("visitRendered", "visitIdentifier" to visitIdentifier)
 
-        if (visitIdentifier == coldBootVisitIdentifier || visitIdentifier == currentVisit.identifier) {
-            if (isFeatureSupported(VISUAL_STATE_CALLBACK)) {
-                postVisitVisualStateCallback(visitIdentifier)
-            } else {
-                callback { it.visitRendered() }
+        currentVisit?.let { visit ->
+            if (visitIdentifier == coldBootVisitIdentifier || visitIdentifier == visit.identifier) {
+                if (isFeatureSupported(VISUAL_STATE_CALLBACK)) {
+                    postVisitVisualStateCallback(visitIdentifier)
+                } else {
+                    callback { it.visitRendered() }
+                }
             }
         }
     }
@@ -181,9 +188,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
             "restorationIdentifier" to restorationIdentifier
         )
 
-        if (visitIdentifier == currentVisit.identifier) {
-            restorationIdentifiers.put(currentVisit.destinationIdentifier, restorationIdentifier)
-            callback { it.visitCompleted(currentVisit.completedOffline) }
+        currentVisit?.let { visit ->
+            if (visitIdentifier == visit.identifier) {
+                restorationIdentifiers.put(visit.destinationIdentifier, restorationIdentifier)
+                callback { it.visitCompleted(visit.completedOffline) }
+            }
         }
     }
 
@@ -191,29 +200,34 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     fun pageInvalidated() {
         logEvent("pageInvalidated")
 
-        callback {
-            it.pageInvalidated()
-            visit(currentVisit.copy(reload = true))
+        currentVisit?.let { visit ->
+            callback {
+                it.pageInvalidated()
+                visit(visit.copy(reload = true))
+            }
         }
     }
 
     @JavascriptInterface
     fun turbolinksIsReady(isReady: Boolean) {
         logEvent("turbolinksIsReady", "isReady" to isReady)
-        this.isReady = isReady
-        this.isColdBooting = false
 
-        if (!isReady) {
-            reset()
-            visitRequestFailedWithStatusCode(currentVisit.identifier, false, 0)
-            return
-        }
+        currentVisit?.let { visit ->
+            this.isReady = isReady
+            this.isColdBooting = false
 
-        // Check if a visit was requested while cold
-        // booting. If so, visit the pending location.
-        when (visitPending) {
-            true -> visitPendingLocation(currentVisit)
-            else -> renderVisitForColdBoot()
+            if (!isReady) {
+                reset()
+                visitRequestFailedWithStatusCode(visit.identifier, false, 0)
+                return
+            }
+
+            // Check if a visit was requested while cold
+            // booting. If so, visit the pending location.
+            when (visitPending) {
+                true -> visitPendingLocation(visit)
+                else -> renderVisitForColdBoot()
+            }
         }
     }
 
@@ -272,7 +286,10 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     private fun renderVisitForColdBoot() {
         logEvent("renderVisitForColdBoot", "coldBootVisitIdentifier" to coldBootVisitIdentifier)
         webView.visitRenderedForColdBoot(coldBootVisitIdentifier)
-        callback { it.visitCompleted(currentVisit.completedOffline) }
+
+        currentVisit?.let { visit ->
+            callback { it.visitCompleted(visit.completedOffline) }
+        }
     }
 
     /**
@@ -333,7 +350,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     private fun callback(action: (TurbolinksSessionCallback) -> Unit) {
         context.runOnUiThread {
-            currentVisit.callback?.let {
+            currentVisit?.callback?.let {
                 if (it.isActive()) action(it)
             }
         }
@@ -416,7 +433,7 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
          */
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
             val location = request.url.toString()
-            val isColdBootRedirect = isColdBooting && currentVisit.location != location
+            val isColdBootRedirect = isColdBooting && currentVisit?.location != location
             val shouldOverride = isReady || isColdBootRedirect
 
             // Don't allow onPageFinished to process its
@@ -456,8 +473,10 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
             val url = request.url.toString()
             val result = httpRepository.fetch(requestHandler, request)
 
-            if (currentVisit.location == url) {
-                currentVisit.completedOffline = result.offline
+            currentVisit?.let { visit ->
+                if (visit.location == url) {
+                    visit.completedOffline = result.offline
+                }
             }
 
             return result.response
@@ -501,11 +520,9 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
                 // can avoid using this session any further in the app.
                 isRenderProcessGone = true
 
-                // We can reach this callback even if a WebView visit hasn't been
-                // performed yet. Guard against this state so we don't crash.
-                if (::currentVisit.isInitialized) {
-                    callback { it.onRenderProcessGone() }
-                }
+                // Note: The render process can be gone even if a visit
+                // hasn't been performed yet in this WebView instance.
+                callback { it.onRenderProcessGone() }
             }
 
             return true
