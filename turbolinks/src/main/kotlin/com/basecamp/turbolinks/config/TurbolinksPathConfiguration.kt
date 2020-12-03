@@ -9,6 +9,8 @@ import com.google.gson.annotations.SerializedName
 import java.net.URL
 
 class TurbolinksPathConfiguration(context: Context) {
+    private val cachedProperties: HashMap<String, TurbolinksPathConfigurationProperties> = hashMapOf()
+
     @SerializedName("rules")
     internal var rules: List<TurbolinksPathConfigurationRule> = emptyList()
 
@@ -24,18 +26,23 @@ class TurbolinksPathConfiguration(context: Context) {
 
     fun load(location: Location) {
         loader.load(location) {
+            cachedProperties.clear()
             rules = it.rules
             settings = it.settings
         }
     }
 
     fun properties(location: String): TurbolinksPathConfigurationProperties {
+        cachedProperties[location]?.let { return it }
+
         val properties = TurbolinksPathConfigurationProperties()
         val path = path(location)
 
         for (rule in rules) when (rule.matches(path)) {
             true -> properties.putAll(rule.properties)
         }
+
+        cachedProperties[location] = properties
 
         return properties
     }

@@ -73,7 +73,7 @@ class TurbolinksSessionTest {
         session.currentVisit = visit.copy(identifier = visitIdentifier)
         session.visitStarted(visitIdentifier, true, "https://basecamp.com")
 
-        assertThat(session.currentVisit.identifier).isEqualTo(visitIdentifier)
+        assertThat(session.currentVisit?.identifier).isEqualTo(visitIdentifier)
     }
 
     @Test
@@ -148,7 +148,7 @@ class TurbolinksSessionTest {
         session.reset()
 
         assertThat(session.coldBootVisitIdentifier).isEmpty()
-        assertThat(session.currentVisit.identifier).isEmpty()
+        assertThat(session.currentVisit?.identifier).isEmpty()
     }
 
     @Test
