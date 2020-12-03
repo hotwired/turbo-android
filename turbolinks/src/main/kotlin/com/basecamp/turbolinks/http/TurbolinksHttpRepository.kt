@@ -50,7 +50,7 @@ internal class TurbolinksHttpRepository {
                                      resourceRequest: WebResourceRequest): Result {
         val url = resourceRequest.url.toString()
         val headers = requestHandler.getCachedResponseHeaders(url) ?: emptyMap()
-        val cacheControl = CacheControl.parse(headers.toHeaders())
+        val cacheControl = cacheControl(headers)
 
         // If the app has an immutable response cached, don't hit the network
         if (cacheControl.immutable) {
@@ -172,6 +172,15 @@ internal class TurbolinksHttpRepository {
 
     private fun responseHeaders(response: Response): Map<String, String> {
         return response.headers.toMap()
+    }
+
+    private fun cacheControl(headers: Map<String, String>): CacheControl {
+        return try {
+            CacheControl.parse(headers.toHeaders())
+        } catch (e: Exception) {
+            // Bad header characters can cause the parser to fail
+            CacheControl.parse(emptyMap<String, String>().toHeaders())
+        }
     }
 
     private fun data(response: Response?): InputStream? {
