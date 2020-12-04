@@ -62,10 +62,9 @@ class TurbolinksSession private constructor(internal val sessionName: String, in
     var offlineRequestHandler: TurbolinksOfflineRequestHandler? = null
 
     /**
-     * Enables/disables transitional screenshots for this session. Default is `true`.
+     * Returns whether transitional screenshots are enabled for this session. Default is `true`.
      */
-    var enableScreenshots = pathConfiguration.settings.screenshotsEnabled
-
+    val screenshotsEnabled get() = pathConfiguration.settings.screenshotsEnabled
 
     /**
      * Provides the status of whether Turbolinks is initialized and ready for use.

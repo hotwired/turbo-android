@@ -337,7 +337,7 @@ class TurbolinksWebFragmentDelegate(
     }
 
     private fun screenshotView() {
-        if (!session().enableScreenshots) return
+        if (!session().screenshotsEnabled) return
 
         turbolinksView?.let {
             screenshot = it.createScreenshot()
