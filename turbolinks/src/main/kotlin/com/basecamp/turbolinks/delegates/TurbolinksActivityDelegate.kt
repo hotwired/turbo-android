@@ -106,7 +106,7 @@ class TurbolinksActivityDelegate(
      * Navigates up using the current destination as the starting point.
      *
      */
-    internal fun navigateUp() {
+    fun navigateUp() {
         currentNavDestination?.navigateUp()
     }
 
@@ -114,7 +114,7 @@ class TurbolinksActivityDelegate(
      * Navigates back using the current destination as the starting point.
      *
      */
-    internal fun navigateBack() {
+    fun navigateBack() {
         currentNavDestination?.navigateBack()
     }
 
