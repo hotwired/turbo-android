@@ -20,7 +20,7 @@
       ],
       "properties": {
         "uri": "turbolinks://fragment/web/home",
-        "presentation": "replace_all"
+        "presentation": "clear_all"
       }
     },
     {

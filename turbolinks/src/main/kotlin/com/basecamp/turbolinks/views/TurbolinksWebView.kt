@@ -7,14 +7,26 @@ import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import androidx.webkit.WebViewCompat
-import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.basecamp.turbolinks.util.contentFromAsset
 import com.basecamp.turbolinks.util.runOnUiThread
 import com.basecamp.turbolinks.util.toJson
+import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import com.google.gson.GsonBuilder
 
+/**
+ * A Turbolinks specific WebView that configures required settings and exposes some helpful info.
+ *
+ * Generally you are not creating this view manually — it will be provided to you via the appropriate
+ * delegate.
+ *
+ * @constructor
+ *
+ * @param context
+ * @param attrs
+ */
 @SuppressLint("SetJavaScriptEnabled")
-open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : WebView(context, attrs) {
+open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+    WebView(context, attrs) {
     private val gson = GsonBuilder().disableHtmlEscaping().create()
 
     init {
@@ -23,12 +35,21 @@ open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: 
         layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
     }
 
+    /**
+     * Provides the WebView's package name.
+     */
     val packageName: String?
         get() = WebViewCompat.getCurrentWebViewPackage(context)?.packageName
 
+    /**
+     * Provides the WebView's version name.
+     */
     val versionName: String?
         get() = WebViewCompat.getCurrentWebViewPackage(context)?.versionName
 
+    /**
+     * Provides the WebView's major version.
+     */
     val majorVersion: Int?
         get() = versionName?.substringBefore(".")?.toIntOrNull()
 

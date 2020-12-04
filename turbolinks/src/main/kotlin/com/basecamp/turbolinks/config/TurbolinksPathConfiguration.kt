@@ -84,3 +84,6 @@ val TurbolinksPathConfigurationProperties.fallbackUri: Uri?
 
 val TurbolinksPathConfigurationProperties.pullToRefreshEnabled: Boolean
     get() = get("pull_to_refresh_enabled")?.toBoolean() ?: false
+
+val TurbolinksPathConfigurationSettings.screenshotsEnabled: Boolean
+    get() = get("screenshots_enabled")?.toBoolean() ?: true

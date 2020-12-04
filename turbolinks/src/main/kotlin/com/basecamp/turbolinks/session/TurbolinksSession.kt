@@ -14,6 +14,7 @@ import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import com.basecamp.turbolinks.config.TurbolinksPathConfiguration
+import com.basecamp.turbolinks.config.screenshotsEnabled
 import com.basecamp.turbolinks.http.TurbolinksHttpClient
 import com.basecamp.turbolinks.http.TurbolinksHttpRepository
 import com.basecamp.turbolinks.http.TurbolinksOfflineRequestHandler
@@ -26,8 +27,18 @@ import com.basecamp.turbolinks.visit.TurbolinksVisitOptions
 import kotlinx.coroutines.launch
 import java.util.*
 
+/**
+ * This class is primarily responsible for managing an instance of an Android WebView that will
+ * be shared between fragments. An implementation of [TurbolinksSessionNavHostFragment] will create
+ * a session for you and it can be retrieved via [TurbolinksSessionNavHostFragment.session].
+ *
+ * @property sessionName An arbitrary name to be used as an identifier for a given session.
+ * @property activity The activity to which the session will be bound to.
+ * @property webView An instance of a [TurbolinksWebView] to be shared/managed.
+ * @constructor Create empty Turbolinks session
+ */
 @Suppress("unused")
-class TurbolinksSession private constructor(val sessionName: String, val activity: Activity, val webView: TurbolinksWebView) {
+class TurbolinksSession private constructor(internal val sessionName: String, internal val activity: Activity, val webView: TurbolinksWebView) {
     internal var currentVisit: TurbolinksVisit? = null
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
@@ -35,15 +46,29 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
     internal var isRenderProcessGone = false
     internal var restorationIdentifiers = SparseArray<String>()
     internal val httpRepository = TurbolinksHttpRepository()
+    internal val context: Context = activity.applicationContext
+    internal var isColdBooting = false
 
     // User accessible
 
-    val context: Context = activity.applicationContext
+    /**
+     * Sets/gets the path configuration for this session. Default is an empty configuration.
+     */
     var pathConfiguration = TurbolinksPathConfiguration(context)
+
+    /**
+     * Sets/gets the [TurbolinksOfflineRequestHandler] for this session. Default is `null`.
+     */
     var offlineRequestHandler: TurbolinksOfflineRequestHandler? = null
-    var enableScreenshots = true
-    var isColdBooting = false
-        internal set
+
+    /**
+     * Returns whether transitional screenshots are enabled for this session. Default is `true`.
+     */
+    val screenshotsEnabled get() = pathConfiguration.settings.screenshotsEnabled
+
+    /**
+     * Provides the status of whether Turbolinks is initialized and ready for use.
+     */
     var isReady = false
         internal set
 
@@ -54,6 +79,12 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     // Public
 
+    /**
+     * Fetches a given location and returns the response to the [TurbolinksOfflineRequestHandler]
+     * Allows an offline cache to contain specific items instead of solely relying on visited items.
+     *
+     * @param location Location to cache.
+     */
     fun preCacheLocation(location: String) {
         val requestHandler = checkNotNull(offlineRequestHandler) {
             "An offline request handler must be provided to pre-cache $location"
@@ -68,6 +99,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Resets this session to a cold boot state. The first subsequent visit after resetting will
+     * execute a full cold boot (reloading of all resources).
+     *
+     */
     fun reset() {
         logEvent("reset")
         currentVisit?.identifier = ""
@@ -78,6 +114,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         isColdBooting = false
     }
 
+    /**
+     * Enables/disables debug logging. Disabled by default.
+     *
+     * @param enabled Whether to enable debug logging.
+     */
     fun setDebugLoggingEnabled(enabled: Boolean) {
         TurbolinksLog.enableDebugLogging = enabled
         TurbolinksHttpClient.reset()
@@ -110,6 +151,15 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
 
     // Callbacks from Turbolinks Core
 
+    /**
+     * Called by Turbolinks when a new visit is initiated.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param location The location to visit.
+     * @param optionsJson A JSON block to be serialzed into [TurbolinksVisitOptions].
+     */
     @JavascriptInterface
     fun visitProposedToLocation(location: String, optionsJson: String) {
         val options = TurbolinksVisitOptions.fromJSON(optionsJson) ?: return
@@ -118,6 +168,16 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         callback { it.visitProposedToLocation(location, options) }
     }
 
+    /**
+     * Called by Turbolinks when a new visit has just started.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param visitIdentifier A unique identifier for the visit.
+     * @param visitHasCachedSnapshot Whether the visit has a cached snapshot available.
+     * @param location The location being visited.
+     */
     @JavascriptInterface
     fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String) {
         logEvent(
@@ -129,11 +189,26 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         currentVisit?.identifier = visitIdentifier
     }
 
+    /**
+     * Called by Turbolinks when the HTTP request has been completed.
+     *
+     * @param visitIdentifier A unique identifier for the visit.
+     */
     @JavascriptInterface
     fun visitRequestCompleted(visitIdentifier: String) {
         logEvent("visitRequestCompleted", "visitIdentifier" to visitIdentifier)
     }
 
+    /**
+     * Called by Turbolinks when the HTTP request has failed.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param visitIdentifier A unique identifier for the visit.
+     * @param visitHasCachedSnapshot Whether the visit has a cached snapshot available.
+     * @param statusCode The HTTP status code that caused the failure.
+     */
     @JavascriptInterface
     fun visitRequestFailedWithStatusCode(visitIdentifier: String, visitHasCachedSnapshot: Boolean, statusCode: Int) {
         logEvent(
@@ -150,11 +225,28 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Called by Turbolinks when the HTTP request has been completed.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param visitIdentifier A unique identifier for the visit.
+     */
     @JavascriptInterface
     fun visitRequestFinished(visitIdentifier: String) {
         logEvent("visitRequestFinished", "visitIdentifier" to visitIdentifier)
     }
 
+    /**
+     * Called by Turbolinks once the page has been fully loaded by the WebView.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param restorationIdentifier A unique identifier for restoring the page and scroll position
+     * from cache.
+     */
     @JavascriptInterface
     fun pageLoaded(restorationIdentifier: String) {
         logEvent("pageLoaded", "restorationIdentifier" to restorationIdentifier)
@@ -164,6 +256,14 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Called by Turbolinks once the page has been fully rendered in the webView.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param visitIdentifier A unique identifier for the visit.
+     */
     @JavascriptInterface
     fun visitRendered(visitIdentifier: String) {
         logEvent("visitRendered", "visitIdentifier" to visitIdentifier)
@@ -179,6 +279,16 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Called by Turbolinks when the visit is fully completed (request successful and page rendered).
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param visitIdentifier  A unique identifier for the visit.
+     * @param restorationIdentifier A unique identifier for restoring the page and scroll position
+     * from cache.
+     */
     @JavascriptInterface
     fun visitCompleted(visitIdentifier: String, restorationIdentifier: String) {
         logEvent(
@@ -195,6 +305,14 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Called when Turbolinks detects that the page being visited has been invalidated, typically by
+     * new resources in the the page HEAD.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     */
     @JavascriptInterface
     fun pageInvalidated() {
         logEvent("pageInvalidated")
@@ -207,6 +325,14 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Sets internal flags that indicate whether Turbolinks in the WebView is ready for use.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param isReady
+     */
     @JavascriptInterface
     fun turbolinksIsReady(isReady: Boolean) {
         logEvent("turbolinksIsReady", "isReady" to isReady)
@@ -230,6 +356,12 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Sets internal flags indicating that Turbolinks did not properly initialize.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     */
     @JavascriptInterface
     fun turbolinksFailedToLoad() {
         logEvent("turbolinksFailedToLoad")
@@ -546,6 +678,11 @@ class TurbolinksSession private constructor(val sessionName: String, val activit
         }
     }
 
+    /**
+     * Create a new [TurbolinksSession].
+     *
+     * @constructor
+     */
     companion object {
         fun getNew(sessionName: String, activity: Activity, webView: TurbolinksWebView): TurbolinksSession {
             return TurbolinksSession(sessionName, activity, webView)

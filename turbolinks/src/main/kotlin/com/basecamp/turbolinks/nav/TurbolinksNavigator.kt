@@ -32,19 +32,6 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
         }
     }
 
-    fun clearBackStack(onCleared: () -> Unit = {}) {
-        if (isAtStartDestination()) {
-            onCleared()
-            return
-        }
-
-        onNavigationVisit {
-            val controller = currentController()
-            controller.popBackStack(controller.graph.startDestination, false)
-            onCleared()
-        }
-    }
-
     fun navigate(
         location: String,
         options: TurbolinksVisitOptions,
@@ -93,6 +80,19 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
         }
     }
 
+    fun clearBackStack(onCleared: () -> Unit = {}) {
+        if (isAtStartDestination()) {
+            onCleared()
+            return
+        }
+
+        onNavigationVisit {
+            val controller = currentController()
+            controller.popBackStack(controller.graph.startDestination, false)
+            onCleared()
+        }
+    }
+
     private fun navigateWithinContext(rule: TurbolinksNavRule) {
         logEvent(
             "navigateWithinContext",
@@ -114,7 +114,7 @@ internal class TurbolinksNavigator(private val navDestination: TurbolinksNavDest
             TurbolinksNavPresentation.REPLACE_ROOT -> onNavigationVisit {
                 replaceRootLocation(rule)
             }
-            TurbolinksNavPresentation.REPLACE_ALL -> onNavigationVisit {
+            TurbolinksNavPresentation.CLEAR_ALL -> onNavigationVisit {
                 clearBackStack()
             }
             else -> {

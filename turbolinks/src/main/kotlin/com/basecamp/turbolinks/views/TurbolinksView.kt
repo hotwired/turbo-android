@@ -15,8 +15,17 @@ import androidx.core.view.isVisible
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.basecamp.turbolinks.R
 
+/**
+ * Turbolinks view
+ *
+ * @constructor
+ *
+ * @param context
+ * @param attrs
+ * @param defStyleAttr
+ */
 class TurbolinksView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-        FrameLayout(context, attrs, defStyleAttr) {
+    FrameLayout(context, attrs, defStyleAttr) {
 
     private val webViewContainer: ViewGroup get() = findViewById(R.id.turbolinks_webView_container)
     private val progressContainer: ViewGroup get() = findViewById(R.id.turbolinks_progress_container)
@@ -115,7 +124,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
-    fun createScreenshot(): Bitmap? {
+    internal fun createScreenshot(): Bitmap? {
         if (!isLaidOut) return null
         if (!hasEnoughMemoryForScreenshot()) return null
         if (width <= 0 || height <= 0) return null
@@ -128,7 +137,7 @@ class TurbolinksView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
-    fun screenshotOrientation(): Int {
+    internal fun screenshotOrientation(): Int {
         return context.resources.configuration.orientation
     }
 

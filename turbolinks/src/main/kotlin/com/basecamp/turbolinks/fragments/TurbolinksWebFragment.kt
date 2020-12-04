@@ -6,19 +6,40 @@ import com.basecamp.turbolinks.delegates.TurbolinksWebFragmentDelegate
 import com.basecamp.turbolinks.session.TurbolinksSessionModalResult
 import com.basecamp.turbolinks.views.TurbolinksWebView
 
+/**
+ * The base class from which all web "standard" fragments (non-dialogs) in a Turbolinks driven app
+ * should extend from.
+ *
+ * @constructor Create empty Turbolinks web fragment
+ */
 abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragmentCallback {
     private lateinit var delegate: TurbolinksWebFragmentDelegate
 
+    /**
+     * Instantiates a [TurbolinksWebFragmentDelegate].
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         delegate = TurbolinksWebFragmentDelegate(this, this)
     }
 
+    /**
+     * Passes this lifecycle call through to [TurbolinksWebFragmentDelegate.onActivityCreated].
+     *
+     * @param savedInstanceState
+     */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         delegate.onActivityCreated()
     }
 
+    /**
+     * Passes this lifecycle call through to [TurbolinksWebFragmentDelegate.onStart] if there is no
+     * modal result to process.
+     *
+     */
     override fun onStart() {
         super.onStart()
 
@@ -27,11 +48,21 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
         }
     }
 
+    /**
+     * Passes this call through to [TurbolinksWebFragmentDelegate.onStartAfterModalResult]
+     *
+     * @param result
+     */
     override fun onStartAfterModalResult(result: TurbolinksSessionModalResult) {
         super.onStartAfterModalResult(result)
         delegate.onStartAfterModalResult(result)
     }
 
+    /**
+     * Passes this call through to [TurbolinksWebFragmentDelegate.onStartAfterDialogCancel] if there
+     * is no modal result to process.
+     *
+     */
     override fun onStartAfterDialogCancel() {
         super.onStartAfterDialogCancel()
 
@@ -40,6 +71,11 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
         }
     }
 
+    /**
+     * Implementing classes can execute state cleanup by overriding this. Will always be called
+     * before any navigation action takes place.
+     *
+     */
     override fun onBeforeNavigation() {
         // Allow subclasses to do state cleanup
     }
@@ -48,7 +84,6 @@ abstract class TurbolinksWebFragment : TurbolinksFragment(), TurbolinksWebFragme
     // TurbolinksWebFragmentCallback interface
     // ----------------------------------------------------------------------------
 
-    override fun onUpdateView() {}
 
     override fun onWebViewAttached(webView: TurbolinksWebView) {}
 

@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
 
-class TurbolinksNavGraphBuilder(
+internal class TurbolinksNavGraphBuilder(
     private val startLocation: String,
     private val navController: NavController,
     private val pathConfiguration: TurbolinksPathConfiguration
