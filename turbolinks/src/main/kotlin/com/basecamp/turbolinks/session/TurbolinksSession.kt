@@ -47,7 +47,6 @@ class TurbolinksSession private constructor(internal val sessionName: String, in
     internal var restorationIdentifiers = SparseArray<String>()
     internal val httpRepository = TurbolinksHttpRepository()
     internal val context: Context = activity.applicationContext
-    internal var rootLocation: String? = null
     internal var isColdBooting = false
 
     // User accessible
