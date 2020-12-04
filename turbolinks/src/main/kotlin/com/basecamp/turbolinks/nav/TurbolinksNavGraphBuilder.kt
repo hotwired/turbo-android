@@ -17,14 +17,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
 
-/**
- * Turbolinks nav graph builder
- *
- * @property startLocation
- * @property navController
- * @property pathConfiguration
- * @constructor Create empty Turbolinks nav graph builder
- */
 internal class TurbolinksNavGraphBuilder(
     private val startLocation: String,
     private val navController: NavController,
@@ -42,13 +34,6 @@ internal class TurbolinksNavGraphBuilder(
         val kClass: KClass<out Fragment>
     )
 
-    /**
-     * Build
-     *
-     * @param registeredActivities
-     * @param registeredFragments
-     * @return
-     */
     fun build(
         registeredActivities: List<KClass<out Activity>>,
         registeredFragments: List<KClass<out Fragment>>

@@ -6,14 +6,6 @@ import android.webkit.WebView
 import androidx.core.view.children
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
-/**
- * Turbolinks swipe refresh layout
- *
- * @constructor
- *
- * @param context
- * @param attrs
- */
 internal class TurbolinksSwipeRefreshLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
         SwipeRefreshLayout(context, attrs) {
 

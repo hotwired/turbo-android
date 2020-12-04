@@ -126,11 +126,6 @@ class TurbolinksSession private constructor(internal val sessionName: String, in
 
     // Internal
 
-    /**
-     * Visit
-     *
-     * @param visit
-     */
     internal fun visit(visit: TurbolinksVisit) {
         this.currentVisit = visit
         callback { it.visitLocationStarted(visit.location) }
@@ -146,11 +141,6 @@ class TurbolinksSession private constructor(internal val sessionName: String, in
         }
     }
 
-    /**
-     * Remove callback
-     *
-     * @param callback
-     */
     internal fun removeCallback(callback: TurbolinksSessionCallback) {
         currentVisit?.let { visit ->
             if (visit.callback == callback) {

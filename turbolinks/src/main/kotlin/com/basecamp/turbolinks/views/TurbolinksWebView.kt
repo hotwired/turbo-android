@@ -29,9 +29,6 @@ open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: 
     WebView(context, attrs) {
     private val gson = GsonBuilder().disableHtmlEscaping().create()
 
-    /**
-     * Basic initialization of the WebView, including enabling JavaScript, DOM Storage, etc.
-     */
     init {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
@@ -56,33 +53,15 @@ open class TurbolinksWebView @JvmOverloads constructor(context: Context, attrs: 
     val majorVersion: Int?
         get() = versionName?.substringBefore(".")?.toIntOrNull()
 
-    /**
-     * Visit location
-     *
-     * @param location
-     * @param options
-     * @param restorationIdentifier
-     */
     internal fun visitLocation(location: String, options: TurbolinksVisitOptions, restorationIdentifier: String) {
         val args = encodeArguments(location, options.toJson(), restorationIdentifier)
         runJavascript("webView.visitLocationWithOptionsAndRestorationIdentifier($args)")
     }
 
-    /**
-     * Visit rendered for cold boot
-     *
-     * @param coldBootVisitIdentifier
-     */
     internal fun visitRenderedForColdBoot(coldBootVisitIdentifier: String) {
         runJavascript("webView.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
     }
 
-    /**
-     * Install bridge
-     *
-     * @param onBridgeInstalled
-     * @receiver
-     */
     internal fun installBridge(onBridgeInstalled: () -> Unit) {
         val script = "window.webView == null"
         val bridge = context.contentFromAsset("js/turbolinks_bridge.js")
