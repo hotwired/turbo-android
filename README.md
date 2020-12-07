@@ -17,6 +17,8 @@ This library has been in use and tested in the wild since June 2020 in the all-n
 ## Introduction
 Turbo Android uses Google's [Navigation component library](https://developer.android.com/guide/navigation) under the hood to navigate between destinations. It leverages a single-`Activity` architecture and each navigation destination is a `Fragment` that you'll implement in your app. To take advantage of speed improvements that [Turbo](https://github.com/turbolinks/turbolinks) enables for web applications, a single `WebView` instance is swapped between each `TurbolinksWebFragment` destination, so the `WebView` instance and resources don't need to be recreated for each destination.
 
+![Structure of a Turbo App](docs/assets/turbo-app-diagram.png)
+
 ## Prerequisites
 
 1. Android API 24+ is required as the `minSdkVersion` in your build.gradle.
