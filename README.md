@@ -6,6 +6,7 @@
 1. [Prerequisites](#prerequisites)
 1. [Installation](#installation)
 1. [Getting Started](#getting-started)
+1. [Navigate to Destinations](#navigate-to-destinations)
 1. [Advanced Configuration](#advanced-configuration)
 1. [Running the Demo App](#try-the-demo-app)
 1. [Contributing](#contributing)
@@ -44,8 +45,11 @@ dependencies {
 ## Getting Started
 See the instructions to [get started with your app](docs/GETTING-STARTED.md).
 
+## Navigate to Destinations
+See the documenation to learn about [navigating between destinations](docs/NAVIGATION.md).
+
 ## Advanced Configuration
-See the instructions to [learn about the advanced configuration options available](docs/ADVANCED-CONFIGURATION.md).
+See the documentation to [learn about the advanced configuration options available](docs/ADVANCED-CONFIGURATION.md).
 
 ## Try the Demo App
 See the instructions to [try out the demo app](docs/DEMO-APP.md).
