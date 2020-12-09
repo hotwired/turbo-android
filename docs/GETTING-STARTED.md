@@ -8,21 +8,21 @@
 1. [Create a Path Configuration](#create-a-path-configuration)
 
 ## Create a NavHostFragment
-A [NavHostFragment](https://developer.android.com/reference/androidx/navigation/fragment/NavHostFragment) is a component available in AndroidX and is primarily responsible for providing "an area in your layout for self-contained navigation to occurr."
+A [NavHostFragment](https://developer.android.com/reference/androidx/navigation/fragment/NavHostFragment) is a component available in [Android Jetpack](https://developer.android.com/jetpack) and is primarily responsible for providing "an area in your layout for self-contained navigation to occurr."
 
-The Turbo extension of this class, `TurboSessionNavHostFragment`, along with being responsible for self-contained `TurboFragment` navigation, also manages a `TurboSesssion` and a `TurboWebView` instance. You will need to implement just a few things for this abstract class.
+The Turbo extension of this class, `TurboSessionNavHostFragment`, along with being responsible for self-contained `TurboFragment` navigation, also manages a `TurboSesssion` and a `TurboWebView` instance. You will need to implement a few things for this abstract class:
 
-* The name of the `TurboSession` (this is abitrary, but must be unique)
+* The name of the `TurboSession` (this is abitrary, but must be unique in your app)
 * The url of a starting location when your app starts up
 * A list of registered activities that Turbo will be able to navigate to (optional)
 * A list of registered fragments that Turbo will be able to navigate to
-* The location of your `TurboPathConfiguration` JSON file(s) to configure navigation
+* The location of your `TurboPathConfiguration` JSON file(s) to configure navigation rules
 
-In its simplest form, the implementation of your `TurbolinksSessionNavHostFragment` will look like:
+In its simplest form, the implementation of your `TurboSessionNavHostFragment` will look like:
 
 **`MainSessionNavHostFragment`:**
 ```kotlin
-class MainSessionNavHostFragment : TurbolinksSessionNavHostFragment() {
+class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override val sessionName = "main"
 
     override val startLocation
@@ -53,12 +53,12 @@ See the [Fragment section](#create-a-web-fragment) below to create a `TurboFragm
 Refer to the demo [MainSessionNavHostFragment](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/main/MainSessionNavHostFragment.kt) for an example.
 
 ## Create an Activity
-It's strongly recommended to use a single-`Activity` architecture in your app. Generally, you'll have one `TurboActivity` and many `TurboFragments`.
+It's strongly recommended to use a single-Activity architecture in your app. Generally, you'll have one `TurboActivity` and many `TurboFragments`.
 
 ### Create the TurboActivity layout resource
 You need to create a layout resource file that your `TurboActivity` will use to host the `TurboSessionNavHostFragment` that you created above.
 
-AndroidX provides a [`FragmentContainerView`](https://developer.android.com/reference/androidx/fragment/app/FragmentContainerView) to contain `NavHostFragment` navigation. In its simplest form, your layout file will look like:
+Android Jetpack provides a [`FragmentContainerView`](https://developer.android.com/reference/androidx/fragment/app/FragmentContainerView) to contain `NavHostFragment` navigation. In its simplest form, your Activity layout file will look like:
 
 **`res/layout/activity_main.xml`:**
 ```xml
@@ -85,63 +85,103 @@ Refer to the demo [`activity_main.xml`](../demoapp_simple/src/main/res/layout/ac
 
 ### Create the TurboActivity class
 
-A Turbolinks `Activity` is straightforward and simply need to implement the [TurbolinksActivity](turbolinks/src/main/kotlin/com/basecamp/turbolinks/activities/TurbolinksActivity.kt) interface in order to provide a [TurbolinksActivityDelegate](turbolinks/src/main/kotlin/com/basecamp/turbolinks/delegates/TurbolinksActivityDelegate.kt).
+A Turbo Activity is straightforward and simply needs to implement the [TurboActivity](turbolinks/src/main/kotlin/com/basecamp/turbolinks/activities/TurbolinksActivity.kt) interface in order to provide a [TurboActivityDelegate](turbolinks/src/main/kotlin/com/basecamp/turbolinks/delegates/TurbolinksActivityDelegate.kt).
 
-Your `Activity` should extend AndroidX's [`AppCompatActivity`](https://developer.android.com/reference/androidx/appcompat/app/AppCompatActivity). In its simplest form, your `Activity` will look like:
+Your Activity should extend Android Jetpack's [`AppCompatActivity`](https://developer.android.com/reference/androidx/appcompat/app/AppCompatActivity). In its simplest form, your Activity will look like:
 
 **`MainActivity.kt`:**
 ```kotlin
-class MainActivity : AppCompatActivity(), TurbolinksActivity {
-    override lateinit var delegate: TurbolinksActivityDelegate
+class MainActivity : AppCompatActivity(), TurboActivity {
+    override lateinit var delegate: TurboActivityDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        delegate = TurbolinksActivityDelegate(this, R.id.main_nav_host)
+        delegate = TurboActivityDelegate(this, R.id.main_nav_host)
     }
 }
 ```
 
-Note that `R.layout.activity_main` refers to the layout file that you already created. `R.id.main_nav_host` refers to the `MainSessionNavHostFragment` hosted in the layout file.
+*Note that `R.layout.activity_main` refers to the Activity layout file that you already created. `R.id.main_nav_host` refers to the `MainSessionNavHostFragment` that you created, hosted in the layout file.*
 
-Refer to [MainActivity](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/main/MainActivity.kt) and feel free to copy that as a starting point. (Don't forget to add your `Activity` to your app's `AndroidManifest.xml` file.)
+Refer to the demo [MainActivity](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/main/MainActivity.kt) as an example. (Don't forget to add your Activity to your app's [`AndroidManifest.xml`](../demoapp_simple/src/main/AndroidManifest.xml) file.)
 
 ## Create a Web Fragment
 
-### Create the TurboWebFragment layout
-You'll need a basic layout for your fragment to inflate. Refer to [fragment_web.xml](../demoapp_simple/src/main/res/layout/fragment_web.xml) and feel free to copy that as a starting point.
+### Create the TurboWebFragment layout resource
+You need to create a layout resource file that your `TurboWebFragment` will use to inflate a `TurboView` that the library provides.
 
-The most important thing is that your layout `include` a reference to the [turbolinks_default](turbolinks/src/main/res/layout/turbolinks_default.xml) resource. This is a view provided by the library which automatically add the necessary view hierarchy that Turbolinks expects for attaching a WebView, progress view, and error view.
+The easiest way to include a `TurboView` in your layout resource is to `<include ... />` a reference to the library's [`turbo_default.xml`](turbolinks/src/main/res/layout/turbolinks_default.xml) resource. This is a view provided by the library which automatically add the necessary view hierarchy that Turbo expects for attaching a WebView, progress view, and error view.
 
+In its simplest form, your web Fragment layout file will look like:
+
+**`res/layout/fragment_web.xml`:**
 ```xml
-<include
-    layout="@layout/turbolinks_default"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/app_bar" />
+    android:layout_height="match_parent">
+
+    <include
+        layout="@layout/turbo_default"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
+Refer to demo [`fragment_web.xml`](../demoapp_simple/src/main/res/layout/fragment_web.xml) for an example.
+
 ### Create the TurboWebFragment class
-You'll need at least one fragment to represent the main body of your view. 
+You'll need at least one web Fragment that will serve as a destination for urls that display web content in your app. 
 
-A [WebFragment](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/features/web/WebFragment.kt) would be a good option to handle all standard WebViews in your app. This fragment:
+A web Fragment is straightforward and simply needs to implement the [TurboWebFragment](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragment.kt) abstract class. This abstract class implements the [`TurboWebFragmentCallback`]((../turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragmentCallback.kt)) interface, which provides a number of functions available to customize your Fragment.
 
-* Should implement your custom destination interface as mentioned above, or, if you haven't created one, simply implement [TurbolinksNavDestination](turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavDestination.kt).
-* Must extend one of the base fragments provided by Turbolinks. In this case, as a web fragment, you should extend [TurbolinksWebFragment](turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragment.kt).
+You'll also need to annotate each Fragment in your app with a `@TurboNavGraphDestination` annotation with a URI. This URI is used by the library to build an internal navigation graph and map url path patterns to the destination Fragment with the corresponding URI. See the [Path Configuration section](#create-a-path-configuration) below to learn how to map url paths to destination Fragments.
 
-Refer to [WebFragment](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/features/web/WebFragment.kt) as an example and feel free to copy it as a starting point. It outlines the very basics of what every fragment will need to implement — a nav graph annotation, inflating a view, setting up progress and error views, and setting up a toolbar.
+In its simplest form, your web Fragment will look like:
+
+**`WebFragment.kt`:**
+```kotlin
+@TurboNavGraphDestination(uri = "turbo://fragment/web")
+class WebFragment : TurboWebFragment() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_web, container, false)
+    }
+
+    override fun createProgressView(location: String): View {
+        return layoutInflater.inflate(R.layout.progress, null)
+    }
+
+    override fun createErrorView(statusCode: Int): View {
+        return layoutInflater.inflate(R.layout.error, null)
+    }
+
+    override fun toolbarForNavigation(): Toolbar? {
+        return view?.findViewById(R.id.toolbar)
+    }
+}
+
+// TODO: Let's try to provide default library views error/progress views that can be overridden with 
+// custom views. Let's also see if it makes sense to provide a `turbo_*.xml` layout resource file 
+// that contains an AppBarLayout with a Toolbar so it's easier to get an app up and running.
+```
+
+*Note that `R.layout.fragment_web` refers to the Fragment layout file that you already created.*
+
+Refer to demo [WebFragment](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/features/web/WebFragment.kt) as an example.
 
 ## Create a Path Configuration
-A configuration file specifies the set of rules Turbolinks will follow to navigate and present views. It has two sections: 
+A configuration file specifies the set of rules Turbo will follow to navigate and present views. It has two sections: 
 
 1. Application-level settings
 1. Path-specific rules 
 
 Typically path-specific rules will do most of the work in determining how and when a particular URI will be navigated to, but additional application-level settings can also be applied to customize navigation logic (see [Create a destination interface](#create-a-destination-interface)).
 
-At minimum you will need a [src/main/assets/json/configuration.json](../demoapp_simple/src/main/assets/json/configuration.json) file that Turbolinks can read, with at least one path configuration. Note that the configuration file is processed in order and cascades downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, while each subsequent rule can override for specific behavior.
+At minimum you will need a [src/main/assets/json/configuration.json](../demoapp_simple/src/main/assets/json/configuration.json) file that Turbo can read, with at least one path configuration. Note that the configuration file is processed in order and cascades downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, while each subsequent rule can override for specific behavior.
 
 Example:
 
@@ -154,7 +194,7 @@ Example:
       ],
       "properties": {
         "context": "default",
-        "uri": "turbolinks://fragment/web",
+        "uri": "turbo://fragment/web",
         "pull_to_refresh_enabled": true,
         "screenshots_enabled": true
       }
@@ -190,4 +230,4 @@ The `properties` object contains a handful of key/value pairs that Turbolinks su
 	* Optional.
 	* Possible values: `true`, `false`. Defaults to `true`.
 
-## 🎉 Congratulations, you're using Turbolinks on Android! 🎉
+## 🎉 Congratulations, you're using Turbo on Android! 🎉
