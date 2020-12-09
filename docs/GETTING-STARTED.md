@@ -85,7 +85,7 @@ Refer to the demo [`activity_main.xml`](../demoapp_simple/src/main/res/layout/ac
 
 ### Create the TurboActivity class
 
-A Turbo Activity is straightforward and simply needs to implement the [TurboActivity](turbolinks/src/main/kotlin/com/basecamp/turbolinks/activities/TurbolinksActivity.kt) interface in order to provide a [TurboActivityDelegate](turbolinks/src/main/kotlin/com/basecamp/turbolinks/delegates/TurbolinksActivityDelegate.kt).
+A Turbo Activity is straightforward and simply needs to implement the [TurboActivity](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/activities/TurbolinksActivity.kt) interface in order to provide a [TurboActivityDelegate](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/delegates/TurbolinksActivityDelegate.kt).
 
 Your Activity should extend Android Jetpack's [`AppCompatActivity`](https://developer.android.com/reference/androidx/appcompat/app/AppCompatActivity). In its simplest form, your Activity will look like:
 
@@ -112,7 +112,7 @@ Refer to the demo [MainActivity](../demoapp_simple/src/main/kotlin/com/basecamp/
 ### Create the TurboWebFragment layout resource
 You need to create a layout resource file that your `TurboWebFragment` will use to inflate a `TurboView` that the library provides.
 
-The easiest way to include a `TurboView` in your layout resource is to `<include ... />` a reference to the library's [`turbo_default.xml`](turbolinks/src/main/res/layout/turbolinks_default.xml) resource. This is a view provided by the library which automatically add the necessary view hierarchy that Turbo expects for attaching a WebView, progress view, and error view.
+The easiest way to include a `TurboView` in your layout resource is to `<include ... />` a reference to the library's [`turbo_default.xml`](../turbolinks/src/main/res/layout/turbolinks_default.xml) resource. This is a view provided by the library which automatically adds the necessary view hierarchy that Turbo expects for attaching a WebView, progress view, and error view.
 
 In its simplest form, your web Fragment layout file will look like:
 
@@ -137,9 +137,9 @@ Refer to demo [`fragment_web.xml`](../demoapp_simple/src/main/res/layout/fragmen
 ### Create the TurboWebFragment class
 You'll need at least one web Fragment that will serve as a destination for urls that display web content in your app. 
 
-A web Fragment is straightforward and simply needs to implement the [TurboWebFragment](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragment.kt) abstract class. This abstract class implements the [`TurboWebFragmentCallback`]((../turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragmentCallback.kt)) interface, which provides a number of functions available to customize your Fragment.
+A web Fragment is straightforward and simply needs to implement the [TurboWebFragment](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragment.kt) abstract class. This abstract class implements the [`TurboWebFragmentCallback`](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragmentCallback.kt) interface, which provides a number of functions available to customize your Fragment.
 
-You'll also need to annotate each Fragment in your app with a `@TurboNavGraphDestination` annotation with a URI. This URI is used by the library to build an internal navigation graph and map url path patterns to the destination Fragment with the corresponding URI. See the [Path Configuration section](#create-a-path-configuration) below to learn how to map url paths to destination Fragments.
+You'll also need to annotate each Fragment in your app with a `@TurboNavGraphDestination` annotation with a URI of your own scheme. This URI is used by the library to build an internal navigation graph and map url path patterns to the destination Fragment with the corresponding URI. See the [Path Configuration section](#create-a-path-configuration) below to learn how to map url paths to destination Fragments.
 
 In its simplest form, your web Fragment will look like:
 
@@ -174,19 +174,21 @@ class WebFragment : TurboWebFragment() {
 Refer to demo [WebFragment](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/features/web/WebFragment.kt) as an example.
 
 ## Create a Path Configuration
-A configuration file specifies the set of rules Turbo will follow to navigate and present views. It has two sections: 
+A JSON configuration file specifies the set of rules Turbo will follow to navigate to Fragment destinations and configure options. It has two top-level objects: 
 
-1. Application-level settings
-1. Path-specific rules 
+1. Application-level `"settings"`
+1. Url path-specific `"rules"`
 
-Typically path-specific rules will do most of the work in determining how and when a particular URI will be navigated to, but additional application-level settings can also be applied to customize navigation logic (see [Create a destination interface](#create-a-destination-interface)).
+At minimum, you will need a bundled [`src/main/assets/json/configuration.json`](../demoapp_simple/src/main/assets/json/configuration.json) file in your app that Turbo can read. We also recommend hosting a remote configuration file on your server, so you can update the app's configuration at any time without needing an app update. Remote configuration files are fetched (and cached) on every app startup, so the app always has the latest configuration available. The location of these configuration files needs to be set in your [`TurboSessionNavHostFragment.pathConfigurationLocation`](#create-a-navhostfragment). 
 
-At minimum you will need a [src/main/assets/json/configuration.json](../demoapp_simple/src/main/assets/json/configuration.json) file that Turbo can read, with at least one path configuration. Note that the configuration file is processed in order and cascades downward, similar to CSS. The top most declaration should establish the default behavior for all path patterns, while each subsequent rule can override for specific behavior.
+In its simplest form, your JSON configuration will look like:
 
-Example:
-
+**`assets/json/configuration.json`:**
 ```json
 {
+  "settings": {
+    "screenshots_enabled": true
+  },
   "rules": [
     {
       "patterns": [
@@ -195,39 +197,53 @@ Example:
       "properties": {
         "context": "default",
         "uri": "turbo://fragment/web",
-        "pull_to_refresh_enabled": true,
-        "screenshots_enabled": true
+        "pull_to_refresh_enabled": true
       }
     }
   ]
 }
 ```
 
-### Patterns
+### Settings
+The `settings` object is a place to configure app-level settings. This is extremely useful when you have a remote configuration file, since you can add your own custom settings and use them as remote feature-flags. Available settings are:
+* `screenshots_enabled` — Whether or not transitional web screenshots should be used during navigation. This gives the appearance of a more smooth experience since the session WebView is swapped between web destination Fragments, but does require more performance overhead. 
+	* Optional.
+	* Possible values: `true`, `false`. Defaults to `true`.
+* Any custom app settings that you'd like to configure here
 
-The `pattern` array defines a Regex pattern that will be used to determine if a provided URI matches (and as a result, which `properties` should be applied).
+### Rules
+The `"rules"` array defines a list of rules that are processed in order and cascade downward, similar to CSS. The top-most declaration should establish the default behavior for all url path patterns, while each subsequent rule can override for specific behavior.
 
-### Properties
+#### Patterns
+
+The `patterns` array defines Regex patterns that will be used to match url paths (and as a result, which `properties` should be applied for a particular path).
+
+#### Properties
 
 The `properties` object contains a handful of key/value pairs that Turbolinks supports out of the box. You are free to add more properties as your app needs, but these are the ones the framework is aware of and will handle automatically.
 
-* `uri` — The target destination to navigate to. Must map to an Activity or Fragment that has implemented the [TurbolinksNavGraphDestination](/turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavGraphDestination.kt) annotation with a matching `uri` value.
+* `uri` — The target destination URI to navigate to. Must map to an Activity or Fragment that has implemented the [TurboNavGraphDestination](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavGraphDestination.kt) annotation with a matching `uri` value.
 	* **Required**. 
 	* No explicit value options. No default value.
-* `context` — Specifies the presentation context in which the view should be displayed. Turbolinks will determine what the navigation behavior should be based on this value + the `presentation` value. Unless you are specifically showing a modal-style view (e.g., a form, wizard, navigation, etc.), `default` is usually sufficient. 
+* `context` — Specifies the presentation context in which the view should be displayed. Turbo will determine what the navigation behavior should be based on this value + the `presentation` value. Unless you are specifically showing a modal-style view (e.g., a form, wizard, navigation, etc.), `default` is usually sufficient. 
 	* Optional. 
 	* Possible values: `default` or `modal`. Defaults to `default`. 
-* `presentation` — Specifies what "action" to use to present the given `uri`. Turbolinks will determine what the navigation behavior should be based on this value + the `context` value. In most cases `default` should be sufficient, but you may find cases where your app needs specific beahvior. 
+* `presentation` — Specifies what style to use when presenting the given `uri` destination. Turbo will determine what the navigation behavior should be based on this value + the `context` value. In most cases `default` should be sufficient, but you may find cases where your app needs specific beahvior. 
 	* Optional. 
 	* Possible values: `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, `none`. Defaults to `default`.
-* `fallback_uri` — Provides a fallback URI in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be available yet.
+* `fallback_uri` — Provides a fallback URI in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be available yet in older versions of the app.
 	* Optional.
 	* No explicit value options. No default value. 
-* `pull_to_refresh_enabled` — Whether or not pull to refresh should be enabled for a given path.
+* `pull_to_refresh_enabled` — Whether or not pull-to-refresh should be enabled for the given path.
 	* Optional.
 	* Possible values: `true`, `false`. Defaults to `false`.
-* `screenshots_enabled` — Whether or not transitional screenshots (when returning to a previous screen) should be used. This gives the appearance of a much faster experience going back, but does require more performance overhead. 
-	* Optional.
-	* Possible values: `true`, `false`. Defaults to `true`.
+
+Refer to demo [`configuration.json`](../demoapp_simple/src/main/assets/json/configuration.json) as an example.
+
+## Navigate to Destinations
+See the documenation to learn about [navigating between destinations](NAVIGATION.md).
+
+## Advanced Configuration
+See the documentation to [learn about the advanced configuration options available](ADVANCED-CONFIGURATION.md).
 
 ## 🎉 Congratulations, you're using Turbo on Android! 🎉
