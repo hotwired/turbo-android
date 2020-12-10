@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import dev.hotwire.turbo.demosimple.base.NavDestination
 import dev.hotwire.turbo.demosimple.R
-import dev.hotwire.turbo.fragments.TurbolinksFragment
-import dev.hotwire.turbo.nav.TurbolinksNavGraphDestination
+import dev.hotwire.turbo.fragments.TurboFragment
+import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_image_viewer.*
 
-@TurbolinksNavGraphDestination(uri = "turbolinks://fragment/image_viewer")
-class ImageViewerFragment : TurbolinksFragment(), NavDestination {
+@TurboNavGraphDestination(uri = "turbo://fragment/image_viewer")
+class ImageViewerFragment : TurboFragment(), NavDestination {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         loadImage()

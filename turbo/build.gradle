@@ -112,13 +112,13 @@ dependencies {
 
 ext {
     bintrayRepo = 'maven'
-    bintrayName = 'turbolinks-android'
+    bintrayName = 'turbo'
 
     publishedGroupId = 'dev.hotwire'
     artifact = 'turbo'
 
-    libraryName = 'Turbolinks Android'
-    libraryDescription = 'Turbolinks for Android'
+    libraryName = 'Turbo Android'
+    libraryDescription = 'Turbo for Android'
     libraryVersion = "$libVersionName"
 
     siteUrl = 'https://github.com/basecamp/turbolinks-android'

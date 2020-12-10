@@ -3,9 +3,9 @@ package dev.hotwire.turbo.demo.features.web
 import android.os.Bundle
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.extensions.drawable
-import dev.hotwire.turbo.nav.TurbolinksNavGraphDestination
+import dev.hotwire.turbo.nav.TurboNavGraphDestination
 
-@TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web/modal")
+@TurboNavGraphDestination(uri = "turbo://fragment/web/modal")
 class WebModalFragment : WebFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

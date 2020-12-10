@@ -5,10 +5,10 @@ import androidx.browser.customtabs.CustomTabsIntent
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.main.MainActivity
 import dev.hotwire.turbo.demo.util.Constants
-import dev.hotwire.turbo.nav.TurbolinksNavDestination
+import dev.hotwire.turbo.nav.TurboNavDestination
 import java.net.MalformedURLException
 
-interface NavDestination : TurbolinksNavDestination {
+interface NavDestination : TurboNavDestination {
     enum class RouteCommand {
         STOP,
         NAVIGATE,

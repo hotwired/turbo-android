@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dev.hotwire.turbo.demo.R
-import dev.hotwire.turbo.nav.TurbolinksNavGraphDestination
+import dev.hotwire.turbo.nav.TurboNavGraphDestination
 
-@TurbolinksNavGraphDestination(uri = "turbolinks://fragment/web/home")
+@TurboNavGraphDestination(uri = "turbo://fragment/web/home")
 class WebHomeFragment : WebFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_web_home, container, false)

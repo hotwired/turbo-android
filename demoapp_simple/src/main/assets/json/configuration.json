@@ -9,7 +9,7 @@
       ],
       "properties": {
         "context": "default",
-        "uri": "turbolinks://fragment/web",
+        "uri": "turbo://fragment/web",
         "pull_to_refresh_enabled": true
       }
     },
@@ -18,7 +18,7 @@
         "^$"
       ],
       "properties": {
-        "uri": "turbolinks://fragment/web/home"
+        "uri": "turbo://fragment/web/home"
       }
     },
     {
@@ -26,7 +26,7 @@
         ".+\\.(?:bmp|gif|heic|jpg|jpeg|png|svg|webp)"
       ],
       "properties": {
-        "uri": "turbolinks://fragment/image_viewer"
+        "uri": "turbo://fragment/image_viewer"
       }
     }
   ]

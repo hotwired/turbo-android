@@ -50,7 +50,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
 See the [Fragment section](#create-a-web-fragment) below to create a `TurboFragment` that you'll register here. See the [Path Configuration section](#create-a-path-configuration) below to create your path configuration file(s).
 
-Refer to the demo [MainSessionNavHostFragment](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/main/MainSessionNavHostFragment.kt) for an example.
+Refer to the demo [MainSessionNavHostFragment](../demoapp_simple/src/main/kotlin/dev/hotwire/turbo/demosimple/main/MainSessionNavHostFragment.kt) for an example.
 
 ## Create an Activity
 It's strongly recommended to use a single-Activity architecture in your app. Generally, you'll have one `TurboActivity` and many `TurboFragments`.
@@ -85,7 +85,7 @@ Refer to the demo [`activity_main.xml`](../demoapp_simple/src/main/res/layout/ac
 
 ### Create the TurboActivity class
 
-A Turbo Activity is straightforward and simply needs to implement the [TurboActivity](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/activities/TurbolinksActivity.kt) interface in order to provide a [TurboActivityDelegate](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/delegates/TurbolinksActivityDelegate.kt).
+A Turbo Activity is straightforward and simply needs to implement the [TurboActivity](../turbo/src/main/kotlin/dev/hotwire/turbo/activities/TurboActivity.kt) interface in order to provide a [TurboActivityDelegate](../turbo/src/main/kotlin/dev/hotwire/turbo/delegates/TurboActivityDelegate.kt).
 
 Your Activity should extend Android Jetpack's [`AppCompatActivity`](https://developer.android.com/reference/androidx/appcompat/app/AppCompatActivity). In its simplest form, your Activity will look like:
 
@@ -105,14 +105,14 @@ class MainActivity : AppCompatActivity(), TurboActivity {
 
 *Note that `R.layout.activity_main` refers to the Activity layout file that you already created. `R.id.main_nav_host` refers to the `MainSessionNavHostFragment` that you created, hosted in the layout file.*
 
-Refer to the demo [MainActivity](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/main/MainActivity.kt) as an example. (Don't forget to add your Activity to your app's [`AndroidManifest.xml`](../demoapp_simple/src/main/AndroidManifest.xml) file.)
+Refer to the demo [MainActivity](../demoapp_simple/src/main/kotlin/dev/hotwire/turbo/demosimple/main/MainActivity.kt) as an example. (Don't forget to add your Activity to your app's [`AndroidManifest.xml`](../demoapp_simple/src/main/AndroidManifest.xml) file.)
 
 ## Create a Web Fragment
 
 ### Create the TurboWebFragment layout resource
 You need to create a layout resource file that your `TurboWebFragment` will use to inflate a `TurboView` that the library provides.
 
-The easiest way to include a `TurboView` in your layout resource is to `<include ... />` a reference to the library's [`turbo_default.xml`](../turbolinks/src/main/res/layout/turbolinks_default.xml) resource. This is a view provided by the library which automatically adds the necessary view hierarchy that Turbo expects for attaching a WebView, progress view, and error view.
+The easiest way to include a `TurboView` in your layout resource is to `<include ... />` a reference to the library's [`turbo_default.xml`](../turbo/src/main/res/layout/turbo_default.xml) resource. This is a view provided by the library which automatically adds the necessary view hierarchy that Turbo expects for attaching a WebView, progress view, and error view.
 
 In its simplest form, your web Fragment layout file will look like:
 
@@ -137,7 +137,7 @@ Refer to demo [`fragment_web.xml`](../demoapp_simple/src/main/res/layout/fragmen
 ### Create the TurboWebFragment class
 You'll need at least one web Fragment that will serve as a destination for urls that display web content in your app. 
 
-A web Fragment is straightforward and simply needs to implement the [TurboWebFragment](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragment.kt) abstract class. This abstract class implements the [`TurboWebFragmentCallback`](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/fragments/TurbolinksWebFragmentCallback.kt) interface, which provides a number of functions available to customize your Fragment.
+A web Fragment is straightforward and simply needs to implement the [TurboWebFragment](../turbo/src/main/kotlin/dev/hotwire/turbo/fragments/TurboWebFragment.kt) abstract class. This abstract class implements the [`TurboWebFragmentCallback`](../turbo/src/main/kotlin/dev/hotwire/turbo/fragments/TurboWebFragmentCallback.kt) interface, which provides a number of functions available to customize your Fragment.
 
 You'll also need to annotate each Fragment in your app with a `@TurboNavGraphDestination` annotation with a URI of your own scheme. This URI is used by the library to build an internal navigation graph and map url path patterns to the destination Fragment with the corresponding URI. See the [Path Configuration section](#create-a-path-configuration) below to learn how to map url paths to destination Fragments.
 
@@ -171,7 +171,7 @@ class WebFragment : TurboWebFragment() {
 
 *Note that `R.layout.fragment_web` refers to the Fragment layout file that you already created.*
 
-Refer to demo [WebFragment](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/features/web/WebFragment.kt) as an example.
+Refer to demo [WebFragment](../demoapp_simple/src/main/kotlin/dev/hotwire/turbo/demosimple/features/web/WebFragment.kt) as an example.
 
 ## Create a Path Configuration
 A JSON configuration file specifies the set of rules Turbo will follow to navigate to Fragment destinations and configure options. It has two top-level objects: 
@@ -220,9 +220,9 @@ The `patterns` array defines Regex patterns that will be used to match url paths
 
 #### Properties
 
-The `properties` object contains a handful of key/value pairs that Turbolinks supports out of the box. You are free to add more properties as your app needs, but these are the ones the framework is aware of and will handle automatically.
+The `properties` object contains a handful of key/value pairs that Turbo supports out of the box. You are free to add more properties as your app needs, but these are the ones the framework is aware of and will handle automatically.
 
-* `uri` — The target destination URI to navigate to. Must map to an Activity or Fragment that has implemented the [TurboNavGraphDestination](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavGraphDestination.kt) annotation with a matching `uri` value.
+* `uri` — The target destination URI to navigate to. Must map to an Activity or Fragment that has implemented the [TurboNavGraphDestination](../turbo/src/main/kotlin/dev/hotwire/turbo/nav/TurboNavGraphDestination.kt) annotation with a matching `uri` value.
 	* **Required**. 
 	* No explicit value options. No default value.
 * `context` — Specifies the presentation context in which the view should be displayed. Turbo will determine what the navigation behavior should be based on this value + the `presentation` value. Unless you are specifically showing a modal-style view (e.g., a form, wizard, navigation, etc.), `default` is usually sufficient. 
