@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>com.hotwire</groupId>
+  <groupId>dev.hotwire</groupId>
   <artifactId>turbolinks-android</artifactId>
   <versioning>
     <release>1.0.88</release>

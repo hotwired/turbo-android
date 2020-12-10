@@ -9,7 +9,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/food_nav_host"
-        android:name="com.hotwire.turbo.demo.features.food.FoodSessionNavHostFragment"
+        android:name="dev.hotwire.turbo.demo.features.food.FoodSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,7 +20,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/orders_nav_host"
-        android:name="com.hotwire.turbo.demo.features.orders.OrdersSessionNavHostFragment"
+        android:name="dev.hotwire.turbo.demo.features.orders.OrdersSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
@@ -32,7 +32,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/me_nav_host"
-        android:name="com.hotwire.turbo.demo.features.profile.ProfileSessionNavHostFragment"
+        android:name="dev.hotwire.turbo.demo.features.profile.ProfileSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

@@ -71,7 +71,7 @@ Android Jetpack provides a [`FragmentContainerView`](https://developer.android.c
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_nav_host"
-        android:name="com.hotwire.turbo.demosimple.main.MainSessionNavHostFragment"
+        android:name="dev.hotwire.turbo.demosimple.main.MainSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
