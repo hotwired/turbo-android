@@ -3,8 +3,14 @@
         this.controller = controller
         controller.adapter = this
 
-        var isReady = typeof Turbolinks !== "undefined" && Turbolinks !== null
-        TurboSession.turboIsReady(isReady)
+        if (window.Turbo) {
+            var isReady = typeof Turbo !== "undefined" && Turbo !== null
+            TurboSession.turboIsReady(isReady)
+        } else {
+            // Turbolinks 5
+            var isReady = typeof Turbolinks !== "undefined" && Turbolinks !== null
+            TurboSession.turboIsReady(isReady)
+        }
     }
 
     TLWebView.prototype = {
@@ -14,7 +20,7 @@
             if (this.controller.startVisitToLocation) {
                 this.controller.startVisitToLocation(location, restorationIdentifier, JSON.parse(options))
             } else {
-                // Temporarily support old API
+                // Turbolinks 5
                 this.controller.startVisitToLocationWithAction(location, JSON.parse(options).action, restorationIdentifier)
             }
         },
@@ -66,11 +72,6 @@
             })
         },
 
-        // Temporary adapter for new API
-        visitProposedToLocationWithAction: function(location, action) {
-            this.visitProposedToLocation(location, { action })
-        },
-
         visitProposedToLocation: function(location, options) {
             TurboSession.visitProposedToLocation(location.absoluteURL, JSON.stringify(options))
         },
@@ -116,6 +117,12 @@
             TurboSession.pageInvalidated()
         },
 
+        // Turbolinks 5 compatibility
+
+        visitProposedToLocationWithAction: function(location, action) {
+            this.visitProposedToLocation(location, { action })
+        },
+
         // Private
 
         afterNextRepaint: function(callback) {
@@ -130,7 +137,9 @@
     }
 
     try {
-        window.webView = new TLWebView(Turbolinks.controller)
+        // Prefer Turbo 7, but support Turbolinks 5
+        const webController = window.Turbo ? Turbo.controller : Turbolinks.controller
+        window.webView = new TLWebView(webController)
         window.webView.pageLoaded()
     } catch (e) {
         // Most likely reached a page where Turbolinks.controller returned
