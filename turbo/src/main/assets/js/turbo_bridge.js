@@ -4,11 +4,11 @@
         controller.adapter = this
 
         var isReady = typeof Turbolinks !== "undefined" && Turbolinks !== null
-        TurbolinksSession.turbolinksIsReady(isReady)
+        TurboSession.turboIsReady(isReady)
     }
 
     TLWebView.prototype = {
-        // TurbolinksSession calls this as the starting point
+        // TurboSession calls this as the starting point
 
         visitLocationWithOptionsAndRestorationIdentifier: function(location, options, restorationIdentifier) {
             if (this.controller.startVisitToLocation) {
@@ -19,7 +19,7 @@
             }
         },
 
-        // Functions available to TurbolinksSession to call directly into Turbolinks Core
+        // Functions available to TurboSession to call directly into Turbo Core
 
         issueRequestForVisitWithIdentifier: function(identifier) {
             if (identifier == this.currentVisit.identifier) {
@@ -53,16 +53,16 @@
 
         visitRenderedForColdBoot: function(visitIdentifier) {
             this.afterNextRepaint(function() {
-                TurbolinksSession.visitRendered(visitIdentifier)
+                TurboSession.visitRendered(visitIdentifier)
             })
         },
 
-        // Callbacks to TurbolinksSession from Turbolinks Core
+        // Callbacks to TurboSession from Turbo Core
 
         pageLoaded: function() {
             var restorationIdentifier = this.controller.restorationIdentifier
             this.afterNextRepaint(function() {
-                TurbolinksSession.pageLoaded(restorationIdentifier)
+                TurboSession.pageLoaded(restorationIdentifier)
             })
         },
 
@@ -72,11 +72,11 @@
         },
 
         visitProposedToLocation: function(location, options) {
-            TurbolinksSession.visitProposedToLocation(location.absoluteURL, JSON.stringify(options))
+            TurboSession.visitProposedToLocation(location.absoluteURL, JSON.stringify(options))
         },
 
         visitStarted: function(visit) {
-            TurbolinksSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.location.absoluteURL)
+            TurboSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.location.absoluteURL)
             this.currentVisit = visit
             this.issueRequestForVisitWithIdentifier(visit.identifier)
             this.changeHistoryForVisitWithIdentifier(visit.identifier)
@@ -88,39 +88,37 @@
         },
 
         visitRequestCompleted: function(visit) {
-            TurbolinksSession.visitRequestCompleted(visit.identifier)
+            TurboSession.visitRequestCompleted(visit.identifier)
             this.loadResponseForVisitWithIdentifier(visit.identifier)
         },
 
         visitRequestFailedWithStatusCode: function(visit, statusCode) {
-            TurbolinksSession.visitRequestFailedWithStatusCode(visit.identifier, visit.hasCachedSnapshot(), statusCode)
+            TurboSession.visitRequestFailedWithStatusCode(visit.identifier, visit.hasCachedSnapshot(), statusCode)
         },
 
         visitRequestFinished: function(visit) {
-            TurbolinksSession.visitRequestFinished(visit.identifier)
+            TurboSession.visitRequestFinished(visit.identifier)
         },
 
         visitRendered: function(visit) {
             this.afterNextRepaint(function() {
-                TurbolinksSession.visitRendered(visit.identifier)
+                TurboSession.visitRendered(visit.identifier)
             })
         },
 
         visitCompleted: function(visit) {
             this.afterNextRepaint(function() {
-                TurbolinksSession.visitCompleted(visit.identifier, visit.restorationIdentifier)
+                TurboSession.visitCompleted(visit.identifier, visit.restorationIdentifier)
             })
         },
 
         pageInvalidated: function() {
-            TurbolinksSession.pageInvalidated()
+            TurboSession.pageInvalidated()
         },
 
         // Private
 
         afterNextRepaint: function(callback) {
-            // Explanation about document.hidden and the circumstances for evaluating 'true':
-            // https://github.com/basecamp/turbolinks-android-kotlin/pull/11#discussion_r157035376
             if (document.hidden) {
                 callback()
             } else {
@@ -137,6 +135,6 @@
     } catch (e) {
         // Most likely reached a page where Turbolinks.controller returned
         // "Uncaught ReferenceError: Turbolinks is not defined"
-        TurbolinksSession.turbolinksFailedToLoad()
+        TurboSession.turboFailedToLoad()
     }
 })()

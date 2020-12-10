@@ -125,7 +125,7 @@ class TurboSessionTest {
         session.currentVisit = visit
         session.visitPending = true
 
-        session.turbolinksIsReady(true)
+        session.turboIsReady(true)
         assertThat(session.visitPending).isFalse()
     }
 

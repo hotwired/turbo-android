@@ -153,10 +153,10 @@ class TurboSession private constructor(internal val sessionName: String, interna
         }
     }
 
-    // Callbacks from Turbolinks Core
+    // Callbacks from Turbo JS Core
 
     /**
-     * Called by Turbolinks when a new visit is initiated.
+     * Called by Turbo when a new visit is initiated.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -173,7 +173,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbolinks when a new visit has just started.
+     * Called by Turbo when a new visit has just started.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -194,7 +194,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbolinks when the HTTP request has been completed.
+     * Called by Turbo when the HTTP request has been completed.
      *
      * @param visitIdentifier A unique identifier for the visit.
      */
@@ -204,7 +204,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbolinks when the HTTP request has failed.
+     * Called by Turbo when the HTTP request has failed.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -230,7 +230,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbolinks when the HTTP request has been completed.
+     * Called by Turbo when the HTTP request has been completed.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -243,7 +243,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbolinks once the page has been fully loaded by the WebView.
+     * Called by Turbo once the page has been fully loaded by the WebView.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -261,7 +261,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbolinks once the page has been fully rendered in the webView.
+     * Called by Turbo once the page has been fully rendered in the webView.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -284,7 +284,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbolinks when the visit is fully completed (request successful and page rendered).
+     * Called by Turbo when the visit is fully completed (request successful and page rendered).
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -310,7 +310,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called when Turbolinks detects that the page being visited has been invalidated, typically by
+     * Called when Turbo detects that the page being visited has been invalidated, typically by
      * new resources in the the page HEAD.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
@@ -330,7 +330,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Sets internal flags that indicate whether Turbolinks in the WebView is ready for use.
+     * Sets internal flags that indicate whether Turbo in the WebView is ready for use.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -338,8 +338,8 @@ class TurboSession private constructor(internal val sessionName: String, interna
      * @param isReady
      */
     @JavascriptInterface
-    fun turbolinksIsReady(isReady: Boolean) {
-        logEvent("turbolinksIsReady", "isReady" to isReady)
+    fun turboIsReady(isReady: Boolean) {
+        logEvent("turboIsReady", "isReady" to isReady)
 
         currentVisit?.let { visit ->
             this.isReady = isReady
@@ -361,14 +361,14 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Sets internal flags indicating that Turbolinks did not properly initialize.
+     * Sets internal flags indicating that Turbo did not properly initialize.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
      */
     @JavascriptInterface
-    fun turbolinksFailedToLoad() {
-        logEvent("turbolinksFailedToLoad")
+    fun turboFailedToLoad() {
+        logEvent("turboFailedToLoad")
         reset()
         callback { it.onReceivedError(-1) }
     }
@@ -401,7 +401,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
         logEvent("visitLocationAsColdBoot", "location" to visit.location)
         isColdBooting = true
 
-        // When a page is invalidated by Turbolinks, we need to reload the
+        // When a page is invalidated by Turbo, we need to reload the
         // same URL in the WebView. For a URL with an anchor, the WebView
         // sees a WebView.loadUrl() request as a same-page visit instead of
         // requesting a full page reload. To work around this, we call
@@ -457,9 +457,9 @@ class TurboSession private constructor(internal val sessionName: String, interna
         )
 
         webView.apply {
-            addJavascriptInterface(this@TurboSession, "TurbolinksSession")
+            addJavascriptInterface(this@TurboSession, "TurboSession")
             webChromeClient = WebChromeClient()
-            webViewClient = TurbolinksWebViewClient()
+            webViewClient = TurboWebViewClient()
             initDownloadListener()
         }
     }
@@ -499,7 +499,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
 
     // Classes and objects
 
-    private inner class TurbolinksWebViewClient : WebViewClientCompat() {
+    private inner class TurboWebViewClient : WebViewClientCompat() {
         private var initialScaleChanged = false
         private var initialScale = 0f
 
@@ -560,7 +560,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
         }
 
         /**
-         * Turbolinks will not call adapter.visitProposedToLocation in some cases,
+         * Turbo will not call adapter.visitProposedToLocation in some cases,
          * like target=_blank or when the domain doesn't match. We still route those here.
          * This is only called when links within a webView are clicked and during a
          * redirect while cold booting.
