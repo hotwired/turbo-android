@@ -42,7 +42,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
     override val pathConfigurationLocation: TurboPathConfiguration.Location
         get() = TurboPathConfiguration.Location(
-            assetFilePath = "json/configuration.json"
+            assetFilePath = "json/configuration.json",
             remoteFileUrl = "https://hotwire.dev/turbo/demo/config/android-v1.json"
         )
 }
@@ -50,7 +50,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
 See the [Fragment section](#create-a-web-fragment) below to create a `TurboFragment` that you'll register here. See the [Path Configuration section](#create-a-path-configuration) below to create your path configuration file(s).
 
-Refer to the demo [MainSessionNavHostFragment](../demoapp_simple/src/main/kotlin/dev/hotwire/turbo/demosimple/main/MainSessionNavHostFragment.kt) for an example.
+Refer to the demo [MainSessionNavHostFragment](../demo/src/main/kotlin/dev/hotwire/turbo/demo/main/MainSessionNavHostFragment.kt) for an example.
 
 ## Create an Activity
 It's strongly recommended to use a single-Activity architecture in your app. Generally, you'll have one `TurboActivity` and many `TurboFragments`.
@@ -71,7 +71,7 @@ Android Jetpack provides a [`FragmentContainerView`](https://developer.android.c
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_nav_host"
-        android:name="dev.hotwire.turbo.demosimple.main.MainSessionNavHostFragment"
+        android:name="dev.hotwire.turbo.demo.main.MainSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +81,7 @@ Android Jetpack provides a [`FragmentContainerView`](https://developer.android.c
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-Refer to the demo [`activity_main.xml`](../demoapp_simple/src/main/res/layout/activity_main.xml) for an example.
+Refer to the demo [`activity_main.xml`](../demo/src/main/res/layout/activity_main.xml) for an example.
 
 ### Create the TurboActivity class
 
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity(), TurboActivity {
 
 *Note that `R.layout.activity_main` refers to the Activity layout file that you already created. `R.id.main_nav_host` refers to the `MainSessionNavHostFragment` that you created, hosted in the layout file.*
 
-Refer to the demo [MainActivity](../demoapp_simple/src/main/kotlin/dev/hotwire/turbo/demosimple/main/MainActivity.kt) as an example. (Don't forget to add your Activity to your app's [`AndroidManifest.xml`](../demoapp_simple/src/main/AndroidManifest.xml) file.)
+Refer to the demo [MainActivity](../demo/src/main/kotlin/dev/hotwire/turbo/demo/main/MainActivity.kt) as an example. (Don't forget to add your Activity to your app's [`AndroidManifest.xml`](../demo/src/main/AndroidManifest.xml) file.)
 
 ## Create a Web Fragment
 
@@ -132,7 +132,7 @@ In its simplest form, your web Fragment layout file will look like:
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-Refer to demo [`fragment_web.xml`](../demoapp_simple/src/main/res/layout/fragment_web.xml) for an example.
+Refer to demo [`fragment_web.xml`](../demo/src/main/res/layout/fragment_web.xml) for an example.
 
 ### Create the TurboWebFragment class
 You'll need at least one web Fragment that will serve as a destination for urls that display web content in your app. 
@@ -171,7 +171,7 @@ class WebFragment : TurboWebFragment() {
 
 *Note that `R.layout.fragment_web` refers to the Fragment layout file that you already created.*
 
-Refer to demo [WebFragment](../demoapp_simple/src/main/kotlin/dev/hotwire/turbo/demosimple/features/web/WebFragment.kt) as an example.
+Refer to demo [WebFragment](../demo/src/main/kotlin/dev/hotwire/turbo/demo/features/web/WebFragment.kt) as an example.
 
 ## Create a Path Configuration
 A JSON configuration file specifies the set of rules Turbo will follow to navigate to Fragment destinations and configure options. It has two top-level objects: 
@@ -179,7 +179,7 @@ A JSON configuration file specifies the set of rules Turbo will follow to naviga
 1. Application-level `"settings"`
 1. Url path-specific `"rules"`
 
-At minimum, you will need a bundled [`src/main/assets/json/configuration.json`](../demoapp_simple/src/main/assets/json/configuration.json) file in your app that Turbo can read. We also recommend hosting a remote configuration file on your server, so you can update the app's configuration at any time without needing an app update. Remote configuration files are fetched (and cached) on every app startup, so the app always has the latest configuration available. The location of these configuration files needs to be set in your [`TurboSessionNavHostFragment.pathConfigurationLocation`](#create-a-navhostfragment). 
+At minimum, you will need a bundled [`src/main/assets/json/configuration.json`](../demo/src/main/assets/json/configuration.json) file in your app that Turbo can read. We also recommend hosting a remote configuration file on your server, so you can update the app's configuration at any time without needing an app update. Remote configuration files are fetched (and cached) on every app startup, so the app always has the latest configuration available. The location of these configuration files needs to be set in your [`TurboSessionNavHostFragment.pathConfigurationLocation`](#create-a-navhostfragment). 
 
 In its simplest form, your JSON configuration will look like:
 
@@ -238,7 +238,7 @@ The `properties` object contains a handful of key/value pairs that Turbo support
 	* Optional.
 	* Possible values: `true`, `false`. Defaults to `false`.
 
-Refer to demo [`configuration.json`](../demoapp_simple/src/main/assets/json/configuration.json) as an example.
+Refer to demo [`configuration.json`](../demo/src/main/assets/json/configuration.json) as an example.
 
 ## Navigate to Destinations
 See the documenation to learn about [navigating between destinations](NAVIGATION.md).

@@ -6,6 +6,6 @@ The demo apps bundled with the library work best with the [Turbo Demo App](https
 
 - Ensure the demo server and Android device are on the same network.
 - Start up the demo server per its instructions.
-- Go to [Contants.kt](../demoapp/src/main/kotlin/dev/hotwire/turbo/demo/util/Constants.kt).
+- Go to [Contants.kt](../demo/src/main/kotlin/dev/hotwire/turbo/demo/util/Constants.kt).
 - Find the `BASE_URL` String at the top of the class. Change the IP to your IP.
 - Build/run the app to your device.

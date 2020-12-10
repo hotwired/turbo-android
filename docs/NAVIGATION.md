@@ -35,7 +35,7 @@ class WebFragment : TurboWebFragment() {
 }
 ```
 
-Refer to demo [`NavDestination`](../demoapp_simple/src/main/kotlin/dev/hotwire/turbo/demosimple/base/NavDestination.kt) interface as a more advanced example.
+Refer to demo [`NavDestination`](../demo/src/main/kotlin/dev/hotwire/turbo/demo/base/NavDestination.kt) interface as a more advanced example.
 
 # From a TurboFragment
 If you'd like to navigate to a new destination in response to native UI/features, it's easy from any `TurboFragment`. The following navigation APIs are available:
