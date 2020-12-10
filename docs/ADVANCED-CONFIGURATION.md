@@ -6,6 +6,9 @@
 ## Display Bottom Sheet Dialogs
 // TODO
 
+## Fragment Transition Animations
+// TODO
+
 ## Using Multiple Activities
 You may encounter situations where a truly single-`Activity` app may not be feasible. For example, you may need an `Activity` for logged-out state and a separate `Activity` for logged-in state.
 
