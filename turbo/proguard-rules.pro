@@ -12,7 +12,7 @@
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
--keepclassmembers class com.basecamp.turbo.session.TurbolinksSession {
+-keepclassmembers class com.hotwire.turbo.session.TurbolinksSession {
     @android.webkit.JavascriptInterface <methods>;
 }
 -keepattributes JavascriptInterface
@@ -23,4 +23,4 @@
 -keep class javax.** { *; }
 -keep class sun.misc.Unsafe { *; }
 
--keep class com.basecamp.turbo.** { *; }
+-keep class com.hotwire.turbo.** { *; }

@@ -114,8 +114,8 @@ ext {
     bintrayRepo = 'maven'
     bintrayName = 'turbolinks-android'
 
-    publishedGroupId = 'com.basecamp'
-    artifact = 'turbolinks'
+    publishedGroupId = 'com.hotwire'
+    artifact = 'turbo'
 
     libraryName = 'Turbolinks Android'
     libraryDescription = 'Turbolinks for Android'
@@ -216,8 +216,8 @@ uploadArchives {
         def deployPath = file("artifacts")
         repository(url: "file://${deployPath.absolutePath}")
         pom.project {
-            groupId 'com.basecamp'
-            artifactId 'turbolinks-android'
+            groupId 'com.hotwire'
+            artifactId 'turbo'
             version libVersionName
         }
     }

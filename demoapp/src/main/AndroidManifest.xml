@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:tools="http://schemas.android.com/tools"
-    package="com.basecamp.turbo.demo"
+    package="com.hotwire.turbo.demo"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -18,7 +18,7 @@
         tools:targetApi="P">
 
         <activity
-            android:name="com.basecamp.turbo.demo.main.MainActivity"
+            android:name="com.hotwire.turbo.demo.main.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
 
@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name="com.basecamp.turbo.demo.ImageViewerActivity"
+            android:name="com.hotwire.turbo.demo.ImageViewerActivity"
             android:theme="@style/AppTheme.ImageViewer"/>
 
     </application>

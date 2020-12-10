@@ -3,7 +3,7 @@
 # The custom rule file must be defined using the 'consumerProguardFiles' property in your
 # build.gradle file.
 
--keepclassmembers class com.basecamp.turbo.session.TurbolinksSession {
+-keepclassmembers class com.hotwire.turbo.session.TurbolinksSession {
     @android.webkit.JavascriptInterface <methods>;
 }
 -keepattributes JavascriptInterface
@@ -14,4 +14,4 @@
 -keep class javax.** { *; }
 -keep class sun.misc.Unsafe { *; }
 
--keep class com.basecamp.turbo.** { *; }
+-keep class com.hotwire.turbo.** { *; }
