@@ -1,1 +1,1 @@
-include ':demoapp', ':demoapp_simple', ':turbo'
+include ':demo', ':turbo'
