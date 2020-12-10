@@ -19,6 +19,7 @@ class WebFragment : TurboWebFragment() {
             true -> {
                 // Allow Turbo to follow the navigation to `newLocation`
                 true
+            }
             else -> {
                 // Open `newLocation` in the device's external browser
                 launchBrowser(newLocation)
@@ -34,7 +35,7 @@ class WebFragment : TurboWebFragment() {
 }
 ```
 
-Refer to demo [`NavDestination`](../demoapp_simple/src/main/kotlin/com/basecamp/turbolinks/demosimple/base/NavDestination.kt) interace as a more advanced example.
+Refer to demo [`NavDestination`](../demoapp_simple/src/main/kotlin/dev/hotwire/turbo/demosimple/base/NavDestination.kt) interface as a more advanced example.
 
 # From a TurboFragment
 If you'd like to navigate to a new destination in response to native UI/features, it's easy from any `TurboFragment`. The following navigation APIs are available:
@@ -44,7 +45,7 @@ If you'd like to navigate to a new destination in response to native UI/features
 - `navigateBack()`
 - `clearBackStack()`
 
-Refer to the [`TurboNavDestination`](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/nav/TurbolinksNavDestination.kt) interface for further documenation.
+Refer to the [`TurboNavDestination`](../turbo/src/main/kotlin/dev/hotwire/turbo/nav/TurboNavDestination.kt) interface for further documentation.
 
 In your Fragment, this would look like:
 
@@ -79,7 +80,7 @@ If you'd like to navigate to a new destination in response to native UI/features
 - `delegate.navigateBack()`
 - `delegate.clearBackStack()`
 
-Refer to the [`TurboActivityDelegate`](../turbolinks/src/main/kotlin/com/basecamp/turbolinks/delegates/TurbolinksNavDestination.kt) class for further documenation.
+Refer to the [`TurboActivityDelegate`](../turbo/src/main/kotlin/dev/hotwire/turbo/delegates/TurboActivityDelegate.kt) class for further documentation.
 
 In your Activity, this would look like:
 

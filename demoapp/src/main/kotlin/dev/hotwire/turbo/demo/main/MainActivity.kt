@@ -6,16 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import dev.hotwire.turbo.activities.TurbolinksActivity
-import dev.hotwire.turbo.delegates.TurbolinksActivityDelegate
+import dev.hotwire.turbo.activities.TurboActivity
+import dev.hotwire.turbo.delegates.TurboActivityDelegate
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.extensions.animateVisibility
 import dev.hotwire.turbo.demo.extensions.isAlreadyVisible
 import dev.hotwire.turbo.demo.util.verifyServerIpAddress
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), TurbolinksActivity {
-    override lateinit var delegate: TurbolinksActivityDelegate
+class MainActivity : AppCompatActivity(), TurboActivity {
+    override lateinit var delegate: TurboActivityDelegate
 
     private val navHostFragments = listOf(
         R.id.food_nav_host,
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), TurbolinksActivity {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        delegate = TurbolinksActivityDelegate(this, R.id.food_nav_host).apply {
+        delegate = TurboActivityDelegate(this, R.id.food_nav_host).apply {
             registerNavHostFragment(R.id.orders_nav_host)
             registerNavHostFragment(R.id.me_nav_host)
         }

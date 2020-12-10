@@ -8,14 +8,14 @@ import androidx.appcompat.widget.Toolbar
 import dev.hotwire.turbo.demo.base.NativeFragment
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.util.Constants
-import dev.hotwire.turbo.nav.TurbolinksNavGraphDestination
+import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.fragment_me.*
 import kotlinx.android.synthetic.main.fragment_me.view.*
 
-@TurbolinksNavGraphDestination(uri = "turbolinks://fragment/profile")
+@TurboNavGraphDestination(uri = "turbo://fragment/profile")
 class ProfileFragment : NativeFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_me, container, false)

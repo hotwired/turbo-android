@@ -9,7 +9,7 @@
       ],
       "properties": {
         "context": "default",
-        "uri": "turbolinks://fragment/web",
+        "uri": "turbo://fragment/web",
         "pull_to_refresh_enabled": true
       }
     },
@@ -19,7 +19,7 @@
         "/orders$"
       ],
       "properties": {
-        "uri": "turbolinks://fragment/web/home"
+        "uri": "turbo://fragment/web/home"
       }
     },
     {
@@ -29,7 +29,7 @@
       ],
       "properties": {
         "context": "modal",
-        "uri": "turbolinks://fragment/web/modal",
+        "uri": "turbo://fragment/web/modal",
         "pull_to_refresh_enabled": false
       }
     },
@@ -38,7 +38,7 @@
         "/profile$"
       ],
       "properties": {
-        "uri": "turbolinks://fragment/profile"
+        "uri": "turbo://fragment/profile"
       }
     },
     {
@@ -46,7 +46,7 @@
         ".+\\.(?:bmp|gif|heic|jpg|jpeg|png|svg|webp)"
       ],
       "properties": {
-        "uri": "turbolinks://fragment/image_viewer"
+        "uri": "turbo://fragment/image_viewer"
       }
     }
   ]

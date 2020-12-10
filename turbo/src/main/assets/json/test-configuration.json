@@ -9,7 +9,7 @@
       ],
       "properties": {
         "context": "default",
-        "uri": "turbolinks://fragment/web",
+        "uri": "turbo://fragment/web",
         "pull_to_refresh_enabled": true
       }
     },
@@ -19,7 +19,7 @@
         "/home"
       ],
       "properties": {
-        "uri": "turbolinks://fragment/web/home",
+        "uri": "turbo://fragment/web/home",
         "presentation": "clear_all"
       }
     },
@@ -30,7 +30,7 @@
       ],
       "properties": {
         "context": "modal",
-        "uri": "turbolinks://fragment/web/modal",
+        "uri": "turbo://fragment/web/modal",
         "pull_to_refresh_enabled": false
       }
     },
@@ -39,7 +39,7 @@
         ".+\\.(?:bmp|gif|heic|jpg|jpeg|png|svg|webp)"
       ],
       "properties": {
-        "uri": "turbolinks://fragment/image_viewer"
+        "uri": "turbo://fragment/image_viewer"
       }
     },
     {
