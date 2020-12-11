@@ -1,4 +1,4 @@
-# Advanced Configuration
+# Advanced Options
 
 ## Create a Native Fragment
 // TODO

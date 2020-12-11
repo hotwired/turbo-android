@@ -1,65 +1,39 @@
-# Turbo Android
+# Turbo Native for Android
 
-## Contents
+Build high-fidelity hybrid apps with native navigation and a single shared web view. Turbo Native for Android provides the tooling to wrap your [Turbo 7](https://github.com/hotwired/turbo)-enabled web app in a native Android shell. It manages a single WebView instance across multiple Fragment destinations, giving you native navigation UI with all the client-side performance benefits of Turbo.
 
-1. [Introduction](#introduction)
-1. [Prerequisites](#prerequisites)
-1. [Installation](#installation)
-1. [Getting Started](#getting-started)
-1. [Navigate to Destinations](#navigate-to-destinations)
-1. [Advanced Configuration](#advanced-configuration)
-1. [Running the Demo App](#try-the-demo-app)
-1. [Contributing](#contributing)
+## Features
+- Deliver fast, efficient hybrid apps. Avoid reloading JavaScript and CSS. Save memory by sharing one WebView.
+- Reuse mobile web views across platforms. Create your views once, on the server, in HTML. Deploy them to [iOS](https://github.com/hotwired/turbo-ios), Android, and mobile browsers simultaneously. Ship new features without waiting on Play Store approval.
+- Enhance web views with native UI. Navigate web views using native patterns. Augment web UI with native controls.
+- Produce large apps with small teams. Achieve baseline HTML coverage for free. Upgrade to native views as needed.
 
-## Introduction
-Turbo Android is a native adapter for any [Turbo 7](https://github.com/hotwired/turbo#readme) enabled web app. It enables you to build hybrid (native + web) apps that give you the flexibility to display native screens, `WebView` screens, or a blend of both. It's built entirely using standard Android tools and conventions.
+## Requirements
 
-This library has been in use and tested in the wild since June 2020 in the all-new [HEY Android](https://play.google.com/store/apps/details?id=com.basecamp.hey&hl=en_US) app.
-
-### Structure of Your App
-Turbo Android uses Google's [Navigation component library](https://developer.android.com/guide/navigation) under the hood to navigate between destinations. It leverages a single-`Activity` architecture and each navigation destination is a `Fragment` that you'll implement in your app. To take advantage of speed improvements that [Turbo](https://github.com/hotwired/turbo) enables for web applications, a single `WebView` instance is swapped between each `TurboWebFragment` destination, so the `WebView` instance and resources don't need to be recreated for each destination.
-
-The structure of your single-`Activity` app will look like the following diagram. The library manages most of the navigation and lifecycle events for you automatically, but you'll need to setup the foundation of your app and each unique `Fragment` destination. We'll walk you through setting up your app in the [Getting Started](docs/GETTING-STARTED.md) instructions.
-
-![Structure of a Turbo App](docs/assets/turbo-app-diagram.png)
-
-## Prerequisites
-
-1. Android API 24+ is required as the `minSdkVersion` in your build.gradle.
-1. In order for a [WebView](https://developer.android.com/reference/android/webkit/WebView.html) to access the Internet and load web pages, your application must have the `INTERNET` permission. Make sure you have `<uses-permission android:name="android.permission.INTERNET" />` in your app's `AndroidManifest.xml`.
+1. Android SDK 24+ is required as the `minSdkVersion` in your build.gradle.
 1. This library is written entirely in [Kotlin](https://kotlinlang.org/), and your app should use Kotlin as well. Explicit compatibility with Java is not provided.
+1. This library supports web apps using either Turbo 7 or Turbolinks 5
 
-## Installation
-Add the dependency from jCenter to your app module's (not top-level) `build.gradle` file.
-
-```groovy
-repositories {
-    jcenter()
-}
-
-dependencies {
-    implementation 'dev.hotwire:turbo:7.0.0-alpha01'
-}
-```
+**Note:** You should understand how Turbo works with web applications in the browser before attempting to use Turbo Android. See the Turbo 7 documentation for details.
 
 ## Getting Started
-See the instructions to [get started with your app](docs/GETTING-STARTED.md).
+The best way to get started with Turbo Android is to try out the demo app first to get familiar with the framework. The demo app walks you through all the basic Turbo flows as well as some advanced features. To run the demo, clone this repo and open in Android Studio and run the `demo` module. See [demo/README.md](demo/README.md) for more details about the demo. When you’re ready to start your own application, read through the rest of the documentation.
 
-## Navigate to Destinations
-See the documenation to learn about [navigating between destinations](docs/NAVIGATION.md).
+See the [instructions to build the project yourself](docs/BUILD-PROJECT.md).
 
-## Advanced Configuration
-See the documentation to [learn about the advanced configuration options available](docs/ADVANCED-CONFIGURATION.md).
+## Documentation
 
-## Try the Demo App
-See the instructions to [try out the demo app](docs/DEMO-APP.md).
+1. [Installation](docs/INSTALLATION.md)
+1. [Overview](docs/OVERVIEW.md)
+1. [Quick Start](docs/QUICK-START.md)
+1. [Path Configuration](docs/PATH-CONFIGURATION.md)
+1. [Navigation](docs/NAVIGATION.md)
+1. [Advanced Options](docs/ADVANCED-OPTIONS)
 
 ## Contributing
 
-Turbo Android is open-source software, freely distributable under the terms of an [MIT-style license](docs/LICENSE). The [source code is hosted on GitHub](https://github.com/hotwired/turbo-android).
+Turbo Android is open-source software, freely distributable under the terms of an [MIT-style license](LICENSE). The [source code is hosted on GitHub](https://github.com/hotwired/turbo-android). Development is sponsored by [Basecamp](https://basecamp.com/).
 
-We welcome contributions in the form of bug reports, pull requests, or thoughtful discussions in the [GitHub issue tracker](https://github.com/hotwired/turbo-android/issues). Please see the [Code of Conduct](docs/CONDUCT.md) for our pledge to contributors.
+We welcome contributions in the form of bug reports, pull requests, or thoughtful discussions in the [GitHub issue tracker](https://github.com/hotwired/turbo-android/issues). 
 
-Turbo Android's development is sponsored by [Basecamp](https://basecamp.com/).
-
-See the [instructions to build the project yourself](docs/BUILD-PROJECT.md).
+Please note that this project is released with a [Contributor Code of Conduct](docs/CONDUCT.md). By participating in this project you agree to abide by its terms.

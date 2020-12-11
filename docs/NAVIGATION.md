@@ -1,7 +1,7 @@
 # Navigate to Destinations
 
 ## From Web Links
-Tapping a web link in a `TurboWebFragment` will automatically navigate to the url's corresponding Fragment destination, based on the app's [Path Configuration](GETTING-STARTED.md#create-a-path-configuration). 
+Tapping a web link in a `TurboWebFragment` will automatically navigate to the url's corresponding Fragment destination, based on the app's [Path Configuration](PATH-CONFIGURATION.md). 
 
 Sometimes, you may want to override this default behavior. For example, if your web app can surface external domain urls, you should open those urls in the device's default browser. The `TurboWebFragment` abstract class implements the `TurbolNavDestination` interface, which provides a `shouldNavigateTo(newLocation: String)` function that can be overridden.
 
