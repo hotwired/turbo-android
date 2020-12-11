@@ -38,8 +38,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override fun onSessionCreated() {
         super.onSessionCreated()
 
-        // TODO Don't report as iOS app once the demo is updated
-        val customUserAgent = "Turbo Native iOS ${session.webView.settings.userAgentString}"
+        val customUserAgent = "Turbo Native Android ${session.webView.settings.userAgentString}"
         session.webView.settings.userAgentString = customUserAgent
         session.setDebugLoggingEnabled(BuildConfig.DEBUG)
     }
