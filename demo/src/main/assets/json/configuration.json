@@ -10,6 +10,7 @@
       "properties": {
         "context": "default",
         "uri": "turbo://fragment/web",
+        "fallback_uri": "turbo://fragment/web",
         "pull_to_refresh_enabled": true
       }
     },
@@ -40,6 +41,14 @@
         "context": "modal",
         "uri": "turbo://fragment/web/modal/sheet",
         "pull_to_refresh_enabled": false
+      }
+    },
+    {
+      "patterns": [
+        "/numbers$"
+      ],
+      "properties": {
+        "uri": "turbo://fragment/numbers"
       }
     },
     {

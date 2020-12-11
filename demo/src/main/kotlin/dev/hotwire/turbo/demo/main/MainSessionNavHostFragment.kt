@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.BuildConfig
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.demo.features.imageviewer.ImageViewerFragment
+import dev.hotwire.turbo.demo.features.numbers.NumbersFragment
 import dev.hotwire.turbo.demo.features.web.WebBottomSheetFragment
 import dev.hotwire.turbo.demo.features.web.WebFragment
 import dev.hotwire.turbo.demo.features.web.WebHomeFragment
@@ -29,6 +30,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
             WebHomeFragment::class,
             WebModalFragment::class,
             WebBottomSheetFragment::class,
+            NumbersFragment::class,
             ImageViewerFragment::class
         )
 
