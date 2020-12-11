@@ -28,6 +28,7 @@
       ],
       "properties": {
         "context": "modal",
+        "uri": "turbo://fragment/web/modal",
         "pull_to_refresh_enabled": false
       }
     },

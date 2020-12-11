@@ -8,6 +8,7 @@ import dev.hotwire.turbo.demo.features.imageviewer.ImageViewerFragment
 import dev.hotwire.turbo.demo.features.web.WebBottomSheetFragment
 import dev.hotwire.turbo.demo.features.web.WebFragment
 import dev.hotwire.turbo.demo.features.web.WebHomeFragment
+import dev.hotwire.turbo.demo.features.web.WebModalFragment
 import dev.hotwire.turbo.demo.util.HOME_URL
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import kotlin.reflect.KClass
@@ -26,6 +27,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
         get() = listOf(
             WebFragment::class,
             WebHomeFragment::class,
+            WebModalFragment::class,
             WebBottomSheetFragment::class,
             ImageViewerFragment::class
         )
