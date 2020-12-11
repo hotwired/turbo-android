@@ -24,6 +24,15 @@
     },
     {
       "patterns": [
+        "/signin$"
+      ],
+      "properties": {
+        "context": "modal",
+        "pull_to_refresh_enabled": false
+      }
+    },
+    {
+      "patterns": [
         "/new$"
       ],
       "properties": {
