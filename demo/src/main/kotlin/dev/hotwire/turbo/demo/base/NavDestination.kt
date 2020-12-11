@@ -3,7 +3,7 @@ package dev.hotwire.turbo.demo.base
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import dev.hotwire.turbo.demo.R
-import dev.hotwire.turbo.demo.util.Constants
+import dev.hotwire.turbo.demo.util.BASE_URL
 import dev.hotwire.turbo.nav.TurboNavDestination
 import java.net.MalformedURLException
 
@@ -38,7 +38,7 @@ interface NavDestination : TurboNavDestination {
     }
 
     private fun isNavigable(location: String): Boolean {
-        return location.startsWith(Constants.BASE_URL)
+        return location.startsWith(BASE_URL)
     }
 
     private fun isInvalidUrl(location: String): Boolean {

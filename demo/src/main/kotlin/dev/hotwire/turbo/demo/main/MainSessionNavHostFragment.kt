@@ -7,7 +7,7 @@ import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.demo.features.imageviewer.ImageViewerFragment
 import dev.hotwire.turbo.demo.features.web.WebFragment
 import dev.hotwire.turbo.demo.features.web.WebHomeFragment
-import dev.hotwire.turbo.demo.util.Constants
+import dev.hotwire.turbo.demo.util.HOME_URL
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import kotlin.reflect.KClass
 
@@ -16,7 +16,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override val sessionName = "main"
 
     override val startLocation
-        get() = Constants.FOOD_URL
+        get() = HOME_URL
 
     override val registeredActivities: List<KClass<out Activity>>
         get() = listOf()
@@ -35,6 +35,10 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
     override fun onSessionCreated() {
         super.onSessionCreated()
+
+        // TODO Don't report as iOS app once the demo is updated
+        val customUserAgent = "Turbo Native iOS ${session.webView.settings.userAgentString}"
+        session.webView.settings.userAgentString = customUserAgent
         session.setDebugLoggingEnabled(BuildConfig.DEBUG)
     }
 }

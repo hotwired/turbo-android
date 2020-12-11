@@ -1,6 +1,6 @@
 {
   "settings": {
-    "custom_app_feature_enabled": true
+    "screenshots_enabled": true
   },
   "rules": [
     {
@@ -15,7 +15,8 @@
     },
     {
       "patterns": [
-        "^$"
+        "^$",
+        "^/$"
       ],
       "properties": {
         "uri": "turbo://fragment/web/home"
