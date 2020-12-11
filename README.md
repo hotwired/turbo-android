@@ -14,10 +14,10 @@ Build high-fidelity hybrid apps with native navigation and a single shared web v
 1. This library is written entirely in [Kotlin](https://kotlinlang.org/), and your app should use Kotlin as well. Explicit compatibility with Java is not provided.
 1. This library supports web apps using either Turbo 7 or Turbolinks 5
 
-**Note:** You should understand how Turbo works with web applications in the browser before attempting to use Turbo Android. See the Turbo 7 documentation for details.
+**Note:** You should understand how Turbo works with web applications in the browser before attempting to use Turbo Android. See the [Turbo 7 documentation](https://github.com/hotwired/turbo) for details.
 
 ## Getting Started
-The best way to get started with Turbo Android is to try out the demo app first to get familiar with the framework. The demo app walks you through all the basic Turbo flows as well as some advanced features. To run the demo, clone this repo and open in Android Studio and run the `demo` module. See [demo/README.md](demo/README.md) for more details about the demo. When you’re ready to start your own application, read through the rest of the documentation.
+The best way to get started with Turbo Android is to try out the demo app first to get familiar with the framework. The demo app walks you through all the basic Turbo flows as well as some advanced features. To run the demo, clone this repo, open the directory in Android Studio, and run the `demo` module. See [demo/README.md](demo/README.md) for more details about the demo. When you’re ready to start your own application, read through the rest of the documentation.
 
 See the [instructions to build the project yourself](docs/BUILD-PROJECT.md).
 
@@ -28,7 +28,7 @@ See the [instructions to build the project yourself](docs/BUILD-PROJECT.md).
 1. [Quick Start](docs/QUICK-START.md)
 1. [Path Configuration](docs/PATH-CONFIGURATION.md)
 1. [Navigation](docs/NAVIGATION.md)
-1. [Advanced Options](docs/ADVANCED-OPTIONS)
+1. [Advanced Options](docs/ADVANCED-OPTIONS.md)
 
 ## Contributing
 
@@ -37,3 +37,7 @@ Turbo Android is open-source software, freely distributable under the terms of a
 We welcome contributions in the form of bug reports, pull requests, or thoughtful discussions in the [GitHub issue tracker](https://github.com/hotwired/turbo-android/issues). 
 
 Please note that this project is released with a [Contributor Code of Conduct](docs/CONDUCT.md). By participating in this project you agree to abide by its terms.
+
+---------
+
+© 2020 Basecamp, LLC

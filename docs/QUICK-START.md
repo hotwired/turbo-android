@@ -181,5 +181,3 @@ See the documenation to learn about [navigating between destinations](NAVIGATION
 
 ## Advanced Options
 See the documentation to [learn about the advanced options available](ADVANCED-OPTIONS.md).
-
-## 🎉 Congratulations, you're using Turbo on Android! 🎉
