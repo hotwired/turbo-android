@@ -34,7 +34,7 @@ open class WebBottomSheetFragment : TurboWebBottomSheetDialogFragment(), NavDest
 
     override fun createErrorView(statusCode: Int): View {
         return layoutInflater.inflate(R.layout.error, null).apply {
-            error_message.text = Error.getMessage(statusCode)
+            error_message.text = Error(statusCode).message
         }
     }
 
