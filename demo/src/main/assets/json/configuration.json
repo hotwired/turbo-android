@@ -24,6 +24,16 @@
     },
     {
       "patterns": [
+        "/new$"
+      ],
+      "properties": {
+        "context": "modal",
+        "uri": "turbo://fragment/web/modal/sheet",
+        "pull_to_refresh_enabled": false
+      }
+    },
+    {
+      "patterns": [
         ".+\\.(?:bmp|gif|heic|jpg|jpeg|png|svg|webp)"
       ],
       "properties": {

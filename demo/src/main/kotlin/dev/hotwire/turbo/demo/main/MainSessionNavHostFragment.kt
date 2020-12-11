@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.BuildConfig
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.demo.features.imageviewer.ImageViewerFragment
+import dev.hotwire.turbo.demo.features.web.WebBottomSheetFragment
 import dev.hotwire.turbo.demo.features.web.WebFragment
 import dev.hotwire.turbo.demo.features.web.WebHomeFragment
 import dev.hotwire.turbo.demo.util.HOME_URL
@@ -25,6 +26,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
         get() = listOf(
             WebFragment::class,
             WebHomeFragment::class,
+            WebBottomSheetFragment::class,
             ImageViewerFragment::class
         )
 
