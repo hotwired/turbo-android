@@ -29,10 +29,6 @@
 
         </activity>
 
-        <activity
-            android:name="dev.hotwire.turbo.demo.ImageViewerActivity"
-            android:theme="@style/AppTheme.ImageViewer"/>
-
     </application>
 
 </manifest>
