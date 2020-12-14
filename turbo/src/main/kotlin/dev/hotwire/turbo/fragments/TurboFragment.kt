@@ -42,6 +42,10 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
         super.onViewCreated(view, savedInstanceState)
         observeModalResult()
         observeDialogResult()
+
+        if (shouldObserveTitleChanges()) {
+            observeTitleChanges()
+        }
     }
 
     /**
@@ -131,6 +135,12 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
             event.getContentIfNotHandled()?.let {
                 onStartAfterDialogCancel()
             }
+        }
+    }
+
+    private fun observeTitleChanges() {
+        fragmentViewModel.title.observe(viewLifecycleOwner) {
+            toolbarForNavigation()?.title = it
         }
     }
 

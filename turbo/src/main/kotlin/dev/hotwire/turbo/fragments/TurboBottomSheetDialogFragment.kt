@@ -2,6 +2,7 @@ package dev.hotwire.turbo.fragments
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.widget.Toolbar
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.nav.TurboNavDestination
@@ -26,6 +27,14 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         delegate = TurboFragmentDelegate(this)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (shouldObserveTitleChanges()) {
+            observeTitleChanges()
+        }
     }
 
     /**
@@ -88,5 +97,11 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
      */
     override fun delegate(): TurboFragmentDelegate {
         return delegate
+    }
+
+    private fun observeTitleChanges() {
+        fragmentViewModel.title.observe(viewLifecycleOwner) {
+            toolbarForNavigation()?.title = it
+        }
     }
 }

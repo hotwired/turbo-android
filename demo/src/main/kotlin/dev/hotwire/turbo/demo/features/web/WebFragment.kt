@@ -1,6 +1,5 @@
 package dev.hotwire.turbo.demo.features.web
 
-import android.os.Bundle
 import dev.hotwire.turbo.demo.base.NavDestination
 import dev.hotwire.turbo.demo.util.SIGN_IN_URL
 import dev.hotwire.turbo.fragments.TurboWebFragment
@@ -8,14 +7,6 @@ import dev.hotwire.turbo.nav.TurboNavGraphDestination
 
 @TurboNavGraphDestination(uri = "turbo://fragment/web")
 open class WebFragment : TurboWebFragment(), NavDestination {
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        fragmentViewModel.title.observe(viewLifecycleOwner) {
-            toolbarForNavigation()?.title = it
-        }
-    }
-
     override fun onVisitErrorReceived(location: String, errorCode: Int) {
         when (errorCode) {
             401 -> navigate(SIGN_IN_URL)

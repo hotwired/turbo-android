@@ -91,6 +91,15 @@ interface TurboNavDestination {
     fun toolbarForNavigation(): Toolbar?
 
     /**
+     * Specifies whether title changes should be automatically observed and update
+     * the title in the Toolbar provided from toolbarForNavigation(), if available.
+     * Default is true.
+     */
+    fun shouldObserveTitleChanges(): Boolean {
+        return true
+    }
+
+    /**
      * Any actions that should be consistently executed before navigating (e.g., any state clean up).
      *
      */

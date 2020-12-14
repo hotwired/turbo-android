@@ -15,14 +15,14 @@ import kotlinx.android.synthetic.main.fragment_image_viewer.*
 
 @TurboNavGraphDestination(uri = "turbo://fragment/image_viewer")
 class ImageViewerFragment : TurboFragment(), NavDestination {
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        initToolbar()
-        loadImage()
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_image_viewer, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initToolbar()
+        loadImage()
     }
 
     private fun initToolbar() {

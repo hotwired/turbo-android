@@ -20,20 +20,18 @@ class NumbersFragment : TurboFragment(), NavDestination {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initList(view)
         initToolbar()
+        initList(view)
+    }
+
+    private fun initToolbar() {
+        fragmentViewModel.setTitle(pathProperties.title ?: "")
     }
 
     private fun initList(view: View) {
         view.recycler_view.layoutManager = LinearLayoutManager(view.context)
         view.recycler_view.adapter = NumbersAdapter().apply {
             setData((1..100).toList())
-        }
-    }
-
-    private fun initToolbar() {
-        pathProperties.title?.let {
-            toolbarForNavigation()?.title = it
         }
     }
 }
