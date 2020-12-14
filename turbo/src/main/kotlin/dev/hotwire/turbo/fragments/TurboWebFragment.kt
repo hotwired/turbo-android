@@ -80,10 +80,6 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
         }
     }
 
-    override fun toolbarForNavigation(): Toolbar? {
-        return view?.findViewById(R.id.toolbar)
-    }
-
     /**
      * Implementing classes can execute state cleanup by overriding this. Will always be called
      * before any navigation action takes place.

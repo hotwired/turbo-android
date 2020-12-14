@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import dev.hotwire.turbo.demo.base.NavDestination
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.fragments.TurboFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import com.bumptech.glide.Glide
+import dev.hotwire.turbo.demo.util.displayBackButtonAsCloseIcon
 import dev.hotwire.turbo.demo.util.drawable
 import kotlinx.android.synthetic.main.fragment_image_viewer.*
 
@@ -19,14 +19,18 @@ class ImageViewerFragment : TurboFragment(), NavDestination {
         return inflater.inflate(R.layout.fragment_image_viewer, container, false)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        initToolbar()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initToolbar()
         loadImage()
     }
 
     private fun initToolbar() {
-        toolbarForNavigation()?.navigationIcon =  context?.drawable(R.drawable.ic_close)
+        toolbarForNavigation()?.displayBackButtonAsCloseIcon()
     }
 
     private fun loadImage() {
