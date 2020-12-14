@@ -5,7 +5,6 @@ import androidx.browser.customtabs.CustomTabsIntent
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.util.BASE_URL
 import dev.hotwire.turbo.nav.TurboNavDestination
-import java.net.MalformedURLException
 
 interface NavDestination : TurboNavDestination {
     override fun shouldNavigateTo(newLocation: String): Boolean {

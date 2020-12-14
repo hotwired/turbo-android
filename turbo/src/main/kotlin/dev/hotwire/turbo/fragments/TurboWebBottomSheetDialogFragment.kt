@@ -1,9 +1,16 @@
 package dev.hotwire.turbo.fragments
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.webkit.HttpAuthHandler
+import com.google.android.material.textview.MaterialTextView
+import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
+import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 
 /**
@@ -50,7 +57,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     /**
      * Passes this call through to [TurboWebFragmentDelegate.onDialogCancel].
      *
-     * @param result
+     * @param dialog
      */
     override fun onCancel(dialog: DialogInterface) {
         delegate.onDialogCancel()
@@ -60,7 +67,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     /**
      * Passes this call through to [TurboWebFragmentDelegate.onDialogDismiss].
      *
-     * @param result
+     * @param dialog
      */
     override fun onDismiss(dialog: DialogInterface) {
         delegate.onDialogDismiss()
@@ -77,7 +84,25 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     // ----------------------------------------------------------------------------
     // TurboWebFragmentCallback interface
     // ----------------------------------------------------------------------------
+    override val turboView: TurboView?
+        get() = view?.findViewById(R.id.turbo_view)
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.turbo_fragment_web_bottom_sheet, container, false)
+    }
+
+    @SuppressLint("InflateParams")
+    override fun createProgressView(location: String): View {
+        return layoutInflater.inflate(R.layout.turbo_progress_bottom_sheet, null)
+    }
+
+    @SuppressLint("InflateParams")
+    override fun createErrorView(statusCode: Int): View {
+        return layoutInflater.inflate(R.layout.turbo_error, null).apply {
+            val message = context.getString(R.string.error_message)
+            findViewById<MaterialTextView>(R.id.turbo_error_message).text = message
+        }
+    }
 
     override fun onWebViewAttached(webView: TurboWebView) {}
 
