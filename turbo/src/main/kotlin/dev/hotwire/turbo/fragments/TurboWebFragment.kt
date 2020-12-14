@@ -2,7 +2,9 @@ package dev.hotwire.turbo.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.HttpAuthHandler
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.textview.MaterialTextView
@@ -96,6 +98,10 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     // ----------------------------------------------------------------------------
     override val turboView: TurboView?
         get() = view?.findViewById(R.id.turbo_view)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.turbo_fragment_web, container, false)
+    }
 
     @SuppressLint("InflateParams")
     override fun createProgressView(location: String): View {

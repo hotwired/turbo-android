@@ -4,17 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
-import dev.hotwire.turbo.demo.base.NavDestination
 import dev.hotwire.turbo.demo.R
+import dev.hotwire.turbo.demo.base.NavDestination
+import dev.hotwire.turbo.demo.util.title
 import dev.hotwire.turbo.fragments.TurboFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
-import com.bumptech.glide.Glide
-import dev.hotwire.turbo.demo.util.title
-import kotlinx.android.synthetic.main.fragment_image_viewer.*
 import kotlinx.android.synthetic.main.fragment_numbers.view.*
-import kotlinx.android.synthetic.main.fragment_web.*
 
 @TurboNavGraphDestination(uri = "turbo://fragment/numbers")
 class NumbersFragment : TurboFragment(), NavDestination {

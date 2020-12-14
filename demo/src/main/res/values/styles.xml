@@ -37,11 +37,6 @@
         <item name="elevation">@dimen/toolbar_elevation</item>
     </style>
 
-    <style name="ThemeOverlay.MyTheme.Toolbar" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
-        <item name="colorControlNormal">?colorOnSurface</item>
-        <item name="actionMenuTextColor">?colorOnSurface</item>
-    </style>
-
     <style name="Widget.MyTheme.Toolbar.Navigation.Tinted" parent="Widget.AppCompat.Toolbar.Button.Navigation">
         <item name="tint">?colorOnSurface</item>
     </style>
