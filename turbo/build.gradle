@@ -121,8 +121,8 @@ ext {
     libraryDescription = 'Turbo for Android'
     libraryVersion = "$libVersionName"
 
-    siteUrl = 'https://github.com/basecamp/turbolinks-android'
-    gitUrl = 'https://github.com/basecamp/turbolinks-android.git'
+    siteUrl = 'https://github.com/hotwired/turbo-android'
+    gitUrl = 'https://github.com/hotwired/turbo-android.git'
 
     developerId = 'basecamp'
     developerName = 'Basecamp'

@@ -1,11 +1,8 @@
-# Running the Demo App
+# Running the Demo Android App
 
-The demo apps bundled with the library work best with the [Turbo Demo App](https://github.com/basecamp/turbolinks-demo). You can follow the instructions in that repo to start up the server.
+To run the demo app on your Android device, clone this repo, open the directory in Android Studio, and run the `demo` module.
 
-## Start the Demo Android App
+The demo is a small app to demonstrate how to use Turbo with a native app. The web demo site lives at [https://turbo-native-demo.glitch.me](https://turbo-native-demo.glitch.me) and its source code is available [here](https://github.com/basecamp/turbo-native-demo).
 
-- Ensure the demo server and Android device are on the same network.
-- Start up the demo server per its instructions.
-- Go to [Contants.kt](../demo/src/main/kotlin/dev/hotwire/turbo/demo/util/Constants.kt).
-- Find the `BASE_URL` String at the top of the class. Change the IP to your IP.
-- Build/run the app to your device.
+
+// TODO [Screenshots here]
