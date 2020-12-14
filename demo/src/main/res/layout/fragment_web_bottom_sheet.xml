@@ -25,6 +25,6 @@
         layout="@layout/turbo_bottom_sheet_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorSurface" />
+        android:background="@color/color_background" />
 
 </LinearLayout>

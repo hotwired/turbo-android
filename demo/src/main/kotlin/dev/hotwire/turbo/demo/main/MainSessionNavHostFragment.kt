@@ -12,6 +12,7 @@ import dev.hotwire.turbo.demo.features.web.WebFragment
 import dev.hotwire.turbo.demo.features.web.WebHomeFragment
 import dev.hotwire.turbo.demo.features.web.WebModalFragment
 import dev.hotwire.turbo.demo.util.HOME_URL
+import dev.hotwire.turbo.demo.util.initDayNightTheme
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import kotlin.reflect.KClass
 
@@ -43,6 +44,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override fun onSessionCreated() {
         super.onSessionCreated()
         session.webView.settings.userAgentString = customUserAgent(session.webView)
+        session.webView.initDayNightTheme()
 
         if (BuildConfig.DEBUG) {
             session.setDebugLoggingEnabled(true)

@@ -28,7 +28,7 @@ interface NavDestination : TurboNavDestination {
             .setShowTitle(true)
             .enableUrlBarHiding()
             .addDefaultShareMenuItem()
-            .setToolbarColor(context.getColor(R.color.white))
+            .setToolbarColor(context.getColor(R.color.color_surface))
             .build()
             .launchUrl(context, Uri.parse(location))
     }
