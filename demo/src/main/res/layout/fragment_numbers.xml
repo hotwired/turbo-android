@@ -9,17 +9,15 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/white"
-        android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
-            style="@style/ToolbarStyle"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:theme="@style/ThemeOverlay.MyTheme.Toolbar"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

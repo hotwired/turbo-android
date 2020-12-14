@@ -10,7 +10,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="false"
-        android:theme="@style/AppTheme"
+        android:theme="@style/MyTheme.DayNight"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="P">
 
@@ -18,7 +18,7 @@
             android:name="dev.hotwire.turbo.demo.main.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme"
+            android:theme="@style/MyTheme.DayNight"
             android:windowSoftInputMode="adjustResize">
 
             <intent-filter>

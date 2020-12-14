@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="use_light_navigation_bar">false</bool>
+    <color name="navigation_bar_color">@color/black</color>
+</resources>

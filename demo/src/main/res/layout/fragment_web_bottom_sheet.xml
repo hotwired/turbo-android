@@ -13,11 +13,11 @@
         android:stateListAnimator="@null">
 
         <com.google.android.material.appbar.MaterialToolbar
-            style="@style/ToolbarStyle"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent" />
+            android:background="@color/transparent"
+            android:theme="@style/ThemeOverlay.MyTheme.Toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
