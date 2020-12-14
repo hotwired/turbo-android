@@ -112,7 +112,7 @@ Refer to the demo [MainActivity](../demo/src/main/kotlin/dev/hotwire/turbo/demo/
 ### Create the TurboWebFragment layout resource
 You need to create a layout resource file that your `TurboWebFragment` will use to inflate a `TurboView` that the library provides.
 
-The easiest way to include a `TurboView` in your layout resource is to `<include ... />` a reference to the library's [`turbo_default.xml`](../turbo/src/main/res/layout/turbo_default.xml) resource. This is a view provided by the library which automatically adds the necessary view hierarchy that Turbo expects for attaching a WebView, progress view, and error view.
+The easiest way to include a `TurboView` in your layout resource is to `<include ... />` a reference to the library's [`turbo_view.xml`](../turbo/src/main/res/layout/turbo_view.xml) resource. This is a view provided by the library which automatically adds the necessary view hierarchy that Turbo expects for attaching a WebView, progress view, and error view.
 
 In its simplest form, your web Fragment layout file will look like:
 
@@ -125,7 +125,7 @@ In its simplest form, your web Fragment layout file will look like:
     android:layout_height="match_parent">
 
     <include
-        layout="@layout/turbo_default"
+        layout="@layout/turbo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -151,25 +151,18 @@ class WebFragment : TurboWebFragment() {
         return inflater.inflate(R.layout.fragment_web, container, false)
     }
 
-    override fun createProgressView(location: String): View {
-        return layoutInflater.inflate(R.layout.progress, null)
-    }
-
-    override fun createErrorView(statusCode: Int): View {
-        return layoutInflater.inflate(R.layout.error, null)
-    }
-
     override fun toolbarForNavigation(): Toolbar? {
         return view?.findViewById(R.id.toolbar)
     }
 }
 
-// TODO: Let's try to provide default library views error/progress views that can be overridden with 
-// custom views. Let's also see if it makes sense to provide a `turbo_*.xml` layout resource file 
+// TODO: Let's see if it makes sense to provide a `turbo_*.xml` layout resource file 
 // that contains an AppBarLayout with a Toolbar so it's easier to get an app up and running.
 ```
 
 *Note that `R.layout.fragment_web` refers to the Fragment layout file that you already created.*
+
+If you'd like, you can also provide your own custom progress view or error view by overriding the `createProgressView()` and `createErrorView()` functions in your web Fragment. 
 
 Refer to demo [WebFragment](../demo/src/main/kotlin/dev/hotwire/turbo/demo/features/web/WebFragment.kt) as an example.
 

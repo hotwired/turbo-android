@@ -28,7 +28,7 @@ class TurboViewTest {
         MockitoAnnotations.openMocks(this)
 
         context = ApplicationProvider.getApplicationContext()
-        view = LayoutInflater.from(context).inflate(R.layout.turbo_default, null) as ViewGroup
+        view = LayoutInflater.from(context).inflate(R.layout.turbo_view, null) as ViewGroup
     }
 
     @Test fun refreshLayoutIsFirstChild() {

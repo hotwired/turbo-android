@@ -56,7 +56,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     /**
      * Passes this call through to [TurboWebFragmentDelegate.onDialogCancel].
      *
-     * @param result
+     * @param dialog
      */
     override fun onCancel(dialog: DialogInterface) {
         delegate.onDialogCancel()
@@ -66,7 +66,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     /**
      * Passes this call through to [TurboWebFragmentDelegate.onDialogDismiss].
      *
-     * @param result
+     * @param dialog
      */
     override fun onDismiss(dialog: DialogInterface) {
         delegate.onDialogDismiss()

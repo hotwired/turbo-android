@@ -22,7 +22,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include
-        layout="@layout/turbo_bottom_sheet_view"
+        layout="@layout/turbo_view_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_background" />
