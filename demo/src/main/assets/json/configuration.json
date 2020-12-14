@@ -20,7 +20,8 @@
         "^/$"
       ],
       "properties": {
-        "uri": "turbo://fragment/web/home"
+        "uri": "turbo://fragment/web/home",
+        "presentation": "replace_root"
       }
     },
     {
