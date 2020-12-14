@@ -5,22 +5,21 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <!-- Note: Don't use android:usesCleartextTraffic="true" in a production app.
-         It's necessary in this demo to use the local web server over HTTP -->
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="false"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
+        android:theme="@style/MyTheme.DayNight"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="P">
 
         <activity
             android:name="dev.hotwire.turbo.demo.main.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+            android:launchMode="singleTask"
+            android:theme="@style/MyTheme.DayNight"
+            android:windowSoftInputMode="adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -28,10 +27,6 @@
             </intent-filter>
 
         </activity>
-
-        <activity
-            android:name="dev.hotwire.turbo.demo.ImageViewerActivity"
-            android:theme="@style/AppTheme.ImageViewer"/>
 
     </application>
 

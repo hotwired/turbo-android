@@ -1,6 +1,6 @@
 {
   "settings": {
-    "custom_app_feature_enabled": true
+    "screenshots_enabled": true
   },
   "rules": [
     {
@@ -10,15 +10,47 @@
       "properties": {
         "context": "default",
         "uri": "turbo://fragment/web",
+        "fallback_uri": "turbo://fragment/web",
         "pull_to_refresh_enabled": true
       }
     },
     {
       "patterns": [
-        "^$"
+        "^$",
+        "^/$"
       ],
       "properties": {
-        "uri": "turbo://fragment/web/home"
+        "uri": "turbo://fragment/web/home",
+        "presentation": "replace_root"
+      }
+    },
+    {
+      "patterns": [
+        "/signin$"
+      ],
+      "properties": {
+        "context": "modal",
+        "uri": "turbo://fragment/web/modal",
+        "pull_to_refresh_enabled": false
+      }
+    },
+    {
+      "patterns": [
+        "/new$"
+      ],
+      "properties": {
+        "context": "modal",
+        "uri": "turbo://fragment/web/modal/sheet",
+        "pull_to_refresh_enabled": false
+      }
+    },
+    {
+      "patterns": [
+        "/numbers$"
+      ],
+      "properties": {
+        "uri": "turbo://fragment/numbers",
+        "title": "Numbers"
       }
     },
     {

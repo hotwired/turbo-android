@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Shape-->
+
+    <!--Material allows theming of a component’s shape through the customization of corner -->
+    <!--style and radius size. To systematically apply shape throughout your app, it helps to -->
+    <!--understand that components are categorized by size, grouped into categories of small, -->
+    <!--medium and large. Each component size group can be themed by overriding the Material -->
+    <!--Components attributes ?shapeAppearanceSmallComponent, ?shapeAppearanceMediumComponent -->
+    <!--and ?shapeAppearanceLargeComponent in your app's theme. Those attributes are already -->
+    <!--defined as default stylesoverridden for you in themes.xml and point to the styles in -->
+    <!--this file.-->
+
+    <!--Experiment with ShapeAppearance properties such as cornerFamily (either ‘cut’ or -->
+    <!--‘rounded’) and corner size. Alternatively, customize each ShapeAppearance on a -->
+    <!--per-corner basis with cornerFamilyTopLeft, cornerFamilyTopRight, cornerFamilyBottomLeft, -->
+    <!--cornerFamilyBottomRight and cornerSizeTopRight, cornerSizeTopLeft, cornerSizeBottomLeft -->
+    <!--and cornerSizeBottomRight.-->
+
+    <!--Shape Appearance for small components like chips, buttons, text fields and FABs-->
+    <style name="ShapeAppearance.MyTheme.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ShapeAppearance.MyTheme.SmallComponent.LargeButton">
+        <item name="cornerSize">30dp</item>
+    </style>
+
+    <!--Shape Appearance for medium components like cards, alert dialogs-->
+    <style name="ShapeAppearance.MyTheme.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <!--Shape Appearance for large components like side and bottom navigation drawers-->
+    <style name="ShapeAppearance.MyTheme.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerSizeTopLeft">20dp</item>
+        <item name="cornerSizeTopRight">20dp</item>
+    </style>
+
+    <!--Shape Appearance for alert dialogs-->
+    <style name="ShapeAppearanceOverlay.MyTheme.Rounded" parent="">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+</resources>

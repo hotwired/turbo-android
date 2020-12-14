@@ -1,25 +1,67 @@
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="ToolbarStyle" parent="Theme.AppCompat.Light">
-        <item name="android:background">@color/white</item>
-        <item name="android:theme">@style/ToolbarTheme</item>
-        <item name="colorControlNormal">@color/white</item>
-        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    <!--Bottom Sheets -->
+
+    <style name="ThemeOverlay.MyTheme.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/Animation.MyTheme.BottomSheet.Modal</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="bottomSheetStyle">@style/Widget.MyTheme.BottomSheet.Modal</item>
+        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@color/transparent</item>
     </style>
 
-    <style name="ToolbarTheme">
-        <item name="android:textColorPrimary">@color/black</item>
-        <item name="android:textColorSecondary">@color/black</item>
-        <item name="colorControlNormal">@color/black</item>
+    <style name="Widget.MyTheme.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">?shapeAppearanceLargeComponent</item>
+        <item name="behavior_draggable">true</item>
+        <item name="behavior_peekHeight">600dp</item>
+        <item name="backgroundTint">?colorSurface</item>
     </style>
 
-    <style name="TextViewStyle"/>
+    <!--Dialogs-->
 
-    <style name="TextViewStyle.Title">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:ellipsize">end</item>
+    <style name="ThemeOverlay.MyTheme.AlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MyTheme.Rounded</item>
+        <item name="android:windowAnimationStyle">@style/Animation.MyTheme.AlertDialog</item>
+    </style>
+
+    <!--Toolbar-->
+
+    <style name="Widget.MyTheme.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
+        <item name="android:background">?colorSurface</item>
+        <item name="colorControlNormal">?colorOnSurface</item>
+        <item name="titleTextColor">?colorOnSurface</item>
+        <item name="subtitleTextColor">?colorSecondary</item>
+        <item name="elevation">@dimen/toolbar_elevation</item>
+    </style>
+
+    <style name="ThemeOverlay.MyTheme.Toolbar" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
+        <item name="colorControlNormal">?colorOnSurface</item>
+        <item name="actionMenuTextColor">?colorOnSurface</item>
+    </style>
+
+    <style name="Widget.MyTheme.Toolbar.Navigation.Tinted" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="tint">?colorOnSurface</item>
+    </style>
+
+    <!--Solid Buttons-->
+
+    <style name="Widget.MyTheme.Button" parent="Widget.MaterialComponents.Button">
+        <!--Your custom button style here-->
+    </style>
+
+    <!--Outlined Buttons-->
+
+    <style name="Widget.MyTheme.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <!--Your custom button style here-->
+    </style>
+
+    <!--Text Buttons-->
+
+    <style name="Widget.MyTheme.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <!--Your custom button style here-->
     </style>
 
 </resources>

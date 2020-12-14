@@ -8,14 +8,14 @@ import androidx.appcompat.widget.Toolbar
 import dev.hotwire.turbo.demo.base.NavDestination
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.util.Error
-import dev.hotwire.turbo.demo.util.SIGN_IN_URL
+import dev.hotwire.turbo.fragments.TurboWebBottomSheetDialogFragment
 import dev.hotwire.turbo.fragments.TurboWebFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import dev.hotwire.turbo.views.TurboView
 import kotlinx.android.synthetic.main.error.view.*
 
-@TurboNavGraphDestination(uri = "turbo://fragment/web")
-open class WebFragment : TurboWebFragment(), NavDestination {
+@TurboNavGraphDestination(uri = "turbo://fragment/web/modal/sheet")
+open class WebBottomSheetFragment : TurboWebBottomSheetDialogFragment(), NavDestination {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -25,11 +25,11 @@ open class WebFragment : TurboWebFragment(), NavDestination {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_web, container, false)
+        return inflater.inflate(R.layout.fragment_web_bottom_sheet, container, false)
     }
 
     override fun createProgressView(location: String): View {
-        return layoutInflater.inflate(R.layout.progress, null)
+        return layoutInflater.inflate(R.layout.progress_bottom_sheet, null)
     }
 
     override fun createErrorView(statusCode: Int): View {
@@ -44,11 +44,4 @@ open class WebFragment : TurboWebFragment(), NavDestination {
 
     override val turboView: TurboView?
         get() = view?.findViewById(R.id.turbo_view)
-
-    override fun onVisitErrorReceived(location: String, errorCode: Int) {
-        when (errorCode) {
-            401 -> navigate(SIGN_IN_URL)
-            else -> super.onVisitErrorReceived(location, errorCode)
-        }
-    }
 }

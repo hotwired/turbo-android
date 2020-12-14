@@ -1,13 +1,18 @@
 package dev.hotwire.turbo.demo.main
 
 import android.app.Activity
+import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.BuildConfig
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.demo.features.imageviewer.ImageViewerFragment
+import dev.hotwire.turbo.demo.features.numbers.NumbersFragment
+import dev.hotwire.turbo.demo.features.web.WebBottomSheetFragment
 import dev.hotwire.turbo.demo.features.web.WebFragment
 import dev.hotwire.turbo.demo.features.web.WebHomeFragment
-import dev.hotwire.turbo.demo.util.Constants
+import dev.hotwire.turbo.demo.features.web.WebModalFragment
+import dev.hotwire.turbo.demo.util.HOME_URL
+import dev.hotwire.turbo.demo.util.initDayNightTheme
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import kotlin.reflect.KClass
 
@@ -16,7 +21,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override val sessionName = "main"
 
     override val startLocation
-        get() = Constants.FOOD_URL
+        get() = HOME_URL
 
     override val registeredActivities: List<KClass<out Activity>>
         get() = listOf()
@@ -25,6 +30,9 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
         get() = listOf(
             WebFragment::class,
             WebHomeFragment::class,
+            WebModalFragment::class,
+            WebBottomSheetFragment::class,
+            NumbersFragment::class,
             ImageViewerFragment::class
         )
 
@@ -35,6 +43,16 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
     override fun onSessionCreated() {
         super.onSessionCreated()
-        session.setDebugLoggingEnabled(BuildConfig.DEBUG)
+        session.webView.settings.userAgentString = customUserAgent(session.webView)
+        session.webView.initDayNightTheme()
+
+        if (BuildConfig.DEBUG) {
+            session.setDebugLoggingEnabled(true)
+            WebView.setWebContentsDebuggingEnabled(true)
+        }
+    }
+
+    private fun customUserAgent(webView: WebView): String {
+        return "Turbo Native Android ${webView.settings.userAgentString}"
     }
 }
