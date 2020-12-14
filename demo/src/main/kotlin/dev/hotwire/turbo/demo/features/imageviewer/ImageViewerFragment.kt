@@ -25,10 +25,6 @@ class ImageViewerFragment : TurboFragment(), NavDestination {
         return inflater.inflate(R.layout.fragment_image_viewer, container, false)
     }
 
-    override fun toolbarForNavigation(): Toolbar? {
-        return view?.findViewById(R.id.toolbar)
-    }
-
     private fun initToolbar() {
         toolbarForNavigation()?.navigationIcon =  context?.drawable(R.drawable.ic_close)
     }

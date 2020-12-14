@@ -28,10 +28,6 @@ class NumbersFragment : TurboFragment(), NavDestination {
         initToolbar()
     }
 
-    override fun toolbarForNavigation(): Toolbar? {
-        return view?.findViewById(R.id.toolbar)
-    }
-
     private fun initList(view: View) {
         view.recycler_view.layoutManager = LinearLayoutManager(view.context)
         view.recycler_view.adapter = NumbersAdapter().apply {

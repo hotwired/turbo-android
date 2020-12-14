@@ -2,7 +2,9 @@ package dev.hotwire.turbo.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import dev.hotwire.turbo.R
 import dev.hotwire.turbo.config.context
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.nav.TurboNavDestination
@@ -92,6 +94,10 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
         if (!sessionViewModel.modalResultExists) {
             delegate.onStartAfterDialogCancel()
         }
+    }
+
+    override fun toolbarForNavigation(): Toolbar? {
+        return view?.findViewById(R.id.toolbar)
     }
 
     /**

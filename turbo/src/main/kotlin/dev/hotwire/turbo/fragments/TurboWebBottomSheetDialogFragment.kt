@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.webkit.HttpAuthHandler
+import androidx.appcompat.widget.Toolbar
 import com.google.android.material.textview.MaterialTextView
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
@@ -71,6 +72,10 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     override fun onDismiss(dialog: DialogInterface) {
         delegate.onDialogDismiss()
         super.onDismiss(dialog)
+    }
+
+    override fun toolbarForNavigation(): Toolbar? {
+        return view?.findViewById(R.id.toolbar)
     }
 
     /**

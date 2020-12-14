@@ -25,10 +25,6 @@ open class WebFragment : TurboWebFragment(), NavDestination {
         return inflater.inflate(R.layout.fragment_web, container, false)
     }
 
-    override fun toolbarForNavigation(): Toolbar? {
-        return view?.findViewById(R.id.toolbar)
-    }
-
     override fun onVisitErrorReceived(location: String, errorCode: Int) {
         when (errorCode) {
             401 -> navigate(SIGN_IN_URL)

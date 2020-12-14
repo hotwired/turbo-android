@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.webkit.HttpAuthHandler
+import androidx.appcompat.widget.Toolbar
 import com.google.android.material.textview.MaterialTextView
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
@@ -75,6 +76,10 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
         if (!sessionViewModel.modalResultExists) {
             delegate.onStartAfterDialogCancel()
         }
+    }
+
+    override fun toolbarForNavigation(): Toolbar? {
+        return view?.findViewById(R.id.toolbar)
     }
 
     /**

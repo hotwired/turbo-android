@@ -2,9 +2,11 @@ package dev.hotwire.turbo.fragments
 
 import android.content.DialogInterface
 import android.os.Bundle
+import androidx.appcompat.widget.Toolbar
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.nav.TurboNavDestination
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dev.hotwire.turbo.R
 
 /**
  * The base class from which all bottom sheet native fragments in a Turbo driven app
@@ -61,6 +63,10 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
     override fun onCancel(dialog: DialogInterface) {
         delegate.onDialogCancel()
         super.onCancel(dialog)
+    }
+
+    override fun toolbarForNavigation(): Toolbar? {
+        return view?.findViewById(R.id.toolbar)
     }
 
     /**

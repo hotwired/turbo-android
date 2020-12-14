@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.base.NavDestination
 import dev.hotwire.turbo.fragments.TurboWebBottomSheetDialogFragment
@@ -22,9 +21,5 @@ open class WebBottomSheetFragment : TurboWebBottomSheetDialogFragment(), NavDest
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_web_bottom_sheet, container, false)
-    }
-
-    override fun toolbarForNavigation(): Toolbar? {
-        return view?.findViewById(R.id.toolbar)
     }
 }
