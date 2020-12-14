@@ -1,10 +1,16 @@
 package dev.hotwire.turbo.fragments
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.View
 import android.webkit.HttpAuthHandler
+import com.google.android.material.textview.MaterialTextView
+import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
+import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
+import kotlinx.android.synthetic.main.turbo_error.*
 
 /**
  * The base class from which all bottom sheet web fragments in a Turbo driven app
@@ -77,7 +83,21 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     // ----------------------------------------------------------------------------
     // TurboWebFragmentCallback interface
     // ----------------------------------------------------------------------------
+    override val turboView: TurboView?
+        get() = view?.findViewById(R.id.turbo_view)
 
+    @SuppressLint("InflateParams")
+    override fun createProgressView(location: String): View {
+        return layoutInflater.inflate(R.layout.turbo_progress_bottom_sheet, null)
+    }
+
+    @SuppressLint("InflateParams")
+    override fun createErrorView(statusCode: Int): View {
+        return layoutInflater.inflate(R.layout.turbo_error, null).apply {
+            val message = context.getString(R.string.error_message)
+            findViewById<MaterialTextView>(R.id.turbo_error_message).text = message
+        }
+    }
 
     override fun onWebViewAttached(webView: TurboWebView) {}
 
