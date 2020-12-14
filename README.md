@@ -1,12 +1,12 @@
 # Turbo Native for Android
 
-Build high-fidelity hybrid apps with native navigation and a single shared web view. Turbo Native for Android provides the tooling to wrap your [Turbo 7](https://github.com/hotwired/turbo)-enabled web app in a native Android shell. It manages a single WebView instance across multiple Fragment destinations, giving you native navigation UI with all the client-side performance benefits of Turbo.
+**Build high-fidelity hybrid apps with native navigation and a single shared web view**. Turbo Native for Android provides the tooling to wrap your [Turbo 7](https://github.com/hotwired/turbo)-enabled web app in a native Android shell. It manages a single WebView instance across multiple Fragment destinations, giving you native navigation UI with all the client-side performance benefits of Turbo.
 
 ## Features
-- Deliver fast, efficient hybrid apps. Avoid reloading JavaScript and CSS. Save memory by sharing one WebView.
-- Reuse mobile web views across platforms. Create your views once, on the server, in HTML. Deploy them to [iOS](https://github.com/hotwired/turbo-ios), Android, and mobile browsers simultaneously. Ship new features without waiting on Play Store approval.
-- Enhance web views with native UI. Navigate web views using native patterns. Augment web UI with native controls.
-- Produce large apps with small teams. Achieve baseline HTML coverage for free. Upgrade to native views as needed.
+- **Deliver fast, efficient hybrid apps.** Avoid reloading JavaScript and CSS. Save memory by sharing one WebView.
+- **Reuse mobile web views across platforms.** Create your views once, on the server, in HTML. Deploy them to [iOS](https://github.com/hotwired/turbo-ios), Android, and mobile browsers simultaneously. Ship new features without waiting on Play Store approval.
+- **Enhance web views with native UI.** Navigate web views using native patterns. Augment web UI with native controls.
+- **Produce large apps with small teams.** Achieve baseline HTML coverage for free. Upgrade to native views as needed.
 
 ## Requirements
 
