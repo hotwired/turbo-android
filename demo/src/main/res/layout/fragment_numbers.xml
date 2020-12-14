@@ -9,8 +9,8 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:elevation="4dp"
         android:background="@color/white"
+        android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,13 +23,11 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.textview.MaterialTextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:text="Native screen"
-        android:textSize="20sp"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/app_bar"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

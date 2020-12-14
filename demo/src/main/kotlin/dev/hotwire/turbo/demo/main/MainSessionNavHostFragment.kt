@@ -1,6 +1,7 @@
 package dev.hotwire.turbo.demo.main
 
 import android.app.Activity
+import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.BuildConfig
 import dev.hotwire.turbo.config.TurboPathConfiguration
@@ -41,9 +42,15 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
     override fun onSessionCreated() {
         super.onSessionCreated()
+        session.webView.settings.userAgentString = customUserAgent(session.webView)
 
-        val customUserAgent = "Turbo Native Android ${session.webView.settings.userAgentString}"
-        session.webView.settings.userAgentString = customUserAgent
-        session.setDebugLoggingEnabled(BuildConfig.DEBUG)
+        if (BuildConfig.DEBUG) {
+            session.setDebugLoggingEnabled(true)
+            WebView.setWebContentsDebuggingEnabled(true)
+        }
+    }
+
+    private fun customUserAgent(webView: WebView): String {
+        return "Turbo Native Android ${webView.settings.userAgentString}"
     }
 }

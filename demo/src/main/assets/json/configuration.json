@@ -48,7 +48,8 @@
         "/numbers$"
       ],
       "properties": {
-        "uri": "turbo://fragment/numbers"
+        "uri": "turbo://fragment/numbers",
+        "title": "Numbers"
       }
     },
     {
