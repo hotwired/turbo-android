@@ -10,12 +10,14 @@ import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.fragments.TurboFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import com.bumptech.glide.Glide
+import dev.hotwire.turbo.demo.util.drawable
 import kotlinx.android.synthetic.main.fragment_image_viewer.*
 
 @TurboNavGraphDestination(uri = "turbo://fragment/image_viewer")
 class ImageViewerFragment : TurboFragment(), NavDestination {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        initToolbar()
         loadImage()
     }
 
@@ -24,7 +26,11 @@ class ImageViewerFragment : TurboFragment(), NavDestination {
     }
 
     override fun toolbarForNavigation(): Toolbar? {
-        return null
+        return view?.findViewById(R.id.toolbar)
+    }
+
+    private fun initToolbar() {
+        toolbarForNavigation()?.navigationIcon =  context?.drawable(R.drawable.ic_close)
     }
 
     private fun loadImage() {
