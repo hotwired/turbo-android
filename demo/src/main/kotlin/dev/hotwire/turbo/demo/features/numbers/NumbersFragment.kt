@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.base.NavDestination
 import dev.hotwire.turbo.demo.util.title
 import dev.hotwire.turbo.fragments.TurboFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
-import kotlinx.android.synthetic.main.fragment_numbers.view.*
 
 @TurboNavGraphDestination(uri = "turbo://fragment/numbers")
 class NumbersFragment : TurboFragment(), NavDestination {
@@ -29,9 +29,11 @@ class NumbersFragment : TurboFragment(), NavDestination {
     }
 
     private fun initList(view: View) {
-        view.recycler_view.layoutManager = LinearLayoutManager(view.context)
-        view.recycler_view.adapter = NumbersAdapter().apply {
-            setData((1..100).toList())
+        view.findViewById<RecyclerView>(R.id.recycler_view).apply {
+            layoutManager = LinearLayoutManager(view.context)
+            adapter = NumbersAdapter().apply {
+                setData((1..100).toList())
+            }
         }
     }
 }

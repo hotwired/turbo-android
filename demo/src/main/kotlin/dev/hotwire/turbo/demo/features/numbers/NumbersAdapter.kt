@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import dev.hotwire.turbo.demo.R
-import kotlinx.android.synthetic.main.adapter_numbers_row.view.*
 
 class NumbersAdapter : RecyclerView.Adapter<NumbersAdapter.ViewHolder>() {
     private val type = R.layout.adapter_numbers_row
@@ -39,7 +38,7 @@ class NumbersAdapter : RecyclerView.Adapter<NumbersAdapter.ViewHolder>() {
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val textView: MaterialTextView = view.number
+        private val textView: MaterialTextView = view.findViewById(R.id.number)
 
         fun bind(number: Int) {
             textView.text = "$number"

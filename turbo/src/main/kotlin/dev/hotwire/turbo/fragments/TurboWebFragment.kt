@@ -6,14 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.HttpAuthHandler
-import androidx.appcompat.widget.Toolbar
 import com.google.android.material.textview.MaterialTextView
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
 import dev.hotwire.turbo.session.TurboSessionModalResult
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
-import kotlinx.android.synthetic.main.turbo_error.*
 
 /**
  * The base class from which all web "standard" fragments (non-dialogs) in a Turbo driven app
