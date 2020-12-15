@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import dev.hotwire.turbo.demo.R
 
-class NumbersAdapter : RecyclerView.Adapter<NumbersAdapter.ViewHolder>() {
+class NumbersAdapter(val callback: NumbersFragmentCallback) : RecyclerView.Adapter<NumbersAdapter.ViewHolder>() {
     private val type = R.layout.adapter_numbers_row
 
     private var items = emptyList<Int>()
@@ -37,11 +37,14 @@ class NumbersAdapter : RecyclerView.Adapter<NumbersAdapter.ViewHolder>() {
         return ViewHolder(view)
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val textView: MaterialTextView = view.findViewById(R.id.number)
 
         fun bind(number: Int) {
             textView.text = "$number"
+            textView.setOnClickListener {
+                callback.onItemClicked(number)
+            }
         }
     }
 }

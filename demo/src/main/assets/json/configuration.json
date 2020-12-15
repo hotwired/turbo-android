@@ -55,6 +55,15 @@
     },
     {
       "patterns": [
+        "/numbers/[0-9]+$"
+      ],
+      "properties": {
+        "uri": "turbo://fragment/numbers/sheet",
+        "title": "Number"
+      }
+    },
+    {
+      "patterns": [
         ".+\\.(?:bmp|gif|heic|jpg|jpeg|png|svg|webp)"
       ],
       "properties": {
