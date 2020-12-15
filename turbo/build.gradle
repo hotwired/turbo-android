@@ -27,13 +27,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.2'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
     testOptions.unitTests.includeAndroidResources = true
 
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 29
+        minSdkVersion 24
+        targetSdkVersion 30
         versionCode libVersionCode
         versionName libVersionName
 
