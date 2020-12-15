@@ -42,7 +42,7 @@ class NumbersAdapter(val callback: NumbersFragmentCallback) : RecyclerView.Adapt
 
         fun bind(number: Int) {
             textView.text = "$number"
-            textView.setOnClickListener {
+            itemView.setOnClickListener {
                 callback.onItemClicked(number)
             }
         }
