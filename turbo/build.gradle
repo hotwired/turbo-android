@@ -111,7 +111,7 @@ ext {
     bintrayName = 'turbo'
 
     publishedGroupId = 'dev.hotwire'
-    artifact = 'turbo'
+    publishedArtifactId = 'turbo'
 
     libraryName = 'Turbo Android'
     libraryDescription = 'Turbo for Android'
@@ -136,7 +136,7 @@ version = libraryVersion
 //            project {
 //                packaging 'aar'
 //                groupId publishedGroupId
-//                artifactId artifact
+//                artifactId publishedArtifactId
 //
 //                // Add your description here
 //                name libraryName
@@ -207,13 +207,14 @@ dependencyUpdates.resolutionStrategy = {
 
 apply plugin: 'maven'
 
+// Build local artifacts to /artifacts
 uploadArchives {
     repositories.mavenDeployer {
         def deployPath = file("artifacts")
         repository(url: "file://${deployPath.absolutePath}")
         pom.project {
-            groupId 'dev.hotwire'
-            artifactId 'turbo'
+            groupId publishedGroupId
+            artifactId publishedArtifactId
             version libVersionName
         }
     }
