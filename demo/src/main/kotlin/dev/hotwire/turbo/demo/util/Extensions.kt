@@ -2,9 +2,7 @@ package dev.hotwire.turbo.demo.util
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.drawable.Drawable
 import android.webkit.WebView
-import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.webkit.WebSettingsCompat
@@ -12,12 +10,11 @@ import androidx.webkit.WebViewFeature
 import dev.hotwire.turbo.config.TurboPathConfigurationProperties
 import dev.hotwire.turbo.demo.R
 
-fun Context.drawable(@DrawableRes id: Int): Drawable? {
-    return ContextCompat.getDrawable(this, id)
-}
+val TurboPathConfigurationProperties.description: String?
+    get() = get("description")
 
 fun Toolbar.displayBackButtonAsCloseIcon() {
-    navigationIcon = context.drawable(R.drawable.ic_close)
+    navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_close)
 }
 
 fun WebView.initDayNightTheme() {

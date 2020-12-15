@@ -59,7 +59,8 @@
       ],
       "properties": {
         "uri": "turbo://fragment/numbers/sheet",
-        "title": "Number"
+        "title": "Number",
+        "description": "This is a native bottom sheet fragment"
       }
     },
     {

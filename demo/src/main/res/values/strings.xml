@@ -1,4 +1,3 @@
 <resources>
     <string name="app_name">Turbo Native</string>
-    <string name="number_description">This is a native bottom sheet fragment</string>
 </resources>
