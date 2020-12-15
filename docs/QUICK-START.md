@@ -43,7 +43,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override val pathConfigurationLocation: TurboPathConfiguration.Location
         get() = TurboPathConfiguration.Location(
             assetFilePath = "json/configuration.json",
-            remoteFileUrl = "https://hotwire.dev/turbo/demo/config/android-v1.json"
+            remoteFileUrl = "https://turbo.hotwire.dev/demo/configurations/android-v1.json"
         )
 }
 ```
@@ -74,8 +74,6 @@ Android Jetpack provides a [`FragmentContainerView`](https://developer.android.c
         android:name="dev.hotwire.turbo.demo.main.MainSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:defaultNavHost="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

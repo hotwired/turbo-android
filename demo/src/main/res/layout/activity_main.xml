@@ -12,9 +12,6 @@
         android:name="dev.hotwire.turbo.demo.main.MainSessionNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultNavHost="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent" />
+        app:defaultNavHost="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

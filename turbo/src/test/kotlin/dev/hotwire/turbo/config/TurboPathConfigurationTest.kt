@@ -37,7 +37,7 @@ class TurboPathConfigurationTest {
 
     @Test
     fun presentationContext() {
-        val url = "http://example.com"
+        val url = "https://turbo.hotwire.dev"
 
         assertThat(pathConfiguration.properties("$url/home").context).isEqualTo(TurboNavPresentationContext.DEFAULT)
         assertThat(pathConfiguration.properties("$url/new").context).isEqualTo(TurboNavPresentationContext.MODAL)
@@ -49,7 +49,7 @@ class TurboPathConfigurationTest {
         pathConfiguration.loader.repository = mockRepository
 
         runBlocking {
-            val url = "http://example.com/configuration.json"
+            val url = "https://turbo.hotwire.dev/demo/configurations/android-v1.json"
             val location = Location(remoteFileUrl = url)
 
             pathConfiguration.load(location)
@@ -67,7 +67,7 @@ class TurboPathConfigurationTest {
 
     @Test
     fun pullToRefresh() {
-        val url = "http://example.com"
+        val url = "https://turbo.hotwire.dev"
 
         assertThat(pathConfiguration.properties("$url/home").pullToRefreshEnabled).isTrue
         assertThat(pathConfiguration.properties("$url/new").pullToRefreshEnabled).isFalse

@@ -20,8 +20,7 @@ import kotlin.reflect.KClass
 class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override val sessionName = "main"
 
-    override val startLocation
-        get() = HOME_URL
+    override val startLocation = HOME_URL
 
     override val registeredActivities: List<KClass<out Activity>>
         get() = listOf()

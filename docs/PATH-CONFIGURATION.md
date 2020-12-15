@@ -4,7 +4,7 @@ A JSON configuration file specifies the set of rules Turbo will follow to naviga
 1. Application-level `"settings"`
 1. Url path-specific `"rules"`
 
-At minimum, you will need a bundled [`src/main/assets/json/configuration.json`](../demo/src/main/assets/json/configuration.json) file in your app that Turbo can read. We also recommend hosting a remote configuration file on your server, so you can update the app's configuration at any time without needing an app update. Remote configuration files are fetched (and cached) on every app startup, so the app always has the latest configuration available. The location of these configuration files needs to be set in your [`TurboSessionNavHostFragment.pathConfigurationLocation`](#create-a-navhostfragment). 
+At minimum, you will need a bundled [`src/main/assets/json/configuration.json`](../demo/src/main/assets/json/configuration.json) file in your app that Turbo can read. We also recommend hosting a remote configuration file on your server, so you can update the app's configuration at any time without needing an app update. Remote configuration files are fetched (and cached) on every app startup, so the app always has the latest configuration available. The location of these configuration files needs to be set in your [`TurboSessionNavHostFragment.pathConfigurationLocation`](QUICK-START.md/#create-a-navhostfragment). 
 
 In its simplest form, your JSON configuration will look like:
 
