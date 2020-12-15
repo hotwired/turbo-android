@@ -6,8 +6,8 @@ apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'org.jetbrains.dokka'
 
 // Update when releasing a new library version
-ext.libVersionCode = 2
-ext.libVersionName = '7.0.0-alpha02'
+ext.libVersionCode = 3
+ext.libVersionName = '7.0.0-alpha03'
 
 buildscript {
     repositories {

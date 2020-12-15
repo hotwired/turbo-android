@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'dev.hotwire:turbo:7.0.0-alpha02'
+    implementation 'dev.hotwire:turbo:7.0.0-alpha03'
 }
 ```
 
