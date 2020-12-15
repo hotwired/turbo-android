@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.config.context
+import dev.hotwire.turbo.config.title
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.nav.TurboNavPresentationContext
@@ -45,6 +46,9 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
 
         if (shouldObserveTitleChanges()) {
             observeTitleChanges()
+            pathProperties.title?.let {
+                fragmentViewModel.setTitle(it)
+            }
         }
     }
 

@@ -5,16 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.base.NavDestination
-import dev.hotwire.turbo.demo.util.title
+import dev.hotwire.turbo.demo.util.description
 import dev.hotwire.turbo.fragments.TurboBottomSheetDialogFragment
-import dev.hotwire.turbo.fragments.TurboFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
-import java.net.URI
 
 @TurboNavGraphDestination(uri = "turbo://fragment/numbers/sheet")
 class NumberBottomSheetFragment : TurboBottomSheetDialogFragment(), NavDestination {
@@ -24,17 +20,16 @@ class NumberBottomSheetFragment : TurboBottomSheetDialogFragment(), NavDestinati
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initToolbar()
         initView(view)
-    }
-
-    private fun initToolbar() {
-        fragmentViewModel.setTitle(pathProperties.title ?: "")
     }
 
     private fun initView(view: View) {
         view.findViewById<MaterialTextView>(R.id.number).apply {
             text = Uri.parse(location).lastPathSegment
+        }
+
+        view.findViewById<MaterialTextView>(R.id.number_description).apply {
+            text = pathProperties.description
         }
     }
 }

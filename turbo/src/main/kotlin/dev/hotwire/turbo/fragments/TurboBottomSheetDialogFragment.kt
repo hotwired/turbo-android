@@ -8,6 +8,7 @@ import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.nav.TurboNavDestination
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dev.hotwire.turbo.R
+import dev.hotwire.turbo.config.title
 
 /**
  * The base class from which all bottom sheet native fragments in a Turbo driven app
@@ -34,6 +35,9 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
 
         if (shouldObserveTitleChanges()) {
             observeTitleChanges()
+            pathProperties.title?.let {
+                fragmentViewModel.setTitle(it)
+            }
         }
     }
 

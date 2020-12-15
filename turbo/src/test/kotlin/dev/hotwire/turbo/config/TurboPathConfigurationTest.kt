@@ -21,6 +21,7 @@ class TurboPathConfigurationTest {
     private lateinit var context: Context
     private lateinit var pathConfiguration: TurboPathConfiguration
     private val mockRepository = mock<TurboPathConfigurationRepository>()
+    private val url = "https://turbo.hotwire.dev"
 
     @Before
     fun setup() {
@@ -37,8 +38,6 @@ class TurboPathConfigurationTest {
 
     @Test
     fun presentationContext() {
-        val url = "https://turbo.hotwire.dev"
-
         assertThat(pathConfiguration.properties("$url/home").context).isEqualTo(TurboNavPresentationContext.DEFAULT)
         assertThat(pathConfiguration.properties("$url/new").context).isEqualTo(TurboNavPresentationContext.MODAL)
         assertThat(pathConfiguration.properties("$url/edit").context).isEqualTo(TurboNavPresentationContext.MODAL)
@@ -49,26 +48,29 @@ class TurboPathConfigurationTest {
         pathConfiguration.loader.repository = mockRepository
 
         runBlocking {
-            val url = "https://turbo.hotwire.dev/demo/configurations/android-v1.json"
-            val location = Location(remoteFileUrl = url)
+            val remoteUrl = "$url/demo/configurations/android-v1.json"
+            val location = Location(remoteFileUrl = remoteUrl)
 
             pathConfiguration.load(location)
-            verify(mockRepository).getCachedConfigurationForUrl(context, url)
-            verify(mockRepository).getRemoteConfiguration(url)
+            verify(mockRepository).getCachedConfigurationForUrl(context, remoteUrl)
+            verify(mockRepository).getRemoteConfiguration(remoteUrl)
         }
     }
 
     @Test
-    fun globalProperty() {
+    fun globalSetting() {
         assertThat(pathConfiguration.settings.size).isEqualTo(1)
         assertThat(pathConfiguration.settings["custom_app_feature_enabled"]).isEqualTo("true")
         assertThat(pathConfiguration.settings["no_such_key"]).isNull()
     }
 
     @Test
-    fun pullToRefresh() {
-        val url = "https://turbo.hotwire.dev"
+    fun title() {
+        assertThat(pathConfiguration.properties("$url/image.jpg").title).isEqualTo("Image Viewer")
+    }
 
+    @Test
+    fun pullToRefresh() {
         assertThat(pathConfiguration.properties("$url/home").pullToRefreshEnabled).isTrue
         assertThat(pathConfiguration.properties("$url/new").pullToRefreshEnabled).isFalse
     }

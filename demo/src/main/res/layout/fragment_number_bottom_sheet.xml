@@ -31,12 +31,12 @@
 
     <com.google.android.material.textview.MaterialTextView
         style="?textAppearanceCaption"
+        android:id="@+id/number_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:paddingTop="24dp"
         android:paddingBottom="24dp"
-        android:text="@string/number_description"
         app:layout_constraintTop_toBottomOf="@id/number" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
