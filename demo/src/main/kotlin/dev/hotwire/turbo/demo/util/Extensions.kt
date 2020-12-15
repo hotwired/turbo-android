@@ -20,9 +20,6 @@ fun Toolbar.displayBackButtonAsCloseIcon() {
     navigationIcon = context.drawable(R.drawable.ic_close)
 }
 
-val TurboPathConfigurationProperties.title: String?
-    get() = get("title")
-
 fun WebView.initDayNightTheme() {
     if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
         WebSettingsCompat.setForceDarkStrategy(settings, WebSettingsCompat.DARK_STRATEGY_WEB_THEME_DARKENING_ONLY)

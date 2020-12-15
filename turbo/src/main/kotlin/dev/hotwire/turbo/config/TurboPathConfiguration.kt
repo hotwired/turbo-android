@@ -82,6 +82,9 @@ val TurboPathConfigurationProperties.uri: Uri
 val TurboPathConfigurationProperties.fallbackUri: Uri?
     get() = get("fallback_uri")?.let { Uri.parse(it) }
 
+val TurboPathConfigurationProperties.title: String?
+    get() = get("title")
+
 val TurboPathConfigurationProperties.pullToRefreshEnabled: Boolean
     get() = get("pull_to_refresh_enabled")?.toBoolean() ?: false
 
