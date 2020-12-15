@@ -48,7 +48,7 @@ class TurboPathConfigurationTest {
         pathConfiguration.loader.repository = mockRepository
 
         runBlocking {
-            val remoteUrl = "https://turbo.hotwire.dev/demo/configurations/android-v1.json"
+            val remoteUrl = "$url/demo/configurations/android-v1.json"
             val location = Location(remoteFileUrl = remoteUrl)
 
             pathConfiguration.load(location)
