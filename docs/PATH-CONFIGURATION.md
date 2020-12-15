@@ -53,12 +53,15 @@ The `properties` object contains a handful of key/value pairs that Turbo support
 * `context` — Specifies the presentation context in which the view should be displayed. Turbo will determine what the navigation behavior should be based on this value + the `presentation` value. Unless you are specifically showing a modal-style view (e.g., a form, wizard, navigation, etc.), `default` is usually sufficient. 
 	* Optional. 
 	* Possible values: `default` or `modal`. Defaults to `default`. 
-* `presentation` — Specifies what style to use when presenting the given `uri` destination. Turbo will determine what the navigation behavior should be based on this value + the `context` value. In most cases `default` should be sufficient, but you may find cases where your app needs specific beahvior. 
+* `presentation` — Specifies what style to use when presenting the given `uri` destination. Turbo will determine what the navigation behavior should be based on this value + the `context` value. In most cases `default` should be sufficient, but you may find cases where your app needs specific behavior. 
 	* Optional. 
 	* Possible values: `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, `none`. Defaults to `default`.
 * `fallback_uri` — Provides a fallback URI in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be available yet in older versions of the app.
 	* Optional.
-	* No explicit value options. No default value. 
+	* No explicit value options. No default value.
+* `title` —  Specifies a default title that will be displayed in the toolbar for the destination. This is most useful for native destinations, since web destinations will render their title from the `WebView` page's `<title>` tag.
+    * Optional.
+    * No explicit value options. No default value.
 * `pull_to_refresh_enabled` — Whether or not pull-to-refresh should be enabled for the given path.
 	* Optional.
 	* Possible values: `true`, `false`. Defaults to `false`.
