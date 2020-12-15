@@ -39,7 +39,8 @@
         ".+\\.(?:bmp|gif|heic|jpg|jpeg|png|svg|webp)"
       ],
       "properties": {
-        "uri": "turbo://fragment/image_viewer"
+        "uri": "turbo://fragment/image_viewer",
+        "title": "Image Viewer"
       }
     },
     {
