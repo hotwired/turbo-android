@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
-apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'org.jetbrains.dokka'
 
 ext {
@@ -34,7 +33,6 @@ buildscript {
 
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.29.0'
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.4.20"
     }
 }
@@ -141,19 +139,7 @@ bintray {
     }
 }
 
-dependencyUpdates.resolutionStrategy = {
-    componentSelection { rules ->
-        rules.all { ComponentSelection selection ->
-            boolean rejected = ['alpha'].any { qualifier ->
-                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
-            }
-            if (rejected) {
-                selection.reject('Rejected')
-            }
-        }
-    }
-}
-
+// Use the sources jar when publishing
 task androidSourcesJar(type: Jar) {
     archiveClassifier.set("sources")
     from android.sourceSets.main.java.srcDirs
