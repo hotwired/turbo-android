@@ -20,10 +20,6 @@ ext {
 
     siteUrl = 'https://github.com/hotwired/turbo-android'
     gitUrl = 'https://github.com/hotwired/turbo-android.git'
-
-    developerId = 'hotwire'
-    developerName = 'Hotwire'
-    developerEmail = 'androidteam@basecamp.com'
 }
 
 buildscript {
@@ -128,6 +124,7 @@ task androidSourcesJar(type: Jar) {
 }
 
 // Publish to GitHub Packages via ./gradlew clean build publish
+// https://github.com/orgs/hotwired/packages?repo_name=turbo-android
 afterEvaluate {
     publishing {
         publications {
@@ -159,6 +156,7 @@ afterEvaluate {
 }
 
 // Publish to Bintray via ./gradlew clean build bintrayUpload
+// https://bintray.com/hotwire/maven/turbo-android
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_API_KEY')
