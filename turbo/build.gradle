@@ -9,11 +9,11 @@ ext {
     // Update when releasing a new library version
     libVersionName = '7.0.0-alpha04'
 
-    libraryName = 'Turbo Android'
-    libraryDescription = 'Turbo for Android'
+    libraryName = 'Turbo Native for Android'
+    libraryDescription = 'Android framework for making Turbo native apps'
 
     bintrayRepo = 'maven'
-    bintrayName = 'turbo'
+    bintrayName = 'turbo-android'
 
     publishedGroupId = 'dev.hotwire'
     publishedArtifactId = 'turbo'
@@ -21,9 +21,9 @@ ext {
     siteUrl = 'https://github.com/hotwired/turbo-android'
     gitUrl = 'https://github.com/hotwired/turbo-android.git'
 
-    developerId = 'basecamp'
-    developerName = 'Basecamp'
-    developerEmail = 'support@basecamp.com'
+    developerId = 'hotwire'
+    developerName = 'Hotwire'
+    developerEmail = 'androidteam@basecamp.com'
 }
 
 buildscript {
@@ -33,7 +33,7 @@ buildscript {
 
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.4.20"
+        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.4.20'
     }
 }
 
@@ -121,31 +121,13 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
 }
 
-// Bintray
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_API_KEY')
-
-    configurations = ['archives']
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-        desc = libraryDescription
-        publish = true
-        publicDownloadNumbers = true
-        version {
-            desc = libraryDescription
-        }
-    }
-}
-
 // Use the sources jar when publishing
 task androidSourcesJar(type: Jar) {
     archiveClassifier.set("sources")
     from android.sourceSets.main.java.srcDirs
 }
 
-// Publish to GitHub Packages via ./gradlew publish
+// Publish to GitHub Packages via ./gradlew clean build publish
 afterEvaluate {
     publishing {
         publications {
@@ -164,14 +146,33 @@ afterEvaluate {
         }
         repositories {
             maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/hotwired/turbo-android")
+                name = 'GitHubPackages'
+                url = uri('https://maven.pkg.github.com/hotwired/turbo-android')
 
                 credentials {
                     username = System.getenv('GITHUB_USER')
                     password = System.getenv('GITHUB_ACCESS_TOKEN')
                 }
             }
+        }
+    }
+}
+
+// Publish to Bintray via ./gradlew clean build bintrayUpload
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+    publications = ['release']
+    publish = true
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        vcsUrl = gitUrl
+        version {
+            name = libVersionName
+            desc = libraryName
+            released = new Date()
         }
     }
 }
