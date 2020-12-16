@@ -24,10 +24,6 @@
         <item name="cornerSize">20dp</item>
     </style>
 
-    <style name="ShapeAppearance.MyTheme.SmallComponent.LargeButton">
-        <item name="cornerSize">30dp</item>
-    </style>
-
     <!--Shape Appearance for medium components like cards, alert dialogs-->
     <style name="ShapeAppearance.MyTheme.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerFamily">rounded</item>
