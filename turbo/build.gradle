@@ -7,7 +7,7 @@ apply plugin: 'org.jetbrains.dokka'
 
 ext {
     // Update when releasing a new library version
-    libVersionName = '7.0.0-alpha03'
+    libVersionName = '7.0.0-alpha04'
 
     libraryName = 'Turbo Android'
     libraryDescription = 'Turbo for Android'
@@ -145,7 +145,7 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-// Publish to GitHub Packages
+// Publish to GitHub Packages via ./gradlew publish
 afterEvaluate {
     publishing {
         publications {
