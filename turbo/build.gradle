@@ -176,31 +176,6 @@ afterEvaluate {
     }
 }
 
-// configure only html format e.g.
-tasks.dokkaHtml.configure {
-    dokkaSourceSets {
-        named("main") {
-            includeNonPublic = false
-            skipEmptyPackages = true
-            skipDeprecated = true
-            reportUndocumented = true
-            jdkVersion = 8
-        }
-    }
-}
-
-tasks.dokkaGfm.configure {
-    dokkaSourceSets {
-        named("main") {
-            includeNonPublic = false
-            skipEmptyPackages = true
-            skipDeprecated = true
-            reportUndocumented = true
-            jdkVersion = 8
-        }
-    }
-}
-
 tasks.dokkaJavadoc.configure {
     dokkaSourceSets {
         named("main") {
