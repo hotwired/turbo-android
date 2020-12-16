@@ -2,12 +2,30 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'org.jetbrains.dokka'
 
-// Update when releasing a new library version
-ext.libVersionCode = 3
-ext.libVersionName = '7.0.0-alpha03'
+ext {
+    // Update when releasing a new library version
+    libVersionName = '7.0.0-alpha03'
+
+    libraryName = 'Turbo Android'
+    libraryDescription = 'Turbo for Android'
+
+    bintrayRepo = 'maven'
+    bintrayName = 'turbo'
+
+    publishedGroupId = 'dev.hotwire'
+    publishedArtifactId = 'turbo'
+
+    siteUrl = 'https://github.com/hotwired/turbo-android'
+    gitUrl = 'https://github.com/hotwired/turbo-android.git'
+
+    developerId = 'basecamp'
+    developerName = 'Basecamp'
+    developerEmail = 'support@basecamp.com'
+}
 
 buildscript {
     repositories {
@@ -34,7 +52,6 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode libVersionCode
         versionName libVersionName
 
         // Define ProGuard rules for this android library project. These rules will be applied when
@@ -106,74 +123,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
 }
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'turbo'
-
-    publishedGroupId = 'dev.hotwire'
-    publishedArtifactId = 'turbo'
-
-    libraryName = 'Turbo Android'
-    libraryDescription = 'Turbo for Android'
-    libraryVersion = "$libVersionName"
-
-    siteUrl = 'https://github.com/hotwired/turbo-android'
-    gitUrl = 'https://github.com/hotwired/turbo-android.git'
-
-    developerId = 'basecamp'
-    developerName = 'Basecamp'
-    developerEmail = 'support@basecamp.com'
-}
-
-// Maven
-group = publishedGroupId
-version = libraryVersion
-
-//install {
-//    repositories.mavenInstaller {
-//        // This generates POM.xml with proper parameters
-//        pom {
-//            project {
-//                packaging 'aar'
-//                groupId publishedGroupId
-//                artifactId publishedArtifactId
-//
-//                // Add your description here
-//                name libraryName
-//                description libraryDescription
-//
-//                developers {
-//                    developer {
-//                        id developerId
-//                        name developerName
-//                        email developerEmail
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-//artifacts {
-//    archives javadocJar
-//    archives sourcesJar
-//}
-
 // Bintray
 bintray {
     user = System.getenv('BINTRAY_USER')
@@ -205,17 +154,38 @@ dependencyUpdates.resolutionStrategy = {
     }
 }
 
-apply plugin: 'maven'
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from android.sourceSets.main.java.srcDirs
+}
 
-// Build local artifacts to /artifacts
-uploadArchives {
-    repositories.mavenDeployer {
-        def deployPath = file("artifacts")
-        repository(url: "file://${deployPath.absolutePath}")
-        pom.project {
-            groupId publishedGroupId
-            artifactId publishedArtifactId
-            version libVersionName
+// Publish to GitHub Packages
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                // Applies the component for the release build variant
+                from components.release
+
+                // Add sources as separate jar
+                artifact androidSourcesJar
+
+                // Publication attributes
+                groupId = publishedGroupId
+                artifactId = publishedArtifactId
+                version = libVersionName
+            }
+        }
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/hotwired/turbo-android")
+
+                credentials {
+                    username = System.getenv('GITHUB_USER')
+                    password = System.getenv('GITHUB_ACCESS_TOKEN')
+                }
+            }
         }
     }
 }
