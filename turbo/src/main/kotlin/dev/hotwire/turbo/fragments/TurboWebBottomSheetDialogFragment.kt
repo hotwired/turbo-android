@@ -22,11 +22,11 @@ import dev.hotwire.turbo.views.TurboWebView
 @Suppress("unused")
 abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragment(),
     TurboWebFragmentCallback {
-    private lateinit var delegate: TurboWebFragmentDelegate
+    private lateinit var webDelegate: TurboWebFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        delegate = TurboWebFragmentDelegate(this, this)
+        webDelegate = TurboWebFragmentDelegate(delegate, this, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -35,21 +35,21 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        delegate.onActivityCreated()
+        webDelegate.onActivityCreated()
     }
 
     override fun onStart() {
         super.onStart()
-        delegate.onStart()
+        webDelegate.onStart()
     }
 
     override fun onCancel(dialog: DialogInterface) {
-        delegate.onDialogCancel()
+        webDelegate.onDialogCancel()
         super.onCancel(dialog)
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        delegate.onDialogDismiss()
+        webDelegate.onDialogDismiss()
         super.onDismiss(dialog)
     }
 
@@ -92,7 +92,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     override fun onVisitCompleted(location: String, completedOffline: Boolean) {}
 
     override fun onVisitErrorReceived(location: String, errorCode: Int) {
-        delegate.showErrorView(errorCode)
+        webDelegate.showErrorView(errorCode)
     }
 
     override fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, errorCode: Int) {

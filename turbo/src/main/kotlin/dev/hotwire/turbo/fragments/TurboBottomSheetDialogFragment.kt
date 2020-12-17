@@ -18,7 +18,7 @@ import dev.hotwire.turbo.config.title
  */
 abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
     TurboNavDestination {
-    private lateinit var delegate: TurboFragmentDelegate
+    internal lateinit var delegate: TurboFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

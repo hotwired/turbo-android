@@ -20,11 +20,11 @@ import dev.hotwire.turbo.views.TurboWebView
  * @constructor Create empty Turbo web fragment
  */
 abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
-    private lateinit var delegate: TurboWebFragmentDelegate
+    private lateinit var webDelegate: TurboWebFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        delegate = TurboWebFragmentDelegate(this, this)
+        webDelegate = TurboWebFragmentDelegate(delegate, this, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -33,14 +33,14 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        delegate.onActivityCreated()
+        webDelegate.onActivityCreated()
     }
 
     override fun onStart() {
         super.onStart()
 
-        if (!sessionViewModel.modalResultExists) {
-            delegate.onStart()
+        if (!delegate.sessionViewModel.modalResultExists) {
+            webDelegate.onStart()
         }
     }
 
@@ -51,7 +51,7 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
      */
     override fun onStartAfterModalResult(result: TurboSessionModalResult) {
         super.onStartAfterModalResult(result)
-        delegate.onStartAfterModalResult(result)
+        webDelegate.onStartAfterModalResult(result)
     }
 
     /**
@@ -62,8 +62,8 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     override fun onStartAfterDialogCancel() {
         super.onStartAfterDialogCancel()
 
-        if (!sessionViewModel.modalResultExists) {
-            delegate.onStartAfterDialogCancel()
+        if (!delegate.sessionViewModel.modalResultExists) {
+            webDelegate.onStartAfterDialogCancel()
         }
     }
 
@@ -106,7 +106,7 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     override fun onVisitCompleted(location: String, completedOffline: Boolean) {}
 
     override fun onVisitErrorReceived(location: String, errorCode: Int) {
-        delegate.showErrorView(errorCode)
+        webDelegate.showErrorView(errorCode)
     }
 
     override fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, errorCode: Int) {

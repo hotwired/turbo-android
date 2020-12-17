@@ -12,7 +12,7 @@ import dev.hotwire.turbo.visit.TurboVisitOptions
  *
  * @constructor
  */
-class TurboSessionViewModel : ViewModel() {
+internal class TurboSessionViewModel : ViewModel() {
     /**
      * Represents visit options for the current visit. Typically consumed by a delegate to execute
      * a navigation action. Can only be consumed once.

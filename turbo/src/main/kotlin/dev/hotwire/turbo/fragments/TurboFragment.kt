@@ -21,7 +21,7 @@ import dev.hotwire.turbo.session.TurboSessionModalResult
  * @constructor Create empty Turbo fragment
  */
 abstract class TurboFragment : Fragment(), TurboNavDestination {
-    private lateinit var delegate: TurboFragmentDelegate
+    internal lateinit var delegate: TurboFragmentDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +49,7 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
     override fun onStart() {
         super.onStart()
 
-        if (!sessionViewModel.modalResultExists) {
+        if (!delegate.sessionViewModel.modalResultExists) {
             delegate.onStart()
         }
     }
@@ -74,7 +74,7 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
      *
      */
     open fun onStartAfterDialogCancel() {
-        if (!sessionViewModel.modalResultExists) {
+        if (!delegate.sessionViewModel.modalResultExists) {
             delegate.onStartAfterDialogCancel()
         }
     }

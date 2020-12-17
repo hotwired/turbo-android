@@ -28,6 +28,7 @@ import kotlin.random.Random
  * @constructor Create empty Turbo web fragment delegate
  */
 internal class TurboWebFragmentDelegate(
+    private val delegate: TurboFragmentDelegate,
     private val navDestination: TurboNavDestination,
     private val callback: TurboWebFragmentCallback
 ) : TurboSessionCallback {
@@ -221,7 +222,8 @@ internal class TurboWebFragmentDelegate(
     // -----------------------------------------------------------------------
 
     private fun currentVisitOptions(): TurboVisitOptions {
-        return navDestination.sessionViewModel.visitOptions?.getContentIfNotHandled() ?: TurboVisitOptions()
+        val visitOptions = delegate.sessionViewModel.visitOptions
+        return visitOptions?.getContentIfNotHandled() ?: TurboVisitOptions()
     }
 
     private fun initNavigationVisit() {

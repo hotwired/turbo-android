@@ -167,7 +167,7 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
     private fun sendModalResult(rule: TurboNavRule) {
         // Save the modal result with VisitOptions so it can be retrieved
         // by the previous destination when the backstack is popped.
-        navDestination.sessionViewModel.sendModalResult(
+        navDestination.delegate().sessionViewModel.sendModalResult(
             checkNotNull(rule.newModalResult)
         )
     }
@@ -195,7 +195,7 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
         // Save the VisitOptions so it can be retrieved by the next
         // destination. When response.responseHTML is present it is
         // too large to save directly within the args bundle.
-        navDestination.sessionViewModel.saveVisitOptions(rule.newVisitOptions)
+        navDestination.delegate().sessionViewModel.saveVisitOptions(rule.newVisitOptions)
 
         rule.newDestination?.let {
             logEvent(

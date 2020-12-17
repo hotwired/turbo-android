@@ -65,12 +65,6 @@ interface TurboNavDestination {
         get() = sessionNavHostFragment.session
 
     /**
-     * Provides access to the TurboSessionViewModel associated with this destination.
-     */
-    val sessionViewModel: TurboSessionViewModel
-        get() = delegate().sessionViewModel
-
-    /**
      * Provides access to the TurboFragmentViewModel associated with this destination.
      */
     val fragmentViewModel: TurboFragmentViewModel
