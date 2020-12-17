@@ -11,10 +11,9 @@ import dev.hotwire.turbo.session.TurboSessionViewModel
 import dev.hotwire.turbo.util.logEvent
 
 /**
- * Provides all the hooks for a fragment to communicate with Turbo (and vice versa).
- *
- * @property navDestination The destination to bind to this delegate instance.
- * @constructor Create empty Turbo fragment delegate
+ * Provides all the hooks for a Fragment to delegate its lifecycle events
+ * to this class. Note: This class should not need to be used directly
+ * from within your app.
  */
 class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
     private val fragment = navDestination.fragment
@@ -27,9 +26,8 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
     internal lateinit var navigator: TurboNavigator
 
     /**
-     * Should be called by the implementing Fragment during [androidx.fragment.app.Fragment.onActivityCreated].
-     * Executes initial Turbo setup, including instantiating a [TurboNavigator] and setting up toolbar clicks.
-     *
+     * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onActivityCreated].
      */
     fun onActivityCreated() {
         navigator = TurboNavigator(navDestination)
@@ -39,18 +37,16 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
     }
 
     /**
-     * Should be called by the implementing Fragment during [androidx.fragment.app.Fragment.onStart].
-     * Currently doesn't do anything.
-     *
+     * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onStart].
      */
     fun onStart() {
         logEvent("fragment.onStart", "location" to location)
     }
 
     /**
-     * Should be called by the implementing Fragment during [androidx.fragment.app.Fragment.onStart].
-     * Currently doesn't do anything.
-     *
+     * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onStop].
      */
     fun onStop() {
         logEvent("fragment.onStop", "location" to location)
@@ -58,8 +54,7 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
 
     /**
      * Provides a hook to Turbo when the fragment has been started again after a dialog has
-     * been dismissed/canceled and no result is passed back. Currently doesn't do anything.
-     *
+     * been dismissed/canceled and no result is passed back.
      */
     fun onStartAfterDialogCancel() {
         logEvent("fragment.onStartAfterDialogCancel", "location" to location)
@@ -68,8 +63,6 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
     /**
      * Provides a hook to Turbo when a fragment has been started again after receiving a
      * modal result. Will navigate if the result indicates it should.
-     *
-     * @param result
      */
     fun onStartAfterModalResult(result: TurboSessionModalResult) {
         logEvent("fragment.onStartAfterModalResult", "location" to result.location, "options" to result.options)
@@ -81,7 +74,6 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
     /**
      * Provides a hook to Turbo when the dialog has been canceled. If there is a modal
      * result, an event will be created in [TurboSessionViewModel] that can be observed.
-     *
      */
     fun onDialogCancel() {
         logEvent("fragment.onDialogCancel", "location" to location)
@@ -90,6 +82,9 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
         }
     }
 
+    /**
+     * Provides a hook to Turbo when the dialog has been dismissed.
+     */
     fun onDialogDismiss() {
         logEvent("fragment.onDialogDismiss", "location" to location)
     }

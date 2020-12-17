@@ -21,11 +21,8 @@ import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 /**
- * Provides all the hooks for a web fragment to communicate with Turbo (and vice versa).
- *
- * @property navDestination
- * @property callback
- * @constructor Create empty Turbo web fragment delegate
+ * Provides all the hooks for a web Fragment to delegate its lifecycle events
+ * to this class.
  */
 internal class TurboWebFragmentDelegate(
     private val delegate: TurboFragmentDelegate,
@@ -48,15 +45,14 @@ internal class TurboWebFragmentDelegate(
         get() = callback.turboView
 
     /**
-     * Convenience accessor to the Turbo session's WebView.
+     * Get the session's WebView instance
      */
     val webView: TurboWebView
         get() = session().webView
 
     /**
-     * Should be called by the implementing Fragment during [androidx.fragment.app.Fragment.onActivityCreated].
-     * Does a variety of WebView checks and state clean up before any navigation takes place.
-     *
+     * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onActivityCreated].
      */
     fun onActivityCreated() {
         if (session().isRenderProcessGone) {
@@ -71,9 +67,8 @@ internal class TurboWebFragmentDelegate(
     }
 
     /**
-     * Should be called by the implementing Fragment during [androidx.fragment.app.Fragment.onStart].
-     * Initializes all necessary views and executes the Turbo visit.
-     *
+     * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onStart].
      */
     fun onStart() {
         initNavigationVisit()
@@ -82,8 +77,6 @@ internal class TurboWebFragmentDelegate(
     /**
      * Provides a hook to Turbo when a fragment has been started again after receiving a
      * modal result. Will navigate if the result indicates it should.
-     *
-     * @param result
      */
     fun onStartAfterModalResult(result: TurboSessionModalResult) {
         if (!result.shouldNavigate) {
@@ -95,7 +88,6 @@ internal class TurboWebFragmentDelegate(
      * Provides a hook to Turbo when the fragment has been started again after a dialog has
      * been dismissed/canceled and no result is passed back. Initializes all necessary views and
      * executes the Turbo visit.
-     *
      */
     fun onStartAfterDialogCancel() {
         initNavigationVisit()
@@ -103,9 +95,7 @@ internal class TurboWebFragmentDelegate(
 
     /**
      * Provides a hook to Turbo when the dialog has been canceled. Detaches the WebView
-     * so that [onStartAfterDialogCancel] or [onStartAfterModalResult] can reattach it and execute
-     * a Turbo visit.
-     *
+     * before navigation.
      */
     fun onDialogCancel() {
         detachWebView()
@@ -113,9 +103,7 @@ internal class TurboWebFragmentDelegate(
 
     /**
      * Provides a hook to Turbo when the dialog has been dismissed. Detaches the WebView
-     * if it's still attached so that [onStartAfterDialogCancel] or [onStartAfterModalResult] can
-     * reattach it and execute a Turbo visit.
-     *
+     * before navigation.
      */
     fun onDialogDismiss() {
         // The WebView is already detached in most circumstances, but sometimes
@@ -127,17 +115,13 @@ internal class TurboWebFragmentDelegate(
 
     /**
      * Retrieves the Turbo session from the destination.
-     *
-     * @return
      */
     fun session(): TurboSession {
         return navDestination.session
     }
 
     /**
-     * Adds and shows the error view that's implemented via [TurboWebFragmentCallback.createErrorView].
-     *
-     * @param code
+     * Displays the error view that's implemented via [TurboWebFragmentCallback.createErrorView].
      */
     fun showErrorView(code: Int) {
         val errorView = callback.createErrorView(code)

@@ -94,8 +94,8 @@ class TurboActivityDelegate(
      * will be determined using the path configuration rules.
      *
      * @param location The location to navigate to.
-     * @param options Visit options to apply to the visit (optional)
-     * @param bundle Bundled arguments to pass to the destination (optional.
+     * @param options Visit options to apply to the visit. (optional)
+     * @param bundle Bundled arguments to pass to the destination. (optional)
      */
     fun navigate(
         location: String,
