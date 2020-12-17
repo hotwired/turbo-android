@@ -50,7 +50,7 @@ internal class TurboWebFragmentDelegate(
     /**
      * Convenience accessor to the Turbo session's WebView.
      */
-    val webView: TurboWebView?
+    val webView: TurboWebView
         get() = session().webView
 
     /**
@@ -251,11 +251,11 @@ internal class TurboWebFragmentDelegate(
             return
         }
 
-        view.attachWebView(requireNotNull(webView)) { attachedToNewDestination ->
+        view.attachWebView(webView) { attachedToNewDestination ->
             onReady(attachedToNewDestination)
 
             if (attachedToNewDestination) {
-                callback.onWebViewAttached(requireNotNull(webView))
+                callback.onWebViewAttached(webView)
             }
         }
     }
@@ -267,7 +267,7 @@ internal class TurboWebFragmentDelegate(
      * new view hierarchy, it needs to already be detached from the previous screen.
      */
     private fun detachWebView(onReady: () -> Unit = {}) {
-        val webView = webView ?: return
+        val webView = webView
         screenshotView()
 
         turboView?.detachWebView(webView) {
@@ -291,12 +291,12 @@ internal class TurboWebFragmentDelegate(
     }
 
     private fun webViewIsAttached(): Boolean {
-        val webView = webView ?: return false
+        val webView = webView
         return turboView?.webViewIsAttached(webView) ?: false
     }
 
     private fun title(): String {
-        return webView?.title ?: ""
+        return webView.title ?: ""
     }
 
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean, reload: Boolean) {
