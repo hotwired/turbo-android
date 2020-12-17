@@ -14,10 +14,10 @@ import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 
 /**
- * The base class from which all bottom sheet web fragments in a Turbo driven app
- * should extend from.
+ * The base class from which all bottom sheet web fragments in a
+ * Turbo-driven app should extend from.
  *
- * @constructor Create empty Turbo web bottom sheet dialog fragment
+ * For native bottom sheet fragments, refer to [TurboBottomSheetDialogFragment].
  */
 @Suppress("unused")
 abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragment(),
@@ -53,17 +53,15 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
         super.onDismiss(dialog)
     }
 
-    /**
-     * Implementing classes can execute state cleanup by overriding this. Will always be called
-     * before any navigation action takes place.
-     *
-     */
-    override fun onBeforeNavigation() {}
-
     // ----------------------------------------------------------------------------
     // TurboWebFragmentCallback interface
     // ----------------------------------------------------------------------------
-    override val turboView: TurboView?
+
+    /**
+     * Gets the TurboView instance in the Fragment's view
+     * with resource ID R.id.turbo_view.
+     */
+    final override val turboView: TurboView?
         get() = view?.findViewById(R.id.turbo_view)
 
     @SuppressLint("InflateParams")

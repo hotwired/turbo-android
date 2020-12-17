@@ -11,10 +11,10 @@ import dev.hotwire.turbo.R
 import dev.hotwire.turbo.config.title
 
 /**
- * The base class from which all bottom sheet native fragments in a Turbo driven app
- * should extend from.
+ * The base class from which all bottom sheet native fragments in a
+ * Turbo-driven app should extend from.
  *
- * @constructor Create empty Turbo bottom sheet dialog fragment
+ * For web bottom sheet fragments, refer to [TurboWebBottomSheetDialogFragment].
  */
 abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
     TurboNavDestination {
@@ -56,28 +56,25 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
         super.onCancel(dialog)
     }
 
-    override fun toolbarForNavigation(): Toolbar? {
-        return view?.findViewById(R.id.toolbar)
-    }
-
     override fun onDismiss(dialog: DialogInterface) {
         delegate.onDialogDismiss()
         super.onDismiss(dialog)
     }
 
-    /**
-     * Implementing classes can execute state cleanup by overriding this. Will always be called
-     * before any navigation action takes place.
-     *
-     */
     override fun onBeforeNavigation() {}
 
     /**
-     * Returns the delegate instantiated in [onCreate].
-     *
-     * @return
+     * Gets the Toolbar instance in your Fragment's view for use with
+     * navigation. The title in the Toolbar will automatically be
+     * updated if a title is available. By default, Turbo will look
+     * for a Toolbar with resource ID `R.id.toolbar`. Override to
+     * provide a Toolbar instance with a different ID.
      */
-    override fun delegate(): TurboFragmentDelegate {
+    override fun toolbarForNavigation(): Toolbar? {
+        return view?.findViewById(R.id.toolbar)
+    }
+
+    final override fun delegate(): TurboFragmentDelegate {
         return delegate
     }
 

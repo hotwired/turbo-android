@@ -14,10 +14,10 @@ import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 
 /**
- * The base class from which all web "standard" fragments (non-dialogs) in a Turbo driven app
- * should extend from.
+ * The base class from which all web "standard" fragments (non-dialogs) in a
+ * Turbo-driven app should extend from.
  *
- * @constructor Create empty Turbo web fragment
+ * For native fragments, refer to [TurboFragment].
  */
 abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     private lateinit var webDelegate: TurboWebFragmentDelegate
@@ -45,9 +45,8 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     }
 
     /**
-     * Passes this call through to [TurboWebFragmentDelegate.onStartAfterModalResult]
-     *
-     * @param result
+     * Called when the Fragment has been started again after receiving a
+     * modal result. Will navigate if the result indicates it should.
      */
     override fun onStartAfterModalResult(result: TurboSessionModalResult) {
         super.onStartAfterModalResult(result)
@@ -55,9 +54,8 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     }
 
     /**
-     * Passes this call through to [TurboWebFragmentDelegate.onStartAfterDialogCancel] if there
-     * is no modal result to process.
-     *
+     * Called when the Fragment has been started again after a dialog has
+     * been dismissed/canceled and no result is passed back.
      */
     override fun onStartAfterDialogCancel() {
         super.onStartAfterDialogCancel()
@@ -67,17 +65,15 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
         }
     }
 
-    /**
-     * Implementing classes can execute state cleanup by overriding this. Will always be called
-     * before any navigation action takes place.
-     *
-     */
-    override fun onBeforeNavigation() {}
-
     // ----------------------------------------------------------------------------
     // TurboWebFragmentCallback interface
     // ----------------------------------------------------------------------------
-    override val turboView: TurboView?
+
+    /**
+     * Gets the TurboView instance in the Fragment's view
+     * with resource ID R.id.turbo_view.
+     */
+    final override val turboView: TurboView?
         get() = view?.findViewById(R.id.turbo_view)
 
     @SuppressLint("InflateParams")

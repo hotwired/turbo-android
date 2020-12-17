@@ -71,16 +71,12 @@ interface TurboNavDestination {
         get() = delegate().fragmentViewModel
 
     /**
-     * Returns the fragment delegate provided by the implementing class.
-     *
-     * @return
+     * Gets the delegate instance that handles the Fragment's lifecycle events.
      */
     fun delegate(): TurboFragmentDelegate
 
     /**
      * Returns the [Toolbar] used for navigation by the given view.
-     *
-     * @return
      */
     fun toolbarForNavigation(): Toolbar?
 
@@ -94,8 +90,8 @@ interface TurboNavDestination {
     }
 
     /**
-     * Any actions that should be consistently executed before navigating (e.g., any state clean up).
-     *
+     * Called before any navigation action takes places. This is a useful place
+     * for state cleanup in your Fragment if necessary.
      */
     fun onBeforeNavigation()
 

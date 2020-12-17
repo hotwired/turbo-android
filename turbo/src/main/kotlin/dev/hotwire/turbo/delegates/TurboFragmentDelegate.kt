@@ -53,7 +53,7 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
     }
 
     /**
-     * Provides a hook to Turbo when the fragment has been started again after a dialog has
+     * Provides a hook to Turbo when the Fragment has been started again after a dialog has
      * been dismissed/canceled and no result is passed back.
      */
     fun onStartAfterDialogCancel() {
@@ -61,7 +61,7 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
     }
 
     /**
-     * Provides a hook to Turbo when a fragment has been started again after receiving a
+     * Provides a hook to Turbo when a Fragment has been started again after receiving a
      * modal result. Will navigate if the result indicates it should.
      */
     fun onStartAfterModalResult(result: TurboSessionModalResult) {
