@@ -2,6 +2,9 @@ package dev.hotwire.turbo.http
 
 import android.webkit.WebResourceResponse
 
+/**
+ * Experimental: API may change, not ready for production use.
+ */
 interface TurboOfflineRequestHandler {
     fun getCacheStrategy(url: String): TurboOfflineCacheStrategy
     fun getCachedResponseHeaders(url: String): Map<String, String>?

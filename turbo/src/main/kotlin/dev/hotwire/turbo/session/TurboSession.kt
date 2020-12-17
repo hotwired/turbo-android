@@ -56,19 +56,21 @@ class TurboSession private constructor(internal val sessionName: String, interna
     // User accessible
 
     /**
-     * Sets/gets the path configuration for this session. Default is an empty configuration.
-     */
-    var pathConfiguration = TurboPathConfiguration(context)
-
-    /**
-     * Sets/gets the [TurboOfflineRequestHandler] for this session. Default is `null`.
+     * Experimental: API may change, not ready for production use.
      */
     var offlineRequestHandler: TurboOfflineRequestHandler? = null
 
     /**
      * Returns whether transitional screenshots are enabled for this session. Default is `true`.
      */
-    val screenshotsEnabled get() = pathConfiguration.settings.screenshotsEnabled
+    val screenshotsEnabled
+        get() = pathConfiguration.settings.screenshotsEnabled
+
+    /**
+     * Gets the path configuration for this session.
+     */
+    var pathConfiguration = TurboPathConfiguration(context)
+        internal set
 
     /**
      * Provides the status of whether Turbo is initialized and ready for use.

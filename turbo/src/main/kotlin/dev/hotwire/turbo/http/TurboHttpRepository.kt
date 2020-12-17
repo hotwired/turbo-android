@@ -3,6 +3,7 @@ package dev.hotwire.turbo.http
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import androidx.annotation.experimental.Experimental
 import dev.hotwire.turbo.util.TurboLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,6 +14,9 @@ import okhttp3.Response
 import java.io.IOException
 import java.io.InputStream
 
+/**
+ * Experimental: API may change, not ready for production use.
+ */
 internal class TurboHttpRepository {
     private val cookieManager = CookieManager.getInstance()
 
