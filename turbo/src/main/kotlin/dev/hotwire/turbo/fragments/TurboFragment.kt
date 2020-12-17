@@ -23,22 +23,11 @@ import dev.hotwire.turbo.session.TurboSessionModalResult
 abstract class TurboFragment : Fragment(), TurboNavDestination {
     private lateinit var delegate: TurboFragmentDelegate
 
-    /**
-     * Instantiates a [TurboFragmentDelegate].
-     *
-     * @param savedInstanceState
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         delegate = TurboFragmentDelegate(this)
     }
 
-    /**
-     * Observes 1) modal results and 2) dialog results.
-     *
-     * @param view
-     * @param savedInstanceState
-     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeModalResult()
@@ -52,21 +41,11 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
         }
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboFragmentDelegate.onActivityCreated].
-     *
-     * @param savedInstanceState
-     */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         delegate.onActivityCreated()
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboFragmentDelegate.onStart] if there is no
-     * modal result to process.
-     *
-     */
     override fun onStart() {
         super.onStart()
 
@@ -75,10 +54,6 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
         }
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboFragmentDelegate.onStop].
-     *
-     */
     override fun onStop() {
         super.onStop()
         delegate.onStop()

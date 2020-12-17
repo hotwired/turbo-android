@@ -24,51 +24,30 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     TurboWebFragmentCallback {
     private lateinit var delegate: TurboWebFragmentDelegate
 
-    /**
-     * Instantiates a [TurboWebFragmentDelegate].
-     *
-     * @param savedInstanceState
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         delegate = TurboWebFragmentDelegate(this, this)
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboWebFragmentDelegate.onActivityCreated].
-     *
-     * @param savedInstanceState
-     */
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.turbo_fragment_web_bottom_sheet, container, false)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         delegate.onActivityCreated()
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboWebFragmentDelegate.onStart] if there is no
-     * modal result to process.
-     *
-     */
     override fun onStart() {
         super.onStart()
         delegate.onStart()
     }
 
-    /**
-     * Passes this call through to [TurboWebFragmentDelegate.onDialogCancel].
-     *
-     * @param dialog
-     */
     override fun onCancel(dialog: DialogInterface) {
         delegate.onDialogCancel()
         super.onCancel(dialog)
     }
 
-    /**
-     * Passes this call through to [TurboWebFragmentDelegate.onDialogDismiss].
-     *
-     * @param dialog
-     */
     override fun onDismiss(dialog: DialogInterface) {
         delegate.onDialogDismiss()
         super.onDismiss(dialog)
@@ -86,10 +65,6 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     // ----------------------------------------------------------------------------
     override val turboView: TurboView?
         get() = view?.findViewById(R.id.turbo_view)
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.turbo_fragment_web_bottom_sheet, container, false)
-    }
 
     @SuppressLint("InflateParams")
     override fun createProgressView(location: String): View {

@@ -22,31 +22,20 @@ import dev.hotwire.turbo.views.TurboWebView
 abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     private lateinit var delegate: TurboWebFragmentDelegate
 
-    /**
-     * Instantiates a [TurboWebFragmentDelegate].
-     *
-     * @param savedInstanceState
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         delegate = TurboWebFragmentDelegate(this, this)
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboWebFragmentDelegate.onActivityCreated].
-     *
-     * @param savedInstanceState
-     */
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.turbo_fragment_web, container, false)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         delegate.onActivityCreated()
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboWebFragmentDelegate.onStart] if there is no
-     * modal result to process.
-     *
-     */
     override fun onStart() {
         super.onStart()
 
@@ -83,19 +72,13 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
      * before any navigation action takes place.
      *
      */
-    override fun onBeforeNavigation() {
-        // Allow subclasses to do state cleanup
-    }
+    override fun onBeforeNavigation() {}
 
     // ----------------------------------------------------------------------------
     // TurboWebFragmentCallback interface
     // ----------------------------------------------------------------------------
     override val turboView: TurboView?
         get() = view?.findViewById(R.id.turbo_view)
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.turbo_fragment_web, container, false)
-    }
 
     @SuppressLint("InflateParams")
     override fun createProgressView(location: String): View {
