@@ -42,7 +42,11 @@ import java.util.*
  * @constructor Create empty Turbo session
  */
 @Suppress("unused")
-class TurboSession private constructor(internal val sessionName: String, internal val activity: Activity, val webView: TurboWebView) {
+class TurboSession internal constructor(
+    internal val sessionName: String,
+    private val activity: Activity,
+    val webView: TurboWebView
+) {
     internal var currentVisit: TurboVisit? = null
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
@@ -681,17 +685,6 @@ class TurboSession private constructor(internal val sessionName: String, interna
 
         private fun String.identifier(): String {
             return hashCode().toString()
-        }
-    }
-
-    /**
-     * Create a new [TurboSession].
-     *
-     * @constructor
-     */
-    companion object {
-        fun getNew(sessionName: String, activity: Activity, webView: TurboWebView): TurboSession {
-            return TurboSession(sessionName, activity, webView)
         }
     }
 }
