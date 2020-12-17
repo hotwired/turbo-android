@@ -13,14 +13,6 @@ import okhttp3.Response
 import java.io.IOException
 import java.io.InputStream
 
-interface TurboOfflineRequestHandler {
-    fun getCacheStrategy(url: String): TurboOfflineCacheStrategy
-    fun getCachedResponseHeaders(url: String): Map<String, String>?
-    fun getCachedResponse(url: String, allowStaleResponse: Boolean = false): WebResourceResponse?
-    fun getCachedSnapshot(url: String): WebResourceResponse?
-    fun cacheResponse(url: String, response: WebResourceResponse): WebResourceResponse?
-}
-
 internal class TurboHttpRepository {
     private val cookieManager = CookieManager.getInstance()
 
