@@ -27,7 +27,7 @@ import kotlin.random.Random
  * @property callback
  * @constructor Create empty Turbo web fragment delegate
  */
-class TurboWebFragmentDelegate(
+internal class TurboWebFragmentDelegate(
     private val navDestination: TurboNavDestination,
     private val callback: TurboWebFragmentCallback
 ) : TurboSessionCallback {
