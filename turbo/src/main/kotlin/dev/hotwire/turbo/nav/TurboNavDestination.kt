@@ -17,55 +17,53 @@ import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.fragments.TurboFragmentViewModel
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
-import dev.hotwire.turbo.session.TurboSessionViewModel
+import dev.hotwire.turbo.delegates.TurboNestedFragmentDelegate
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
 /**
- * The primary interface that a navigable Fragment must implement to provide the library with
+ * The primary interface that a navigable Fragment implements to provide the library with
  * the information it needs to properly navigate.
- *
- * @constructor Create empty Turbo nav destination
  */
 interface TurboNavDestination {
     /**
-     * Convenience property that casts the this destination as a Fragment.
+     * Gets the fragment instance for this destination.
      */
     val fragment: Fragment
         get() = this as Fragment
 
     /**
-     * Provides access to the Turbo Session nav host fragment associated with this destination.
+     * Gets the Turbo session's nav host fragment associated with this destination.
      */
     val sessionNavHostFragment: TurboSessionNavHostFragment
         get() = fragment.parentFragment as TurboSessionNavHostFragment
 
     /**
-     * Provides access to the location stored in the Fragment's arguments.
+     * Gets the location for this destination.
      */
     val location: String
         get() = requireNotNull(fragment.arguments?.location)
 
     /**
-     * Provides access to the previous back stack entry's location from the nav controller.
+     * Gets the previous back stack entry's location from the nav controller.
      */
     val previousLocation: String?
         get() = navController()?.previousBackStackEntry?.arguments?.location
 
     /**
-     * Provides access to the path configuration properties for the location associated with this
+     * Gets the path configuration properties for the location associated with this
      * destination.
      */
     val pathProperties: TurboPathConfigurationProperties
         get() = pathConfiguration.properties(location)
 
     /**
-     * Provides access to the TurboSession associated with this destination.
+     * Gets the [TurboSession] associated with this destination.
      */
     val session: TurboSession
         get() = sessionNavHostFragment.session
 
     /**
-     * Provides access to the TurboFragmentViewModel associated with this destination.
+     * Gets the [TurboFragmentViewModel] associated with this destination.
      */
     val fragmentViewModel: TurboFragmentViewModel
         get() = delegate().fragmentViewModel
@@ -96,34 +94,32 @@ interface TurboNavDestination {
     fun onBeforeNavigation()
 
     /**
-     * Provides access to the [TurboSessionNavHostFragment] used by this destination's session.
-     *
-     * @param newLocation The destination's new location.
-     * @return
+     * Gets the nav host fragment that will be used for navigating to `newLocation`. You should
+     * not have to override this, unless you're using a [TurboNestedFragmentDelegate] to provide
+     * sub-navigation within your current Fragment destination and would like custom behavior.
      */
     fun navHostForNavigation(newLocation: String): TurboSessionNavHostFragment {
         return sessionNavHostFragment
     }
 
     /**
-     * Implementing fragments can determine their own rules for when navigation should or shouldn't
-     * execute (e.g., certains paths like mailto:'s may not be appropriate to send through the
-     * normal navigation flow).
-     *
-     * @param newLocation
-     * @return
+     * Gets whether the new location should be navigated to from the current destination. Override
+     * to provide your own custom rules based on the location's domain, protocol, path, or any other
+     * factors. (e.g. external domain urls or mailto: links should not be sent through the normal
+     * Turbo navigation flow).
      */
     fun shouldNavigateTo(newLocation: String): Boolean {
         return true
     }
 
     /**
-     * Executes the navigation via the [TurboNavigator].
+     * Navigates to the specified location. The resulting destination and its presentation
+     * will be determined using the path configuration rules.
      *
      * @param location The location to navigate to.
-     * @param options The visit options to use to process the navigation.
-     * @param bundle Any bundle arguments to pass along to the Android navigation components.
-     * @param extras Any extras to pass along to the Android navigation components.
+     * @param options Visit options to apply to the visit. (optional)
+     * @param bundle Bundled arguments to pass to the destination. (optional)
+     * @param extras Extras that can be passed to enable Fragment specific behavior. (optional)
      */
     fun navigate(
         location: String,
@@ -135,12 +131,9 @@ interface TurboNavDestination {
     }
 
     /**
-     * Provides a default set of navigation options (basic enter/exit animations) for the Android
-     * Navigation components to use to execute a navigation event.
-     *
-     * @param newLocation
-     * @param newPathProperties
-     * @return
+     * Gets the default set of navigation options (basic enter/exit animations) for the Android
+     * Navigation components to use to execute a navigation event. This can be overridden if
+     * you'd like to provide your own.
      */
     fun getNavigationOptions(
         newLocation: String,
@@ -157,35 +150,30 @@ interface TurboNavDestination {
     }
 
     /**
-     * Tells the [TurboNavigator] to navigate up.
-     *
+     * Navigates up to the previous destination. See [NavController.navigateUp] for
+     * more details.
      */
     fun navigateUp() {
         navigator.navigateUp()
     }
 
     /**
-     * Tells the [TurboNavigator] to navigate back.
-     *
+     * Navigates back to the previous destination. See [NavController.popBackStack] for
+     * more details.
      */
     fun navigateBack() {
         navigator.navigateBack()
     }
 
     /**
-     * Tells the [TurboNavigator] to clear the back stack. Will not clear if already at the
-     * start destination for the nav host.
-     *
+     * Clears the navigation back stack to the start destination.
      */
     fun clearBackStack(onCleared: () -> Unit = {}) {
         navigator.clearBackStack(onCleared)
     }
 
     /**
-     * Finds the nav host fragment with the given ID.
-     *
-     * @param navHostFragmentId
-     * @return
+     * Finds the nav host fragment with the given resource ID.
      */
     fun findNavHostFragment(@IdRes navHostFragmentId: Int): TurboSessionNavHostFragment {
         return fragment.parentFragment?.childFragmentManager?.findNavHostFragment(navHostFragmentId)
@@ -205,12 +193,9 @@ interface TurboNavDestination {
 
     /**
      * Retrieve the nav controller indirectly from the parent NavHostFragment,
-     * since it's only available when the fragment is attached to its parent
-     *
-     * @return
+     * since it's only available when the fragment is attached to its parent.
      */
     private fun navController(): NavController? {
-
         return fragment.parentFragment?.findNavController()
     }
 

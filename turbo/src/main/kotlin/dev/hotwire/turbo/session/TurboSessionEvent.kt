@@ -5,7 +5,6 @@ package dev.hotwire.turbo.session
  *
  * @param T
  * @property content Content of the event.
- * @constructor Create empty Turbo session event
  */
 internal class TurboSessionEvent<out T>(private val content: T) {
     var hasBeenHandled = false

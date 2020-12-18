@@ -14,15 +14,10 @@ import dev.hotwire.turbo.visit.TurboVisitOptions
 import com.google.gson.GsonBuilder
 
 /**
- * A Turbo specific WebView that configures required settings and exposes some helpful info.
+ * A Turbo-specific WebView that configures required settings and exposes some helpful info.
  *
- * Generally you are not creating this view manually — it will be provided to you via the appropriate
- * delegate.
- *
- * @constructor
- *
- * @param context
- * @param attrs
+ * Generally, you are not creating this view manually — it will be automatically created
+ * and available from the Turbo session.
  */
 @SuppressLint("SetJavaScriptEnabled")
 open class TurboWebView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
@@ -36,19 +31,19 @@ open class TurboWebView @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * Provides the WebView's package name.
+     * Provides the WebView's package name (corresponds to Chrome or Android System WebView).
      */
     val packageName: String?
         get() = WebViewCompat.getCurrentWebViewPackage(context)?.packageName
 
     /**
-     * Provides the WebView's version name.
+     * Provides the WebView's version name (corresponds to Chrome or Android System WebView).
      */
     val versionName: String?
         get() = WebViewCompat.getCurrentWebViewPackage(context)?.versionName
 
     /**
-     * Provides the WebView's major version.
+     * Provides the WebView's major version (corresponds to Chrome or Android System WebView).
      */
     val majorVersion: Int?
         get() = versionName?.substringBefore(".")?.toIntOrNull()
