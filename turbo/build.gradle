@@ -7,7 +7,7 @@ apply plugin: 'org.jetbrains.dokka'
 
 ext {
     // Update when releasing a new library version
-    libVersionName = '7.0.0-alpha04'
+    libVersionName = '7.0.0-alpha05'
 
     libraryName = 'Turbo Native for Android'
     libraryDescription = 'Android framework for making Turbo native apps'
