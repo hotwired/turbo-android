@@ -11,7 +11,6 @@ import dev.hotwire.turbo.visit.TurboVisitOptions
  * @property options Visit options that the modal used.
  * @property bundle Any additional data used by the navigation library.
  * @property shouldNavigate Whether the location should be navigated to based on its presentation property.
- * @constructor Create empty Turbo session modal result
  */
 data class TurboSessionModalResult(
     val location: String,

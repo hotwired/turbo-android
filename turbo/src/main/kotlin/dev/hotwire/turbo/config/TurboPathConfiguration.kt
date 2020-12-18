@@ -8,22 +8,55 @@ import dev.hotwire.turbo.nav.TurboNavPresentationContext
 import com.google.gson.annotations.SerializedName
 import java.net.URL
 
+/**
+ * Provides the ability to load, parse, and retrieve url path
+ * properties from the app's JSON configuration file.
+ */
 class TurboPathConfiguration(context: Context) {
     private val cachedProperties: HashMap<String, TurboPathConfigurationProperties> = hashMapOf()
+
+    internal val loader = TurboPathConfigurationLoader(context.applicationContext)
 
     @SerializedName("rules")
     internal var rules: List<TurboPathConfigurationRule> = emptyList()
 
+    /**
+     * Gets the top-level settings specified in the app's path configuration.
+     * The settings are map of key/value `String` items.
+     */
     @SerializedName("settings")
     var settings: TurboPathConfigurationSettings = TurboPathConfigurationSettings()
+        private set
 
-    internal var loader = TurboPathConfigurationLoader(context.applicationContext)
-
+    /**
+     * Represents the location of the app's path configuration JSON file(s).
+     */
     data class Location(
+        /**
+         * The location of the locally bundled configuration file. Providing a
+         * local configuration file is highly recommended, so your app's
+         * configuration is available immediately at startup. This must be
+         * located in the app's `assets` directory. For example, a configuration
+         * located in `assets/json/configuration.json` would specify the path
+         * without the `assets` prefix: `"json/configuration.json"`.
+         */
         val assetFilePath: String? = null,
+
+        /**
+         * The location of the remote configuration file on your server. This
+         * file must be publicly available via a GET request. The file will be
+         * automatically downloaded and cached at app startup. This location
+         * must be the full url of the JSON file, for example:
+         * `"https://turbo.hotwire.dev/demo/json/configuration.json"`
+         */
         val remoteFileUrl: String? = null
     )
 
+    /**
+     * Loads and parses the specified configuration file(s) from their local
+     * and/or remote locations. You should not need to call this directly
+     * outside of testing.
+     */
     fun load(location: Location) {
         loader.load(location) {
             cachedProperties.clear()
@@ -32,6 +65,15 @@ class TurboPathConfiguration(context: Context) {
         }
     }
 
+    /**
+     * Retrieve the path properties based on the cascading rules in your
+     * path configuration.
+     *
+     * @param location The absolute url to match against the configuration's
+     *  rules. Only the url's relative path will be used to find the matching
+     *  regex rules.
+     * @return The map of key/value `String` properties
+     */
     fun properties(location: String): TurboPathConfigurationProperties {
         cachedProperties[location]?.let { return it }
 

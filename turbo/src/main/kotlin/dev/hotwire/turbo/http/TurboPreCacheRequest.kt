@@ -4,6 +4,9 @@ import android.net.Uri
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 
+/**
+ * Experimental: API may change, not ready for production use.
+ */
 internal class TurboPreCacheRequest(val url: String, val userAgent: String) : WebResourceRequest {
     private val cookieManager = CookieManager.getInstance()
 

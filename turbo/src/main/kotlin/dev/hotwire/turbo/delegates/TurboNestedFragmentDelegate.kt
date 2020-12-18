@@ -3,19 +3,22 @@ package dev.hotwire.turbo.delegates
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
 /**
- * A simplified delegate that can be used when only part of the view is delegated to Turbo
- * instead of the entire view being swapped. Example: a search screen with a search bar at the top
- * that doesn't navigate away, but search results load in a section of the view below the search bar.
+ * A simplified delegate that can be used when a [TurboSessionNavHostFragment] is nested
+ * within a Fragment. This can be useful when you want a portion of the screen to have
+ * sub-navigation destinations within the current Fragment.
  *
- * @property fragment The fragment to bind this delegate to.
- * @constructor
+ * Example: A search screen with a search bar at the top that stays fixed, but search
+ * results load in a section of the view below the search bar.
  *
- * @param navHostFragmentId
+ * @property fragment The Fragment to bind this delegate to.
+ * @param navHostFragmentId The resource ID of the [TurboSessionNavHostFragment]
+ *  instance hosted in your Fragment's layout resource.
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class TurboNestedFragmentDelegate(val fragment: Fragment, navHostFragmentId: Int) {
@@ -26,7 +29,6 @@ class TurboNestedFragmentDelegate(val fragment: Fragment, navHostFragmentId: Int
 
     /**
      * Resets the nav host fragment via [TurboSessionNavHostFragment.reset]
-     *
      */
     fun resetNavHostFragment() {
         navHostFragment.reset()
@@ -34,18 +36,18 @@ class TurboNestedFragmentDelegate(val fragment: Fragment, navHostFragmentId: Int
 
     /**
      * Resets the Turbo session associated with the nav host fragment.
-     *
      */
     fun resetSession() {
         navHostFragment.session.reset()
     }
 
     /**
-     * Navigates to the specified location using the current destination as the starting point.
+     * Navigates to the specified location. The resulting destination and its presentation
+     * will be determined using the path configuration rules.
      *
      * @param location The location to navigate to.
-     * @param options Any options to apply to the visit.
-     * @param bundle Any additional bundled data to pass to the navigation components.
+     * @param options Visit options to apply to the visit. (optional)
+     * @param bundle Bundled arguments to pass to the destination. (optional)
      */
     fun navigate(
         location: String,
@@ -56,24 +58,23 @@ class TurboNestedFragmentDelegate(val fragment: Fragment, navHostFragmentId: Int
     }
 
     /**
-     * Navigates up using the current destination as the starting point.
-     *
+     * Navigates up to the previous destination. See [NavController.navigateUp] for
+     * more details.
      */
     fun navigateUp() {
         currentNavDestination.navigateUp()
     }
 
     /**
-     * Navigates back using the current destination as the starting point.
-     *
+     * Navigates back to the previous destination. See [NavController.popBackStack] for
+     * more details.
      */
     fun navigateBack() {
         currentNavDestination.navigateBack()
     }
 
     /**
-     * Clears the nav back stack.
-     *
+     * Clears the navigation back stack to the start destination.
      */
     fun clearBackStack() {
         currentNavDestination.clearBackStack()

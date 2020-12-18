@@ -3,7 +3,7 @@ package dev.hotwire.turbo.session
 import android.webkit.HttpAuthHandler
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
-interface TurboSessionCallback {
+internal interface TurboSessionCallback {
     fun onPageStarted(location: String)
     fun onPageFinished(location: String)
     fun onReceivedError(errorCode: Int)

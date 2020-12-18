@@ -2,11 +2,11 @@ package dev.hotwire.turbo.session
 
 import android.app.Activity
 import android.os.Build
+import com.nhaarman.mockito_kotlin.whenever
 import dev.hotwire.turbo.util.toJson
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -34,7 +34,7 @@ class TurboSessionTest {
         MockitoAnnotations.openMocks(this)
 
         activity = buildActivity(TurboTestActivity::class.java).get()
-        session = TurboSession.getNew("test", activity, webView)
+        session = TurboSession("test", activity, webView)
         visit = TurboVisit(
             location = "https://turbo.hotwire.dev",
             destinationIdentifier = 1,
@@ -50,8 +50,8 @@ class TurboSessionTest {
 
     @Test
     fun getNewIsAlwaysNewInstance() {
-        val session = TurboSession.getNew("test", activity, webView)
-        val newSession = TurboSession.getNew("test", activity, webView)
+        val session = TurboSession("test", activity, webView)
+        val newSession = TurboSession("test", activity, webView)
 
         assertThat(session).isNotEqualTo(newSession)
     }

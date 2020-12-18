@@ -9,6 +9,9 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+/**
+ * Experimental: API may change, not ready for production use.
+ */
 object TurboHttpClient {
     private var cache: Cache? = null
     private var httpCacheSize = 100L * 1024L * 1024L // 100 MBs

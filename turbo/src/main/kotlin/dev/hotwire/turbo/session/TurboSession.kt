@@ -39,10 +39,13 @@ import java.util.*
  * @property sessionName An arbitrary name to be used as an identifier for a given session.
  * @property activity The activity to which the session will be bound to.
  * @property webView An instance of a [TurboWebView] to be shared/managed.
- * @constructor Create empty Turbo session
  */
 @Suppress("unused")
-class TurboSession private constructor(internal val sessionName: String, internal val activity: Activity, val webView: TurboWebView) {
+class TurboSession internal constructor(
+    internal val sessionName: String,
+    private val activity: Activity,
+    val webView: TurboWebView
+) {
     internal var currentVisit: TurboVisit? = null
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
@@ -56,19 +59,21 @@ class TurboSession private constructor(internal val sessionName: String, interna
     // User accessible
 
     /**
-     * Sets/gets the path configuration for this session. Default is an empty configuration.
-     */
-    var pathConfiguration = TurboPathConfiguration(context)
-
-    /**
-     * Sets/gets the [TurboOfflineRequestHandler] for this session. Default is `null`.
+     * Experimental: API may change, not ready for production use.
      */
     var offlineRequestHandler: TurboOfflineRequestHandler? = null
 
     /**
      * Returns whether transitional screenshots are enabled for this session. Default is `true`.
      */
-    val screenshotsEnabled get() = pathConfiguration.settings.screenshotsEnabled
+    val screenshotsEnabled
+        get() = pathConfiguration.settings.screenshotsEnabled
+
+    /**
+     * Gets the path configuration for this session.
+     */
+    var pathConfiguration = TurboPathConfiguration(context)
+        internal set
 
     /**
      * Provides the status of whether Turbo is initialized and ready for use.
@@ -106,7 +111,6 @@ class TurboSession private constructor(internal val sessionName: String, interna
     /**
      * Resets this session to a cold boot state. The first subsequent visit after resetting will
      * execute a full cold boot (reloading of all resources).
-     *
      */
     fun reset() {
         logEvent("reset")
@@ -119,7 +123,8 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Enables/disables debug logging. Disabled by default.
+     * Enables/disables debug logging. This should be disabled in production environments.
+     * Disabled by default.
      *
      * @param enabled Whether to enable debug logging.
      */
@@ -156,7 +161,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     // Callbacks from Turbo JS Core
 
     /**
-     * Called by Turbo when a new visit is initiated.
+     * Called by Turbo bridge when a new visit is initiated.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -173,7 +178,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbo when a new visit has just started.
+     * Called by Turbo bridge when a new visit has just started.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -194,7 +199,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbo when the HTTP request has been completed.
+     * Called by Turbo bridge when the HTTP request has been completed.
      *
      * @param visitIdentifier A unique identifier for the visit.
      */
@@ -204,7 +209,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbo when the HTTP request has failed.
+     * Called by Turbo bridge when the HTTP request has failed.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -230,7 +235,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbo when the HTTP request has been completed.
+     * Called by Turbo bridge when the HTTP request has been completed.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -243,7 +248,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbo once the page has been fully loaded by the WebView.
+     * Called by Turbo bridge once the page has been fully loaded by the WebView.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -261,7 +266,7 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbo once the page has been fully rendered in the webView.
+     * Called by Turbo bridge once the page has been fully rendered in the webView.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -284,7 +289,8 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called by Turbo when the visit is fully completed (request successful and page rendered).
+     * Called by Turbo bridge when the visit is fully completed (request successful and
+     * page rendered).
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -310,8 +316,8 @@ class TurboSession private constructor(internal val sessionName: String, interna
     }
 
     /**
-     * Called when Turbo detects that the page being visited has been invalidated, typically by
-     * new resources in the the page HEAD.
+     * Called when Turbo bridge detects that the page being visited has been invalidated,
+     * typically by new resources in the the page HEAD.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -679,17 +685,6 @@ class TurboSession private constructor(internal val sessionName: String, interna
 
         private fun String.identifier(): String {
             return hashCode().toString()
-        }
-    }
-
-    /**
-     * Create a new [TurboSession].
-     *
-     * @constructor
-     */
-    companion object {
-        fun getNew(sessionName: String, activity: Activity, webView: TurboWebView): TurboSession {
-            return TurboSession(sessionName, activity, webView)
         }
     }
 }

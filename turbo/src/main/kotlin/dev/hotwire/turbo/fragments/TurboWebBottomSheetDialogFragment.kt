@@ -14,82 +14,55 @@ import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 
 /**
- * The base class from which all bottom sheet web fragments in a Turbo driven app
- * should extend from.
+ * The base class from which all bottom sheet web fragments in a
+ * Turbo-driven app should extend from.
  *
- * @constructor Create empty Turbo web bottom sheet dialog fragment
+ * For native bottom sheet fragments, refer to [TurboBottomSheetDialogFragment].
  */
 @Suppress("unused")
 abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragment(),
     TurboWebFragmentCallback {
-    private lateinit var delegate: TurboWebFragmentDelegate
+    private lateinit var webDelegate: TurboWebFragmentDelegate
 
-    /**
-     * Instantiates a [TurboWebFragmentDelegate].
-     *
-     * @param savedInstanceState
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        delegate = TurboWebFragmentDelegate(this, this)
+        webDelegate = TurboWebFragmentDelegate(delegate, this, this)
     }
-
-    /**
-     * Passes this lifecycle call through to [TurboWebFragmentDelegate.onActivityCreated].
-     *
-     * @param savedInstanceState
-     */
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        delegate.onActivityCreated()
-    }
-
-    /**
-     * Passes this lifecycle call through to [TurboWebFragmentDelegate.onStart] if there is no
-     * modal result to process.
-     *
-     */
-    override fun onStart() {
-        super.onStart()
-        delegate.onStart()
-    }
-
-    /**
-     * Passes this call through to [TurboWebFragmentDelegate.onDialogCancel].
-     *
-     * @param dialog
-     */
-    override fun onCancel(dialog: DialogInterface) {
-        delegate.onDialogCancel()
-        super.onCancel(dialog)
-    }
-
-    /**
-     * Passes this call through to [TurboWebFragmentDelegate.onDialogDismiss].
-     *
-     * @param dialog
-     */
-    override fun onDismiss(dialog: DialogInterface) {
-        delegate.onDialogDismiss()
-        super.onDismiss(dialog)
-    }
-
-    /**
-     * Implementing classes can execute state cleanup by overriding this. Will always be called
-     * before any navigation action takes place.
-     *
-     */
-    override fun onBeforeNavigation() {}
-
-    // ----------------------------------------------------------------------------
-    // TurboWebFragmentCallback interface
-    // ----------------------------------------------------------------------------
-    override val turboView: TurboView?
-        get() = view?.findViewById(R.id.turbo_view)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.turbo_fragment_web_bottom_sheet, container, false)
     }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        webDelegate.onActivityCreated()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        webDelegate.onStart()
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        webDelegate.onDialogCancel()
+        super.onCancel(dialog)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        webDelegate.onDialogDismiss()
+        super.onDismiss(dialog)
+    }
+
+    // ----------------------------------------------------------------------------
+    // TurboWebFragmentCallback interface
+    // ----------------------------------------------------------------------------
+
+    /**
+     * Gets the TurboView instance in the Fragment's view
+     * with resource ID R.id.turbo_view.
+     */
+    final override val turboView: TurboView?
+        get() = view?.findViewById(R.id.turbo_view)
 
     @SuppressLint("InflateParams")
     override fun createProgressView(location: String): View {
@@ -117,7 +90,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     override fun onVisitCompleted(location: String, completedOffline: Boolean) {}
 
     override fun onVisitErrorReceived(location: String, errorCode: Int) {
-        delegate.showErrorView(errorCode)
+        webDelegate.showErrorView(errorCode)
     }
 
     override fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, errorCode: Int) {

@@ -14,88 +14,67 @@ import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 
 /**
- * The base class from which all web "standard" fragments (non-dialogs) in a Turbo driven app
- * should extend from.
+ * The base class from which all web "standard" fragments (non-dialogs) in a
+ * Turbo-driven app should extend from.
  *
- * @constructor Create empty Turbo web fragment
+ * For native fragments, refer to [TurboFragment].
  */
 abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
-    private lateinit var delegate: TurboWebFragmentDelegate
+    private lateinit var webDelegate: TurboWebFragmentDelegate
 
-    /**
-     * Instantiates a [TurboWebFragmentDelegate].
-     *
-     * @param savedInstanceState
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        delegate = TurboWebFragmentDelegate(this, this)
+        webDelegate = TurboWebFragmentDelegate(delegate, this, this)
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboWebFragmentDelegate.onActivityCreated].
-     *
-     * @param savedInstanceState
-     */
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.turbo_fragment_web, container, false)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        delegate.onActivityCreated()
+        webDelegate.onActivityCreated()
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboWebFragmentDelegate.onStart] if there is no
-     * modal result to process.
-     *
-     */
     override fun onStart() {
         super.onStart()
 
-        if (!sessionViewModel.modalResultExists) {
-            delegate.onStart()
+        if (!delegate.sessionViewModel.modalResultExists) {
+            webDelegate.onStart()
         }
     }
 
     /**
-     * Passes this call through to [TurboWebFragmentDelegate.onStartAfterModalResult]
-     *
-     * @param result
+     * Called when the Fragment has been started again after receiving a
+     * modal result. Will navigate if the result indicates it should.
      */
     override fun onStartAfterModalResult(result: TurboSessionModalResult) {
         super.onStartAfterModalResult(result)
-        delegate.onStartAfterModalResult(result)
+        webDelegate.onStartAfterModalResult(result)
     }
 
     /**
-     * Passes this call through to [TurboWebFragmentDelegate.onStartAfterDialogCancel] if there
-     * is no modal result to process.
-     *
+     * Called when the Fragment has been started again after a dialog has
+     * been dismissed/canceled and no result is passed back.
      */
     override fun onStartAfterDialogCancel() {
         super.onStartAfterDialogCancel()
 
-        if (!sessionViewModel.modalResultExists) {
-            delegate.onStartAfterDialogCancel()
+        if (!delegate.sessionViewModel.modalResultExists) {
+            webDelegate.onStartAfterDialogCancel()
         }
-    }
-
-    /**
-     * Implementing classes can execute state cleanup by overriding this. Will always be called
-     * before any navigation action takes place.
-     *
-     */
-    override fun onBeforeNavigation() {
-        // Allow subclasses to do state cleanup
     }
 
     // ----------------------------------------------------------------------------
     // TurboWebFragmentCallback interface
     // ----------------------------------------------------------------------------
-    override val turboView: TurboView?
-        get() = view?.findViewById(R.id.turbo_view)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.turbo_fragment_web, container, false)
-    }
+    /**
+     * Gets the TurboView instance in the Fragment's view
+     * with resource ID R.id.turbo_view.
+     */
+    final override val turboView: TurboView?
+        get() = view?.findViewById(R.id.turbo_view)
 
     @SuppressLint("InflateParams")
     override fun createProgressView(location: String): View {
@@ -123,7 +102,7 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     override fun onVisitCompleted(location: String, completedOffline: Boolean) {}
 
     override fun onVisitErrorReceived(location: String, errorCode: Int) {
-        delegate.showErrorView(errorCode)
+        webDelegate.showErrorView(errorCode)
     }
 
     override fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, errorCode: Int) {

@@ -16,13 +16,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dev.hotwire.turbo.R
 
 /**
- * Turbo view
- *
- * @constructor
- *
- * @param context
- * @param attrs
- * @param defStyleAttr
+ * Turbo view that hosts the shared WebView, a progress view, an error view, and allows
+ * pull-to-refresh behavior.
  */
 class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     FrameLayout(context, attrs, defStyleAttr) {

@@ -21,13 +21,11 @@ import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 /**
- * Provides all the hooks for a web fragment to communicate with Turbo (and vice versa).
- *
- * @property navDestination
- * @property callback
- * @constructor Create empty Turbo web fragment delegate
+ * Provides all the hooks for a web Fragment to delegate its lifecycle events
+ * to this class.
  */
-class TurboWebFragmentDelegate(
+internal class TurboWebFragmentDelegate(
+    private val delegate: TurboFragmentDelegate,
     private val navDestination: TurboNavDestination,
     private val callback: TurboWebFragmentCallback
 ) : TurboSessionCallback {
@@ -47,15 +45,14 @@ class TurboWebFragmentDelegate(
         get() = callback.turboView
 
     /**
-     * Convenience accessor to the Turbo session's WebView.
+     * Get the session's WebView instance
      */
-    val webView: TurboWebView?
+    val webView: TurboWebView
         get() = session().webView
 
     /**
-     * Should be called by the implementing Fragment during [androidx.fragment.app.Fragment.onActivityCreated].
-     * Does a variety of WebView checks and state clean up before any navigation takes place.
-     *
+     * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onActivityCreated].
      */
     fun onActivityCreated() {
         if (session().isRenderProcessGone) {
@@ -70,9 +67,8 @@ class TurboWebFragmentDelegate(
     }
 
     /**
-     * Should be called by the implementing Fragment during [androidx.fragment.app.Fragment.onStart].
-     * Initializes all necessary views and executes the Turbo visit.
-     *
+     * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onStart].
      */
     fun onStart() {
         initNavigationVisit()
@@ -81,8 +77,6 @@ class TurboWebFragmentDelegate(
     /**
      * Provides a hook to Turbo when a fragment has been started again after receiving a
      * modal result. Will navigate if the result indicates it should.
-     *
-     * @param result
      */
     fun onStartAfterModalResult(result: TurboSessionModalResult) {
         if (!result.shouldNavigate) {
@@ -94,7 +88,6 @@ class TurboWebFragmentDelegate(
      * Provides a hook to Turbo when the fragment has been started again after a dialog has
      * been dismissed/canceled and no result is passed back. Initializes all necessary views and
      * executes the Turbo visit.
-     *
      */
     fun onStartAfterDialogCancel() {
         initNavigationVisit()
@@ -102,9 +95,7 @@ class TurboWebFragmentDelegate(
 
     /**
      * Provides a hook to Turbo when the dialog has been canceled. Detaches the WebView
-     * so that [onStartAfterDialogCancel] or [onStartAfterModalResult] can reattach it and execute
-     * a Turbo visit.
-     *
+     * before navigation.
      */
     fun onDialogCancel() {
         detachWebView()
@@ -112,9 +103,7 @@ class TurboWebFragmentDelegate(
 
     /**
      * Provides a hook to Turbo when the dialog has been dismissed. Detaches the WebView
-     * if it's still attached so that [onStartAfterDialogCancel] or [onStartAfterModalResult] can
-     * reattach it and execute a Turbo visit.
-     *
+     * before navigation.
      */
     fun onDialogDismiss() {
         // The WebView is already detached in most circumstances, but sometimes
@@ -126,17 +115,13 @@ class TurboWebFragmentDelegate(
 
     /**
      * Retrieves the Turbo session from the destination.
-     *
-     * @return
      */
     fun session(): TurboSession {
         return navDestination.session
     }
 
     /**
-     * Adds and shows the error view that's implemented via [TurboWebFragmentCallback.createErrorView].
-     *
-     * @param code
+     * Displays the error view that's implemented via [TurboWebFragmentCallback.createErrorView].
      */
     fun showErrorView(code: Int) {
         val errorView = callback.createErrorView(code)
@@ -221,7 +206,8 @@ class TurboWebFragmentDelegate(
     // -----------------------------------------------------------------------
 
     private fun currentVisitOptions(): TurboVisitOptions {
-        return navDestination.sessionViewModel.visitOptions?.getContentIfNotHandled() ?: TurboVisitOptions()
+        val visitOptions = delegate.sessionViewModel.visitOptions
+        return visitOptions?.getContentIfNotHandled() ?: TurboVisitOptions()
     }
 
     private fun initNavigationVisit() {
@@ -249,11 +235,11 @@ class TurboWebFragmentDelegate(
             return
         }
 
-        view.attachWebView(requireNotNull(webView)) { attachedToNewDestination ->
+        view.attachWebView(webView) { attachedToNewDestination ->
             onReady(attachedToNewDestination)
 
             if (attachedToNewDestination) {
-                callback.onWebViewAttached(requireNotNull(webView))
+                callback.onWebViewAttached(webView)
             }
         }
     }
@@ -265,7 +251,7 @@ class TurboWebFragmentDelegate(
      * new view hierarchy, it needs to already be detached from the previous screen.
      */
     private fun detachWebView(onReady: () -> Unit = {}) {
-        val webView = webView ?: return
+        val webView = webView
         screenshotView()
 
         turboView?.detachWebView(webView) {
@@ -289,12 +275,12 @@ class TurboWebFragmentDelegate(
     }
 
     private fun webViewIsAttached(): Boolean {
-        val webView = webView ?: return false
+        val webView = webView
         return turboView?.webViewIsAttached(webView) ?: false
     }
 
     private fun title(): String {
-        return webView?.title ?: ""
+        return webView.title ?: ""
     }
 
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean, reload: Boolean) {

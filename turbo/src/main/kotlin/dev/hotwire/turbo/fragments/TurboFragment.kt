@@ -13,32 +13,19 @@ import dev.hotwire.turbo.nav.TurboNavPresentationContext
 import dev.hotwire.turbo.session.TurboSessionModalResult
 
 /**
- * The base class from which all "standard" native fragments (non-dialogs) in a Turbo driven app
- * should extend from.
+ * The base class from which all "standard" native Fragments (non-dialogs) in a
+ * Turbo-driven app should extend from.
  *
  * For web fragments, refer to [TurboWebFragment].
- *
- * @constructor Create empty Turbo fragment
  */
 abstract class TurboFragment : Fragment(), TurboNavDestination {
-    private lateinit var delegate: TurboFragmentDelegate
+    internal lateinit var delegate: TurboFragmentDelegate
 
-    /**
-     * Instantiates a [TurboFragmentDelegate].
-     *
-     * @param savedInstanceState
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         delegate = TurboFragmentDelegate(this)
     }
 
-    /**
-     * Observes 1) modal results and 2) dialog results.
-     *
-     * @param view
-     * @param savedInstanceState
-     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeModalResult()
@@ -52,75 +39,56 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
         }
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboFragmentDelegate.onActivityCreated].
-     *
-     * @param savedInstanceState
-     */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         delegate.onActivityCreated()
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboFragmentDelegate.onStart] if there is no
-     * modal result to process.
-     *
-     */
     override fun onStart() {
         super.onStart()
 
-        if (!sessionViewModel.modalResultExists) {
+        if (!delegate.sessionViewModel.modalResultExists) {
             delegate.onStart()
         }
     }
 
-    /**
-     * Passes this lifecycle call through to [TurboFragmentDelegate.onStop].
-     *
-     */
     override fun onStop() {
         super.onStop()
         delegate.onStop()
     }
 
     /**
-     * Passes this call through to [TurboFragmentDelegate.onStartAfterModalResult]
-     *
-     * @param result
+     * Called when the Fragment has been started again after receiving a
+     * modal result. Will navigate if the result indicates it should.
      */
     open fun onStartAfterModalResult(result: TurboSessionModalResult) {
         delegate.onStartAfterModalResult(result)
     }
 
     /**
-     * Passes this call through to [TurboFragmentDelegate.onStartAfterDialogCancel] if there
-     * is no modal result to process.
-     *
+     * Called when the Fragment has been started again after a dialog has
+     * been dismissed/canceled and no result is passed back.
      */
     open fun onStartAfterDialogCancel() {
-        if (!sessionViewModel.modalResultExists) {
+        if (!delegate.sessionViewModel.modalResultExists) {
             delegate.onStartAfterDialogCancel()
         }
     }
 
+    override fun onBeforeNavigation() {}
+
+    /**
+     * Gets the Toolbar instance in your Fragment's view for use with
+     * navigation. The title in the Toolbar will automatically be
+     * updated if a title is available. By default, Turbo will look
+     * for a Toolbar with resource ID `R.id.toolbar`. Override to
+     * provide a Toolbar instance with a different ID.
+     */
     override fun toolbarForNavigation(): Toolbar? {
         return view?.findViewById(R.id.toolbar)
     }
 
-    /**
-     * Implementing classes can execute state cleanup by overriding this. Will always be called
-     * before any navigation action takes place.
-     *
-     */
-    override fun onBeforeNavigation() {}
-
-    /**
-     * Returns the delegate instantiated in [onCreate].
-     *
-     * @return
-     */
-    override fun delegate(): TurboFragmentDelegate {
+    final override fun delegate(): TurboFragmentDelegate {
         return delegate
     }
 

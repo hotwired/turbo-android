@@ -5,16 +5,18 @@ import androidx.activity.addCallback
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
 /**
- * Provides all the hooks for an activity to communicate with Turbo (and vice versa).
+ * Initializes the Activity for Turbo navigation and provides all the hooks for an
+ * Activity to communicate with Turbo (and vice versa).
  *
- * @property activity The activity to bind this delegate to.
- * @property currentNavHostFragmentId The resource ID of the view bound to the nav host fragment.
- * @constructor Create empty Turbo activity delegate
+ * @property activity The Activity to bind this delegate to.
+ * @property currentNavHostFragmentId The resource ID of the [TurboSessionNavHostFragment]
+ *  instance hosted in your Activity's layout resource.
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class TurboActivityDelegate(
@@ -25,19 +27,21 @@ class TurboActivityDelegate(
     private val navHostFragments = mutableMapOf<Int, TurboSessionNavHostFragment>()
 
     /**
-     * A reference to the session's nav host fragment.
+     * Gets the Activity's currently active [TurboSessionNavHostFragment].
      */
     val currentSessionNavHostFragment: TurboSessionNavHostFragment
         get() = navHostFragment(currentNavHostFragmentId)
 
     /**
-     * A reference to the current destination.
+     * Gets the currently active Fragment destination hosted in the current
+     * [TurboSessionNavHostFragment].
      */
     val currentNavDestination: TurboNavDestination?
         get() = currentFragment as TurboNavDestination?
 
     /**
-     * Initializes the Activity with a BackPressedDispatcher that properly handles Fragment
+     * Registers the provided nav host fragment and initializes the
+     * Activity with a BackPressedDispatcher that properly handles Fragment
      * navigation with the back button.
      */
     init {
@@ -60,7 +64,7 @@ class TurboActivityDelegate(
     }
 
     /**
-     * Finds the nav host fragment associated with the provided ID.
+     * Finds the nav host fragment associated with the provided resource ID.
      *
      * @param navHostFragmentId
      * @return
@@ -72,27 +76,26 @@ class TurboActivityDelegate(
     }
 
     /**
-     * Resets the Turbo sessions associated with each nav host fragment.
-     *
+     * Resets the Turbo sessions associated with all registered nav host fragments.
      */
     fun resetSessions() {
         navHostFragments.forEach { it.value.session.reset() }
     }
 
     /**
-     * Resets each nav host fragment via [TurboSessionNavHostFragment.reset].
-     *
+     * Resets all registered nav host fragments via [TurboSessionNavHostFragment.reset].
      */
     fun resetNavHostFragments() {
         navHostFragments.forEach { it.value.reset() }
     }
 
     /**
-     * Navigates to the specified location using the current destination as the starting point.
+     * Navigates to the specified location. The resulting destination and its presentation
+     * will be determined using the path configuration rules.
      *
      * @param location The location to navigate to.
-     * @param options Any options to apply to the visit.
-     * @param bundle Any additional bundled data to pass to the navigation components.
+     * @param options Visit options to apply to the visit. (optional)
+     * @param bundle Bundled arguments to pass to the destination. (optional)
      */
     fun navigate(
         location: String,
@@ -103,24 +106,23 @@ class TurboActivityDelegate(
     }
 
     /**
-     * Navigates up using the current destination as the starting point.
-     *
+     * Navigates up to the previous destination. See [NavController.navigateUp] for
+     * more details.
      */
     fun navigateUp() {
         currentNavDestination?.navigateUp()
     }
 
     /**
-     * Navigates back using the current destination as the starting point.
-     *
+     * Navigates back to the previous destination. See [NavController.popBackStack] for
+     * more details.
      */
     fun navigateBack() {
         currentNavDestination?.navigateBack()
     }
 
     /**
-     * Clears the nav back stack.
-     *
+     * Clears the navigation back stack to the start destination.
      */
     fun clearBackStack(onCleared: () -> Unit = {}) {
         currentNavDestination?.clearBackStack(onCleared)

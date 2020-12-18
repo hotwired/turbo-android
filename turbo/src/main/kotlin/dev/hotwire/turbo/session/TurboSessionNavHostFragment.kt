@@ -29,7 +29,7 @@ abstract class TurboSessionNavHostFragment : NavHostFragment() {
     }
 
     internal fun createNewSession() {
-        session = TurboSession.getNew(sessionName, requireActivity(), onCreateWebView(requireActivity()))
+        session = TurboSession(sessionName, requireActivity(), onCreateWebView(requireActivity()))
         onSessionCreated()
     }
 

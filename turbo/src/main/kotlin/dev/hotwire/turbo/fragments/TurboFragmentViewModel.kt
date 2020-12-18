@@ -7,16 +7,12 @@ import androidx.lifecycle.ViewModelProvider
 
 /**
  * Holds onto fragment-level state data.
- *
- * @constructor Create empty Turbo fragment view model
  */
 class TurboFragmentViewModel : ViewModel() {
     val title: MutableLiveData<String> = MutableLiveData()
 
     /**
-     * Set's the page title.
-     *
-     * @param newTitle
+     * Set's the Fragment destination's title.
      */
     fun setTitle(newTitle: String) {
         title.value = newTitle
