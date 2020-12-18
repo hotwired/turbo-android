@@ -54,7 +54,23 @@ Don't forget to register the `ImageViewerFragment` class in your app's `TurboSes
 Refer to demo [`ImageViewerFragment`](../demo/src/main/kotlin/dev/hotwire/turbo/demo/features/imageviewer/ImageViewerFragment.kt) as an example.
 
 ## Display Bottom Sheet Dialogs
-// TODO
+Fragment destinations can be dislplayed as bottom sheet dialogs. These are transitional, modal Fragments that can be easily dismissed. Bottom sheet Fragments can be web or native.
+
+### Create a Web Bottom Sheet Fragment
+A web bottom sheet Fragment is straightforward and needs to implement the [`TurboWebBottomSheetDialogFragment`](../turbo/src/main/kotlin/dev/hotwire/turbo/fragments/TurboWebBottomSheetDialogFragment.kt) abstract class. This abstract class implements the [`TurboWebFragmentCallback`](../turbo/src/main/kotlin/dev/hotwire/turbo/fragments/TurboWebFragmentCallback.kt) interface, which provides a number of functions available to customize your Fragment.
+
+In its simplest form, your web bottom sheet Fragment will look like:
+
+**`WebBottomSheetFragment.kt`:**
+```kotlin
+@TurboNavGraphDestination(uri = "turbo://fragment/web/modal/sheet")
+class WebBottomSheetFragment : TurboWebBottomSheetDialogFragment()
+```
+The library automatically inflates a default `R.layout.turbo_fragment_web_bottom_sheet` layout to host a `TurboView`. If you'd like to create your own custom layout for your web bottom sheet Fragment, you can override the `onCreateView()` function and inflate your own layout.
+
+You can also provide your own custom progress view or error view by overriding the `createProgressView()` and `createErrorView()` functions in your web Fragment. 
+
+Refer to demo [`WebBottomSheetFragment`](../demo/src/main/kotlin/dev/hotwire/turbo/demo/features/web/WebBottomSheetFragment.kt) as an example.
 
 ## Fragment Transition Animations
 // TODO
