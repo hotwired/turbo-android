@@ -25,15 +25,15 @@ class ImageViewerFragment : TurboFragment(), NavDestination {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadImage()
+        loadImage(view)
     }
 
     private fun initToolbar() {
         toolbarForNavigation()?.displayBackButtonAsCloseIcon()
     }
 
-    private fun loadImage() {
-        view?.findViewById<ImageView>(R.id.image_view)?.let {
+    private fun loadImage(view: View) {
+        view.findViewById<ImageView>(R.id.image_view)?.let {
             Glide.with(this).load(location).into(it)
         }
     }

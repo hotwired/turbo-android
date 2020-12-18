@@ -67,7 +67,7 @@ class WebFragment : TurboWebFragment() {
         navigateBack()
 
         // Clears all Fragment destinations off the backstack, excluding
-        // the starting destination of your TurboNavHostFragment
+        // the starting destination of your TurboSessionNavHostFragment
         clearBackStack()
     }
 }
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity(), TurboActivity {
         delegate.navigateBack()
 
         // Clears all Fragment destinations off the backstack, excluding
-        // the starting destination of your TurboNavHostFragment
+        // the starting destination of your TurboSessionNavHostFragment
         delegate.clearBackStack()
     }
 }
