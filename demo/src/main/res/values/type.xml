@@ -71,7 +71,7 @@
     </style>
 
     <style name="TextAppearance.MyTheme.Caption" parent="TextAppearance.MaterialComponents.Caption">
-        <!--Your custom type style here-->
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="TextAppearance.MyTheme.Overline" parent="TextAppearance.MaterialComponents.Overline">

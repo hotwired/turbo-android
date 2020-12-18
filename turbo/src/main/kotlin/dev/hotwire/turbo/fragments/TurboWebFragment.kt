@@ -83,10 +83,7 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
 
     @SuppressLint("InflateParams")
     override fun createErrorView(statusCode: Int): View {
-        return layoutInflater.inflate(R.layout.turbo_error, null).apply {
-            val message = context.getString(R.string.error_message)
-            findViewById<MaterialTextView>(R.id.turbo_error_message).text = message
-        }
+        return layoutInflater.inflate(R.layout.turbo_error, null)
     }
 
     override fun onWebViewAttached(webView: TurboWebView) {}

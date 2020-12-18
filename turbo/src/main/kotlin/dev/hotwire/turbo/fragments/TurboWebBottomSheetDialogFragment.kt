@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.HttpAuthHandler
-import com.google.android.material.textview.MaterialTextView
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
 import dev.hotwire.turbo.views.TurboView
@@ -71,10 +70,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
 
     @SuppressLint("InflateParams")
     override fun createErrorView(statusCode: Int): View {
-        return layoutInflater.inflate(R.layout.turbo_error, null).apply {
-            val message = context.getString(R.string.error_message)
-            findViewById<MaterialTextView>(R.id.turbo_error_message).text = message
-        }
+        return layoutInflater.inflate(R.layout.turbo_error, null)
     }
 
     override fun onWebViewAttached(webView: TurboWebView) {}
