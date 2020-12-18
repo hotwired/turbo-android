@@ -29,7 +29,10 @@ In order for a [WebView](https://developer.android.com/reference/android/webkit/
 ```
 
 # Snapshot Builds
-Pre-release snapshot builds will be published to [GitHub Packages](https://github.com/features/packages). If you'd like to use a snapshot release, you'll need to create a [Personal Access Token](https://docs.github.com/en/free-pro-team@latest/packages/learn-github-packages/about-github-packages#authenticating-to-github-packages) in your GitHub account and give it the `read:packages` permission.
+Pre-release snapshot builds will be published to [GitHub Packages](https://github.com/features/packages).
+
+## Personal Access Token
+If you'd like to use a snapshot release, you'll need to create a [Personal Access Token](https://docs.github.com/en/free-pro-team@latest/packages/learn-github-packages/about-github-packages#authenticating-to-github-packages) in your GitHub account and give it the `read:packages` permission.
 
 Copy your access token to your `.bash_profile` (or another accessible place that's outside of source control):
 
@@ -38,7 +41,9 @@ export GITHUB_USER='<your username>'
 export GITHUB_ACCESS_TOKEN='<your personal access token>'
 ```
 
+##  Gradle
 Add the GitHub Packages maven repository and the dependency to your app module's `build.gradle` file:
+
 ```groovy
 repositories {
     maven {
