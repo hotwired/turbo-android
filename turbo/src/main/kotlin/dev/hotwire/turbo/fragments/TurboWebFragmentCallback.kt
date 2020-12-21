@@ -28,46 +28,48 @@ interface TurboWebFragmentCallback {
     /**
      * Called when the WebView has been attached to the current destination.
      */
-    fun onWebViewAttached(webView: TurboWebView)
+    fun onWebViewAttached(webView: TurboWebView) {}
 
     /**
      * Called when the WebView has been detached from the current destination.
      */
-    fun onWebViewDetached(webView: TurboWebView)
+    fun onWebViewDetached(webView: TurboWebView) {}
 
     /**
      * Called when Turbo begins a WebView cold boot (fresh resources).
      */
-    fun onColdBootPageStarted(location: String)
+    fun onColdBootPageStarted(location: String) {}
 
     /**
      * Called when Turbo completes a WebView cold boot (fresh resources).
      */
-    fun onColdBootPageCompleted(location: String)
+    fun onColdBootPageCompleted(location: String) {}
 
     /**
      * Called when a Turbo visit has started.
      */
-    fun onVisitStarted(location: String)
+    fun onVisitStarted(location: String) {}
 
     /**
      * Called when a Turbo visit has completed.
      */
-    fun onVisitCompleted(location: String, completedOffline: Boolean)
+    fun onVisitCompleted(location: String, completedOffline: Boolean) {}
 
     /**
      * Called when a Turbo visit resulted in an error.
      */
-    fun onVisitErrorReceived(location: String, errorCode: Int)
+    fun onVisitErrorReceived(location: String, errorCode: Int) {}
 
     /**
      * Called when the Turbo visit resulted in an error, but a cached
      * snapshot is being displayed, which may be stale.
      */
-    fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, errorCode: Int)
+    fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, errorCode: Int) {}
 
     /**
      * Called when the WebView has received an HTTP authentication request.
      */
-    fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String)
+    fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {
+        handler.cancel()
+    }
 }

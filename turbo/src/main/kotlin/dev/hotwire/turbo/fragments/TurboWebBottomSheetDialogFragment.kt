@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.HttpAuthHandler
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
 import dev.hotwire.turbo.views.TurboView
-import dev.hotwire.turbo.views.TurboWebView
 
 /**
  * The base class from which all bottom sheet web fragments in a
@@ -73,27 +71,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
         return layoutInflater.inflate(R.layout.turbo_error, null)
     }
 
-    override fun onWebViewAttached(webView: TurboWebView) {}
-
-    override fun onWebViewDetached(webView: TurboWebView) {}
-
-    override fun onColdBootPageStarted(location: String) {}
-
-    override fun onColdBootPageCompleted(location: String) {}
-
-    override fun onVisitStarted(location: String) {}
-
-    override fun onVisitCompleted(location: String, completedOffline: Boolean) {}
-
     override fun onVisitErrorReceived(location: String, errorCode: Int) {
         webDelegate.showErrorView(errorCode)
-    }
-
-    override fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, errorCode: Int) {
-        // Allow app to display an indicator for (potentially) stale content
-    }
-
-    override fun onReceivedHttpAuthRequest(handler: HttpAuthHandler, host: String, realm: String) {
-        handler.cancel()
     }
 }
