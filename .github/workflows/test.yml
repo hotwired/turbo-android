@@ -7,4 +7,4 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Run tests
-        run: ./gradlew build testRelease
+        run: ./gradlew testRelease
