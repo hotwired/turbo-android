@@ -4,7 +4,7 @@
 
 ---------
 
-**Build high-fidelity hybrid apps with native navigation and a single shared web view**. Turbo Native for Android provides the tooling to wrap your [Turbo 7](https://github.com/hotwired/turbo)-enabled web app in a native Android shell. It manages a single WebView instance across multiple Fragment destinations, giving you native navigation UI with all the client-side performance benefits of Turbo.
+**Build high-fidelity hybrid apps with native navigation and a single shared web view**. Turbo Native for Android provides the tooling to wrap your [Turbo 7](https://turbo.hotwire.dev/)-enabled web app in a native Android shell. It manages a single WebView instance across multiple Fragment destinations, giving you native navigation UI with all the client-side performance benefits of Turbo.
 
 ## Features
 - **Deliver fast, efficient hybrid apps.** Avoid reloading JavaScript and CSS. Save memory by sharing one WebView.
@@ -15,13 +15,13 @@
 ## Requirements
 
 1. Android SDK 24+ is required as the `minSdkVersion` in your build.gradle.
-1. This library is written entirely in [Kotlin](https://kotlinlang.org/), and your app should use Kotlin as well. Explicit compatibility with Java is not provided.
+1. This library is written entirely in [Kotlin](https://kotlinlang.org/), and your app should use Kotlin as well. Compatibility with Java is not provided or supported.
 1. This library supports web apps using either Turbo 7 or Turbolinks 5
 
-**Note:** You should understand how Turbo works with web applications in the browser before attempting to use Turbo Android. See the [Turbo 7 documentation](https://github.com/hotwired/turbo) for details.
+**Note:** You should understand how Turbo works with web applications in the browser before attempting to use Turbo Android. See the [Turbo 7 documentation](https://turbo.hotwire.dev) for details.
 
 ## Getting Started
-The best way to get started with Turbo Android is to try out the demo app first to get familiar with the framework. The demo app walks you through all the basic Turbo flows as well as some advanced features. To run the demo, clone this repo, open the directory in Android Studio, and run the `demo` module. See [demo/README.md](demo/README.md) for more details about the demo. When you’re ready to start your own application, read through the rest of the documentation.
+The best way to get started with Turbo Android is to try out the demo app first to get familiar with the framework. The demo app walks you through all the basic Turbo flows as well as some advanced features. To run the demo, clone this repo, open the directory in Android Studio, and build the `demo` module to your Android device. See [demo/README.md](demo/README.md) for more details about the demo. When you’re ready to start your own application, read through the rest of the documentation.
 
 See the [instructions to build the project yourself](docs/BUILD-PROJECT.md).
 

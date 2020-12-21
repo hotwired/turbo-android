@@ -132,7 +132,7 @@ interface TurboNavDestination {
 
     /**
      * Gets the default set of navigation options (basic enter/exit animations) for the Android
-     * Navigation components to use to execute a navigation event. This can be overridden if
+     * Navigation component to use to execute a navigation event. This can be overridden if
      * you'd like to provide your own.
      */
     fun getNavigationOptions(

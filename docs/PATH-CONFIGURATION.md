@@ -29,8 +29,10 @@ In its simplest form, your JSON configuration will look like:
 }
 ```
 
+Refer to demo [`configuration.json`](../demo/src/main/assets/json/configuration.json) as an example.
+
 ## Settings
-The `settings` object is a place to configure app-level settings. This is extremely useful when you have a remote configuration file, since you can add your own custom settings and use them as remote feature-flags. Available settings are:
+The `settings` object is a place to configure app-level settings. This is useful when you have a remote configuration file, since you can add your own custom settings and use them as remote feature-flags. Available settings are:
 * `screenshots_enabled` — Whether or not transitional web screenshots should be used during navigation. This gives the appearance of a more smooth experience since the session WebView is swapped between web destination Fragments, but does require more performance overhead. 
 	* Optional.
 	* Possible values: `true`, `false`. Defaults to `true`.
@@ -45,9 +47,9 @@ The `patterns` array defines Regex patterns that will be used to match url paths
 
 ### Properties
 
-The `properties` object contains a handful of key/value pairs that Turbo supports out of the box. You are free to add more properties as your app needs, but these are the ones the framework is aware of and will handle automatically.
+The `properties` object contains a handful of key/value pairs that Turbo Android supports out of the box. You are free to add more properties as your app needs, but these are the ones the framework is aware of and will handle automatically.
 
-* `uri` — The target destination URI to navigate to. Must map to an Activity or Fragment that has implemented the [TurboNavGraphDestination](../turbo/src/main/kotlin/dev/hotwire/turbo/nav/TurboNavGraphDestination.kt) annotation with a matching `uri` value.
+* `uri` — The target destination URI to navigate to. Must map to an Activity or Fragment that has implemented the [`TurboNavGraphDestination`](../turbo/src/main/kotlin/dev/hotwire/turbo/nav/TurboNavGraphDestination.kt) annotation with a matching `uri` value.
 	* **Required**. 
 	* No explicit value options. No default value.
 * `context` — Specifies the presentation context in which the view should be displayed. Turbo will determine what the navigation behavior should be based on this value + the `presentation` value. Unless you are specifically showing a modal-style view (e.g., a form, wizard, navigation, etc.), `default` is usually sufficient. 
@@ -65,5 +67,4 @@ The `properties` object contains a handful of key/value pairs that Turbo support
 * `pull_to_refresh_enabled` — Whether or not pull-to-refresh should be enabled for the given path.
 	* Optional.
 	* Possible values: `true`, `false`. Defaults to `false`.
-
-Refer to demo [`configuration.json`](../demo/src/main/assets/json/configuration.json) as an example.
+  

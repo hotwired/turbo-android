@@ -8,7 +8,7 @@ package dev.hotwire.turbo.nav
  *  `@TurboNavGraphDestination(uri = "turbo://fragment/search")`
  *  `class SearchFragment : TurboWebFragment()`
  *
- * @property uri The URI to be registered with the Android Navigation components nav graph.
+ * @property uri The URI to be registered with the Android Navigation component nav graph.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)

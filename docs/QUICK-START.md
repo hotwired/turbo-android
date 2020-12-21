@@ -25,8 +25,7 @@ In its simplest form, the implementation of your `TurboSessionNavHostFragment` w
 class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override val sessionName = "main"
 
-    override val startLocation
-        get() = "https://hotwire.dev/turbo/demo"
+    override val startLocation = "https://hotwire.dev/turbo/demo"
 
     override val registeredActivities: List<KClass<out Activity>>
         get() = listOf(
@@ -48,7 +47,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 }
 ```
 
-See the [Fragment section](#create-a-web-fragment) below to create a `TurboFragment` that you'll register here. See the [Path Configuration section](#create-a-path-configuration) below to create your path configuration file(s).
+See the [Fragment section](#create-a-web-fragment) below to create a `TurboFragment` that you'll register here. See the [Path Configuration documentation](PATH-CONFIGURATION.md) to create your path configuration file(s).
 
 Refer to the demo [`MainSessionNavHostFragment`](../demo/src/main/kotlin/dev/hotwire/turbo/demo/main/MainSessionNavHostFragment.kt) for an example.
 
@@ -83,7 +82,7 @@ Refer to the demo [`activity_main.xml`](../demo/src/main/res/layout/activity_mai
 
 ### Create the TurboActivity class
 
-A Turbo Activity is straightforward and simply needs to implement the [`TurboActivity`](../turbo/src/main/kotlin/dev/hotwire/turbo/activities/TurboActivity.kt) interface in order to provide a [`TurboActivityDelegate`](../turbo/src/main/kotlin/dev/hotwire/turbo/delegates/TurboActivityDelegate.kt).
+A Turbo Activity is straightforward and needs to implement the [`TurboActivity`](../turbo/src/main/kotlin/dev/hotwire/turbo/activities/TurboActivity.kt) interface in order to provide a [`TurboActivityDelegate`](../turbo/src/main/kotlin/dev/hotwire/turbo/delegates/TurboActivityDelegate.kt).
 
 Your Activity should extend Android Jetpack's [`AppCompatActivity`](https://developer.android.com/reference/androidx/appcompat/app/AppCompatActivity). In its simplest form, your Activity will look like:
 
@@ -110,9 +109,9 @@ Refer to the demo [`MainActivity`](../demo/src/main/kotlin/dev/hotwire/turbo/dem
 ### Create the TurboWebFragment class
 You'll need at least one web Fragment that will serve as a destination for urls that display web content in your app. 
 
-A web Fragment is straightforward and simply needs to implement the [`TurboWebFragment`](../turbo/src/main/kotlin/dev/hotwire/turbo/fragments/TurboWebFragment.kt) abstract class. This abstract class implements the [`TurboWebFragmentCallback`](../turbo/src/main/kotlin/dev/hotwire/turbo/fragments/TurboWebFragmentCallback.kt) interface, which provides a number of functions available to customize your Fragment.
+A web Fragment is straightforward and needs to implement the [`TurboWebFragment`](../turbo/src/main/kotlin/dev/hotwire/turbo/fragments/TurboWebFragment.kt) abstract class. This abstract class implements the [`TurboWebFragmentCallback`](../turbo/src/main/kotlin/dev/hotwire/turbo/fragments/TurboWebFragmentCallback.kt) interface, which provides a number of functions available to customize your Fragment.
 
-You'll need to annotate each Fragment in your app with a `@TurboNavGraphDestination` annotation with a URI of your own scheme. This URI is used by the library to build an internal navigation graph and map url path patterns to the destination Fragment with the corresponding URI. See the [Path Configuration section](#create-a-path-configuration) below to learn how to map url paths to destination Fragments.
+You'll need to annotate each Fragment in your app with a `@TurboNavGraphDestination` annotation with a URI of your own scheme. This URI is used by the library to build an internal navigation graph and map url path patterns to the destination Fragment with the corresponding URI. See the [Path Configuration documentation](PATH-CONFIGURATION.md) to learn how to map url paths to destination Fragments.
 
 In its simplest form, your web Fragment will look like:
 
