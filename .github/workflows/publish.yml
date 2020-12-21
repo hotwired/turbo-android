@@ -1,8 +1,8 @@
-name: Publish
+name: Publish to GitHub Packages
 
 on:
   release:
-    types: [published]
+    types: [prereleased, published]
 
 jobs:
   publish-release:
@@ -11,7 +11,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Publish artifact
+      - name: Publish artifact to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew -Pversion=${{ github.event.release.tag_name }} publish
+        run: ./gradlew -Pversion=${{ github.event.release.tag_name }} clean build publish

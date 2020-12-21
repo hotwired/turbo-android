@@ -120,7 +120,7 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-// Publish to GitHub Packages via ./gradlew clean build publish
+// Publish to GitHub Packages via ./gradlew -Pversion=<version> clean build publish
 // https://github.com/orgs/hotwired/packages?repo_name=turbo-android
 afterEvaluate {
     publishing {
@@ -152,7 +152,7 @@ afterEvaluate {
     }
 }
 
-// Publish to Bintray via ./gradlew clean build bintrayUpload
+// Publish to Bintray via ./gradlew -Pversion=<version> clean build bintrayUpload
 // https://bintray.com/hotwire/maven/turbo-android
 bintray {
     user = System.getenv('BINTRAY_USER')
