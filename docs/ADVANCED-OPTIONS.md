@@ -73,7 +73,25 @@ You can also provide your own custom progress view or error view by overriding t
 Refer to demo [`WebBottomSheetFragment`](../demo/src/main/kotlin/dev/hotwire/turbo/demo/features/web/WebBottomSheetFragment.kt) as an example.
 
 ## Fragment Transition Animations
-// TODO
+The transition animations when navigating between Fragments can be fully customized. To do this, override the `TurboNavDestination.getNavigationOptions()` interface function (available in all Fragment destinations). Place your custom XML animation resources in the `/res/anim` directory and provide these animations using the AndroidX [`NavOptions`](https://developer.android.com/reference/androidx/navigation/NavOptions) DSL. An example looks like:
+
+```kotlin
+override fun getNavigationOptions(
+    newLocation: String,
+    newPathProperties: TurboPathConfigurationProperties
+): NavOptions {
+    return navOptions {
+        anim {
+            enter = R.anim.custom_anim_enter
+            exit = R.anim.custom_anim_exit
+            popEnter = R.anim.custom_anim_pop_enter
+            popExit = R.anim.custom_anim_pop_exit
+        }
+    }
+}
+```
+
+Refer to the demo [`NavDestination.kt`](../demo/src/main/kotlin/dev/hotwire/turbo/demo/base/NavDestination.kt) as an example.
 
 ## Using Multiple Activities
 You may encounter situations where a truly single-`Activity` app may not be feasible. For example, you may need an `Activity` for logged-out state and a separate `Activity` for logged-in state.
