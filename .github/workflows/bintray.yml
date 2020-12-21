@@ -2,7 +2,7 @@ name: Publish to Bintray
 
 on:
   release:
-    types: [published]
+    types: [released]
 
 jobs:
   publish-release:
@@ -14,4 +14,6 @@ jobs:
       - name: Publish artifact to Bintray
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
+          BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
         run: ./gradlew -Pversion=${{ github.event.release.tag_name }} clean build bintrayUpload
