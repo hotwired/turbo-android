@@ -1,0 +1,19 @@
+name: Publish to Bintray
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Publish artifact to Bintray
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
+          BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
+        run: ./gradlew -Pversion=${{ github.event.release.tag_name }} clean build bintrayUpload
