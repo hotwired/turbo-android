@@ -1,0 +1,17 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-release:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Publish artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew -Pversion=${{ github.event.release.tag_name }} publish

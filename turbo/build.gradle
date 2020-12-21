@@ -6,9 +6,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.jetbrains.dokka'
 
 ext {
-    // Update when releasing a new library version
-    libVersionName = '7.0.0-alpha05'
-
+    libVersionName = version
     libraryName = 'Turbo Native for Android'
     libraryDescription = 'Android framework for making Turbo native apps'
 
@@ -46,7 +44,6 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 30
-        versionName libVersionName
 
         // Define ProGuard rules for this android library project. These rules will be applied when
         // a consumer of this library sets 'minifyEnabled true'.
@@ -147,8 +144,8 @@ afterEvaluate {
                 url = uri('https://maven.pkg.github.com/hotwired/turbo-android')
 
                 credentials {
-                    username = System.getenv('GITHUB_USER')
-                    password = System.getenv('GITHUB_ACCESS_TOKEN')
+                    username = System.getenv('GITHUB_ACTOR')
+                    password = System.getenv('GITHUB_TOKEN')
                 }
             }
         }
