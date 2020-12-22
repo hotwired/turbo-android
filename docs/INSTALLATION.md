@@ -13,6 +13,8 @@ dependencies {
 }
 ```
 
+See the [latest version](https://bintray.com/hotwire/maven/turbo-android) available on Bintray/JCenter.
+
 ## Required `minSdkVersion`
 Android SDK 24 (or greater) is required as the `minSdkVersion` in your app module's `build.gradle` file:
 ```groovy
@@ -28,11 +30,11 @@ In order for a [WebView](https://developer.android.com/reference/android/webkit/
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 
-# Snapshot Builds
-Pre-release snapshot builds will be published to [GitHub Packages](https://github.com/features/packages).
+# Pre-release Builds
+Pre-release builds will be published to [GitHub Packages](https://github.com/features/packages).
 
 ## Personal Access Token
-If you'd like to use a snapshot release, you'll need to create a [Personal Access Token](https://docs.github.com/en/free-pro-team@latest/packages/learn-github-packages/about-github-packages#authenticating-to-github-packages) in your GitHub account and give it the `read:packages` permission.
+If you'd like to use a pre-release version, you'll need to create a [Personal Access Token](https://docs.github.com/en/free-pro-team@latest/packages/learn-github-packages/about-github-packages#authenticating-to-github-packages) in your GitHub account and give it the `read:packages` permission.
 
 Copy your access token to your `.bash_profile` (or another accessible place that's outside of source control):
 
@@ -58,6 +60,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'dev.hotwire:turbo:7.0.1-snapshot01'
+    implementation 'dev.hotwire:turbo:7.0.1-alpha01'
 }
 ```
