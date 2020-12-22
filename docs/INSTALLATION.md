@@ -12,7 +12,6 @@ dependencies {
     implementation 'dev.hotwire:turbo:7.0.0-beta01'
 }
 ```
-**🚨 We're still waiting for Bintray to approve the package in JCenter. This should be resolved very soon. If you can't wait, see how to install the dependency from GitHub Packages below. 🚨**
 
 See the [latest version](https://bintray.com/hotwire/maven/turbo-android) available on Bintray/JCenter.
 
