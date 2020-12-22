@@ -11,9 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
       - name: Publish artifact to Bintray
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
           BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
-        run: ./gradlew -Pversion=${{ github.event.release.tag_name }} clean build bintrayUpload
+        run: ./gradlew -Pversion=${{ github.event.release.tag_name }} clean build -x test bintrayUpload
