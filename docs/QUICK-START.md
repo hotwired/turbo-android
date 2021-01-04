@@ -25,7 +25,7 @@ In its simplest form, the implementation of your `TurboSessionNavHostFragment` w
 class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override val sessionName = "main"
 
-    override val startLocation = "https://hotwire.dev/turbo/demo"
+    override val startLocation = "https://turbo-native-demo.glitch.me/"
 
     override val registeredActivities: List<KClass<out Activity>>
         get() = listOf(
