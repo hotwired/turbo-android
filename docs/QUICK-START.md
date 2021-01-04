@@ -8,11 +8,11 @@
 1. [Create a Path Configuration](#create-a-path-configuration)
 
 ## Create a NavHostFragment
-A [`NavHostFragment`](https://developer.android.com/reference/androidx/navigation/fragment/NavHostFragment) is a component available in [Android Jetpack](https://developer.android.com/jetpack) and is primarily responsible for providing "an area in your layout for self-contained navigation to occurr."
+A [`NavHostFragment`](https://developer.android.com/reference/androidx/navigation/fragment/NavHostFragment) is a component available in [Android Jetpack](https://developer.android.com/jetpack) and is primarily responsible for providing "an area in your layout for self-contained navigation to occur."
 
 The Turbo extension of this class, `TurboSessionNavHostFragment`, along with being responsible for self-contained `TurboFragment` navigation, also manages a `TurboSesssion` and a `TurboWebView` instance. You will need to implement a few things for this abstract class:
 
-* The name of the `TurboSession` (this is abitrary, but must be unique in your app)
+* The name of the `TurboSession` (this is arbitrary, but must be unique in your app)
 * The url of a starting location when your app starts up
 * A list of registered activities that Turbo will be able to navigate to (optional)
 * A list of registered fragments that Turbo will be able to navigate to
