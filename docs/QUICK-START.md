@@ -13,7 +13,7 @@ A [`NavHostFragment`](https://developer.android.com/reference/androidx/navigatio
 The Turbo extension of this class, `TurboSessionNavHostFragment`, along with being responsible for self-contained `TurboFragment` navigation, also manages a `TurboSesssion` and a `TurboWebView` instance. You will need to implement a few things for this abstract class:
 
 * The name of the `TurboSession` (this is arbitrary, but must be unique in your app)
-* The url of a starting location when your app starts up
+* The url of a starting location when your app starts up. Note: if you're running your app locally without HTTPS, you'll need to adjust your `android:usesCleartextTraffic` settings in the AndroidManifest.xml to allow arbitrary loads.
 * A list of registered activities that Turbo will be able to navigate to (optional)
 * A list of registered fragments that Turbo will be able to navigate to
 * The location of your `TurboPathConfiguration` JSON file(s) to configure navigation rules
