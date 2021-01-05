@@ -29,6 +29,11 @@ internal fun Context.coroutineScope(): CoroutineScope {
     return (this as? AppCompatActivity)?.lifecycleScope ?: GlobalScope
 }
 
+internal fun String.extract(patternRegex: String): String? {
+    val regex = Regex(patternRegex, RegexOption.IGNORE_CASE)
+    return regex.find(this)?.groups?.get(1)?.value
+}
+
 internal fun Any.toJson(): String {
     return gson.toJson(this)
 }

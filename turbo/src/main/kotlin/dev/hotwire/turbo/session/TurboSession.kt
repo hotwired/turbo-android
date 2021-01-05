@@ -46,13 +46,13 @@ class TurboSession internal constructor(
     internal var currentVisit: TurboVisit? = null
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
+    internal var isColdBooting = false
     internal var visitPending = false
     internal var isRenderProcessGone = false
     internal var restorationIdentifiers = SparseArray<String>()
+    internal val context: Context = activity.applicationContext
     internal val httpRepository = TurboHttpRepository()
     internal val fileUploadDelegate = TurboFileUploadDelegate(this)
-    internal val context: Context = activity.applicationContext
-    internal var isColdBooting = false
 
     // User accessible
 

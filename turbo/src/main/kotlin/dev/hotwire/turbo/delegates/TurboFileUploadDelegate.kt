@@ -2,17 +2,28 @@ package dev.hotwire.turbo.delegates
 
 import android.app.Activity
 import android.content.ClipData
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.session.TurboSession
+import dev.hotwire.turbo.util.TurboFileProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 const val TURBO_REQUEST_CODE_FILES = 37
 
-class TurboFileUploadDelegate(val session: TurboSession) {
+internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineScope {
+    private val context: Context = session.context
     private var uploadCallback: ValueCallback<Array<Uri>>? = null
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO + Job()
 
     fun onShowFileChooser(
         filePathCallback: ValueCallback<Array<Uri>>,
@@ -74,24 +85,30 @@ class TurboFileUploadDelegate(val session: TurboSession) {
     private fun handleFileSelection(intent: Intent?) {
         if (intent == null) return
 
-        val clipData = intent.clipData
-        val dataString = intent.dataString
-        val results = when {
-            clipData != null -> buildMultipleFilesResult(clipData)
-            dataString != null -> buildSingleFileResult(dataString)
-            else -> null
-        }
+        launch {
+            val clipData = intent.clipData
+            val dataString = intent.dataString
+            val results = when {
+                clipData != null -> buildMultipleFilesResult(clipData)
+                dataString != null -> buildSingleFileResult(dataString)
+                else -> null
+            }
 
-        uploadCallback?.onReceiveValue(results)
-        uploadCallback = null
+            uploadCallback?.onReceiveValue(results)
+            uploadCallback = null
+        }
     }
 
-    private fun buildMultipleFilesResult(clipData: ClipData): Array<Uri>? {
+    private suspend fun buildMultipleFilesResult(clipData: ClipData): Array<Uri>? {
         val arrayList = mutableListOf<Uri>()
 
         for (i in 0 until clipData.itemCount) {
-            arrayList.add(clipData.getItemAt(i).uri)
+            writeToCachedFile(clipData.getItemAt(i).uri)?.let {
+                arrayList.add(it)
+            }
         }
+
+        // TODO allow read/write failure to be observed
 
         return when {
             arrayList.isEmpty() -> null
@@ -99,7 +116,15 @@ class TurboFileUploadDelegate(val session: TurboSession) {
         }
     }
 
-    private fun buildSingleFileResult(dataString: String): Array<Uri> {
-        return arrayOf(Uri.parse(dataString))
+    private suspend fun buildSingleFileResult(dataString: String): Array<Uri>? {
+        val uri = writeToCachedFile(Uri.parse(dataString))
+
+        // TODO allow read/write failure to be observed
+
+        return uri?.let { arrayOf(it) }
+    }
+
+    private suspend fun writeToCachedFile(uri: Uri): Uri? {
+        return TurboFileProvider.writeUriToFile(context, uri)
     }
 }
