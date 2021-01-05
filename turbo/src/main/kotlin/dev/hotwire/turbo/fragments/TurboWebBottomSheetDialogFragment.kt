@@ -2,6 +2,7 @@ package dev.hotwire.turbo.fragments
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
 import dev.hotwire.turbo.views.TurboView
+import dev.hotwire.turbo.views.TurboWebChromeClient
 
 /**
  * The base class from which all bottom sheet web fragments in a
@@ -33,6 +35,10 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         webDelegate.onActivityCreated()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        webDelegate.onActivityResult(requestCode, resultCode, intent)
     }
 
     override fun onStart() {
@@ -69,6 +75,10 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     @SuppressLint("InflateParams")
     override fun createErrorView(statusCode: Int): View {
         return layoutInflater.inflate(R.layout.turbo_error, null)
+    }
+
+    override fun createWebChromeClient(): TurboWebChromeClient {
+        return TurboWebChromeClient(this)
     }
 
     override fun onVisitErrorReceived(location: String, errorCode: Int) {

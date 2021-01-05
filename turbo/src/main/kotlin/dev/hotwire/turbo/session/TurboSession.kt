@@ -15,14 +15,11 @@ import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.screenshotsEnabled
+import dev.hotwire.turbo.delegates.TurboFileUploadDelegate
 import dev.hotwire.turbo.http.TurboHttpClient
 import dev.hotwire.turbo.http.TurboHttpRepository
 import dev.hotwire.turbo.http.TurboOfflineRequestHandler
 import dev.hotwire.turbo.http.TurboPreCacheRequest
-import dev.hotwire.turbo.util.TurboLog
-import dev.hotwire.turbo.util.coroutineScope
-import dev.hotwire.turbo.util.runOnUiThread
-import dev.hotwire.turbo.util.toJson
 import dev.hotwire.turbo.util.*
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
@@ -53,6 +50,7 @@ class TurboSession internal constructor(
     internal var isRenderProcessGone = false
     internal var restorationIdentifiers = SparseArray<String>()
     internal val httpRepository = TurboHttpRepository()
+    internal val fileUploadDelegate = TurboFileUploadDelegate(this)
     internal val context: Context = activity.applicationContext
     internal var isColdBooting = false
 
