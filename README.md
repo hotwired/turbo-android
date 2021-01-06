@@ -17,6 +17,7 @@
 1. Android SDK 24+ is required as the `minSdkVersion` in your build.gradle.
 1. This library is written entirely in [Kotlin](https://kotlinlang.org/), and your app should use Kotlin as well. Compatibility with Java is not provided or supported.
 1. This library supports web apps using either Turbo 7 or Turbolinks 5
+1. Turbo or Turbolinks is exposed on the `window` object on the page being loaded.
 
 **Note:** You should understand how Turbo works with web applications in the browser before attempting to use Turbo Android. See the [Turbo 7 documentation](https://turbo.hotwire.dev) for details.
 
@@ -38,7 +39,7 @@ See the [instructions to build the project yourself](docs/BUILD-PROJECT.md).
 
 Turbo Android is open-source software, freely distributable under the terms of an [MIT-style license](LICENSE). The [source code is hosted on GitHub](https://github.com/hotwired/turbo-android). Development is sponsored by [Basecamp](https://basecamp.com/).
 
-We welcome contributions in the form of bug reports, pull requests, or thoughtful discussions in the [GitHub issue tracker](https://github.com/hotwired/turbo-android/issues). 
+We welcome contributions in the form of bug reports, pull requests, or thoughtful discussions in the [GitHub issue tracker](https://github.com/hotwired/turbo-android/issues).
 
 Please note that this project is released with a [Contributor Code of Conduct](docs/CONDUCT.md). By participating in this project you agree to abide by its terms.
 
