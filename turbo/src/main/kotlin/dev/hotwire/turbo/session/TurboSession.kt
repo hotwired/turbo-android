@@ -20,6 +20,7 @@ import dev.hotwire.turbo.http.TurboHttpClient
 import dev.hotwire.turbo.http.TurboHttpRepository
 import dev.hotwire.turbo.http.TurboOfflineRequestHandler
 import dev.hotwire.turbo.http.TurboPreCacheRequest
+import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.*
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
@@ -72,6 +73,12 @@ class TurboSession internal constructor(
      */
     var pathConfiguration = TurboPathConfiguration(context)
         internal set
+
+    /**
+     * Gets the nav destination that corresponds to the current visit.
+     */
+    val currentVisitNavDestination: TurboNavDestination?
+        get() = currentVisit?.callback?.visitNavDestination()
 
     /**
      * Provides the status of whether Turbo is initialized and ready for use.
@@ -489,8 +496,10 @@ class TurboSession internal constructor(
 
     private fun callback(action: (TurboSessionCallback) -> Unit) {
         context.runOnUiThread {
-            currentVisit?.callback?.let {
-                if (it.isActive()) action(it)
+            currentVisit?.callback?.let { callback ->
+                if (callback.visitNavDestination().isActive) {
+                    action(callback)
+                }
             }
         }
     }

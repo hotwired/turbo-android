@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
-import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TurboFileProvider
 import kotlinx.coroutines.CoroutineScope
@@ -27,19 +26,18 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
 
     fun onShowFileChooser(
         filePathCallback: ValueCallback<Array<Uri>>,
-        params: FileChooserParams,
-        destination: TurboNavDestination
+        params: FileChooserParams
     ): Boolean {
         uploadCallback = filePathCallback
-        openFileChooser(params, destination)
-        return true
+        return openFileChooser(params)
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         handleActivityResult(requestCode, resultCode, intent)
     }
 
-    private fun openFileChooser(params: FileChooserParams, destination: TurboNavDestination) {
+    private fun openFileChooser(params: FileChooserParams): Boolean {
+        val destination = session.currentVisitNavDestination ?: return false
         val allowMultiple = params.mode == FileChooserParams.MODE_OPEN_MULTIPLE
 
         val fileTypesIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
@@ -64,6 +62,7 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
 
         val chooserIntent = Intent.createChooser(fileTypesIntent, title)
         destination.fragment.startActivityForResult(chooserIntent, TURBO_REQUEST_CODE_FILES)
+        return true
     }
 
     private fun handleActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {

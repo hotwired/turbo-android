@@ -208,8 +208,8 @@ internal class TurboWebFragmentDelegate(
         navigator.navigate(location, options)
     }
 
-    override fun isActive(): Boolean {
-        return navDestination.fragment.isAdded
+    override fun visitNavDestination(): TurboNavDestination {
+        return navDestination
     }
 
     // -----------------------------------------------------------------------

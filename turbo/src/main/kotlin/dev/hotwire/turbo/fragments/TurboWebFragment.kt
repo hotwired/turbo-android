@@ -90,7 +90,7 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     }
 
     override fun createWebChromeClient(): TurboWebChromeClient {
-        return TurboWebChromeClient(this)
+        return TurboWebChromeClient(session)
     }
 
     override fun onVisitErrorReceived(location: String, errorCode: Int) {
