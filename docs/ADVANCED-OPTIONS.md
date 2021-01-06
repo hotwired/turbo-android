@@ -97,3 +97,36 @@ Refer to the demo [`NavDestination.kt`](../demo/src/main/kotlin/dev/hotwire/turb
 You may encounter situations where a truly single-`Activity` app may not be feasible. For example, you may need an `Activity` for logged-out state and a separate `Activity` for logged-in state.
 
 In such cases, you need to create an additional `Activity` that also implements the `TurboActivity` interface. You will need to be sure to register each `Activity` by calling [`TurboSessionNavHostFragment.registeredActivities()`](../turbo/src/main/kotlin/dev/hotwire/turbo/session/TurboSessionNavHostFragment.kt) so that you can navigate between them.
+
+## Enable Debug Logging
+You may encounter some time when you need to see what turbo-android is doing behind the scenes in these instances you can enable debug logging by overriding the `onSessionCreate` method in your `NavHostFragment` and turning it on. For example:
+
+```kotlin
+class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
+    override val sessionName = "main"
+
+    override val startLocation = "https://turbo-native-demo.glitch.me"
+
+    override val registeredActivities: List<KClass<out Activity>>
+        get() = listOf(
+            // Leave empty unless you have more
+            // than one TurboActivity in your app
+        )
+
+    override val registeredFragments: List<KClass<out Fragment>>
+        get() = listOf(
+            WebFragment::class
+            // And any other TurboFragments in your app
+        )
+
+    override val pathConfigurationLocation: TurboPathConfiguration.Location
+        get() = TurboPathConfiguration.Location(
+            assetFilePath = "json/configuration.json"
+        )
+
+    override open fun onSessionCreated() {
+        super.onSessionCreated()
+        session.setDebugLoggingEnabled(true)
+    }
+}
+```
