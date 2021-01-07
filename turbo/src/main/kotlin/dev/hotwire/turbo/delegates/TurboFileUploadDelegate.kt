@@ -111,8 +111,6 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
             }
         }
 
-        // TODO allow read/write failure to be observed
-
         return when {
             arrayList.isEmpty() -> null
             else -> arrayList.toTypedArray()
@@ -121,9 +119,6 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
 
     private suspend fun buildSingleFileResult(dataString: String): Array<Uri>? {
         val uri = writeToCachedFile(Uri.parse(dataString))
-
-        // TODO allow read/write failure to be observed
-
         return uri?.let { arrayOf(it) }
     }
 
