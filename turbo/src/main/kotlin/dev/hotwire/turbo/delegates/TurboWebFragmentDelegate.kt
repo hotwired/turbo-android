@@ -11,6 +11,7 @@ import dev.hotwire.turbo.nav.TurboNavigator
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.session.TurboSessionCallback
 import dev.hotwire.turbo.session.TurboSessionModalResult
+import dev.hotwire.turbo.util.dispatcherProvider
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
@@ -326,7 +327,7 @@ internal class TurboWebFragmentDelegate(
     }
 
     private suspend fun fetchCachedSnapshot(): String? {
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatcherProvider.io) {
             val response = session().offlineRequestHandler?.getCachedSnapshot(
                 url = location
             )

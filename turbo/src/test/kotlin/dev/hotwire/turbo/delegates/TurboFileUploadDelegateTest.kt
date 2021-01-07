@@ -34,12 +34,12 @@ class TurboFileUploadDelegateTest : BaseRepositoryTest() {
 
     @Before
     override fun setup() {
+        super.setup()
         MockitoAnnotations.openMocks(this)
 
         activity = buildActivity(TurboTestActivity::class.java).get()
         context = ApplicationProvider.getApplicationContext()
         session = TurboSession("test", activity, webView)
-        session.fileUploadDelegate.coroutineDispatcher = Dispatchers.Main
     }
 
     @Test

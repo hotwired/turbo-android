@@ -5,6 +5,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import androidx.annotation.experimental.Experimental
 import dev.hotwire.turbo.util.TurboLog
+import dev.hotwire.turbo.util.dispatcherProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
@@ -27,7 +28,7 @@ internal class TurboHttpRepository {
 
     internal suspend fun preCache(requestHandler: TurboOfflineRequestHandler,
                                   resourceRequest: WebResourceRequest) {
-        withContext(Dispatchers.IO) {
+        withContext(dispatcherProvider.io) {
             fetch(requestHandler, resourceRequest)
         }
     }

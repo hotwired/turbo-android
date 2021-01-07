@@ -14,7 +14,7 @@ class TurboUriHelper(val context: Context) {
     suspend fun writeFileTo(uri: Uri, directory: File): File? {
         val uriAttributes = getAttributes(uri) ?: return null
 
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatcherProvider.io) {
             val file = File(directory, uriAttributes.fileName).also {
                 if (it.exists()) it.delete()
             }

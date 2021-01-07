@@ -9,6 +9,7 @@ import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TurboFileProvider
+import dev.hotwire.turbo.util.dispatcherProvider
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -18,10 +19,8 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
     private val context: Context = session.context
     private var uploadCallback: ValueCallback<Array<Uri>>? = null
 
-    var coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-
     override val coroutineContext: CoroutineContext
-        get() = coroutineDispatcher + Job()
+        get() = dispatcherProvider.io + Job()
 
     fun onShowFileChooser(
         filePathCallback: ValueCallback<Array<Uri>>,
