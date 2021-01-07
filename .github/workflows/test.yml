@@ -11,3 +11,9 @@ jobs:
 
       - name: Run tests
         run: ./gradlew testRelease
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-report
+          path: build/reports/tests/testReleaseUnitTest/*.html
