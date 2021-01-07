@@ -11,6 +11,7 @@ import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitActionAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
+import java.io.File
 
 internal fun Context.runOnUiThread(func: () -> Unit) {
     when (mainLooper.isCurrentThread) {
@@ -32,6 +33,14 @@ internal fun Context.coroutineScope(): CoroutineScope {
 internal fun String.extract(patternRegex: String): String? {
     val regex = Regex(patternRegex, RegexOption.IGNORE_CASE)
     return regex.find(this)?.groups?.get(1)?.value
+}
+
+internal fun File.deleteAllFilesInDirectory() {
+    if (!isDirectory) return
+
+    listFiles()?.forEach {
+        it.delete()
+    }
 }
 
 internal fun Any.toJson(): String {

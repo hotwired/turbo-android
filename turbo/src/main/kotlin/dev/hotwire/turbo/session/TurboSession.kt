@@ -89,6 +89,7 @@ class TurboSession internal constructor(
     init {
         initializeWebView()
         TurboHttpClient.enableCachingWith(context)
+        fileUploadDelegate.deleteCachedFiles()
     }
 
     // Public

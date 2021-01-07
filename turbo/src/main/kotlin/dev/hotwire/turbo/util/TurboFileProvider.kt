@@ -3,6 +3,8 @@ package dev.hotwire.turbo.util
 import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
@@ -32,6 +34,12 @@ class TurboFileProvider : FileProvider() {
 
             return uriHelper.writeFileTo(uri, directory(context))?.let {
                 contentUriForFile(context, it)
+            }
+        }
+
+        suspend fun deleteAllFiles(context: Context) {
+            withContext(Dispatchers.IO) {
+                directory(context).deleteAllFilesInDirectory()
             }
         }
     }

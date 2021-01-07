@@ -9,10 +9,7 @@ import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TurboFileProvider
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 const val TURBO_REQUEST_CODE_FILES = 37
@@ -21,8 +18,10 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
     private val context: Context = session.context
     private var uploadCallback: ValueCallback<Array<Uri>>? = null
 
+    var coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + Job()
+        get() = coroutineDispatcher + Job()
 
     fun onShowFileChooser(
         filePathCallback: ValueCallback<Array<Uri>>,
@@ -34,6 +33,12 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
 
     fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         handleActivityResult(requestCode, resultCode, intent)
+    }
+
+    fun deleteCachedFiles() {
+        launch {
+            TurboFileProvider.deleteAllFiles(context)
+        }
     }
 
     private fun openFileChooser(params: FileChooserParams): Boolean {
