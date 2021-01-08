@@ -16,8 +16,8 @@
 
 1. Android SDK 24+ is required as the `minSdkVersion` in your build.gradle.
 1. This library is written entirely in [Kotlin](https://kotlinlang.org/), and your app should use Kotlin as well. Compatibility with Java is not provided or supported.
-1. This library supports web apps using either Turbo 7 or Turbolinks 5
-1. Turbo or Turbolinks is exposed on the `window` object on the page being loaded.
+1. This library supports web apps using either Turbo 7 or Turbolinks 5.
+1. `Turbo` (or `Turbolinks`) is exposed on the `window` object on the WebView page being loaded.
 
 **Note:** You should understand how Turbo works with web applications in the browser before attempting to use Turbo Android. See the [Turbo 7 documentation](https://turbo.hotwire.dev) for details.
 

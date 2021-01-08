@@ -12,7 +12,7 @@ In your web Fragment, this would look like:
 @TurboNavGraphDestination(uri = "turbo://fragment/web")
 class WebFragment : TurboWebFragment() {
 
-    ...
+    // ...
 
     override fun shouldNavigateTo(newLocation: String): Boolean {
         return when (newLocation.startsWith(MY_DOMAIN)) {
@@ -54,7 +54,7 @@ In your Fragment, this would look like:
 @TurboNavGraphDestination(uri = "turbo://fragment/web")
 class WebFragment : TurboWebFragment() {
 
-    ...
+    // ...
 
     private fun respondToNativeFeature() {
         // Navigate to a new destination
@@ -88,7 +88,7 @@ In your Activity, this would look like:
 ```kotlin
 class MainActivity : AppCompatActivity(), TurboActivity {
     
-    ...
+    // ...
 
     private fun respondToNativeFeature() {
         // Navigate to a new destination

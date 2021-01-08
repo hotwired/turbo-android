@@ -99,12 +99,12 @@ You may encounter situations where a truly single-`Activity` app may not be feas
 In such cases, you need to create an additional `Activity` that also implements the `TurboActivity` interface. You will need to be sure to register each `Activity` by calling [`TurboSessionNavHostFragment.registeredActivities()`](../turbo/src/main/kotlin/dev/hotwire/turbo/session/TurboSessionNavHostFragment.kt) so that you can navigate between them.
 
 ## Enable Debug Logging
-You may encounter some time when you need to see what `turbo-android` is doing behind the scenes. To enable debug logging, override the `onSessionCreate()` method in your `NavHostFragment` and call `session.setDebugLoggingEnabled(true)`. Debug logging should always be disabled in your production app. For example:
+During development, you may want to see what `turbo-android` is doing behind the scenes. To enable debug logging, override the `onSessionCreated()` method in your `NavHostFragment` and call `session.setDebugLoggingEnabled(true)`. Debug logging should always be disabled in your production app. For example:
 
 ```kotlin
 class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
-    ...
+    // ...
 
     override open fun onSessionCreated() {
         super.onSessionCreated()

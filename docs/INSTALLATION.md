@@ -20,7 +20,7 @@ Android SDK 24 (or greater) is required as the `minSdkVersion` in your app modul
 ```groovy
 defaultConfig {
     minSdkVersion 24
-    ...
+    // ...
 }
 ```
 
