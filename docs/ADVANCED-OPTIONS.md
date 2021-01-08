@@ -68,7 +68,7 @@ class WebBottomSheetFragment : TurboWebBottomSheetDialogFragment()
 ```
 The library automatically inflates a default `R.layout.turbo_fragment_web_bottom_sheet` layout to host a `TurboView`. If you'd like to create your own custom layout for your web bottom sheet Fragment, you can override the `onCreateView()` function and inflate your own layout.
 
-You can also provide your own custom progress view or error view by overriding the `createProgressView()` and `createErrorView()` functions in your web Fragment. 
+You can also provide your own custom progress view or error view by overriding the `createProgressView()` and `createErrorView()` functions in your web Fragment.
 
 Refer to demo [`WebBottomSheetFragment`](../demo/src/main/kotlin/dev/hotwire/turbo/demo/features/web/WebBottomSheetFragment.kt) as an example.
 
@@ -97,3 +97,21 @@ Refer to the demo [`NavDestination.kt`](../demo/src/main/kotlin/dev/hotwire/turb
 You may encounter situations where a truly single-`Activity` app may not be feasible. For example, you may need an `Activity` for logged-out state and a separate `Activity` for logged-in state.
 
 In such cases, you need to create an additional `Activity` that also implements the `TurboActivity` interface. You will need to be sure to register each `Activity` by calling [`TurboSessionNavHostFragment.registeredActivities()`](../turbo/src/main/kotlin/dev/hotwire/turbo/session/TurboSessionNavHostFragment.kt) so that you can navigate between them.
+
+## Enable Debug Logging
+You may encounter some time when you need to see what `turbo-android` is doing behind the scenes. To enable debug logging, override the `onSessionCreate()` method in your `NavHostFragment` and call `session.setDebugLoggingEnabled(true)`. Debug logging should always be disabled in your production app. For example:
+
+```kotlin
+class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
+
+    ...
+
+    override open fun onSessionCreated() {
+        super.onSessionCreated()
+
+        if (BuildConfig.DEBUG) {
+          session.setDebugLoggingEnabled(true)
+        }
+    }
+}
+```
