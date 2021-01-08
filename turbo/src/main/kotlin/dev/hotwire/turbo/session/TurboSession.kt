@@ -75,7 +75,7 @@ class TurboSession internal constructor(
         internal set
 
     /**
-     * Gets the nav destination that corresponds to the current visit.
+     * Gets the nav destination that corresponds to the current WebView visit.
      */
     val currentVisitNavDestination: TurboNavDestination?
         get() = currentVisit?.callback?.visitNavDestination()

@@ -10,10 +10,12 @@ import android.webkit.WebChromeClient.FileChooserParams
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TurboFileProvider
 import dev.hotwire.turbo.util.dispatcherProvider
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-const val TURBO_REQUEST_CODE_FILES = 37
+internal const val TURBO_REQUEST_CODE_FILES = 37
 
 internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineScope {
     private val context: Context = session.context
@@ -43,8 +45,19 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
     private fun openFileChooser(params: FileChooserParams): Boolean {
         val destination = session.currentVisitNavDestination ?: return false
         val allowMultiple = params.mode == FileChooserParams.MODE_OPEN_MULTIPLE
+        val intent = buildGetContentIntent(params, allowMultiple)
+        val title = params.title ?: when (allowMultiple) {
+            true -> "Choose Files"
+            else -> "Choose File"
+        }
 
-        val fileTypesIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+        val chooserIntent = Intent.createChooser(intent, title)
+        destination.fragment.startActivityForResult(chooserIntent, TURBO_REQUEST_CODE_FILES)
+        return true
+    }
+
+    private fun buildGetContentIntent(params: FileChooserParams, allowMultiple: Boolean): Intent {
+        return Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, allowMultiple)
 
@@ -58,15 +71,6 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
                 else -> params.acceptTypes.first()
             }
         }
-
-        val title = params.title ?: when (allowMultiple) {
-            true -> "Choose Files"
-            else -> "Choose File"
-        }
-
-        val chooserIntent = Intent.createChooser(fileTypesIntent, title)
-        destination.fragment.startActivityForResult(chooserIntent, TURBO_REQUEST_CODE_FILES)
-        return true
     }
 
     private fun handleActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -111,8 +115,8 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
             }
         }
 
-        return when {
-            arrayList.isEmpty() -> null
+        return when (arrayList.isEmpty()) {
+            true -> null
             else -> arrayList.toTypedArray()
         }
     }
