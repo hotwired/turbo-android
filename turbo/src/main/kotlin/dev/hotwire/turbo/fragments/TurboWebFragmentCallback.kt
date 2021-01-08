@@ -3,6 +3,7 @@ package dev.hotwire.turbo.fragments
 import android.view.View
 import android.webkit.HttpAuthHandler
 import dev.hotwire.turbo.views.TurboView
+import dev.hotwire.turbo.views.TurboWebChromeClient
 import dev.hotwire.turbo.views.TurboWebView
 
 /**
@@ -24,6 +25,11 @@ interface TurboWebFragmentCallback {
      * Inflate and return a new view to serve as a progress view.
      */
     fun createProgressView(location: String): View
+
+    /**
+     * Create and return a new web chrome client instance.
+     */
+    fun createWebChromeClient(): TurboWebChromeClient
 
     /**
      * Called when the WebView has been attached to the current destination.

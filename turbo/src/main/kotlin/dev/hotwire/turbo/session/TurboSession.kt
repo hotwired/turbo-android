@@ -15,14 +15,12 @@ import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.screenshotsEnabled
+import dev.hotwire.turbo.delegates.TurboFileUploadDelegate
 import dev.hotwire.turbo.http.TurboHttpClient
 import dev.hotwire.turbo.http.TurboHttpRepository
 import dev.hotwire.turbo.http.TurboOfflineRequestHandler
 import dev.hotwire.turbo.http.TurboPreCacheRequest
-import dev.hotwire.turbo.util.TurboLog
-import dev.hotwire.turbo.util.coroutineScope
-import dev.hotwire.turbo.util.runOnUiThread
-import dev.hotwire.turbo.util.toJson
+import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.*
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
@@ -49,12 +47,13 @@ class TurboSession internal constructor(
     internal var currentVisit: TurboVisit? = null
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
+    internal var isColdBooting = false
     internal var visitPending = false
     internal var isRenderProcessGone = false
     internal var restorationIdentifiers = SparseArray<String>()
-    internal val httpRepository = TurboHttpRepository()
     internal val context: Context = activity.applicationContext
-    internal var isColdBooting = false
+    internal val httpRepository = TurboHttpRepository()
+    internal val fileUploadDelegate = TurboFileUploadDelegate(this)
 
     // User accessible
 
@@ -76,6 +75,12 @@ class TurboSession internal constructor(
         internal set
 
     /**
+     * Gets the nav destination that corresponds to the current WebView visit.
+     */
+    val currentVisitNavDestination: TurboNavDestination?
+        get() = currentVisit?.callback?.visitNavDestination()
+
+    /**
      * Provides the status of whether Turbo is initialized and ready for use.
      */
     var isReady = false
@@ -84,6 +89,7 @@ class TurboSession internal constructor(
     init {
         initializeWebView()
         TurboHttpClient.enableCachingWith(context)
+        fileUploadDelegate.deleteCachedFiles()
     }
 
     // Public
@@ -491,8 +497,10 @@ class TurboSession internal constructor(
 
     private fun callback(action: (TurboSessionCallback) -> Unit) {
         context.runOnUiThread {
-            currentVisit?.callback?.let {
-                if (it.isActive()) action(it)
+            currentVisit?.callback?.let { callback ->
+                if (callback.visitNavDestination().isActive) {
+                    action(callback)
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import dev.hotwire.turbo.http.TurboHttpClient
+import dev.hotwire.turbo.util.dispatcherProvider
 import dev.hotwire.turbo.util.toJson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,7 +17,7 @@ internal class TurboPathConfigurationRepository {
     suspend fun getRemoteConfiguration(url: String): String? {
         val request = Request.Builder().url(url).build()
 
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatcherProvider.io) {
             issueRequest(request)
         }
     }

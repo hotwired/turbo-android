@@ -14,10 +14,10 @@ import dev.hotwire.turbo.R
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.TurboPathConfigurationProperties
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
+import dev.hotwire.turbo.delegates.TurboNestedFragmentDelegate
 import dev.hotwire.turbo.fragments.TurboFragmentViewModel
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
-import dev.hotwire.turbo.delegates.TurboNestedFragmentDelegate
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
 /**
@@ -67,6 +67,13 @@ interface TurboNavDestination {
      */
     val fragmentViewModel: TurboFragmentViewModel
         get() = delegate().fragmentViewModel
+
+    /**
+     * Specifies whether the destination fragment is currently active and
+     * added to its parent activity.
+     */
+    val isActive: Boolean
+        get() = fragment.isAdded && !fragment.isDetached
 
     /**
      * Gets the delegate instance that handles the Fragment's lifecycle events.

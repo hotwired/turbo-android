@@ -1,5 +1,6 @@
 package dev.hotwire.turbo
 
+import dev.hotwire.turbo.util.dispatcherProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -26,6 +27,7 @@ open class BaseRepositoryTest : BaseUnitTest() {
     override fun setup() {
         super.setup()
         Dispatchers.setMain(testDispatcher)
+        dispatcherProvider.io = Dispatchers.Main
         server.start()
     }
 

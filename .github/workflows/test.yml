@@ -11,3 +11,10 @@ jobs:
 
       - name: Run tests
         run: ./gradlew testRelease
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: test-results-report
+          path: turbo/build/reports/tests/testReleaseUnitTest

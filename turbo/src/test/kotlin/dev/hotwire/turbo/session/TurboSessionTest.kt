@@ -3,6 +3,7 @@ package dev.hotwire.turbo.session
 import android.app.Activity
 import android.os.Build
 import com.nhaarman.mockito_kotlin.whenever
+import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.toJson
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
@@ -25,6 +26,8 @@ class TurboSessionTest {
     private lateinit var callback: TurboSessionCallback
     @Mock
     private lateinit var webView: TurboWebView
+    @Mock
+    private lateinit var navDestination: TurboNavDestination
     private lateinit var activity: Activity
     private lateinit var session: TurboSession
     private lateinit var visit: TurboVisit
@@ -45,7 +48,8 @@ class TurboSessionTest {
             options = TurboVisitOptions()
         )
 
-        whenever(callback.isActive()).thenReturn(true)
+        whenever(callback.visitNavDestination()).thenReturn(navDestination)
+        whenever(navDestination.isActive).thenReturn(true)
     }
 
     @Test

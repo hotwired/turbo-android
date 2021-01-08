@@ -1,5 +1,6 @@
 package dev.hotwire.turbo.delegates
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
 import androidx.lifecycle.lifecycleScope
@@ -10,6 +11,7 @@ import dev.hotwire.turbo.nav.TurboNavigator
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.session.TurboSessionCallback
 import dev.hotwire.turbo.session.TurboSessionModalResult
+import dev.hotwire.turbo.util.dispatcherProvider
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
@@ -68,10 +70,19 @@ internal class TurboWebFragmentDelegate(
 
     /**
      * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onActivityResult].
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        session().fileUploadDelegate.onActivityResult(requestCode, resultCode, intent)
+    }
+
+    /**
+     * Should be called by the implementing Fragment during
      * [androidx.fragment.app.Fragment.onStart].
      */
     fun onStart() {
         initNavigationVisit()
+        initWebChromeClient()
     }
 
     /**
@@ -91,6 +102,7 @@ internal class TurboWebFragmentDelegate(
      */
     fun onStartAfterDialogCancel() {
         initNavigationVisit()
+        initWebChromeClient()
     }
 
     /**
@@ -197,8 +209,8 @@ internal class TurboWebFragmentDelegate(
         navigator.navigate(location, options)
     }
 
-    override fun isActive(): Boolean {
-        return navDestination.fragment.isAdded
+    override fun visitNavDestination(): TurboNavDestination {
+        return navDestination
     }
 
     // -----------------------------------------------------------------------
@@ -225,6 +237,10 @@ internal class TurboWebFragmentDelegate(
             screenshotOrientation = 0
             screenshotZoomed = false
         }
+    }
+
+    private fun initWebChromeClient() {
+        webView.webChromeClient = callback.createWebChromeClient()
     }
 
     private fun attachWebView(onReady: (Boolean) -> Unit = {}) {
@@ -311,7 +327,7 @@ internal class TurboWebFragmentDelegate(
     }
 
     private suspend fun fetchCachedSnapshot(): String? {
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatcherProvider.io) {
             val response = session().offlineRequestHandler?.getCachedSnapshot(
                 url = location
             )

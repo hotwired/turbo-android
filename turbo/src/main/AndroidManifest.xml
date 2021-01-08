@@ -1,3 +1,19 @@
-<manifest package="dev.hotwire.turbo">
-    <application/>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="dev.hotwire.turbo">
+
+    <application>
+
+        <provider
+            android:name=".util.TurboFileProvider"
+            android:authorities="${applicationId}.turbo.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
+    </application>
+
 </manifest>
