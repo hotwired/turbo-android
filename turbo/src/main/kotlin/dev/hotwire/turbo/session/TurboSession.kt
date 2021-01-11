@@ -173,7 +173,7 @@ class TurboSession internal constructor(
      * You should never call this directly as it could lead to unintended behavior.
      *
      * @param location The location to visit.
-     * @param optionsJson A JSON block to be serialzed into [TurboVisitOptions].
+     * @param optionsJson A JSON block to be serialized into [TurboVisitOptions].
      */
     @JavascriptInterface
     fun visitProposedToLocation(location: String, optionsJson: String) {
@@ -196,7 +196,8 @@ class TurboSession internal constructor(
     @JavascriptInterface
     fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String) {
         logEvent(
-            "visitStarted", "location" to location,
+            "visitStarted",
+            "location" to location,
             "visitIdentifier" to visitIdentifier,
             "visitHasCachedSnapshot" to visitHasCachedSnapshot
         )
@@ -207,11 +208,37 @@ class TurboSession internal constructor(
     /**
      * Called by Turbo bridge when the HTTP request has been completed.
      *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
      * @param visitIdentifier A unique identifier for the visit.
+     * @param location The location being visited.
      */
     @JavascriptInterface
-    fun visitRequestCompleted(visitIdentifier: String) {
-        logEvent("visitRequestCompleted", "visitIdentifier" to visitIdentifier)
+    fun visitRequestCompleted(visitIdentifier: String, location: String) {
+        logEvent(
+            "visitRequestCompleted",
+            "location" to location,
+            "visitIdentifier" to visitIdentifier
+        )
+    }
+
+    /**
+     * Called by Turbo bridge when the HTTP request redirects to a new location.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param visitIdentifier A unique identifier for the visit.
+     * @param location The location being redirected to.
+     */
+    @JavascriptInterface
+    fun visitRequestRedirected(visitIdentifier: String, location: String) {
+        logEvent(
+            "visitRequestRedirected",
+            "location" to location,
+            "visitIdentifier" to visitIdentifier
+        )
     }
 
     /**
@@ -249,8 +276,12 @@ class TurboSession internal constructor(
      * @param visitIdentifier A unique identifier for the visit.
      */
     @JavascriptInterface
-    fun visitRequestFinished(visitIdentifier: String) {
-        logEvent("visitRequestFinished", "visitIdentifier" to visitIdentifier)
+    fun visitRequestFinished(visitIdentifier: String, location: String) {
+        logEvent(
+            "visitRequestFinished",
+            "location" to location,
+            "visitIdentifier" to visitIdentifier
+        )
     }
 
     /**
