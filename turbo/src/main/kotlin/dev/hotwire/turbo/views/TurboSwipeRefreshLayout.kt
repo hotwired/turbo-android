@@ -2,11 +2,9 @@ package dev.hotwire.turbo.views
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.webkit.WebView
 import androidx.core.view.children
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import dev.hotwire.turbo.util.TurboLog
 
 internal class TurboSwipeRefreshLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
         SwipeRefreshLayout(context, attrs) {
