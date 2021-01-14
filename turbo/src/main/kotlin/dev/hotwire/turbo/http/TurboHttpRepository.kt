@@ -161,7 +161,7 @@ internal class TurboHttpRepository {
 
     private fun reasonPhrase(response: Response): String {
         // A reason phrase cannot be empty
-        return when (response.message.isEmpty()) {
+        return when (response.message.isBlank()) {
             true -> "OK"
             else -> response.message
         }
