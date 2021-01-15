@@ -9,9 +9,11 @@ repositories {
 }
 
 dependencies {
-    implementation 'dev.hotwire:turbo:7.0.0-beta03'
+    implementation 'dev.hotwire:turbo:<latest-version>'
 }
 ```
+
+[![Download](https://api.bintray.com/packages/hotwire/maven/turbo-android/images/download.svg)](https://bintray.com/hotwire/maven/turbo-android/_latestVersion)
 
 See the [latest version](https://bintray.com/hotwire/maven/turbo-android) available on Bintray/JCenter.
 
@@ -60,6 +62,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'dev.hotwire:turbo:7.0.1-alpha01'
+    implementation 'dev.hotwire:turbo:<latest-version>'
 }
 ```
+
+See the [latest version](https://github.com/hotwired/turbo-android/releases) available on GitHub Packages.
