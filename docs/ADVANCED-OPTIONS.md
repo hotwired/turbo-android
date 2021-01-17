@@ -115,3 +115,23 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     }
 }
 ```
+
+## Native <-> JavaScript Integration
+
+To call native code from JavaScript, use [`addJavascriptInterface`](https://developer.android.com/reference/android/webkit/WebView#addJavascriptInterface(java.lang.Object,%20java.lang.String)). JavaScript interfaces are long lasting, so a good place to do this is your `TurboSessionNavHostFragment` subclass' `onSessionCreated` function.
+
+To call JavaScript code from native, use [`evaluateJavascript`](https://developer.android.com/reference/android/webkit/WebView#evaluateJavascript(java.lang.String,%20android.webkit.ValueCallback%3Cjava.lang.String%3E)). For example, to do this every time a Turbo visit is completed, override `onVisitCompleted` in your `TurboWebFragment` subclass:
+
+```kotlin
+class WebFragment : TurboWebFragment() {
+
+    // ...
+    
+    override open fun onSessionCreated() {
+        val snippet = "console.log('hello world')"
+
+        activity?.runOnUiThread {
+          this.session.webView.evaluateJavascript(snippet, null)
+        }
+    }
+```
