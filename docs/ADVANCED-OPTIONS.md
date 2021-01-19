@@ -115,3 +115,24 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     }
 }
 ```
+
+## Native <-> JavaScript Integration
+
+To call native code from JavaScript, use [`addJavascriptInterface`](https://developer.android.com/reference/android/webkit/WebView#addJavascriptInterface(java.lang.Object,%20java.lang.String)). JavaScript interfaces are long lasting, so a good place to do this is your `TurboSessionNavHostFragment` subclass' `onSessionCreated` function.
+
+To call JavaScript code from native, use [`evaluateJavascript`](https://developer.android.com/reference/android/webkit/WebView#evaluateJavascript(java.lang.String,%20android.webkit.ValueCallback%3Cjava.lang.String%3E)). For example, to do this every time a Turbo visit is completed, override `onVisitCompleted` in your `TurboWebFragment` subclass:
+
+```kotlin
+class WebFragment : TurboWebFragment() {
+
+    // ...
+    
+    override fun onVisitCompleted(location: String, completedOffline: Boolean)
+        super.onVisitCompleted(location, completedOffline)
+        
+        val snippet = "console.log('hello world')"
+        session.webView.evaluateJavascript(script, null)
+    }
+```
+
+Executing JavaScript directly is fine for simple tasks, but we've found we need something more comprehensive for our apps, which is why we created a new framework called Strada. This is a library in 3 parts (web, iOS, and Android) for integrating Turbo Native apps with their hosted web apps. This is separate and optional, but can dramatically improve the experience of your app. See the Strada repo for details (coming soon).
