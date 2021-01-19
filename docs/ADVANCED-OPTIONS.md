@@ -130,9 +130,9 @@ class WebFragment : TurboWebFragment() {
     override fun onVisitCompleted(location: String, completedOffline: Boolean)
         super.onVisitCompleted(location, completedOffline)
         
-        val snippet = "console.log('hello world')"
+        val script = "console.log('hello world')"
         session.webView.evaluateJavascript(script, null)
     }
 ```
 
-Executing JavaScript directly is fine for simple tasks, but we've found we need something more comprehensive for our apps, which is why we created a new framework called Strada. This is a library in 3 parts (web, iOS, and Android) for integrating Turbo Native apps with their hosted web apps. This is separate and optional, but can dramatically improve the experience of your app. See the Strada repo for details (coming soon).
+Executing JavaScript directly is fine for simple tasks, but we've found we need something more comprehensive for our apps, which is why we created a new framework called Strada. This is a library in 3 parts (web, iOS, and Android) for integrating Turbo Native apps with their hosted web apps. This is separate and optional, but can dramatically improve the experience of your app. See the Strada repo for details *(coming soon)*.
