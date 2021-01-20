@@ -5,7 +5,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
@@ -14,10 +13,6 @@ class TurboUriHelper(val context: Context) {
     @Suppress("BlockingMethodInNonBlockingContext") // https://youtrack.jetbrains.com/issue/KT-39684
     suspend fun writeFileTo(uri: Uri, directory: File): File? {
         val uriAttributes = getAttributes(uri) ?: return null
-
-        if (uri.originIsAppResource()) {
-            return null
-        }
 
         return withContext(dispatcherProvider.io) {
             val file = File(directory, uriAttributes.fileName).also {
@@ -48,6 +43,10 @@ class TurboUriHelper(val context: Context) {
 
     private fun getFileUriAttributes(uri: Uri): TurboUriAttributes? {
         val file = uri.getFile() ?: return null
+
+        if (file.originIsAppResource()) {
+            return null
+        }
 
         return TurboUriAttributes(
             fileName = file.name,
@@ -101,12 +100,12 @@ class TurboUriHelper(val context: Context) {
     }
  
     /**
-     * Determine if the URI's origin points to an app resource file. Symbolic
-     * link attacks can target app resource files to steal private data.
+     * Determine if the file points to an app resource. Symbolic link
+     * attacks can target app resource files to steal private data.
      */
-    private fun Uri.originIsAppResource(): Boolean {
+    private fun File.originIsAppResource(): Boolean {
         return try {
-            getFile()?.canonicalPath?.contains(context.packageName) ?: false
+            canonicalPath.contains(context.packageName)
         } catch (e: IOException) {
             TurboLog.e("${e.message}")
             false
