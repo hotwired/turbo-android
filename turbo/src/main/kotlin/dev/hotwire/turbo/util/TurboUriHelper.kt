@@ -8,11 +8,16 @@ import android.webkit.MimeTypeMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 
 class TurboUriHelper(val context: Context) {
     @Suppress("BlockingMethodInNonBlockingContext") // https://youtrack.jetbrains.com/issue/KT-39684
     suspend fun writeFileTo(uri: Uri, directory: File): File? {
         val uriAttributes = getAttributes(uri) ?: return null
+
+        if (uri.originIsAppResource()) {
+            return null
+        }
 
         return withContext(dispatcherProvider.io) {
             val file = File(directory, uriAttributes.fileName).also {
@@ -93,6 +98,19 @@ class TurboUriHelper(val context: Context) {
             mimeType = mimeType ?: uri.mimeType(),
             fileSize = 0
         )
+    }
+ 
+    /**
+     * Determine if the URI's origin points to an app resource file. Symbolic
+     * link attacks can target app resource files to steal private data.
+     */
+    private fun Uri.originIsAppResource(): Boolean {
+        return try {
+            getFile()?.canonicalPath?.contains(context.packageName) ?: false
+        } catch (e: IOException) {
+            TurboLog.e("${e.message}")
+            false
+        }
     }
 
     private fun Uri.fileExtension(): String? {
