@@ -51,7 +51,7 @@ class TurboPathConfigurationRepositoryTest : BaseRepositoryTest() {
         assertThat(json).isNotNull()
 
         val config = load(json)
-        assertThat(config?.rules?.size).isEqualTo(6)
+        assertThat(config?.rules?.size).isEqualTo(7)
     }
 
     @Test
