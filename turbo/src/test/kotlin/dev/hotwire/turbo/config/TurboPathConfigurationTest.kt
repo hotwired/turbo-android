@@ -33,7 +33,7 @@ class TurboPathConfigurationTest {
 
     @Test
     fun assetConfigurationIsLoaded() {
-        assertThat(pathConfiguration.rules.size).isEqualTo(6)
+        assertThat(pathConfiguration.rules.size).isEqualTo(7)
     }
 
     @Test

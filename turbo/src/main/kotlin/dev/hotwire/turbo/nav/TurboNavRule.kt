@@ -45,6 +45,10 @@ internal class TurboNavRule(
     val newFallbackDestination = controller.destinationFor(newFallbackUri)
     val newNavOptions = newNavOptions(navOptions)
 
+    init {
+        verifyNavRules()
+    }
+
     private fun newPresentation(): TurboNavPresentation {
         // Use the custom presentation provided in the path configuration
         if (newProperties.presentation != TurboNavPresentation.DEFAULT) {
@@ -106,6 +110,13 @@ internal class TurboNavRule(
             bundle = newBundle,
             shouldNavigate = newProperties.presentation != TurboNavPresentation.NONE
         )
+    }
+
+    private fun verifyNavRules() {
+        if (newPresentationContext == TurboNavPresentationContext.MODAL &&
+            newPresentation == TurboNavPresentation.REPLACE_ROOT) {
+            throw TurboNavException("A `modal` destination cannot use presentation `REPLACE_ROOT`")
+        }
     }
 
     private fun NavController.destinationFor(uri: Uri?): NavDestination? {

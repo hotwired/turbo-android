@@ -15,6 +15,7 @@ import dev.hotwire.turbo.R
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,6 +36,7 @@ class TurboNavRuleTest {
     private val editUrl = "http://hotwire.dev/feature/edit"
     private val refreshUrl = "http://hotwire.dev/custom/refresh"
     private val resumeUrl = "http://hotwire.dev/custom/resume"
+    private val modalRootUrl = "http://hotwire.dev/custom/modal"
 
     private val webDestinationId = 1
     private val webModalDestinationId = 2
@@ -103,6 +105,13 @@ class TurboNavRuleTest {
         assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
         assertThat(rule.newDestination).isNotNull()
         assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `navigate to modal context replacing root`() {
+        assertThatThrownBy { getNavigatorRule(modalRootUrl) }
+            .isInstanceOf(TurboNavException::class.java)
+            .hasMessage("A `modal` destination cannot use presentation `REPLACE_ROOT`")
     }
 
     @Test
