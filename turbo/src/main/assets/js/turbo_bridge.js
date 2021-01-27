@@ -92,7 +92,7 @@
     // Adapter interface
 
     visitProposedToLocation(location, options) {
-      TurboSession.visitProposedToLocation(location.absoluteURL, JSON.stringify(options))
+      TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
     }
 
     // Turbolinks 5
@@ -101,7 +101,7 @@
     }
 
     visitStarted(visit) {
-      TurboSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.location.absoluteURL)
+      TurboSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.location.toString())
       this.currentVisit = visit
       this.issueRequestForVisitWithIdentifier(visit.identifier)
       this.changeHistoryForVisitWithIdentifier(visit.identifier)
