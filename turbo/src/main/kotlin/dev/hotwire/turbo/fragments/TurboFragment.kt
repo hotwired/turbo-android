@@ -77,6 +77,8 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
 
     override fun onBeforeNavigation() {}
 
+    override fun refresh(displayProgress: Boolean) {}
+
     /**
      * Gets the Toolbar instance in your Fragment's view for use with
      * navigation. The title in the Toolbar will automatically be
