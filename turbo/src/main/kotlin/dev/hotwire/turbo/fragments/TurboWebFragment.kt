@@ -68,6 +68,10 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
         }
     }
 
+    override fun refresh(displayProgress: Boolean) {
+        webDelegate.refresh(displayProgress)
+    }
+
     // ----------------------------------------------------------------------------
     // TurboWebFragmentCallback interface
     // ----------------------------------------------------------------------------

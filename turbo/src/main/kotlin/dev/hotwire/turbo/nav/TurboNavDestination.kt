@@ -15,7 +15,9 @@ import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.TurboPathConfigurationProperties
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.delegates.TurboNestedFragmentDelegate
+import dev.hotwire.turbo.fragments.TurboFragment
 import dev.hotwire.turbo.fragments.TurboFragmentViewModel
+import dev.hotwire.turbo.fragments.TurboWebFragment
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import dev.hotwire.turbo.visit.TurboVisitOptions
@@ -99,6 +101,15 @@ interface TurboNavDestination {
      * for state cleanup in your Fragment if necessary.
      */
     fun onBeforeNavigation()
+
+    /**
+     * Refresh the destination's contents. In a [TurboWebFragment], this will perform
+     * a cold boot reload of the WebView location. In an all-native [TurboFragment]
+     * each subclass is responsible for implementing how to refresh its contents.
+     *
+     * @param displayProgress Whether progress should be displayed while refreshing.
+     */
+    fun refresh(displayProgress: Boolean = true)
 
     /**
      * Gets the nav host fragment that will be used for navigating to `newLocation`. You should

@@ -126,6 +126,21 @@ internal class TurboWebFragmentDelegate(
     }
 
     /**
+     * Should be called by the implementing Fragment during
+     * [dev.hotwire.turbo.nav.TurboNavDestination.refresh]
+     */
+    fun refresh(displayProgress: Boolean) {
+        turboView?.webViewRefresh?.apply {
+            if (displayProgress && !isRefreshing) {
+                isRefreshing = true
+            }
+        }
+
+        isWebViewAttachedToNewDestination = false
+        visit(location, restoreWithCachedSnapshot = false, reload = true)
+    }
+
+    /**
      * Retrieves the Turbo session from the destination.
      */
     fun session(): TurboSession {
@@ -358,8 +373,7 @@ internal class TurboWebFragmentDelegate(
         turboView.webViewRefresh?.apply {
             isEnabled = navDestination.pathProperties.pullToRefreshEnabled
             setOnRefreshListener {
-                isWebViewAttachedToNewDestination = false
-                visit(location, restoreWithCachedSnapshot = false, reload = true)
+                refresh(displayProgress = true)
             }
         }
     }
@@ -367,8 +381,7 @@ internal class TurboWebFragmentDelegate(
     private fun initializeErrorPullToRefresh(turboView: TurboView) {
         turboView.errorRefresh?.apply {
             setOnRefreshListener {
-                isWebViewAttachedToNewDestination = false
-                visit(location, restoreWithCachedSnapshot = false, reload = true)
+                refresh(displayProgress = true)
             }
         }
     }

@@ -56,6 +56,10 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
         super.onDismiss(dialog)
     }
 
+    override fun refresh(displayProgress: Boolean) {
+        webDelegate.refresh(displayProgress)
+    }
+
     // ----------------------------------------------------------------------------
     // TurboWebFragmentCallback interface
     // ----------------------------------------------------------------------------
