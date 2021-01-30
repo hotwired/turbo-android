@@ -130,9 +130,9 @@ internal class TurboWebFragmentDelegate(
      * [dev.hotwire.turbo.nav.TurboNavDestination.refresh]
      */
     fun refresh(displayProgress: Boolean) {
-        turboView?.webViewRefresh?.let {
-            if (displayProgress && !it.isRefreshing) {
-                it.isRefreshing = true
+        turboView?.webViewRefresh?.apply {
+            if (displayProgress && !isRefreshing) {
+                isRefreshing = true
             }
         }
 
@@ -373,7 +373,7 @@ internal class TurboWebFragmentDelegate(
         turboView.webViewRefresh?.apply {
             isEnabled = navDestination.pathProperties.pullToRefreshEnabled
             setOnRefreshListener {
-                refresh(true)
+                refresh(displayProgress = true)
             }
         }
     }
@@ -381,7 +381,7 @@ internal class TurboWebFragmentDelegate(
     private fun initializeErrorPullToRefresh(turboView: TurboView) {
         turboView.errorRefresh?.apply {
             setOnRefreshListener {
-                refresh(true)
+                refresh(displayProgress = true)
             }
         }
     }
