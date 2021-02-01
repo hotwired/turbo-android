@@ -10,6 +10,8 @@ import android.webkit.WebChromeClient.FileChooserParams
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TurboFileProvider
 import dev.hotwire.turbo.util.dispatcherProvider
+import dev.hotwire.turbo.views.TurboWebChromeClient
+import dev.hotwire.turbo.views.TurboWebChromeClient.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -26,10 +28,20 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
 
     fun onShowFileChooser(
         filePathCallback: ValueCallback<Array<Uri>>,
-        params: FileChooserParams
+        params: FileChooserParams,
+        type: FileChooserType
     ): Boolean {
         uploadCallback = filePathCallback
-        return openFileChooser(params)
+
+        return when (type) {
+            FileChooserType.BROWSE -> openFileChooser(params)
+            FileChooserType.CAMERA -> openCamera()
+        }
+    }
+
+    fun onShowFileChooserCancelled(filePathCallback: ValueCallback<Array<Uri>>) {
+        uploadCallback = filePathCallback
+        handleFileCancellation()
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -39,6 +51,14 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
     fun deleteCachedFiles() {
         launch {
             TurboFileProvider.deleteAllFiles(context)
+        }
+    }
+
+    fun defaultAcceptType(params: FileChooserParams): String {
+        return when {
+            params.acceptTypes.isEmpty() -> "*/*"
+            params.acceptTypes.first().isBlank() -> "*/*"
+            else -> params.acceptTypes.first()
         }
     }
 
@@ -56,21 +76,26 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
         return true
     }
 
+    private fun openCamera(): Boolean {
+        // TODO
+        handleFileCancellation()
+        return false
+    }
+
     private fun buildGetContentIntent(params: FileChooserParams, allowMultiple: Boolean): Intent {
         return Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, allowMultiple)
+            type = defaultAcceptType(params)
 
             if (params.acceptTypes.size > 1) {
                 putExtra(Intent.EXTRA_MIME_TYPES, params.acceptTypes)
             }
-
-            type = when {
-                params.acceptTypes.isEmpty() -> "*/*"
-                params.acceptTypes.first().isBlank() -> "*/*"
-                else -> params.acceptTypes.first()
-            }
         }
+    }
+
+    private fun buildCameraIntent(): Intent {
+        TODO("not implemented")
     }
 
     private fun handleActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
