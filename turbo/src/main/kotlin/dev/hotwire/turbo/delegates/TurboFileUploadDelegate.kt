@@ -1,27 +1,35 @@
 package dev.hotwire.turbo.delegates
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TurboFileProvider
+import dev.hotwire.turbo.util.TurboLog
 import dev.hotwire.turbo.util.dispatcherProvider
-import dev.hotwire.turbo.views.TurboWebChromeClient
-import dev.hotwire.turbo.views.TurboWebChromeClient.*
+import dev.hotwire.turbo.views.TurboWebChromeClient.FileChooserType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 internal const val TURBO_REQUEST_CODE_FILES = 37
+internal const val TURBO_REQUEST_CODE_CAMERA = 38
 
 internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineScope {
     private val context: Context = session.context
     private var uploadCallback: ValueCallback<Array<Uri>>? = null
+    private var cameraImagePath: String? = null
 
     override val coroutineContext: CoroutineContext
         get() = dispatcherProvider.io + Job()
@@ -36,12 +44,14 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
         return when (type) {
             FileChooserType.BROWSE -> openFileChooser(params)
             FileChooserType.CAMERA -> openCamera()
+        }.also { success ->
+            if (!success) handleCancellation()
         }
     }
 
     fun onShowFileChooserCancelled(filePathCallback: ValueCallback<Array<Uri>>) {
         uploadCallback = filePathCallback
-        handleFileCancellation()
+        handleCancellation()
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -62,8 +72,9 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
         }
     }
 
+    // Intents
+
     private fun openFileChooser(params: FileChooserParams): Boolean {
-        val destination = session.currentVisitNavDestination ?: return false
         val allowMultiple = params.mode == FileChooserParams.MODE_OPEN_MULTIPLE
         val intent = buildGetContentIntent(params, allowMultiple)
         val title = params.title ?: when (allowMultiple) {
@@ -72,14 +83,12 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
         }
 
         val chooserIntent = Intent.createChooser(intent, title)
-        destination.fragment.startActivityForResult(chooserIntent, TURBO_REQUEST_CODE_FILES)
-        return true
+        return startIntent(chooserIntent, TURBO_REQUEST_CODE_FILES)
     }
 
     private fun openCamera(): Boolean {
-        // TODO
-        handleFileCancellation()
-        return false
+        val intent = buildCameraIntent() ?: return false
+        return startIntent(intent, TURBO_REQUEST_CODE_CAMERA)
     }
 
     private fun buildGetContentIntent(params: FileChooserParams, allowMultiple: Boolean): Intent {
@@ -94,24 +103,56 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
         }
     }
 
-    private fun buildCameraIntent(): Intent {
-        TODO("not implemented")
-    }
+    private fun buildCameraIntent(): Intent? {
+        return try {
+            val file = createEmptyImageFile() ?: return null
+            val uri = TurboFileProvider.contentUriForFile(session.context, file)
 
-    private fun handleActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (requestCode != TURBO_REQUEST_CODE_FILES) return
+            cameraImagePath = file.absolutePath
 
-        when (resultCode) {
-            Activity.RESULT_CANCELED -> handleFileCancellation()
-            Activity.RESULT_OK -> handleFileSelection(intent)
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                putExtra(MediaStore.EXTRA_OUTPUT, uri)
+            }
+        } catch(e: Exception) {
+            TurboLog.e("${e.message}")
+            return null
         }
     }
 
-    private fun handleFileCancellation() {
+    private fun startIntent(intent: Intent, requestCode: Int): Boolean {
+        val destination = session.currentVisitNavDestination ?: return false
+
+        return try {
+            destination.fragment.startActivityForResult(intent, requestCode)
+            true
+        } catch (e: Exception) {
+            TurboLog.e("${e.message}")
+            false
+        }
+    }
+
+    // Handle results
+
+    private fun handleActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        if (requestCode == TURBO_REQUEST_CODE_FILES) {
+            when (resultCode) {
+                Activity.RESULT_CANCELED -> handleCancellation()
+                Activity.RESULT_OK -> handleFileSelection(intent)
+            }
+        } else if (requestCode == TURBO_REQUEST_CODE_CAMERA) {
+            when (resultCode) {
+                Activity.RESULT_CANCELED -> handleCancellation()
+                Activity.RESULT_OK -> handleCameraCapture()
+            }
+        }
+    }
+
+    private fun handleCancellation() {
         // Important to send a null value to the upload callback, otherwise the webview
         // gets into a state where it doesn't allow the file chooser to open again.
         uploadCallback?.onReceiveValue(null)
         uploadCallback = null
+        cameraImagePath = null
     }
 
     private fun handleFileSelection(intent: Intent?) {
@@ -129,6 +170,14 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
             uploadCallback?.onReceiveValue(results)
             uploadCallback = null
         }
+    }
+
+    private fun handleCameraCapture() {
+        val results = buildCameraImageResult()
+
+        uploadCallback?.onReceiveValue(results)
+        uploadCallback = null
+        cameraImagePath = null
     }
 
     private suspend fun buildMultipleFilesResult(clipData: ClipData): Array<Uri>? {
@@ -149,6 +198,30 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
     private suspend fun buildSingleFileResult(dataString: String): Array<Uri>? {
         val uri = writeToCachedFile(Uri.parse(dataString))
         return uri?.let { arrayOf(it) }
+    }
+
+    private fun buildCameraImageResult(): Array<Uri>? {
+        val file = cameraImagePath?.let { File(it) } ?: return null
+        val uri = TurboFileProvider.contentUriForFile(session.context, file)
+
+        return when (file.length()) {
+            0L -> null
+            else -> arrayOf(uri)
+        }
+    }
+
+    // Files
+
+    @SuppressLint("SimpleDateFormat")
+    private fun createEmptyImageFile(): File? {
+        return try {
+            val timestamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+            val directory: File = TurboFileProvider.directory(session.context)
+            return File.createTempFile("capture_${timestamp}", ".jpg", directory)
+        } catch (e: IOException) {
+            TurboLog.e("${e.message}")
+            null
+        }
     }
 
     private suspend fun writeToCachedFile(uri: Uri): Uri? {
