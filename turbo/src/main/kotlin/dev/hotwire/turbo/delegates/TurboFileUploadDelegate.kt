@@ -123,7 +123,7 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
                 handleCancellation()
             }
             Activity.RESULT_OK -> {
-                if (intent?.dataString == null) {
+                if (intent?.dataString == null && intent?.clipData == null) {
                     handleCameraCapture()
                 } else {
                     handleFileSelection(intent)
