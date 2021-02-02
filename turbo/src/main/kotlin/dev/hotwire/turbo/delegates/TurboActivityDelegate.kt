@@ -128,6 +128,14 @@ class TurboActivityDelegate(
         currentNavDestination?.clearBackStack(onCleared)
     }
 
+    /**
+     * Refresh the current destination. See [TurboNavDestination.refresh] for
+     * more details.
+     */
+    fun refresh(displayProgress: Boolean = true) {
+        currentNavDestination?.refresh(displayProgress)
+    }
+
     private val currentFragment: Fragment?
         get() {
             return if (currentSessionNavHostFragment.isAdded && !currentSessionNavHostFragment.isDetached) {

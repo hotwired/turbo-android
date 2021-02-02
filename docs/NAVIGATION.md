@@ -1,7 +1,7 @@
 # Navigate to Destinations
 
 ## From Web Links
-Tapping a web link in a `TurboWebFragment` will automatically navigate to the url's corresponding Fragment destination, based on the app's [Path Configuration](PATH-CONFIGURATION.md). 
+Tapping a web link in a `TurboWebFragment` will automatically navigate to the url's corresponding Fragment destination, based on the app's [Path Configuration](PATH-CONFIGURATION.md).
 
 Sometimes, you may want to override this default behavior. For example, if your web app can surface external domain urls, you should open those urls in the device's default browser. The `TurboWebFragment` abstract class implements the `TurbolNavDestination` interface, which provides a `shouldNavigateTo(newLocation: String)` function that can be overridden.
 
@@ -44,6 +44,7 @@ If you'd like to navigate to a new destination in response to native UI/features
 - `navigateUp()`
 - `navigateBack()`
 - `clearBackStack()`
+- `refresh(displayProgress: Boolean)`
 
 Refer to the [`TurboNavDestination`](../turbo/src/main/kotlin/dev/hotwire/turbo/nav/TurboNavDestination.kt) interface for further documentation.
 
@@ -69,6 +70,12 @@ class WebFragment : TurboWebFragment() {
         // Clears all Fragment destinations off the backstack, excluding
         // the starting destination of your TurboSessionNavHostFragment
         clearBackStack()
+
+        // Refresh the current destination
+        refresh()
+
+        // Refresh the current destination without displaying progress
+        refresh(displayProgress = false)
     }
 }
 ```
@@ -79,6 +86,7 @@ If you'd like to navigate to a new destination in response to native UI/features
 - `delegate.navigateUp()`
 - `delegate.navigateBack()`
 - `delegate.clearBackStack()`
+- `delegate.refresh(displayProgress: Boolean)`
 
 Refer to the [`TurboActivityDelegate`](../turbo/src/main/kotlin/dev/hotwire/turbo/delegates/TurboActivityDelegate.kt) class for further documentation.
 
@@ -87,7 +95,7 @@ In your Activity, this would look like:
 **`MainActivity.kt`:**
 ```kotlin
 class MainActivity : AppCompatActivity(), TurboActivity {
-    
+
     // ...
 
     private fun respondToNativeFeature() {
@@ -103,6 +111,12 @@ class MainActivity : AppCompatActivity(), TurboActivity {
         // Clears all Fragment destinations off the backstack, excluding
         // the starting destination of your TurboSessionNavHostFragment
         delegate.clearBackStack()
+
+        // Refresh the current destination
+        delegate.refresh()
+
+        // Refresh the current destination without displaying progress
+        delegate.refresh(displayProgress = false)
     }
 }
 ```
