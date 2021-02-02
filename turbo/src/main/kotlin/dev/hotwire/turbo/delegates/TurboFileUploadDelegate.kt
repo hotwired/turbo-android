@@ -1,6 +1,5 @@
 package dev.hotwire.turbo.delegates
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipData
 import android.content.Context
@@ -9,22 +8,19 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
+import dev.hotwire.turbo.R
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TurboFileProvider
 import dev.hotwire.turbo.util.TurboLog
 import dev.hotwire.turbo.util.dispatcherProvider
-import dev.hotwire.turbo.views.TurboWebChromeClient.FileChooserType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 internal const val TURBO_REQUEST_CODE_FILES = 37
-internal const val TURBO_REQUEST_CODE_CAMERA = 38
 
 internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineScope {
     private val context: Context = session.context
@@ -36,22 +32,13 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
 
     fun onShowFileChooser(
         filePathCallback: ValueCallback<Array<Uri>>,
-        params: FileChooserParams,
-        type: FileChooserType
+        params: FileChooserParams
     ): Boolean {
         uploadCallback = filePathCallback
 
-        return when (type) {
-            FileChooserType.BROWSE -> openFileChooser(params)
-            FileChooserType.CAMERA -> openCamera()
-        }.also { success ->
+        return openChooser(params).also { success ->
             if (!success) handleCancellation()
         }
-    }
-
-    fun onShowFileChooserCancelled(filePathCallback: ValueCallback<Array<Uri>>) {
-        uploadCallback = filePathCallback
-        handleCancellation()
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -64,38 +51,31 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
         }
     }
 
-    fun defaultAcceptType(params: FileChooserParams): String {
-        return when {
-            params.acceptTypes.isEmpty() -> "*/*"
-            params.acceptTypes.first().isBlank() -> "*/*"
-            else -> params.acceptTypes.first()
-        }
-    }
-
     // Intents
 
-    private fun openFileChooser(params: FileChooserParams): Boolean {
-        val allowMultiple = params.mode == FileChooserParams.MODE_OPEN_MULTIPLE
-        val intent = buildGetContentIntent(params, allowMultiple)
-        val title = params.title ?: when (allowMultiple) {
-            true -> "Choose Files"
-            else -> "Choose File"
+    private fun openChooser(params: FileChooserParams): Boolean {
+        val cameraIntent = buildCameraIntent(params)
+        val chooserIntent = buildGetContentIntent(params)
+
+        val mediaIntents = when (cameraIntent) {
+            null -> emptyArray()
+            else -> arrayOf(cameraIntent)
         }
 
-        val chooserIntent = Intent.createChooser(intent, title)
-        return startIntent(chooserIntent, TURBO_REQUEST_CODE_FILES)
+        val intent = Intent(Intent.ACTION_CHOOSER).apply {
+            putExtra(Intent.EXTRA_INTENT, chooserIntent)
+            putExtra(Intent.EXTRA_TITLE, params.title())
+            putExtra(Intent.EXTRA_INITIAL_INTENTS, mediaIntents)
+        }
+
+        return startIntent(intent)
     }
 
-    private fun openCamera(): Boolean {
-        val intent = buildCameraIntent() ?: return false
-        return startIntent(intent, TURBO_REQUEST_CODE_CAMERA)
-    }
-
-    private fun buildGetContentIntent(params: FileChooserParams, allowMultiple: Boolean): Intent {
+    private fun buildGetContentIntent(params: FileChooserParams): Intent {
         return Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, allowMultiple)
-            type = defaultAcceptType(params)
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, params.allowsMultiple())
+            type = params.defaultAcceptType()
 
             if (params.acceptTypes.size > 1) {
                 putExtra(Intent.EXTRA_MIME_TYPES, params.acceptTypes)
@@ -103,7 +83,9 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
         }
     }
 
-    private fun buildCameraIntent(): Intent? {
+    private fun buildCameraIntent(params: FileChooserParams): Intent? {
+        if (!params.allowsCameraCapture()) return null
+
         return try {
             val file = createEmptyImageFile() ?: return null
             val uri = TurboFileProvider.contentUriForFile(session.context, file)
@@ -119,11 +101,11 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
         }
     }
 
-    private fun startIntent(intent: Intent, requestCode: Int): Boolean {
+    private fun startIntent(intent: Intent): Boolean {
         val destination = session.currentVisitNavDestination ?: return false
 
         return try {
-            destination.fragment.startActivityForResult(intent, requestCode)
+            destination.fragment.startActivityForResult(intent, TURBO_REQUEST_CODE_FILES)
             true
         } catch (e: Exception) {
             TurboLog.e("${e.message}")
@@ -134,15 +116,18 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
     // Handle results
 
     private fun handleActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (requestCode == TURBO_REQUEST_CODE_FILES) {
-            when (resultCode) {
-                Activity.RESULT_CANCELED -> handleCancellation()
-                Activity.RESULT_OK -> handleFileSelection(intent)
+        if (requestCode != TURBO_REQUEST_CODE_FILES) return
+
+        when (resultCode) {
+            Activity.RESULT_CANCELED -> {
+                handleCancellation()
             }
-        } else if (requestCode == TURBO_REQUEST_CODE_CAMERA) {
-            when (resultCode) {
-                Activity.RESULT_CANCELED -> handleCancellation()
-                Activity.RESULT_OK -> handleCameraCapture()
+            Activity.RESULT_OK -> {
+                if (intent?.dataString == null) {
+                    handleCameraCapture()
+                } else {
+                    handleFileSelection(intent)
+                }
             }
         }
     }
@@ -212,12 +197,10 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
 
     // Files
 
-    @SuppressLint("SimpleDateFormat")
     private fun createEmptyImageFile(): File? {
         return try {
-            val timestamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
             val directory: File = TurboFileProvider.directory(session.context)
-            return File.createTempFile("capture_${timestamp}", ".jpg", directory)
+            return File.createTempFile("Capture_", ".jpg", directory)
         } catch (e: IOException) {
             TurboLog.e("${e.message}")
             null
@@ -226,5 +209,34 @@ internal class TurboFileUploadDelegate(val session: TurboSession) : CoroutineSco
 
     private suspend fun writeToCachedFile(uri: Uri): Uri? {
         return TurboFileProvider.writeUriToFile(context, uri)
+    }
+
+    // Params
+
+    private fun FileChooserParams.allowsMultiple(): Boolean {
+        return mode == FileChooserParams.MODE_OPEN_MULTIPLE
+    }
+
+    private fun FileChooserParams.defaultAcceptType(): String {
+        return when {
+            acceptTypes.isEmpty() -> "*/*"
+            acceptTypes.first().isBlank() -> "*/*"
+            else -> acceptTypes.first()
+        }
+    }
+
+    private fun FileChooserParams.allowsCameraCapture(): Boolean {
+        val accept = defaultAcceptType()
+        val acceptsAny = accept == "*/*"
+        val acceptsImages = accept == "image/*" || accept == "image/jpg"
+
+        return isCaptureEnabled && (acceptsAny || acceptsImages)
+    }
+
+    private fun FileChooserParams.title(): String {
+        return title?.toString() ?: when (allowsMultiple()) {
+            true -> session.context.getString(R.string.turbo_file_chooser_select_multiple)
+            else -> session.context.getString(R.string.turbo_file_chooser_select)
+        }
     }
 }

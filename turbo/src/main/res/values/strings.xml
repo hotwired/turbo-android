@@ -1,6 +1,5 @@
 <resources>
     <string name="turbo_error_message">Error loading page</string>
-    <string name="turbo_file_chooser_select">Select</string>
-    <string name="turbo_file_chooser_browse">Browse files</string>
-    <string name="turbo_file_chooser_camera">Take a photo</string>
+    <string name="turbo_file_chooser_select">Select file</string>
+    <string name="turbo_file_chooser_select_multiple">Select file(s)</string>
 </resources>
