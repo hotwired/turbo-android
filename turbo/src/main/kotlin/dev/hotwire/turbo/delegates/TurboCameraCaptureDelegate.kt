@@ -38,7 +38,6 @@ internal class TurboCameraCaptureDelegate(val context: Context) {
         cameraImagePath = null
     }
 
-
     private fun buildCameraImageResult(): Array<Uri>? {
         val file = cameraImagePath?.let { File(it) } ?: return null
         val uri = TurboFileProvider.contentUriForFile(context, file)

@@ -8,6 +8,7 @@ import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.session.TurboSession
+import dev.hotwire.turbo.util.TURBO_REQUEST_CODE_FILES
 import dev.hotwire.turbo.util.TurboFileProvider
 import dev.hotwire.turbo.util.TurboLog
 import dev.hotwire.turbo.util.dispatcherProvider
@@ -15,8 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
-
-internal const val TURBO_REQUEST_CODE_FILES = 37
 
 internal class TurboFileChooserDelegate(val session: TurboSession) : CoroutineScope {
     private val context: Context = session.context
@@ -81,12 +80,8 @@ internal class TurboFileChooserDelegate(val session: TurboSession) : CoroutineSc
 
     private fun handleResult(intent: Intent?) {
         when (intent.containsFileResult()) {
-            true -> browseFilesDelegate.handleResult(intent) {
-                sendResult(it)
-            }
-            else -> cameraCaptureDelegate.handleResult {
-                sendResult(it)
-            }
+            true -> browseFilesDelegate.handleResult(intent) { sendResult(it) }
+            else -> cameraCaptureDelegate.handleResult { sendResult(it) }
         }
     }
 
