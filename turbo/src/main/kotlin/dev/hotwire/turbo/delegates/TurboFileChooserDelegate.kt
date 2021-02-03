@@ -56,16 +56,12 @@ internal class TurboFileChooserDelegate(val session: TurboSession) : CoroutineSc
     private fun openChooser(params: FileChooserParams): Boolean {
         val cameraIntent =  cameraCaptureDelegate.buildIntent(params)
         val chooserIntent = browseFilesDelegate.buildIntent(params)
-
-        val mediaIntents = when (cameraIntent) {
-            null -> emptyArray()
-            else -> arrayOf(cameraIntent)
-        }
+        val extraIntents = listOfNotNull(cameraIntent).toTypedArray()
 
         val intent = Intent(Intent.ACTION_CHOOSER).apply {
             putExtra(Intent.EXTRA_INTENT, chooserIntent)
             putExtra(Intent.EXTRA_TITLE, params.title())
-            putExtra(Intent.EXTRA_INITIAL_INTENTS, mediaIntents)
+            putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents)
         }
 
         return startIntent(intent)

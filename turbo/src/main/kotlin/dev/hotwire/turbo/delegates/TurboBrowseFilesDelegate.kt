@@ -48,23 +48,29 @@ internal class TurboBrowseFilesDelegate(val context: Context) : CoroutineScope {
     }
 
     private suspend fun buildMultipleFilesResult(clipData: ClipData): Array<Uri>? {
-        val arrayList = mutableListOf<Uri>()
+        val uris = mutableListOf<Uri>()
 
         for (i in 0 until clipData.itemCount) {
-            writeToCachedFile(clipData.getItemAt(i).uri)?.let {
-                arrayList.add(it)
-            }
+            uris.add(clipData.getItemAt(i).uri)
         }
 
-        return when (arrayList.isEmpty()) {
-            true -> null
-            else -> arrayList.toTypedArray()
-        }
+        return buildResult(uris)
     }
 
     private suspend fun buildSingleFileResult(dataString: String): Array<Uri>? {
-        val uri = writeToCachedFile(Uri.parse(dataString))
-        return uri?.let { arrayOf(it) }
+        val uri = Uri.parse(dataString)
+        return buildResult(listOf(uri))
+    }
+
+    private suspend fun buildResult(uris: List<Uri>): Array<Uri>? {
+        val results = uris.mapNotNull {
+            writeToCachedFile(it)
+        }
+
+        return when (results.isEmpty()) {
+            true -> null
+            else -> results.toTypedArray()
+        }
     }
 
     private suspend fun writeToCachedFile(uri: Uri): Uri? {
