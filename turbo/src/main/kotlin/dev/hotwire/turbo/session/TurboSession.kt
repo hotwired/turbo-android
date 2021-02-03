@@ -15,7 +15,7 @@ import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.screenshotsEnabled
-import dev.hotwire.turbo.delegates.TurboFileUploadDelegate
+import dev.hotwire.turbo.delegates.TurboFileChooserDelegate
 import dev.hotwire.turbo.http.TurboHttpClient
 import dev.hotwire.turbo.http.TurboHttpRepository
 import dev.hotwire.turbo.http.TurboOfflineRequestHandler
@@ -53,7 +53,7 @@ class TurboSession internal constructor(
     internal var restorationIdentifiers = SparseArray<String>()
     internal val context: Context = activity.applicationContext
     internal val httpRepository = TurboHttpRepository()
-    internal val fileUploadDelegate = TurboFileUploadDelegate(this)
+    internal val fileChooserDelegate = TurboFileChooserDelegate(this)
 
     // User accessible
 
@@ -89,7 +89,7 @@ class TurboSession internal constructor(
     init {
         initializeWebView()
         TurboHttpClient.enableCachingWith(context)
-        fileUploadDelegate.deleteCachedFiles()
+        fileChooserDelegate.deleteCachedFiles()
     }
 
     // Public

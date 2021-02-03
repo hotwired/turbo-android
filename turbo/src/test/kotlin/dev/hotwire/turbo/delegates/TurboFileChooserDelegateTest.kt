@@ -25,7 +25,7 @@ import java.io.File
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class TurboFileUploadDelegateTest : BaseRepositoryTest() {
+class TurboFileChooserDelegateTest : BaseRepositoryTest() {
     @Mock
     private lateinit var webView: TurboWebView
     private lateinit var activity: Activity
@@ -54,7 +54,7 @@ class TurboFileUploadDelegateTest : BaseRepositoryTest() {
         assertThat(dir.listFiles()?.get(0)?.name).isEqualTo("testFile.txt")
 
         runBlocking {
-            session.fileUploadDelegate.deleteCachedFiles()
+            session.fileChooserDelegate.deleteCachedFiles()
             assertThat(dir.listFiles()?.size).isEqualTo(0)
         }
     }
