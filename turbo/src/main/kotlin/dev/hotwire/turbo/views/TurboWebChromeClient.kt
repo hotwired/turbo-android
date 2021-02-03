@@ -6,7 +6,6 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import dev.hotwire.turbo.session.TurboSession
 
-@Suppress("MemberVisibilityCanBePrivate")
 open class TurboWebChromeClient(val session: TurboSession) : WebChromeClient() {
     override fun onShowFileChooser(
         webView: WebView,
