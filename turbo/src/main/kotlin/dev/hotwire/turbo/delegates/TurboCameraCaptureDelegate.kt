@@ -16,18 +16,13 @@ internal class TurboCameraCaptureDelegate(val context: Context) {
     fun buildIntent(params: FileChooserParams): Intent? {
         if (!params.allowsCameraCapture()) return null
 
-        return try {
-            val file = createEmptyImageFile() ?: return null
-            val uri = TurboFileProvider.contentUriForFile(context, file)
+        val file = createEmptyImageFile() ?: return null
+        val uri = TurboFileProvider.contentUriForFile(context, file)
 
-            cameraImagePath = file.absolutePath
+        cameraImagePath = file.absolutePath
 
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-                putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            }
-        } catch(e: Exception) {
-            TurboLog.e("${e.message}")
-            return null
+        return Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+            putExtra(MediaStore.EXTRA_OUTPUT, uri)
         }
     }
 
