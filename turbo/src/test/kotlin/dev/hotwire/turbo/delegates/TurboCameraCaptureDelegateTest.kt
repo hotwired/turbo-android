@@ -7,8 +7,7 @@ import android.os.Build
 import android.provider.MediaStore
 import android.webkit.WebChromeClient.FileChooserParams
 import androidx.test.core.app.ApplicationProvider
-import dev.hotwire.turbo.BaseRepositoryTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import dev.hotwire.turbo.BaseUnitTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -16,10 +15,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-@ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class TurboCameraCaptureDelegateTest : BaseRepositoryTest() {
+class TurboCameraCaptureDelegateTest : BaseUnitTest() {
     private lateinit var context: Context
     private lateinit var delegate: TurboCameraCaptureDelegate
 
