@@ -8,7 +8,6 @@ import dev.hotwire.turbo.BaseRepositoryTest
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TurboFileProvider
 import dev.hotwire.turbo.views.TurboWebView
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat

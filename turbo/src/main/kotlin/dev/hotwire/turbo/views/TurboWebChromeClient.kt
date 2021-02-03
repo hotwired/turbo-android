@@ -11,11 +11,11 @@ open class TurboWebChromeClient(val session: TurboSession) : WebChromeClient() {
     override fun onShowFileChooser(
         webView: WebView,
         filePathCallback: ValueCallback<Array<Uri>>,
-        params: FileChooserParams
+        fileChooserParams: FileChooserParams
     ): Boolean {
         return session.fileChooserDelegate.onShowFileChooser(
             filePathCallback = filePathCallback,
-            params = params
+            params = fileChooserParams
         )
     }
 }
