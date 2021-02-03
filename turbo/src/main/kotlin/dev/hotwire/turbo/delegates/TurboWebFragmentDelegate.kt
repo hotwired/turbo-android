@@ -73,7 +73,7 @@ internal class TurboWebFragmentDelegate(
      * [androidx.fragment.app.Fragment.onActivityResult].
      */
     fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        session().fileUploadDelegate.onActivityResult(requestCode, resultCode, intent)
+        session().fileChooserDelegate.onActivityResult(requestCode, resultCode, intent)
     }
 
     /**

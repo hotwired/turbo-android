@@ -7,7 +7,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
-@Suppress("MemberVisibilityCanBePrivate")
 class TurboFileProvider : FileProvider() {
     companion object {
         fun authority(context: Context): String {

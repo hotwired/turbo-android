@@ -1,3 +1,5 @@
 <resources>
-    <string name="error_message">Error loading page</string>
+    <string name="turbo_error_message">Error loading page</string>
+    <string name="turbo_file_chooser_select">Select file</string>
+    <string name="turbo_file_chooser_select_multiple">Select file(s)</string>
 </resources>

@@ -12,9 +12,9 @@ open class TurboWebChromeClient(val session: TurboSession) : WebChromeClient() {
         filePathCallback: ValueCallback<Array<Uri>>,
         fileChooserParams: FileChooserParams
     ): Boolean {
-        return session.fileUploadDelegate.onShowFileChooser(
+        return session.fileChooserDelegate.onShowFileChooser(
             filePathCallback = filePathCallback,
-            params = fileChooserParams,
+            params = fileChooserParams
         )
     }
 }
