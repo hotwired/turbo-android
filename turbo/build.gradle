@@ -88,8 +88,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     // Networking/API
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
@@ -111,7 +111,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.4'
     testImplementation 'org.mockito:mockito-core:3.6.28'
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
-    testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
     testImplementation 'junit:junit:4.13.1'
 }
 
