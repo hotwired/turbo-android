@@ -5,7 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 
-class TurboActivityObserver : LifecycleObserver {
+internal class TurboActivityObserver : LifecycleObserver {
     /**
      * Cookies may not be persisted to storage yet, since WebView
      * maintains its own internal timing to flush in-memory cookies
