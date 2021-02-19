@@ -6,8 +6,8 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import dev.hotwire.turbo.activities.TurboActivityObserver
 import dev.hotwire.turbo.nav.TurboNavDestination
+import dev.hotwire.turbo.observers.TurboActivityObserver
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import dev.hotwire.turbo.visit.TurboVisitOptions
 

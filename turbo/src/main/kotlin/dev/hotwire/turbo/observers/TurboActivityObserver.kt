@@ -1,4 +1,4 @@
-package dev.hotwire.turbo.activities
+package dev.hotwire.turbo.observers
 
 import android.webkit.CookieManager
 import androidx.lifecycle.Lifecycle
