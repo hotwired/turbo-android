@@ -10,6 +10,7 @@ import dev.hotwire.turbo.config.title
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.nav.TurboNavPresentationContext
+import dev.hotwire.turbo.observers.TurboWindowThemeObserver
 import dev.hotwire.turbo.session.TurboSessionModalResult
 
 /**
@@ -30,6 +31,7 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
         super.onViewCreated(view, savedInstanceState)
         observeModalResult()
         observeDialogResult()
+        observeTheme()
 
         if (shouldObserveTitleChanges()) {
             observeTitleChanges()
@@ -115,6 +117,19 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
     private fun observeTitleChanges() {
         fragmentViewModel.title.observe(viewLifecycleOwner) {
             toolbarForNavigation()?.title = it
+        }
+    }
+
+    /*
+     * If a theme is applied directly on the root view, allow the
+     * system status and navigation bars to inherit the view's theme
+     * and override the Activity's theme window attributes.
+     */
+    private fun observeTheme() {
+        val view = view ?: return
+
+        if (requireActivity().theme != view.context.theme) {
+            viewLifecycleOwner.lifecycle.addObserver(TurboWindowThemeObserver(this))
         }
     }
 
