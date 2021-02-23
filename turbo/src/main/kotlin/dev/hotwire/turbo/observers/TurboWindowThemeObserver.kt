@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import dev.hotwire.turbo.nav.TurboNavDestination
+import dev.hotwire.turbo.util.animateColorTo
 
 internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -34,7 +35,9 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
         val statusBarColor = colorAttribute(theme, android.R.attr.statusBarColor)
         val useLightStatusBar = booleanAttribute(theme, android.R.attr.windowLightStatusBar)
 
-        window.statusBarColor = statusBarColor
+        window.statusBarColor.animateColorTo(statusBarColor) {
+            window.statusBarColor = it
+        }
 
         @Suppress("DEPRECATION")
         updateSystemBar(useLightStatusBar, SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
@@ -45,7 +48,9 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
         val window = destination.fragment.requireActivity().window
         val navigationBarColor = colorAttribute(theme, android.R.attr.navigationBarColor)
 
-        window.navigationBarColor = navigationBarColor
+        window.navigationBarColor.animateColorTo(navigationBarColor) {
+            window.navigationBarColor = it
+        }
 
         // Light navigation bars are only available in API 27+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) {

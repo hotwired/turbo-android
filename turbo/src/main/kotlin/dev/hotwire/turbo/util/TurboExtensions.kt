@@ -1,5 +1,7 @@
 package dev.hotwire.turbo.util
 
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +51,16 @@ internal fun Any.toJson(): String {
 
 internal fun <T> String.toObject(typeToken: TypeToken<T>): T {
     return gson.fromJson(this, typeToken.type)
+}
+
+internal fun Int.animateColorTo(toColor: Int, duration: Long = 150, onUpdate: (Int) -> Unit) {
+    ValueAnimator.ofObject(ArgbEvaluator(), this, toColor).apply {
+        this.duration = duration
+        this.addUpdateListener {
+            val color = it.animatedValue as Int?
+            color?.let { onUpdate(color) }
+        }
+    }.start()
 }
 
 private val gson: Gson = GsonBuilder()
