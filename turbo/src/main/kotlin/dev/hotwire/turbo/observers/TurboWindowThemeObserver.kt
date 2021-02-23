@@ -5,7 +5,6 @@ import android.os.Build
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowInsetsController
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -15,16 +14,17 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun updateSystemBarColors() {
         val view = destination.fragment.view ?: return
-        updateWindowTheme(view.context.theme)
+        val theme = view.context.theme
+
+        updateStatusBar(theme)
+        updateNavigationBar(theme)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun restoreSystemBarColors() {
         val activity = destination.fragment.activity ?: return
-        updateWindowTheme(activity.theme)
-    }
+        val theme = activity.theme
 
-    private fun updateWindowTheme(theme: Theme) {
         updateStatusBar(theme)
         updateNavigationBar(theme)
     }
@@ -36,12 +36,8 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
 
         window.statusBarColor = statusBarColor
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            updateSystemBarsAppearance(useLightStatusBar)
-        } else {
-            @Suppress("DEPRECATION")
-            updateSystemUiVisibility(useLightStatusBar, SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
-        }
+        @Suppress("DEPRECATION")
+        updateSystemBar(useLightStatusBar, SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
     }
 
 
@@ -58,11 +54,15 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
 
         val useLightNavigationBar = booleanAttribute(theme, android.R.attr.windowLightNavigationBar)
 
+        @Suppress("DEPRECATION")
+        updateSystemBar(useLightNavigationBar, SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
+    }
+
+    private fun updateSystemBar(useLightSystemBar: Boolean, flag: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            updateSystemBarsAppearance(useLightNavigationBar)
+            updateSystemBarsAppearance(useLightSystemBar)
         } else {
-            @Suppress("DEPRECATION")
-            updateSystemUiVisibility(useLightNavigationBar, SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
+            updateSystemUiVisibility(useLightSystemBar, flag)
         }
     }
 
