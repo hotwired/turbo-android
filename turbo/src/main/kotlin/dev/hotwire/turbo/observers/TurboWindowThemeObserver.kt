@@ -7,6 +7,7 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.Window
 import android.view.WindowInsetsController
 import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -74,6 +75,7 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun updateSystemBarsAppearance(useLightSystemBars: Boolean) {
         val appearance = when (useLightSystemBars) {
             true -> APPEARANCE_LIGHT_STATUS_BARS
