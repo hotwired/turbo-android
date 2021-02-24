@@ -9,6 +9,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Run lint
+        run: ./gradlew turbo:lint
+
       - name: Run tests
         run: ./gradlew testRelease
 
