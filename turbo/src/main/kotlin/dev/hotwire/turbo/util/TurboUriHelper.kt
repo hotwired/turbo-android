@@ -71,8 +71,10 @@ class TurboUriHelper(val context: Context) {
     }
 
     private fun uriAttributesFromContentQuery(uri: Uri, mimeType: String?, cursor: Cursor): TurboUriAttributes? {
-        val fileName: String? = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-        val fileSize: Long = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE))
+        val columnName = cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
+        val columnSize = cursor.getColumnIndexOrThrow(OpenableColumns.SIZE)
+        val fileName: String? = cursor.getString(columnName)
+        val fileSize: Long = cursor.getLong(columnSize)
 
         if (fileName == null && mimeType == null) {
             return null
