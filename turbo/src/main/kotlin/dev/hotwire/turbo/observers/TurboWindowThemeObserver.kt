@@ -4,7 +4,9 @@ import android.content.res.Resources.Theme
 import android.os.Build
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+import android.view.Window
 import android.view.WindowInsetsController
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -12,6 +14,9 @@ import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.animateColorTo
 
 internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : LifecycleObserver {
+    private val window: Window
+        get() = destination.fragment.requireActivity().window
+
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun updateSystemBarColors() {
         val view = destination.fragment.view ?: return
@@ -31,7 +36,6 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
     }
 
     private fun updateStatusBar(theme: Theme) {
-        val window = destination.fragment.requireActivity().window
         val statusBarColor = colorAttribute(theme, android.R.attr.statusBarColor)
         val useLightStatusBar = booleanAttribute(theme, android.R.attr.windowLightStatusBar)
 
@@ -45,7 +49,6 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
 
 
     private fun updateNavigationBar(theme: Theme) {
-        val window = destination.fragment.requireActivity().window
         val navigationBarColor = colorAttribute(theme, android.R.attr.navigationBarColor)
 
         window.navigationBarColor.animateColorTo(navigationBarColor) {
@@ -72,9 +75,8 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
     }
 
     private fun updateSystemBarsAppearance(useLightSystemBars: Boolean) {
-        val window = destination.fragment.requireActivity().window
         val appearance = when (useLightSystemBars) {
-            true -> WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            true -> APPEARANCE_LIGHT_STATUS_BARS
             else -> 0
         }
 
@@ -85,14 +87,12 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
 
         window.insetsController?.setSystemBarsAppearance(
             appearance,
-            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            APPEARANCE_LIGHT_STATUS_BARS
         )
     }
 
     @Suppress("DEPRECATION")
     private fun updateSystemUiVisibility(useLightSystemBar: Boolean, flag: Int) {
-        val window = destination.fragment.requireActivity().window
-
         val flags = when (useLightSystemBar) {
             true -> window.decorView.systemUiVisibility or flag
             else -> window.decorView.systemUiVisibility and flag.inv()
