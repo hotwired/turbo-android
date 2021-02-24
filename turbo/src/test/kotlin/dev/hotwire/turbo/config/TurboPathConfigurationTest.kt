@@ -7,6 +7,8 @@ import dev.hotwire.turbo.config.TurboPathConfiguration.Location
 import dev.hotwire.turbo.nav.TurboNavPresentationContext
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
+import dev.hotwire.turbo.BaseRepositoryTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -15,16 +17,19 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
+@ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class TurboPathConfigurationTest {
+class TurboPathConfigurationTest : BaseRepositoryTest() {
     private lateinit var context: Context
     private lateinit var pathConfiguration: TurboPathConfiguration
     private val mockRepository = mock<TurboPathConfigurationRepository>()
     private val url = "https://turbo.hotwire.dev"
 
     @Before
-    fun setup() {
+    override fun setup() {
+        super.setup()
+
         context = ApplicationProvider.getApplicationContext()
         pathConfiguration = TurboPathConfiguration(context).apply {
             load(Location(assetFilePath = "json/test-configuration.json"))

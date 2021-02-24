@@ -1,13 +1,19 @@
 package dev.hotwire.turbo.config
 
 import android.content.Context
-import dev.hotwire.turbo.util.coroutineScope
 import dev.hotwire.turbo.util.toObject
 import com.google.gson.reflect.TypeToken
+import dev.hotwire.turbo.util.dispatcherProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-internal class TurboPathConfigurationLoader(val context: Context) {
+internal class TurboPathConfigurationLoader(val context: Context) : CoroutineScope {
     internal var repository = TurboPathConfigurationRepository()
+
+    override val coroutineContext: CoroutineContext
+        get() = dispatcherProvider.io + Job()
 
     fun load(location: TurboPathConfiguration.Location, onCompletion: (TurboPathConfiguration) -> Unit) {
         location.assetFilePath?.let {
@@ -23,7 +29,7 @@ internal class TurboPathConfigurationLoader(val context: Context) {
         // Always load the previously cached version first, if available
         loadCachedConfigurationForUrl(url, onCompletion)
 
-        context.coroutineScope().launch {
+        launch {
             repository.getRemoteConfiguration(url)?.let {
                 onCompletion(load(it))
                 cacheConfigurationForUrl(url, load(it))
