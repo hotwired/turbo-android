@@ -57,7 +57,7 @@ The `properties` object contains a handful of key/value pairs that Turbo Android
 	* Possible values: `default` or `modal`. Defaults to `default`. 
 * `presentation` — Specifies what style to use when presenting the given `uri` destination. Turbo will determine what the navigation behavior should be based on this value + the `context` value. In most cases `default` should be sufficient, but you may find cases where your app needs specific behavior. 
 	* Optional. 
-	* [Possible values](https://github.com/hotwired/turbo-android/blob/main/turbo/src/main/kotlin/dev/hotwire/turbo/nav/TurboNavPresentation.kt): `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, `none`. Defaults to `default`.
+	* [Possible values](../turbo/src/main/kotlin/dev/hotwire/turbo/nav/TurboNavPresentation.kt): `default`, `push`, `pop`, `replace`, `replace_root`, `clear_all`, `refresh`, `none`. Defaults to `default`.
 * `fallback_uri` — Provides a fallback URI in case a destination cannot be found that maps to the `uri`. Can be useful in cases when pointing to a new `uri` that may not be available yet in older versions of the app.
 	* Optional.
 	* No explicit value options. No default value.
