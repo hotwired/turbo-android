@@ -127,7 +127,7 @@ class WebFragment : TurboWebFragment() {
 
     // ...
     
-    override fun onVisitCompleted(location: String, completedOffline: Boolean)
+    override fun onVisitCompleted(location: String, completedOffline: Boolean) {
         super.onVisitCompleted(location, completedOffline)
         
         val script = "console.log('hello world')"
