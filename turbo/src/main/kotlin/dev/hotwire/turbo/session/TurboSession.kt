@@ -418,7 +418,11 @@ class TurboSession internal constructor(
         // sees a WebView.loadUrl() request as a same-page visit instead of
         // requesting a full page reload. To work around this, we call
         // WebView.reload(), which fully reloads the page for all URLs.
-        when (visit.reload) {
+        //
+        // Note that webView.url is null if you call reload() before the webView
+        // has successfully loaded a URL, or if the URL webView is unloaded
+        // (eg by force closing the app). In this case we load the URL as normal.
+        when (visit.reload && webView.url != null) {
             true -> webView.reload()
             else -> webView.loadUrl(visit.location)
         }
