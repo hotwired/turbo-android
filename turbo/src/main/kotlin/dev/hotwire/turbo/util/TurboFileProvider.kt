@@ -9,12 +9,14 @@ import java.io.IOException
 
 class TurboFileProvider : FileProvider() {
     companion object {
+        private const val sharedDir = "shared"
+
         fun authority(context: Context): String {
             return "${context.packageName}.turbo.fileprovider"
         }
 
-        fun directory(context: Context): File {
-            val directory = File(context.filesDir, "shared")
+        fun directory(context: Context, dirName: String = sharedDir): File {
+            val directory = File(context.filesDir, dirName)
 
             if (!directory.mkdirs() && !directory.isDirectory) {
                 throw IOException("Could not create file provider directory")
@@ -27,17 +29,17 @@ class TurboFileProvider : FileProvider() {
             return getUriForFile(context, authority(context), file)
         }
 
-        suspend fun writeUriToFile(context: Context, uri: Uri): Uri? {
+        suspend fun writeUriToFile(context: Context, uri: Uri, dirName: String = sharedDir): Uri? {
             val uriHelper = TurboUriHelper(context)
 
-            return uriHelper.writeFileTo(uri, directory(context))?.let {
+            return uriHelper.writeFileTo(uri, directory(context, dirName))?.let {
                 contentUriForFile(context, it)
             }
         }
 
-        suspend fun deleteAllFiles(context: Context) {
+        suspend fun deleteAllFiles(context: Context, dirName: String = sharedDir) {
             withContext(dispatcherProvider.io) {
-                directory(context).deleteAllFilesInDirectory()
+                directory(context, dirName).deleteAllFilesInDirectory()
             }
         }
     }
