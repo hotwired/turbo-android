@@ -1,8 +1,8 @@
 package dev.hotwire.turbo.delegates
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import androidx.test.core.app.ApplicationProvider
 import dev.hotwire.turbo.BaseRepositoryTest
 import dev.hotwire.turbo.session.TurboSession
@@ -27,7 +27,7 @@ import java.io.File
 class TurboFileChooserDelegateTest : BaseRepositoryTest() {
     @Mock
     private lateinit var webView: TurboWebView
-    private lateinit var activity: Activity
+    private lateinit var activity: AppCompatActivity
     private lateinit var context: Context
     private lateinit var session: TurboSession
 
@@ -59,4 +59,4 @@ class TurboFileChooserDelegateTest : BaseRepositoryTest() {
     }
 }
 
-internal class TurboTestActivity : Activity()
+internal class TurboTestActivity : AppCompatActivity()

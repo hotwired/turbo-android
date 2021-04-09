@@ -1,7 +1,7 @@
 package dev.hotwire.turbo.demo.main
 
-import android.app.Activity
 import android.webkit.WebView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.BuildConfig
 import dev.hotwire.turbo.config.TurboPathConfiguration
@@ -23,7 +23,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
     override val startLocation = HOME_URL
 
-    override val registeredActivities: List<KClass<out Activity>>
+    override val registeredActivities: List<KClass<out AppCompatActivity>>
         get() = listOf()
 
     override val registeredFragments: List<KClass<out Fragment>>

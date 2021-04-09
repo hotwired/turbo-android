@@ -1,8 +1,8 @@
 package dev.hotwire.turbo.session
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -16,7 +16,7 @@ abstract class TurboSessionNavHostFragment : NavHostFragment() {
     abstract val sessionName: String
     abstract val startLocation: String
     abstract val pathConfigurationLocation: TurboPathConfiguration.Location
-    abstract val registeredActivities: List<KClass<out Activity>>
+    abstract val registeredActivities: List<KClass<out AppCompatActivity>>
     abstract val registeredFragments: List<KClass<out Fragment>>
 
     lateinit var session: TurboSession
@@ -29,7 +29,8 @@ abstract class TurboSessionNavHostFragment : NavHostFragment() {
     }
 
     internal fun createNewSession() {
-        session = TurboSession(sessionName, requireActivity(), onCreateWebView(requireActivity()))
+        val activity = requireActivity() as AppCompatActivity
+        session = TurboSession(sessionName, activity, onCreateWebView(activity))
         onSessionCreated()
     }
 

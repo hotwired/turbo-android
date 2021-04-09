@@ -2,13 +2,14 @@ package dev.hotwire.turbo.session
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.os.Build
 import android.util.SparseArray
 import android.webkit.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
@@ -41,7 +42,7 @@ import java.util.*
 @Suppress("unused")
 class TurboSession internal constructor(
     internal val sessionName: String,
-    private val activity: Activity,
+    private val activity: AppCompatActivity,
     val webView: TurboWebView
 ) {
     internal var currentVisit: TurboVisit? = null
@@ -105,7 +106,7 @@ class TurboSession internal constructor(
             "An offline request handler must be provided to pre-cache $location"
         }
 
-        activity.coroutineScope().launch {
+        activity.lifecycleScope.launch {
             httpRepository.preCache(
                 requestHandler, TurboPreCacheRequest(
                     url = location, userAgent = webView.settings.userAgentString
