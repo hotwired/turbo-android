@@ -1,7 +1,7 @@
 package dev.hotwire.turbo.session
 
-import android.app.Activity
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import com.nhaarman.mockito_kotlin.whenever
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.toJson
@@ -28,7 +28,7 @@ class TurboSessionTest {
     private lateinit var webView: TurboWebView
     @Mock
     private lateinit var navDestination: TurboNavDestination
-    private lateinit var activity: Activity
+    private lateinit var activity: AppCompatActivity
     private lateinit var session: TurboSession
     private lateinit var visit: TurboVisit
 
@@ -161,4 +161,4 @@ class TurboSessionTest {
     }
 }
 
-internal class TurboTestActivity : Activity()
+internal class TurboTestActivity : AppCompatActivity()
