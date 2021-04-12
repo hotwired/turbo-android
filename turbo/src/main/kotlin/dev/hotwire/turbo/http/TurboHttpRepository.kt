@@ -20,7 +20,7 @@ import java.io.InputStream
 /**
  * Experimental: API may change, not ready for production use.
  */
-internal class TurboHttpRepository(private val lifecycleScope: CoroutineScope) {
+internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
     private val cookieManager = CookieManager.getInstance()
 
     // Limit pre-cache requests to 2 concurrently
@@ -35,7 +35,7 @@ internal class TurboHttpRepository(private val lifecycleScope: CoroutineScope) {
         requestHandler: TurboOfflineRequestHandler,
         resourceRequest: WebResourceRequest
     ) {
-        lifecycleScope.launch {
+        coroutineScope.launch {
             preCacheRequestQueue.withPermit {
                 withContext(dispatcherProvider.io) {
                     fetch(requestHandler, resourceRequest)
