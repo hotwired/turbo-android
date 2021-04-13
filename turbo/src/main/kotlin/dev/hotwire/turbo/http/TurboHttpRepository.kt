@@ -3,10 +3,12 @@ package dev.hotwire.turbo.http
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
-import androidx.annotation.experimental.Experimental
 import dev.hotwire.turbo.util.TurboLog
 import dev.hotwire.turbo.util.dispatcherProvider
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
 import okhttp3.Headers.Companion.toHeaders
@@ -18,23 +20,34 @@ import java.io.InputStream
 /**
  * Experimental: API may change, not ready for production use.
  */
-internal class TurboHttpRepository {
+internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
     private val cookieManager = CookieManager.getInstance()
+
+    // Limit pre-cache requests to 2 concurrently
+    private val preCacheRequestQueue = Semaphore(2)
 
     data class Result(
         val response: WebResourceResponse?,
         val offline: Boolean
     )
 
-    internal suspend fun preCache(requestHandler: TurboOfflineRequestHandler,
-                                  resourceRequest: WebResourceRequest) {
-        withContext(dispatcherProvider.io) {
-            fetch(requestHandler, resourceRequest)
+    internal fun preCache(
+        requestHandler: TurboOfflineRequestHandler,
+        resourceRequest: WebResourceRequest
+    ) {
+        coroutineScope.launch {
+            preCacheRequestQueue.withPermit {
+                withContext(dispatcherProvider.io) {
+                    fetch(requestHandler, resourceRequest)
+                }
+            }
         }
     }
 
-    internal fun fetch(requestHandler: TurboOfflineRequestHandler,
-                       resourceRequest: WebResourceRequest): Result {
+    internal fun fetch(
+        requestHandler: TurboOfflineRequestHandler,
+        resourceRequest: WebResourceRequest
+    ): Result {
         val url = resourceRequest.url.toString()
 
         return when (requestHandler.getCacheStrategy(url)) {
@@ -43,8 +56,10 @@ internal class TurboHttpRepository {
         }
     }
 
-    private fun fetchAppCacheRequest(requestHandler: TurboOfflineRequestHandler,
-                                     resourceRequest: WebResourceRequest): Result {
+    private fun fetchAppCacheRequest(
+        requestHandler: TurboOfflineRequestHandler,
+        resourceRequest: WebResourceRequest
+    ): Result {
         val url = resourceRequest.url.toString()
         val headers = requestHandler.getCachedResponseHeaders(url) ?: emptyMap()
         val cacheControl = cacheControl(headers)

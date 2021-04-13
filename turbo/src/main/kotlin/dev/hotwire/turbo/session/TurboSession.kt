@@ -27,7 +27,7 @@ import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 
 /**
@@ -53,7 +53,7 @@ class TurboSession internal constructor(
     internal var isRenderProcessGone = false
     internal var restorationIdentifiers = SparseArray<String>()
     internal val context: Context = activity.applicationContext
-    internal val httpRepository = TurboHttpRepository()
+    internal val httpRepository = TurboHttpRepository(activity.lifecycleScope)
     internal val fileChooserDelegate = TurboFileChooserDelegate(this)
 
     // User accessible
@@ -106,13 +106,11 @@ class TurboSession internal constructor(
             "An offline request handler must be provided to pre-cache $location"
         }
 
-        activity.lifecycleScope.launch {
-            httpRepository.preCache(
-                requestHandler, TurboPreCacheRequest(
-                    url = location, userAgent = webView.settings.userAgentString
-                )
+        httpRepository.preCache(
+            requestHandler, TurboPreCacheRequest(
+                url = location, userAgent = webView.settings.userAgentString
             )
-        }
+        )
     }
 
     /**
@@ -174,7 +172,7 @@ class TurboSession internal constructor(
      * You should never call this directly as it could lead to unintended behavior.
      *
      * @param location The location to visit.
-     * @param optionsJson A JSON block to be serialzed into [TurboVisitOptions].
+     * @param optionsJson A JSON block to be serialized into [TurboVisitOptions].
      */
     @JavascriptInterface
     fun visitProposedToLocation(location: String, optionsJson: String) {
