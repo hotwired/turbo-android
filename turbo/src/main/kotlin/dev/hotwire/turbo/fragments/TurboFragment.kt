@@ -29,6 +29,8 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        delegate.onViewCreated()
+
         observeModalResult()
         observeDialogResult()
         observeTheme()
@@ -41,9 +43,16 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
+    /**
+     * @deprecated use {@link #onViewCreated(View, Bundle)} for code touching
+     * the Fragment's view and {@link #onCreate(Bundle)} for other initialization.
+     *
+     * This is marked `final` to prevent further use, as it's now deprecated in
+     * AndroidX's Fragment implementation.
+     */
+    @Suppress("DEPRECATION")
+    final override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        delegate.onActivityCreated()
     }
 
     override fun onStart() {

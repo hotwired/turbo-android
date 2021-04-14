@@ -18,13 +18,9 @@ class ImageViewerFragment : TurboFragment(), NavDestination {
         return inflater.inflate(R.layout.fragment_image_viewer, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        initToolbar()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initToolbar()
         loadImage(view)
     }
 

@@ -32,9 +32,9 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
         return inflater.inflate(R.layout.turbo_fragment_web_bottom_sheet, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        webDelegate.onActivityCreated()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        webDelegate.onViewCreated()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
