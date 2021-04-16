@@ -33,7 +33,7 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
         navigator = TurboNavigator(navDestination)
 
         initToolbar()
-        logEvent("fragment.onActivityCreated", "location" to location)
+        logEvent("fragment.onViewCreated", "location" to location)
     }
 
     /**

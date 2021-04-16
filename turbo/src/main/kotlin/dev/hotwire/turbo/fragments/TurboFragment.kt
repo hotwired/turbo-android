@@ -44,11 +44,11 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
     }
 
     /**
-     * @deprecated use {@link #onViewCreated(View, Bundle)} for code touching
-     * the Fragment's view and {@link #onCreate(Bundle)} for other initialization.
-     *
      * This is marked `final` to prevent further use, as it's now deprecated in
      * AndroidX's Fragment implementation.
+     *
+     * Use [onViewCreated] for code touching
+     * the Fragment's view and [onCreate] for other initialization.
      */
     @Suppress("DEPRECATION")
     final override fun onActivityCreated(savedInstanceState: Bundle?) {
