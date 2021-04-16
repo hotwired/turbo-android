@@ -54,9 +54,9 @@ internal class TurboWebFragmentDelegate(
 
     /**
      * Should be called by the implementing Fragment during
-     * [androidx.fragment.app.Fragment.onActivityCreated].
+     * [androidx.fragment.app.Fragment.onViewCreated].
      */
-    fun onActivityCreated() {
+    fun onViewCreated() {
         if (session().isRenderProcessGone) {
             navDestination.sessionNavHostFragment.createNewSession()
         }

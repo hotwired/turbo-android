@@ -27,13 +27,13 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
 
     /**
      * Should be called by the implementing Fragment during
-     * [androidx.fragment.app.Fragment.onActivityCreated].
+     * [androidx.fragment.app.Fragment.onViewCreated].
      */
-    fun onActivityCreated() {
+    fun onViewCreated() {
         navigator = TurboNavigator(navDestination)
 
         initToolbar()
-        logEvent("fragment.onActivityCreated", "location" to location)
+        logEvent("fragment.onViewCreated", "location" to location)
     }
 
     /**
