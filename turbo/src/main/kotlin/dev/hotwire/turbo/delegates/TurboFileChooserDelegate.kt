@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
+import androidx.activity.result.ActivityResult
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TURBO_REQUEST_CODE_FILES
@@ -37,11 +38,9 @@ internal class TurboFileChooserDelegate(val session: TurboSession) : CoroutineSc
         }
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (requestCode != TURBO_REQUEST_CODE_FILES) return
-
-        when (resultCode) {
-            Activity.RESULT_OK -> handleResult(intent)
+    fun onActivityResult(result: ActivityResult) {
+        when (result.resultCode) {
+            Activity.RESULT_OK -> handleResult(result.data)
             Activity.RESULT_CANCELED -> handleCancellation()
         }
     }
@@ -70,7 +69,7 @@ internal class TurboFileChooserDelegate(val session: TurboSession) : CoroutineSc
         val destination = session.currentVisitNavDestination ?: return false
 
         return try {
-            destination.fragment.startActivityForResult(intent, TURBO_REQUEST_CODE_FILES)
+            destination.activityResultLauncher(TURBO_REQUEST_CODE_FILES)?.launch(intent)
             true
         } catch (e: Exception) {
             TurboLog.e("${e.message}")

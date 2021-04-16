@@ -1,6 +1,7 @@
 package dev.hotwire.turbo.fragments
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
@@ -47,6 +48,21 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
     @Suppress("DEPRECATION")
     final override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+    }
+
+    /**
+     * This is marked `final` to prevent further use, as it's now deprecated in
+     * AndroidX's Fragment implementation.
+     *
+     * Use [registerForActivityResult] with the appropriate
+     * [androidx.activity.result.contract.ActivityResultContract] and its callback.
+     *
+     * Turbo provides the [TurboNavDestination.activityResultLauncher] interface
+     * to obtain registered result launchers from any destination.
+     */
+    @Suppress("DEPRECATION")
+    final override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
     }
 
     override fun onStart() {
