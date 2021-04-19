@@ -3,6 +3,8 @@ package dev.hotwire.turbo.delegates
 import android.content.Intent
 import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.lifecycle.lifecycleScope
 import dev.hotwire.turbo.config.pullToRefreshEnabled
 import dev.hotwire.turbo.fragments.TurboWebFragmentCallback
@@ -17,7 +19,6 @@ import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
@@ -53,6 +54,11 @@ internal class TurboWebFragmentDelegate(
         get() = session().webView
 
     /**
+     * The activity result launcher that handles file chooser results.
+     */
+    val fileChooserResultLauncher = registerFileChooserLauncher()
+
+    /**
      * Should be called by the implementing Fragment during
      * [androidx.fragment.app.Fragment.onViewCreated].
      */
@@ -66,14 +72,6 @@ internal class TurboWebFragmentDelegate(
             session().removeCallback(this)
             detachWebView(onReady)
         }
-    }
-
-    /**
-     * Should be called by the implementing Fragment during
-     * [androidx.fragment.app.Fragment.onActivityResult].
-     */
-    fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        session().fileChooserDelegate.onActivityResult(requestCode, resultCode, intent)
     }
 
     /**
@@ -312,6 +310,12 @@ internal class TurboWebFragmentDelegate(
 
     private fun title(): String {
         return webView.title ?: ""
+    }
+
+    private fun registerFileChooserLauncher(): ActivityResultLauncher<Intent> {
+        return navDestination.fragment.registerForActivityResult(StartActivityForResult()) { result ->
+            session().fileChooserDelegate.onActivityResult(result)
+        }
     }
 
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean, reload: Boolean) {

@@ -1,6 +1,8 @@
 package dev.hotwire.turbo.nav
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -188,6 +190,20 @@ interface TurboNavDestination {
      */
     fun clearBackStack(onCleared: () -> Unit = {}) {
         navigator.clearBackStack(onCleared)
+    }
+
+    /**
+     * Gets a registered activity result launcher instance for the given `requestCode`.
+     *
+     * Override to provide your own [androidx.activity.result.ActivityResultLauncher]
+     * instances. If your app doesn't have a matching `requestCode`, you must call
+     * `super.activityResultLauncher(requestCode)` to give the Turbo library an
+     * opportunity to provide a matching result launcher.
+     *
+     * @param requestCode The request code for the corresponding result launcher.
+     */
+    fun activityResultLauncher(requestCode: Int): ActivityResultLauncher<Intent>? {
+        return null
     }
 
     /**
