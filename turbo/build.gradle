@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 apply plugin: 'org.jetbrains.dokka'
 
 ext {
@@ -10,14 +10,17 @@ ext {
     libraryName = 'Turbo Native for Android'
     libraryDescription = 'Android framework for making Turbo native apps'
 
-    bintrayRepo = 'maven'
-    bintrayName = 'turbo-android'
-
     publishedGroupId = 'dev.hotwire'
     publishedArtifactId = 'turbo'
 
     siteUrl = 'https://github.com/hotwired/turbo-android'
     gitUrl = 'https://github.com/hotwired/turbo-android.git'
+
+    licenseType = 'MIT License'
+    licenseUrl = 'https://github.com/hotwired/turbo-android/blob/main/LICENSE'
+
+    developerId = 'basecamp'
+    developerEmail = 'androidteam@basecamp.com'
 }
 
 buildscript {
@@ -26,7 +29,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
         classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.4.20'
     }
 }
@@ -122,12 +124,50 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
+// Sign Sonatype published release artifacts
+signing {
+    def keyId = project.property("Turbo.signing.keyId")
+    def secretKey = project.property("Turbo.signing.secretKey")
+    def password = project.property("Turbo.signing.password")
+
+    useInMemoryPgpKeys(keyId, secretKey, password)
+
+    required {
+        tasks.withType(PublishToMavenRepository).find {
+            gradle.taskGraph.hasTask it
+        }
+    }
+    sign publishing.publications
+}
+
 // Publish to GitHub Packages via ./gradlew -Pversion=<version> clean build publish
 // https://github.com/orgs/hotwired/packages?repo_name=turbo-android
 afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
+                pom {
+                    name = libraryName
+                    description = libraryDescription
+                    url = siteUrl
+                    licenses {
+                        license {
+                            name = licenseType
+                            url = licenseUrl
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = developerId
+                            name = developerId
+                            email = developerEmail
+                        }
+                    }
+                    scm {
+                        url = siteUrl
+                    }
+                }
+
                 // Applies the component for the release build variant
                 from components.release
 
@@ -141,7 +181,7 @@ afterEvaluate {
             }
         }
         repositories {
-            maven {
+            /*maven {
                 name = 'GitHubPackages'
                 url = uri('https://maven.pkg.github.com/hotwired/turbo-android')
 
@@ -149,27 +189,16 @@ afterEvaluate {
                     username = System.getenv('GITHUB_ACTOR')
                     password = System.getenv('GITHUB_TOKEN')
                 }
-            }
-        }
-    }
-}
+            }*/
 
-// Publish to Bintray via ./gradlew -Pversion=<version> clean build bintrayUpload
-// https://bintray.com/hotwire/maven/turbo-android
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_API_KEY')
-    publications = ['release']
-    publish = true
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-        desc = libraryDescription
-        vcsUrl = gitUrl
-        version {
-            name = libVersionName
-            desc = libraryName
-            released = new Date()
+            maven {
+                url = uri('https://s01.oss.sonatype.org/content/repositories/releases/')
+
+                credentials {
+                    username = System.getenv('SONATYPE_USER')
+                    password = System.getenv('SONATYPE_PASSWORD')
+                }
+            }
         }
     }
 }
