@@ -132,15 +132,17 @@ tasks.withType(Sign) {
 }
 
 // Sign Sonatype published release artifacts
-signing {
-    def keyId = project.property("Turbo.signing.keyId")
-    def secretKey = project.property("Turbo.signing.secretKey")
-    def password = project.property("Turbo.signing.password")
+if (isSonatypeRelease) {
+    signing {
+        def keyId = project.property("Turbo.signing.keyId")
+        def secretKey = project.property("Turbo.signing.secretKey")
+        def password = project.property("Turbo.signing.password")
 
-    useInMemoryPgpKeys(keyId, secretKey, password)
+        useInMemoryPgpKeys(keyId, secretKey, password)
 
-    required { isSonatypeRelease && gradle.taskGraph.hasTask("publish") }
-    sign publishing.publications
+        required { gradle.taskGraph.hasTask("publish") }
+        sign publishing.publications
+    }
 }
 
 // Publish to GitHub Packages via ./gradlew -Pversion=<version> clean build publish
