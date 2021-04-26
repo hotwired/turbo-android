@@ -21,6 +21,8 @@ ext {
 
     developerId = 'basecamp'
     developerEmail = 'androidteam@basecamp.com'
+
+    isSonatypeRelease = project.hasProperty('sonatype')
 }
 
 buildscript {
@@ -124,6 +126,11 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
+// Only sign Sonatype release artifacts
+tasks.withType(Sign) {
+    onlyIf { isSonatypeRelease }
+}
+
 // Sign Sonatype published release artifacts
 signing {
     def keyId = project.property("Turbo.signing.keyId")
@@ -132,11 +139,7 @@ signing {
 
     useInMemoryPgpKeys(keyId, secretKey, password)
 
-    required {
-        tasks.withType(PublishToMavenRepository).find {
-            gradle.taskGraph.hasTask it
-        }
-    }
+    required { isSonatypeRelease && gradle.taskGraph.hasTask("publish") }
     sign publishing.publications
 }
 
@@ -164,7 +167,7 @@ afterEvaluate {
                         }
                     }
                     scm {
-                        url = siteUrl
+                        url = gitUrl
                     }
                 }
 
@@ -181,22 +184,24 @@ afterEvaluate {
             }
         }
         repositories {
-            /*maven {
-                name = 'GitHubPackages'
-                url = uri('https://maven.pkg.github.com/hotwired/turbo-android')
+            if (isSonatypeRelease) {
+                maven {
+                    url = uri('https://s01.oss.sonatype.org/content/repositories/releases/')
 
-                credentials {
-                    username = System.getenv('GITHUB_ACTOR')
-                    password = System.getenv('GITHUB_TOKEN')
+                    credentials {
+                        username = System.getenv('SONATYPE_USER')
+                        password = System.getenv('SONATYPE_PASSWORD')
+                    }
                 }
-            }*/
+            } else {
+                maven {
+                    name = 'GitHubPackages'
+                    url = uri('https://maven.pkg.github.com/hotwired/turbo-android')
 
-            maven {
-                url = uri('https://s01.oss.sonatype.org/content/repositories/releases/')
-
-                credentials {
-                    username = System.getenv('SONATYPE_USER')
-                    password = System.getenv('SONATYPE_PASSWORD')
+                    credentials {
+                        username = System.getenv('GITHUB_ACTOR')
+                        password = System.getenv('GITHUB_TOKEN')
+                    }
                 }
             }
         }
