@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
-apply plugin: 'org.jetbrains.dokka'
 
 ext {
     libVersionName = version
@@ -25,20 +24,9 @@ ext {
     isSonatypeRelease = project.hasProperty('sonatype')
 }
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.4.20'
-    }
-}
-
 repositories {
     google()
     mavenCentral()
-    jcenter()
 }
 
 android {
@@ -206,18 +194,6 @@ afterEvaluate {
                     }
                 }
             }
-        }
-    }
-}
-
-tasks.dokkaJavadoc.configure {
-    dokkaSourceSets {
-        named("main") {
-            includeNonPublic = false
-            skipEmptyPackages = true
-            skipDeprecated = true
-            reportUndocumented = true
-            jdkVersion = 8
         }
     }
 }
