@@ -122,9 +122,9 @@ tasks.withType(Sign) {
 // Sign Sonatype published release artifacts
 if (isSonatypeRelease) {
     signing {
-        def keyId = project.property("Turbo.signing.keyId")
-        def secretKey = project.property("Turbo.signing.secretKey")
-        def password = project.property("Turbo.signing.password")
+        def keyId = System.getenv('GPG_KEY_ID')
+        def secretKey = System.getenv("GPG_SECRET_KEY")
+        def password = System.getenv("GPG_PASSWORD")
 
         useInMemoryPgpKeys(keyId, secretKey, password)
 
