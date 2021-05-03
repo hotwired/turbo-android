@@ -1,21 +1,22 @@
 # Installation
 
 ## Gradle
-Add the dependency from jCenter to your app module's (not top-level) `build.gradle` file:
+Add the dependency from Maven Central to your app module's (not top-level) `build.gradle` file:
 
 ```groovy
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
     implementation 'dev.hotwire:turbo:<latest-version>'
 }
 ```
+[![Download](https://img.shields.io/maven-central/v/dev.hotwire/turbo)](https://search.maven.org/artifact/dev.hotwire/turbo)
 
-[![Download](https://api.bintray.com/packages/hotwire/maven/turbo-android/images/download.svg)](https://bintray.com/hotwire/maven/turbo-android/_latestVersion)
+See the [latest version](https://search.maven.org/artifact/dev.hotwire/turbo) available on Maven Central.
 
-See the [latest version](https://bintray.com/hotwire/maven/turbo-android) available on Bintray/JCenter.
+*Note: As of May 1, 2021, artifacts will no longer be released to JCenter, since [it's shutting down](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/).*
 
 ## Required `minSdkVersion`
 Android SDK 24 (or greater) is required as the `minSdkVersion` in your app module's `build.gradle` file:
