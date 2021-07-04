@@ -30,13 +30,13 @@ class TurboNavRuleTest {
     private lateinit var controller: TestNavHostController
     private lateinit var pathConfiguration: TurboPathConfiguration
 
-    private val homeUrl = "http://hotwire.dev/home"
-    private val featureUrl = "http://hotwire.dev/feature"
-    private val newUrl = "http://hotwire.dev/feature/new"
-    private val editUrl = "http://hotwire.dev/feature/edit"
-    private val refreshUrl = "http://hotwire.dev/custom/refresh"
-    private val resumeUrl = "http://hotwire.dev/custom/resume"
-    private val modalRootUrl = "http://hotwire.dev/custom/modal"
+    private val homeUrl = "https://hotwired.dev/home"
+    private val featureUrl = "https://hotwired.dev/feature"
+    private val newUrl = "https://hotwired.dev/feature/new"
+    private val editUrl = "https://hotwired.dev/feature/edit"
+    private val refreshUrl = "https://hotwired.dev/custom/refresh"
+    private val resumeUrl = "https://hotwired.dev/custom/resume"
+    private val modalRootUrl = "https://hotwired.dev/custom/modal"
 
     private val webDestinationId = 1
     private val webModalDestinationId = 2
