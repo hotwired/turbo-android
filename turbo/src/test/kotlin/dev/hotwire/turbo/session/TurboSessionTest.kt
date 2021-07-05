@@ -39,7 +39,7 @@ class TurboSessionTest {
         activity = buildActivity(TurboTestActivity::class.java).get()
         session = TurboSession("test", activity, webView)
         visit = TurboVisit(
-            location = "https://turbo.hotwire.dev",
+            location = "https://turbo.hotwired.dev",
             destinationIdentifier = 1,
             restoreWithCachedSnapshot = false,
             reload = false,
@@ -75,7 +75,7 @@ class TurboSessionTest {
         val visitIdentifier = "12345"
 
         session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.visitStarted(visitIdentifier, true, "https://turbo.hotwire.dev")
+        session.visitStarted(visitIdentifier, true, "https://turbo.hotwired.dev")
 
         assertThat(session.currentVisit?.identifier).isEqualTo(visitIdentifier)
     }

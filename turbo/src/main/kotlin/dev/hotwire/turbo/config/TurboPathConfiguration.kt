@@ -47,7 +47,7 @@ class TurboPathConfiguration(context: Context) {
          * file must be publicly available via a GET request. The file will be
          * automatically downloaded and cached at app startup. This location
          * must be the full url of the JSON file, for example:
-         * `"https://turbo.hotwire.dev/demo/json/configuration.json"`
+         * `"https://turbo.hotwired.dev/demo/json/configuration.json"`
          */
         val remoteFileUrl: String? = null
     )

@@ -42,7 +42,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
     override val pathConfigurationLocation: TurboPathConfiguration.Location
         get() = TurboPathConfiguration.Location(
             assetFilePath = "json/configuration.json",
-            remoteFileUrl = "https://turbo.hotwire.dev/demo/configurations/android-v1.json"
+            remoteFileUrl = "https://turbo.hotwired.dev/demo/configurations/android-v1.json"
         )
 }
 ```

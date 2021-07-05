@@ -56,7 +56,7 @@ class TurboPathConfigurationRepositoryTest : BaseRepositoryTest() {
 
     @Test
     fun getCachedConfiguration() {
-        val url = "https://turbo.hotwire.dev/demo/configurations/android-v1.json"
+        val url = "https://turbo.hotwired.dev/demo/configurations/android-v1.json"
         val config = requireNotNull(load(json()))
         repository.cacheConfigurationForUrl(context, url, config)
 
