@@ -24,7 +24,7 @@ class TurboPathConfigurationTest : BaseRepositoryTest() {
     private lateinit var context: Context
     private lateinit var pathConfiguration: TurboPathConfiguration
     private val mockRepository = mock<TurboPathConfigurationRepository>()
-    private val url = "https://turbo.hotwire.dev"
+    private val url = "https://turbo.hotwired.dev"
 
     @Before
     override fun setup() {
