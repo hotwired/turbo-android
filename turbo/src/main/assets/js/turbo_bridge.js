@@ -113,8 +113,13 @@
     }
 
     visitRequestCompleted(visit) {
-      TurboSession.visitRequestCompleted(visit.identifier)
-      this.loadResponseForVisitWithIdentifier(visit.identifier)
+      if (visit.redirectedToLocation) {
+        TurboSession.visitRequestRedirected(visit.identifier, visit.redirectedToLocation.absoluteURL)
+        this.visitProposedToLocation(visit.redirectedToLocation, { action: "replace" })
+      } else {
+        TurboSession.visitRequestCompleted(visit.identifier, visit.location.absoluteURL)
+        this.loadResponseForVisitWithIdentifier(visit.identifier)
+      }
     }
 
     visitRequestFailedWithStatusCode(visit, statusCode) {
@@ -122,7 +127,7 @@
     }
 
     visitRequestFinished(visit) {
-      TurboSession.visitRequestFinished(visit.identifier)
+      TurboSession.visitRequestFinished(visit.identifier, visit.location.absoluteURL)
     }
 
     visitRendered(visit) {
