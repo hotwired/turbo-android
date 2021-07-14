@@ -92,8 +92,8 @@
     // Adapter interface
 
     visitProposedToLocation(location, options) {
-      if (window.Turbo && this.currentVisit?.locationIsSamePageAnchor(location)) {
-        this.currentVisit.scrollToAnchor(location)
+      if (window.Turbo && Turbo.navigator.locationWithActionIsSamePage(location, options.action)) {
+        Turbo.navigator.view.scrollToAnchorFromLocation(location)
       } else {
         TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
       }
