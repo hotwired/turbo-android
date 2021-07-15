@@ -1,8 +1,8 @@
 package dev.hotwire.turbo.nav
 
-import android.app.Activity
 import android.net.Uri
 import androidx.annotation.IdRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -25,7 +25,7 @@ internal class TurboNavGraphBuilder(
     private data class ActivityDestination(
         val id: Int,
         val uri: Uri,
-        val kClass: KClass<out Activity>
+        val kClass: KClass<out AppCompatActivity>
     )
 
     private data class FragmentDestination(
@@ -35,7 +35,7 @@ internal class TurboNavGraphBuilder(
     )
 
     fun build(
-        registeredActivities: List<KClass<out Activity>>,
+        registeredActivities: List<KClass<out AppCompatActivity>>,
         registeredFragments: List<KClass<out Fragment>>
     ): NavGraph {
         var currentId = 1

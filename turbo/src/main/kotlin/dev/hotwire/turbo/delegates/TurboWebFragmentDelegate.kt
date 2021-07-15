@@ -3,6 +3,8 @@ package dev.hotwire.turbo.delegates
 import android.content.Intent
 import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.lifecycle.lifecycleScope
 import dev.hotwire.turbo.config.pullToRefreshEnabled
 import dev.hotwire.turbo.fragments.TurboWebFragmentCallback
@@ -17,7 +19,6 @@ import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
@@ -53,10 +54,15 @@ internal class TurboWebFragmentDelegate(
         get() = session().webView
 
     /**
-     * Should be called by the implementing Fragment during
-     * [androidx.fragment.app.Fragment.onActivityCreated].
+     * The activity result launcher that handles file chooser results.
      */
-    fun onActivityCreated() {
+    val fileChooserResultLauncher = registerFileChooserLauncher()
+
+    /**
+     * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onViewCreated].
+     */
+    fun onViewCreated() {
         if (session().isRenderProcessGone) {
             navDestination.sessionNavHostFragment.createNewSession()
         }
@@ -66,14 +72,6 @@ internal class TurboWebFragmentDelegate(
             session().removeCallback(this)
             detachWebView(onReady)
         }
-    }
-
-    /**
-     * Should be called by the implementing Fragment during
-     * [androidx.fragment.app.Fragment.onActivityResult].
-     */
-    fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        session().fileUploadDelegate.onActivityResult(requestCode, resultCode, intent)
     }
 
     /**
@@ -123,6 +121,21 @@ internal class TurboWebFragmentDelegate(
         if (webViewIsAttached()) {
             detachWebView()
         }
+    }
+
+    /**
+     * Should be called by the implementing Fragment during
+     * [dev.hotwire.turbo.nav.TurboNavDestination.refresh]
+     */
+    fun refresh(displayProgress: Boolean) {
+        turboView?.webViewRefresh?.apply {
+            if (displayProgress && !isRefreshing) {
+                isRefreshing = true
+            }
+        }
+
+        isWebViewAttachedToNewDestination = false
+        visit(location, restoreWithCachedSnapshot = false, reload = true)
     }
 
     /**
@@ -299,6 +312,12 @@ internal class TurboWebFragmentDelegate(
         return webView.title ?: ""
     }
 
+    private fun registerFileChooserLauncher(): ActivityResultLauncher<Intent> {
+        return navDestination.fragment.registerForActivityResult(StartActivityForResult()) { result ->
+            session().fileChooserDelegate.onActivityResult(result)
+        }
+    }
+
     private fun visit(location: String, restoreWithCachedSnapshot: Boolean, reload: Boolean) {
         val restore = restoreWithCachedSnapshot && !reload
         val options = when {
@@ -358,8 +377,7 @@ internal class TurboWebFragmentDelegate(
         turboView.webViewRefresh?.apply {
             isEnabled = navDestination.pathProperties.pullToRefreshEnabled
             setOnRefreshListener {
-                isWebViewAttachedToNewDestination = false
-                visit(location, restoreWithCachedSnapshot = false, reload = true)
+                refresh(displayProgress = true)
             }
         }
     }
@@ -367,8 +385,7 @@ internal class TurboWebFragmentDelegate(
     private fun initializeErrorPullToRefresh(turboView: TurboView) {
         turboView.errorRefresh?.apply {
             setOnRefreshListener {
-                isWebViewAttachedToNewDestination = false
-                visit(location, restoreWithCachedSnapshot = false, reload = true)
+                refresh(displayProgress = true)
             }
         }
     }

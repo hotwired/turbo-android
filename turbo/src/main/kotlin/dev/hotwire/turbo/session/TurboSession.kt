@@ -2,20 +2,21 @@ package dev.hotwire.turbo.session
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.os.Build
 import android.util.SparseArray
 import android.webkit.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.screenshotsEnabled
-import dev.hotwire.turbo.delegates.TurboFileUploadDelegate
+import dev.hotwire.turbo.delegates.TurboFileChooserDelegate
 import dev.hotwire.turbo.http.TurboHttpClient
 import dev.hotwire.turbo.http.TurboHttpRepository
 import dev.hotwire.turbo.http.TurboOfflineRequestHandler
@@ -26,7 +27,7 @@ import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 
 /**
@@ -41,7 +42,7 @@ import java.util.*
 @Suppress("unused")
 class TurboSession internal constructor(
     internal val sessionName: String,
-    private val activity: Activity,
+    private val activity: AppCompatActivity,
     val webView: TurboWebView
 ) {
     internal var currentVisit: TurboVisit? = null
@@ -52,8 +53,8 @@ class TurboSession internal constructor(
     internal var isRenderProcessGone = false
     internal var restorationIdentifiers = SparseArray<String>()
     internal val context: Context = activity.applicationContext
-    internal val httpRepository = TurboHttpRepository()
-    internal val fileUploadDelegate = TurboFileUploadDelegate(this)
+    internal val httpRepository = TurboHttpRepository(activity.lifecycleScope)
+    internal val fileChooserDelegate = TurboFileChooserDelegate(this)
 
     // User accessible
 
@@ -89,7 +90,7 @@ class TurboSession internal constructor(
     init {
         initializeWebView()
         TurboHttpClient.enableCachingWith(context)
-        fileUploadDelegate.deleteCachedFiles()
+        fileChooserDelegate.deleteCachedFiles()
     }
 
     // Public
@@ -105,13 +106,11 @@ class TurboSession internal constructor(
             "An offline request handler must be provided to pre-cache $location"
         }
 
-        activity.coroutineScope().launch {
-            httpRepository.preCache(
-                requestHandler, TurboPreCacheRequest(
-                    url = location, userAgent = webView.settings.userAgentString
-                )
+        httpRepository.preCache(
+            requestHandler, TurboPreCacheRequest(
+                url = location, userAgent = webView.settings.userAgentString
             )
-        }
+        )
     }
 
     /**

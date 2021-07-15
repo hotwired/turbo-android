@@ -4,6 +4,16 @@
     <!--Top level DayNight theme to be used in AndroidManifest.xml-->
     <style name="MyTheme.DayNight" parent="Base.MyTheme"/>
 
+    <style name="MyTheme.DayNight.Black">
+        <item name="colorSurface">@color/black</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:colorBackground">@color/black</item>
+        <item name="android:statusBarColor">@color/black</item>
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+    </style>
+
     <!--Base custom theme which will be shared between both light and dark theme variants-->
     <style name="Base.MyTheme" parent="Base.MaterialThemeBuilder">
         <!--Material color attributes -->

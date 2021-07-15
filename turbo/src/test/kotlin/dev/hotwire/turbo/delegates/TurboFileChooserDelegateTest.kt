@@ -1,14 +1,13 @@
 package dev.hotwire.turbo.delegates
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import androidx.test.core.app.ApplicationProvider
 import dev.hotwire.turbo.BaseRepositoryTest
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.util.TurboFileProvider
 import dev.hotwire.turbo.views.TurboWebView
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -25,10 +24,10 @@ import java.io.File
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O])
-class TurboFileUploadDelegateTest : BaseRepositoryTest() {
+class TurboFileChooserDelegateTest : BaseRepositoryTest() {
     @Mock
     private lateinit var webView: TurboWebView
-    private lateinit var activity: Activity
+    private lateinit var activity: AppCompatActivity
     private lateinit var context: Context
     private lateinit var session: TurboSession
 
@@ -54,10 +53,10 @@ class TurboFileUploadDelegateTest : BaseRepositoryTest() {
         assertThat(dir.listFiles()?.get(0)?.name).isEqualTo("testFile.txt")
 
         runBlocking {
-            session.fileUploadDelegate.deleteCachedFiles()
+            session.fileChooserDelegate.deleteCachedFiles()
             assertThat(dir.listFiles()?.size).isEqualTo(0)
         }
     }
 }
 
-internal class TurboTestActivity : Activity()
+internal class TurboTestActivity : AppCompatActivity()

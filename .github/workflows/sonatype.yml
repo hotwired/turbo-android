@@ -1,0 +1,21 @@
+name: Publish to Sonatype
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Publish artifact to Sonatype
+        env:
+          SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+          GPG_PASSWORD: ${{ secrets.GPG_PASSWORD }}
+        run: ./gradlew -Psonatype -Pversion=${{ github.event.release.tag_name }} clean build -x test publish

@@ -4,7 +4,7 @@
 
 ---------
 
-**Build high-fidelity hybrid apps with native navigation and a single shared web view**. Turbo Native for Android provides the tooling to wrap your [Turbo 7](https://turbo.hotwire.dev/)-enabled web app in a native Android shell. It manages a single WebView instance across multiple Fragment destinations, giving you native navigation UI with all the client-side performance benefits of Turbo.
+**Build high-fidelity hybrid apps with native navigation and a single shared web view**. Turbo Native for Android provides the tooling to wrap your [Turbo 7](https://turbo.hotwired.dev/)-enabled web app in a native Android shell. It manages a single WebView instance across multiple Fragment destinations, giving you native navigation UI with all the client-side performance benefits of Turbo.
 
 ## Features
 - **Deliver fast, efficient hybrid apps.** Avoid reloading JavaScript and CSS. Save memory by sharing one WebView.
@@ -19,7 +19,7 @@
 1. This library supports web apps using either Turbo 7 or Turbolinks 5.
 1. `Turbo` (or `Turbolinks`) is exposed on the `window` object on the WebView page being loaded.
 
-**Note:** You should understand how Turbo works with web applications in the browser before attempting to use Turbo Android. See the [Turbo 7 documentation](https://turbo.hotwire.dev) for details.
+**Note:** You should understand how Turbo works with web applications in the browser before attempting to use Turbo Android. See the [Turbo 7 documentation](https://turbo.hotwired.dev) for details.
 
 ## Getting Started
 The best way to get started with Turbo Android is to try out the demo app first to get familiar with the framework. The demo app walks you through all the basic Turbo flows as well as some advanced features. To run the demo, clone this repo, open the directory in Android Studio, and build the `demo` module to your Android device. See [demo/README.md](demo/README.md) for more details about the demo. When you’re ready to start your own application, read through the rest of the documentation.

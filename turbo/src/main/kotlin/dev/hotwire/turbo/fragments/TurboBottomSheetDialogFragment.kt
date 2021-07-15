@@ -1,14 +1,15 @@
 package dev.hotwire.turbo.fragments
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
-import dev.hotwire.turbo.delegates.TurboFragmentDelegate
-import dev.hotwire.turbo.nav.TurboNavDestination
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.config.title
+import dev.hotwire.turbo.delegates.TurboFragmentDelegate
+import dev.hotwire.turbo.nav.TurboNavDestination
 
 /**
  * The base class from which all bottom sheet native fragments in a
@@ -27,6 +28,7 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        delegate.onViewCreated()
 
         if (shouldObserveTitleChanges()) {
             observeTitleChanges()
@@ -36,9 +38,31 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
+    /**
+     * This is marked `final` to prevent further use, as it's now deprecated in
+     * AndroidX's Fragment implementation.
+     *
+     * Use [onViewCreated] for code touching
+     * the Fragment's view and [onCreate] for other initialization.
+     */
+    @Suppress("DEPRECATION")
+    final override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        delegate.onActivityCreated()
+    }
+
+    /**
+     * This is marked `final` to prevent further use, as it's now deprecated in
+     * AndroidX's Fragment implementation.
+     *
+     * Use [registerForActivityResult] with the appropriate
+     * [androidx.activity.result.contract.ActivityResultContract] and its callback.
+     *
+     * Turbo provides the [TurboNavDestination.activityResultLauncher] interface
+     * to obtain registered result launchers from any destination.
+     */
+    @Suppress("DEPRECATION")
+    final override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
     }
 
     override fun onStart() {
@@ -62,6 +86,8 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
     }
 
     override fun onBeforeNavigation() {}
+
+    override fun refresh(displayProgress: Boolean) {}
 
     /**
      * Gets the Toolbar instance in your Fragment's view for use with

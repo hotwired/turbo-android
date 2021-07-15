@@ -1,7 +1,7 @@
 package dev.hotwire.turbo.session
 
-import android.app.Activity
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import com.nhaarman.mockito_kotlin.whenever
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.toJson
@@ -28,7 +28,7 @@ class TurboSessionTest {
     private lateinit var webView: TurboWebView
     @Mock
     private lateinit var navDestination: TurboNavDestination
-    private lateinit var activity: Activity
+    private lateinit var activity: AppCompatActivity
     private lateinit var session: TurboSession
     private lateinit var visit: TurboVisit
 
@@ -39,7 +39,7 @@ class TurboSessionTest {
         activity = buildActivity(TurboTestActivity::class.java).get()
         session = TurboSession("test", activity, webView)
         visit = TurboVisit(
-            location = "https://turbo.hotwire.dev",
+            location = "https://turbo.hotwired.dev",
             destinationIdentifier = 1,
             restoreWithCachedSnapshot = false,
             reload = false,
@@ -75,7 +75,7 @@ class TurboSessionTest {
         val visitIdentifier = "12345"
 
         session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.visitStarted(visitIdentifier, true, "https://turbo.hotwire.dev")
+        session.visitStarted(visitIdentifier, true, "https://turbo.hotwired.dev")
 
         assertThat(session.currentVisit?.identifier).isEqualTo(visitIdentifier)
     }
@@ -161,4 +161,4 @@ class TurboSessionTest {
     }
 }
 
-internal class TurboTestActivity : Activity()
+internal class TurboTestActivity : AppCompatActivity()

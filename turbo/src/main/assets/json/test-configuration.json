@@ -58,6 +58,16 @@
       "properties": {
         "presentation": "none"
       }
+    },
+    {
+      "patterns": [
+        "/custom/modal"
+      ],
+      "properties": {
+        "context": "modal",
+        "uri": "turbo://fragment/web/modal",
+        "presentation": "replace_root"
+      }
     }
   ]
 }

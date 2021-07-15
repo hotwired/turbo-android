@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
 import dev.hotwire.turbo.session.TurboSessionModalResult
+import dev.hotwire.turbo.util.TURBO_REQUEST_CODE_FILES
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebChromeClient
 
@@ -30,13 +32,9 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
         return inflater.inflate(R.layout.turbo_fragment_web, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        webDelegate.onActivityCreated()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        webDelegate.onActivityResult(requestCode, resultCode, intent)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        webDelegate.onViewCreated()
     }
 
     override fun onStart() {
@@ -65,6 +63,17 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
 
         if (!delegate.sessionViewModel.modalResultExists) {
             webDelegate.onStartAfterDialogCancel()
+        }
+    }
+
+    override fun refresh(displayProgress: Boolean) {
+        webDelegate.refresh(displayProgress)
+    }
+
+    override fun activityResultLauncher(requestCode: Int): ActivityResultLauncher<Intent>? {
+        return when (requestCode) {
+            TURBO_REQUEST_CODE_FILES -> webDelegate.fileChooserResultLauncher
+            else -> null
         }
     }
 

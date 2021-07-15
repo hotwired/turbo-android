@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
+import dev.hotwire.turbo.util.TURBO_REQUEST_CODE_FILES
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebChromeClient
 
@@ -32,13 +34,16 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
         return inflater.inflate(R.layout.turbo_fragment_web_bottom_sheet, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        webDelegate.onActivityCreated()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        webDelegate.onViewCreated()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        webDelegate.onActivityResult(requestCode, resultCode, intent)
+    override fun activityResultLauncher(requestCode: Int): ActivityResultLauncher<Intent>? {
+        return when (requestCode) {
+            TURBO_REQUEST_CODE_FILES -> webDelegate.fileChooserResultLauncher
+            else -> null
+        }
     }
 
     override fun onStart() {
@@ -54,6 +59,10 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     override fun onDismiss(dialog: DialogInterface) {
         webDelegate.onDialogDismiss()
         super.onDismiss(dialog)
+    }
+
+    override fun refresh(displayProgress: Boolean) {
+        webDelegate.refresh(displayProgress)
     }
 
     // ----------------------------------------------------------------------------

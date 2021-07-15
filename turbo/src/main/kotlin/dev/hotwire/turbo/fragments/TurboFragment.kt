@@ -1,5 +1,6 @@
 package dev.hotwire.turbo.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
@@ -10,6 +11,7 @@ import dev.hotwire.turbo.config.title
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.nav.TurboNavPresentationContext
+import dev.hotwire.turbo.observers.TurboWindowThemeObserver
 import dev.hotwire.turbo.session.TurboSessionModalResult
 
 /**
@@ -28,8 +30,11 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        delegate.onViewCreated()
+
         observeModalResult()
         observeDialogResult()
+        observeTheme()
 
         if (shouldObserveTitleChanges()) {
             observeTitleChanges()
@@ -39,9 +44,31 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
+    /**
+     * This is marked `final` to prevent further use, as it's now deprecated in
+     * AndroidX's Fragment implementation.
+     *
+     * Use [onViewCreated] for code touching
+     * the Fragment's view and [onCreate] for other initialization.
+     */
+    @Suppress("DEPRECATION")
+    final override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        delegate.onActivityCreated()
+    }
+
+    /**
+     * This is marked `final` to prevent further use, as it's now deprecated in
+     * AndroidX's Fragment implementation.
+     *
+     * Use [registerForActivityResult] with the appropriate
+     * [androidx.activity.result.contract.ActivityResultContract] and its callback.
+     *
+     * Turbo provides the [TurboNavDestination.activityResultLauncher] interface
+     * to obtain registered result launchers from any destination.
+     */
+    @Suppress("DEPRECATION")
+    final override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
     }
 
     override fun onStart() {
@@ -76,6 +103,8 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
     }
 
     override fun onBeforeNavigation() {}
+
+    override fun refresh(displayProgress: Boolean) {}
 
     /**
      * Gets the Toolbar instance in your Fragment's view for use with
@@ -113,6 +142,19 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
     private fun observeTitleChanges() {
         fragmentViewModel.title.observe(viewLifecycleOwner) {
             toolbarForNavigation()?.title = it
+        }
+    }
+
+    /*
+     * If a theme is applied directly on the root view, allow the
+     * system status and navigation bars to inherit the view's theme
+     * and override the Activity's theme window attributes.
+     */
+    private fun observeTheme() {
+        val view = view ?: return
+
+        if (requireActivity().theme != view.context.theme) {
+            viewLifecycleOwner.lifecycle.addObserver(TurboWindowThemeObserver(this))
         }
     }
 

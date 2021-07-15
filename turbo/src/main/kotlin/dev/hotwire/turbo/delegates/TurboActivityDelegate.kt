@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import dev.hotwire.turbo.nav.TurboNavDestination
+import dev.hotwire.turbo.observers.TurboActivityObserver
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
@@ -46,6 +47,7 @@ class TurboActivityDelegate(
      */
     init {
         registerNavHostFragment(currentNavHostFragmentId)
+        activity.lifecycle.addObserver(TurboActivityObserver())
         activity.onBackPressedDispatcher.addCallback(activity) {
             navigateBack()
         }
@@ -126,6 +128,14 @@ class TurboActivityDelegate(
      */
     fun clearBackStack(onCleared: () -> Unit = {}) {
         currentNavDestination?.clearBackStack(onCleared)
+    }
+
+    /**
+     * Refresh the current destination. See [TurboNavDestination.refresh] for
+     * more details.
+     */
+    fun refresh(displayProgress: Boolean = true) {
+        currentNavDestination?.refresh(displayProgress)
     }
 
     private val currentFragment: Fragment?
