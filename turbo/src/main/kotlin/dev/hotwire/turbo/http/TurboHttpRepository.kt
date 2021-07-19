@@ -102,6 +102,7 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
     private fun buildRequest(resourceRequest: WebResourceRequest): Request {
         val location = resourceRequest.url.toString()
         val headers = resourceRequest.requestHeaders
+        TurboLog.e("Headers in buildRequest: $headers")
         val builder = Request.Builder().url(location)
 
         headers.forEach { builder.header(it.key, it.value) }
