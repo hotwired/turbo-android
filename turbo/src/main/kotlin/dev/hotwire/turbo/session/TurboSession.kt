@@ -106,11 +106,10 @@ class TurboSession internal constructor(
             "An offline request handler must be provided to pre-cache $location"
         }
 
-        httpRepository.preCache(
-            requestHandler, TurboPreCacheRequest(
-                url = location, userAgent = webView.settings.userAgentString
-            )
-        )
+        val webResourceRequest = currentVisit?.callback?.getWebResourceRequest() ?:
+            TurboPreCacheRequest(url = location, userAgent = webView.settings.userAgentString)
+
+        httpRepository.preCache(requestHandler, webResourceRequest)
     }
 
     /**

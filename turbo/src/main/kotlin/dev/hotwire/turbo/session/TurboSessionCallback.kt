@@ -1,6 +1,7 @@
 package dev.hotwire.turbo.session
 
 import android.webkit.HttpAuthHandler
+import android.webkit.WebResourceRequest
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
@@ -19,4 +20,5 @@ internal interface TurboSessionCallback {
     fun visitLocationStarted(location: String)
     fun visitProposedToLocation(location: String, options: TurboVisitOptions)
     fun visitNavDestination(): TurboNavDestination
+    fun getWebResourceRequest(): WebResourceRequest?
 }
