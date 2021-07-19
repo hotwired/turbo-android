@@ -64,6 +64,7 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
         val headers = requestHandler.getCachedResponseHeaders(url) ?: emptyMap()
         val cacheControl = cacheControl(headers)
 
+        TurboLog.e("Headers: $headers")
         // If the app has an immutable response cached, don't hit the network
         if (cacheControl.immutable) {
             requestHandler.getCachedResponse(url)?.let {
