@@ -35,6 +35,7 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
         requestHandler: TurboOfflineRequestHandler,
         resourceRequest: WebResourceRequest
     ) {
+
         coroutineScope.launch {
             preCacheRequestQueue.withPermit {
                 withContext(dispatcherProvider.io) {
