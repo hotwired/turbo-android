@@ -139,6 +139,7 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
     }
 
     private fun resourceResponse(response: Response?): WebResourceResponse? {
+        TurboLog.e("resourceResponse: $response")
         if (response == null) {
             return null
         }
