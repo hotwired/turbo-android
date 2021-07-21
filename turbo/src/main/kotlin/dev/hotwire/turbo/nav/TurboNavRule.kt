@@ -137,6 +137,6 @@ internal class TurboNavRule(
             return false
         }
 
-        return URI(first).path == URI(second).path
+        return Uri.parse(first).path == Uri.parse(second).path
     }
 }

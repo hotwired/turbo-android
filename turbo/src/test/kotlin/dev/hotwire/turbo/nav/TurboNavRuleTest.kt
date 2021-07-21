@@ -37,6 +37,7 @@ class TurboNavRuleTest {
     private val refreshUrl = "https://hotwired.dev/custom/refresh"
     private val resumeUrl = "https://hotwired.dev/custom/resume"
     private val modalRootUrl = "https://hotwired.dev/custom/modal"
+    private val filterUrl = "https://hotwired.dev/feature?filter=true"
 
     private val webDestinationId = 1
     private val webModalDestinationId = 2
@@ -245,6 +246,28 @@ class TurboNavRuleTest {
         assertThat(rule.newModalResult).isNotNull()
         assertThat(rule.newModalResult?.location).isEqualTo(resumeUrl)
         assertThat(rule.newModalResult?.shouldNavigate).isFalse()
+        assertThat(rule.newDestinationUri).isEqualTo(webUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `navigate to the same path with query params`() {
+        controller.navigate(webDestinationId, locationArgs(featureUrl))
+        val rule = getNavigatorRule(filterUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentLocation).isEqualTo(featureUrl)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(filterUrl)
+        assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.REPLACE)
+        assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
+        assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
         assertThat(rule.newDestination).isNotNull()
         assertThat(rule.newNavOptions).isEqualTo(navOptions)
