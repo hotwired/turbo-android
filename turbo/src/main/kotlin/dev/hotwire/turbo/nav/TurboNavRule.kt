@@ -36,6 +36,7 @@ internal class TurboNavRule(
     val newExtras = extras
     val newProperties = pathConfiguration.properties(newLocation)
     val newPresentationContext = newProperties.context
+    val newQueryStringPresentation = newProperties.queryStringPresentation
     val newPresentation = newPresentation()
     val newNavigationMode = newNavigationMode()
     val newModalResult = newModalResult()
@@ -55,8 +56,8 @@ internal class TurboNavRule(
             return newProperties.presentation
         }
 
-        val locationIsCurrent = locationPathsAreEqual(newLocation, currentLocation)
-        val locationIsPrevious = locationPathsAreEqual(newLocation, previousLocation)
+        val locationIsCurrent = locationsAreSame(newLocation, currentLocation)
+        val locationIsPrevious = locationsAreSame(newLocation, previousLocation)
         val replace = newVisitOptions.action == TurboVisitAction.REPLACE
 
         return when {
@@ -132,11 +133,21 @@ internal class TurboNavRule(
     private val NavBackStackEntry?.location: String?
         get() = this?.arguments?.getString("location")
 
-    private fun locationPathsAreEqual(first: String?, second: String?): Boolean {
+    private fun locationsAreSame(first: String?, second: String?): Boolean {
         if (first == null || second == null) {
             return false
         }
 
-        return Uri.parse(first).path == Uri.parse(second).path
+        val firstUri = Uri.parse(first)
+        val secondUri = Uri.parse(second)
+
+        return when (newQueryStringPresentation) {
+            TurboNavQueryStringPresentation.REPLACE -> {
+                firstUri.path == secondUri.path
+            }
+            TurboNavQueryStringPresentation.DEFAULT -> {
+                firstUri.path == secondUri.path && firstUri.query == secondUri.query
+            }
+        }
     }
 }
