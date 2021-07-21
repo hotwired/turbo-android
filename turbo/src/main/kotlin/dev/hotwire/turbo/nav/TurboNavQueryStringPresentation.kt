@@ -6,8 +6,12 @@ package dev.hotwire.turbo.nav
  * present in either location.
  *
  * Example situation:
- * current location: /feature
- * new location:     /feature?filter=true
+ *  current location: /feature
+ *  new location:     /feature?filter=true
+ *
+ * Another example situation:
+ *  current location: /feature?filter=a
+ *  new location:     /feature?filter=b
  */
 enum class TurboNavQueryStringPresentation {
     /**
