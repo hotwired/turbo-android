@@ -23,6 +23,7 @@ import dev.hotwire.turbo.fragments.TurboWebFragment
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import dev.hotwire.turbo.visit.TurboVisitOptions
+import java.net.MalformedURLException
 import java.net.URL
 
 /**
@@ -133,7 +134,7 @@ interface TurboNavDestination {
         return try {
             URL(newLocation)
             true
-        } catch (e: java.net.MalformedURLException) {
+        } catch (e: MalformedURLException) {
             false
         }
     }
