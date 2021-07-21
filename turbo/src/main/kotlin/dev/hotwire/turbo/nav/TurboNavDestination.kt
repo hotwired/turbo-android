@@ -23,6 +23,7 @@ import dev.hotwire.turbo.fragments.TurboWebFragment
 import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import dev.hotwire.turbo.visit.TurboVisitOptions
+import java.net.URL
 
 /**
  * The primary interface that a navigable Fragment implements to provide the library with
@@ -129,7 +130,12 @@ interface TurboNavDestination {
      * Turbo navigation flow).
      */
     fun shouldNavigateTo(newLocation: String): Boolean {
-        return true
+        return try {
+            URL(newLocation)
+            true
+        } catch (e: java.net.MalformedURLException) {
+            false
+        }
     }
 
     /**
