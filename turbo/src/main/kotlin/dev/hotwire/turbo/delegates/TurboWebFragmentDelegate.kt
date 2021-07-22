@@ -128,6 +128,8 @@ internal class TurboWebFragmentDelegate(
      * [dev.hotwire.turbo.nav.TurboNavDestination.refresh]
      */
     fun refresh(displayProgress: Boolean) {
+        if (webView.url == null) return
+
         turboView?.webViewRefresh?.apply {
             if (displayProgress && !isRefreshing) {
                 isRefreshing = true
