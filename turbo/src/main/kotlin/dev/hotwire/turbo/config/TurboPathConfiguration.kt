@@ -6,6 +6,7 @@ import android.net.Uri
 import dev.hotwire.turbo.nav.TurboNavPresentation
 import dev.hotwire.turbo.nav.TurboNavPresentationContext
 import com.google.gson.annotations.SerializedName
+import dev.hotwire.turbo.nav.TurboNavQueryStringPresentation
 import java.net.URL
 
 /**
@@ -108,6 +109,14 @@ val TurboPathConfigurationProperties.presentation: TurboNavPresentation
         TurboNavPresentation.valueOf(value.toUpperCase())
     } catch (e: IllegalArgumentException) {
         TurboNavPresentation.DEFAULT
+    }
+
+val TurboPathConfigurationProperties.queryStringPresentation: TurboNavQueryStringPresentation
+    @SuppressLint("DefaultLocale") get() = try {
+        val value = get("query_string_presentation") ?: "default"
+        TurboNavQueryStringPresentation.valueOf(value.toUpperCase())
+    } catch (e: IllegalArgumentException) {
+        TurboNavQueryStringPresentation.DEFAULT
     }
 
 val TurboPathConfigurationProperties.context: TurboNavPresentationContext
