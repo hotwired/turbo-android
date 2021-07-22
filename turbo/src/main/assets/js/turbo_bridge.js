@@ -113,11 +113,11 @@
     }
 
     visitRequestCompleted(visit) {
-      if (visit.redirectedToLocation) {
-        TurboSession.visitRequestRedirected(visit.identifier, visit.redirectedToLocation.absoluteURL)
-        this.visitProposedToLocation(visit.redirectedToLocation, { action: "replace" })
+      if (window.Turbo && visit.redirectedToLocation) {
+        TurboSession.visitRequestRedirected(visit.identifier, visit.redirectedToLocation.toString())
+        this.visitProposedToLocation(visit.redirectedToLocation, { action: "replace", response: visit.response })
       } else {
-        TurboSession.visitRequestCompleted(visit.identifier, visit.location.absoluteURL)
+        TurboSession.visitRequestCompleted(visit.identifier, visit.location.toString())
         this.loadResponseForVisitWithIdentifier(visit.identifier)
       }
     }
@@ -127,7 +127,7 @@
     }
 
     visitRequestFinished(visit) {
-      TurboSession.visitRequestFinished(visit.identifier, visit.location.absoluteURL)
+      TurboSession.visitRequestFinished(visit.identifier, visit.location.toString())
     }
 
     visitRendered(visit) {
