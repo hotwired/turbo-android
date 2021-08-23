@@ -27,13 +27,14 @@
 
     </FrameLayout>
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/turbo_screenshot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
         android:clickable="true"
         android:focusable="true"
+        android:scaleType="fitStart"
         tools:ignore="ContentDescription" />
 
     <dev.hotwire.turbo.views.TurboSwipeRefreshLayout
