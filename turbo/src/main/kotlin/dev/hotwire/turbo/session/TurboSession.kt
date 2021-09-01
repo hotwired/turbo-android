@@ -204,6 +204,16 @@ class TurboSession internal constructor(
     }
 
     /**
+     * Called by Turbo bridge when the HTTP request has started.
+     *
+     * @param visitIdentifier A unique identifier for the visit.
+     */
+    @JavascriptInterface
+    fun visitRequestStarted(visitIdentifier: String) {
+        logEvent("visitRequestStarted", "visitIdentifier" to visitIdentifier)
+    }
+
+    /**
      * Called by Turbo bridge when the HTTP request has been completed.
      *
      * @param visitIdentifier A unique identifier for the visit.

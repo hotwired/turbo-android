@@ -109,7 +109,7 @@
     }
 
     visitRequestStarted(visit) {
-      // Purposely left unimplemented. visitStarted covers most cases.
+      TurboSession.visitRequestStarted(visit.identifier)
     }
 
     visitRequestCompleted(visit) {
