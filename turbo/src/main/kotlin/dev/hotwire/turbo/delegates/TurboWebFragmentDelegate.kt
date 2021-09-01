@@ -108,6 +108,7 @@ internal class TurboWebFragmentDelegate(
      * before navigation.
      */
     fun onDialogCancel() {
+        session().removeCallback(this)
         detachWebView()
     }
 
@@ -119,6 +120,7 @@ internal class TurboWebFragmentDelegate(
         // The WebView is already detached in most circumstances, but sometimes
         // fast user cancellation does not call onCancel() before onDismiss()
         if (webViewIsAttached()) {
+            session().removeCallback(this)
             detachWebView()
         }
     }
