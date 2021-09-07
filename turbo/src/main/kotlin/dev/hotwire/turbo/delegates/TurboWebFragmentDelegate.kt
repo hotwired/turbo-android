@@ -90,6 +90,7 @@ internal class TurboWebFragmentDelegate(
     fun onStartAfterModalResult(result: TurboSessionModalResult) {
         if (!result.shouldNavigate) {
             initNavigationVisit()
+            initWebChromeClient()
         }
     }
 
@@ -300,9 +301,15 @@ internal class TurboWebFragmentDelegate(
 
             // Visit every time the WebView is reattached to the current Fragment.
             if (isWebViewAttachedToNewDestination) {
-                showProgressView(location)
-                visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
-                isInitialVisit = false
+                val currentSessionVisitRestored = !isInitialVisit &&
+                    session().currentVisit?.destinationIdentifier == identifier &&
+                    session().restoreCurrentVisit(this)
+
+                if (!currentSessionVisitRestored) {
+                    showProgressView(location)
+                    visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
+                    isInitialVisit = false
+                }
             }
         }
     }
