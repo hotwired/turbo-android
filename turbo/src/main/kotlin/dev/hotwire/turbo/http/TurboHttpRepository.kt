@@ -28,7 +28,8 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
 
     data class Result(
         val response: WebResourceResponse?,
-        val offline: Boolean
+        val offline: Boolean,
+        val redirectToLocation: String? = null
     )
 
     internal fun preCache(
@@ -74,15 +75,26 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
         return try {
             val response = issueRequest(resourceRequest)
 
+            // Cache based on the response's request url, which may have been a redirect
+            val responseUrl = response?.request?.url.toString()
+            val isRedirect = url != responseUrl
+
             // Let the app cache the response
             val resourceResponse = resourceResponse(response)
             val cachedResponse = resourceResponse?.let {
-                requestHandler.cacheResponse(url, it)
+                requestHandler.cacheResponse(responseUrl, it)
             }
 
-            Result(cachedResponse ?: resourceResponse, false)
+            Result(
+                response = cachedResponse ?: resourceResponse,
+                offline = false,
+                redirectToLocation = if (isRedirect) responseUrl else null
+            )
         } catch (e: IOException) {
-            Result(requestHandler.getCachedResponse(url, allowStaleResponse = true), true)
+            Result(
+                response = requestHandler.getCachedResponse(url, allowStaleResponse = true),
+                offline = true
+            )
         }
     }
 

@@ -657,15 +657,28 @@ class TurboSession internal constructor(
             }
 
             val url = request.url.toString()
+            val isCurrentVisitRequest = url == currentVisit?.location
             val result = httpRepository.fetch(requestHandler, request)
 
-            currentVisit?.let { visit ->
-                if (visit.location == url) {
-                    visit.completedOffline = result.offline
-                }
+            return if (isCurrentVisitRequest && result.redirectToLocation != null) {
+                // Let Turbo see the redirect, so a redirect "replace" visit can be proposed
+                logEvent("shouldInterceptRequest",
+                    "location" to url,
+                    "redirectToLocation" to result.redirectToLocation,
+                    "statusCode" to (result.response?.statusCode ?: "<none>")
+                )
+                null
+            } else if (isCurrentVisitRequest) {
+                logEvent("shouldInterceptRequest",
+                    "location" to url,
+                    "statusCode" to (result.response?.statusCode ?: "<none>"),
+                    "completedOffline" to result.offline
+                )
+                currentVisit?.completedOffline = result.offline
+                result.response
+            } else {
+                result.response
             }
-
-            return result.response
         }
 
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {
