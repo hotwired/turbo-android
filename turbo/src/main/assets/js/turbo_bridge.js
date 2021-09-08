@@ -92,11 +92,14 @@
     // Adapter interface
 
     visitProposedToLocation(location, options) {
-      if (window.Turbo && Turbo.navigator.locationWithActionIsSamePage(location, options.action)) {
-        Turbo.navigator.view.scrollToAnchorFromLocation(location)
-      } else {
-        TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
+      if (window.Turbo && typeof Turbo.navigator.locationWithActionIsSamePage === "function") {
+        if (Turbo.navigator.locationWithActionIsSamePage(location, options.action)) {
+          Turbo.navigator.view.scrollToAnchorFromLocation(location)
+          return
+        }
       }
+
+      TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
     }
 
     // Turbolinks 5
