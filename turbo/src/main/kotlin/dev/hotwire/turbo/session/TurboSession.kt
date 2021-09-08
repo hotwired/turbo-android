@@ -17,10 +17,7 @@ import androidx.webkit.WebViewFeature.*
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.screenshotsEnabled
 import dev.hotwire.turbo.delegates.TurboFileChooserDelegate
-import dev.hotwire.turbo.http.TurboHttpClient
-import dev.hotwire.turbo.http.TurboHttpRepository
-import dev.hotwire.turbo.http.TurboOfflineRequestHandler
-import dev.hotwire.turbo.http.TurboPreCacheRequest
+import dev.hotwire.turbo.http.*
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.*
 import dev.hotwire.turbo.views.TurboWebView
@@ -54,6 +51,7 @@ class TurboSession internal constructor(
     internal var restorationIdentifiers = SparseArray<String>()
     internal val context: Context = activity.applicationContext
     internal val httpRepository = TurboHttpRepository(activity.lifecycleScope)
+    internal val requestInterceptor = TurboWebViewRequestInterceptor(this)
     internal val fileChooserDelegate = TurboFileChooserDelegate(this)
 
     // User accessible
@@ -648,24 +646,7 @@ class TurboSession internal constructor(
         }
 
         override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-            val requestHandler = offlineRequestHandler ?: return null
-
-            if (!request.method.equals("GET", ignoreCase = true) ||
-                request.url.scheme?.startsWith("HTTP", ignoreCase = true) != true
-            ) {
-                return null
-            }
-
-            val url = request.url.toString()
-            val result = httpRepository.fetch(requestHandler, request)
-
-            currentVisit?.let { visit ->
-                if (visit.location == url) {
-                    visit.completedOffline = result.offline
-                }
-            }
-
-            return result.response
+            return requestInterceptor.interceptRequest(request)
         }
 
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {
