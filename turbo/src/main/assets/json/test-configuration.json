@@ -25,12 +25,21 @@
     },
     {
       "patterns": [
+        "/feature"
+      ],
+      "properties": {
+        "query_string_presentation": "replace"
+      }
+    },
+    {
+      "patterns": [
         "/new$",
         "/edit$"
       ],
       "properties": {
         "context": "modal",
         "uri": "turbo://fragment/web/modal",
+        "query_string_presentation": "default",
         "pull_to_refresh_enabled": false
       }
     },

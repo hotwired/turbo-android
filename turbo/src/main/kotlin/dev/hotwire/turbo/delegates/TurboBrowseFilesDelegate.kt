@@ -74,6 +74,8 @@ internal class TurboBrowseFilesDelegate(val context: Context) : CoroutineScope {
     }
 
     private suspend fun writeToCachedFile(uri: Uri): Uri? {
-        return TurboFileProvider.writeUriToFile(context, uri)
+        return TurboFileProvider.writeUriToFile(context, uri)?.let {
+            TurboFileProvider.contentUriForFile(context, it)
+        }
     }
 }

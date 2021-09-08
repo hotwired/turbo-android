@@ -37,6 +37,9 @@ class TurboNavRuleTest {
     private val refreshUrl = "https://hotwired.dev/custom/refresh"
     private val resumeUrl = "https://hotwired.dev/custom/resume"
     private val modalRootUrl = "https://hotwired.dev/custom/modal"
+    private val filterUrl = "https://hotwired.dev/feature?filter=true"
+    private val customUrl = "https://hotwired.dev/custom"
+    private val customQueryUrl = "https://hotwired.dev/custom?id=1"
 
     private val webDestinationId = 1
     private val webModalDestinationId = 2
@@ -79,6 +82,7 @@ class TurboNavRuleTest {
         assertThat(rule.newLocation).isEqualTo(featureUrl)
         assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
         assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.PUSH)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.REPLACE)
         assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
@@ -100,6 +104,7 @@ class TurboNavRuleTest {
         assertThat(rule.newLocation).isEqualTo(newUrl)
         assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.MODAL)
         assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.PUSH)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
         assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.TO_MODAL)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
@@ -129,6 +134,7 @@ class TurboNavRuleTest {
         assertThat(rule.newLocation).isEqualTo(homeUrl)
         assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
         assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.CLEAR_ALL)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
         assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webHomeUri)
@@ -152,6 +158,7 @@ class TurboNavRuleTest {
         assertThat(rule.newLocation).isEqualTo(featureUrl)
         assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
         assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.POP)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.REPLACE)
         assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.DISMISS_MODAL)
         assertThat(rule.newModalResult?.location).isEqualTo(featureUrl)
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
@@ -174,6 +181,7 @@ class TurboNavRuleTest {
         assertThat(rule.newLocation).isEqualTo(newUrl)
         assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.MODAL)
         assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.REPLACE)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
         assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
@@ -196,6 +204,7 @@ class TurboNavRuleTest {
         assertThat(rule.newLocation).isEqualTo(editUrl)
         assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.MODAL)
         assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.PUSH)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
         assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
@@ -218,6 +227,7 @@ class TurboNavRuleTest {
         assertThat(rule.newLocation).isEqualTo(refreshUrl)
         assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
         assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.REFRESH)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
         assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.REFRESH)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
@@ -241,10 +251,80 @@ class TurboNavRuleTest {
         assertThat(rule.newLocation).isEqualTo(resumeUrl)
         assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
         assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.NONE)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
         assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.DISMISS_MODAL)
         assertThat(rule.newModalResult).isNotNull()
         assertThat(rule.newModalResult?.location).isEqualTo(resumeUrl)
         assertThat(rule.newModalResult?.shouldNavigate).isFalse()
+        assertThat(rule.newDestinationUri).isEqualTo(webUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `navigate to the same path with new query string`() {
+        controller.navigate(webDestinationId, locationArgs(customUrl))
+        val rule = getNavigatorRule(customQueryUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentLocation).isEqualTo(customUrl)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(customQueryUrl)
+        assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.PUSH)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
+        assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
+        assertThat(rule.newModalResult).isNull()
+        assertThat(rule.newDestinationUri).isEqualTo(webUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `navigate to the same path with same query string`() {
+        controller.navigate(webDestinationId, locationArgs(customQueryUrl))
+        val rule = getNavigatorRule(customQueryUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentLocation).isEqualTo(customQueryUrl)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(customQueryUrl)
+        assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.REPLACE)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
+        assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
+        assertThat(rule.newModalResult).isNull()
+        assertThat(rule.newDestinationUri).isEqualTo(webUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `navigate to the same path with filterable query string`() {
+        controller.navigate(webDestinationId, locationArgs(featureUrl))
+        val rule = getNavigatorRule(filterUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentLocation).isEqualTo(featureUrl)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(filterUrl)
+        assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.REPLACE)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.REPLACE)
+        assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
+        assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
         assertThat(rule.newDestination).isNotNull()
         assertThat(rule.newNavOptions).isEqualTo(navOptions)

@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
-class TurboUriHelper(val context: Context) {
+internal class TurboUriHelper(val context: Context) {
     @Suppress("BlockingMethodInNonBlockingContext") // https://youtrack.jetbrains.com/issue/KT-39684
     suspend fun writeFileTo(uri: Uri, directory: File): File? {
         val uriAttributes = getAttributes(uri) ?: return null

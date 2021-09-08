@@ -29,12 +29,15 @@ class TurboFileProvider : FileProvider() {
             return getUriForFile(context, authority(context), file)
         }
 
-        suspend fun writeUriToFile(context: Context, uri: Uri, dirName: String = sharedDir): Uri? {
+        @Suppress("unused")
+        fun uriAttributes(context: Context, uri: Uri): TurboUriAttributes? {
             val uriHelper = TurboUriHelper(context)
+            return uriHelper.getAttributes(uri)
+        }
 
-            return uriHelper.writeFileTo(uri, directory(context, dirName))?.let {
-                contentUriForFile(context, it)
-            }
+        suspend fun writeUriToFile(context: Context, uri: Uri, dirName: String = sharedDir): File? {
+            val uriHelper = TurboUriHelper(context)
+            return uriHelper.writeFileTo(uri, directory(context, dirName))
         }
 
         suspend fun deleteAllFiles(context: Context, dirName: String = sharedDir) {
