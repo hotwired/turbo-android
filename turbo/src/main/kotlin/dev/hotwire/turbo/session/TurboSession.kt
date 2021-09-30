@@ -369,7 +369,9 @@ class TurboSession internal constructor(
             "location" to location
         )
 
-        callback { it.formSubmissionStarted(location) }
+        currentVisit?.let {
+            callback { it.formSubmissionStarted(location) }
+        }
     }
 
     /**
@@ -387,7 +389,9 @@ class TurboSession internal constructor(
             "location" to location
         )
 
-        callback { it.formSubmissionFinished(location) }
+        currentVisit?.let {
+            callback { it.formSubmissionFinished(location) }
+        }
     }
 
     /**

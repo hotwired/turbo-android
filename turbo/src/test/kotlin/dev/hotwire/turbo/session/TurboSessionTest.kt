@@ -116,6 +116,22 @@ class TurboSessionTest {
     }
 
     @Test
+    fun visitFormSubmissionStartedFiresCallback() {
+        session.currentVisit = visit
+        session.formSubmissionStarted(visit.location)
+
+        verify(callback).formSubmissionStarted(visit.location)
+    }
+
+    @Test
+    fun visitFormSubmissionFinishedFiresCallback() {
+        session.currentVisit = visit
+        session.formSubmissionFinished(visit.location)
+
+        verify(callback).formSubmissionFinished(visit.location)
+    }
+
+    @Test
     fun pageLoadedSavesRestorationIdentifier() {
         val restorationIdentifier = "67890"
         assertThat(session.restorationIdentifiers.size()).isEqualTo(0)
