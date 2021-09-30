@@ -1,6 +1,8 @@
 package dev.hotwire.turbo.demo.base
 
 import android.net.Uri
+import android.view.Menu
+import android.view.MenuItem
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsIntent.SHARE_STATE_ON
@@ -15,6 +17,9 @@ import dev.hotwire.turbo.nav.TurboNavPresentationContext
 import dev.hotwire.turbo.nav.TurboNavPresentationContext.*
 
 interface NavDestination : TurboNavDestination {
+    val menuProgress: MenuItem?
+        get() = toolbarForNavigation()?.menu?.findItem(R.id.menu_progress)
+
     override fun shouldNavigateTo(newLocation: String): Boolean {
         return when (isNavigable(newLocation)) {
             true -> true
