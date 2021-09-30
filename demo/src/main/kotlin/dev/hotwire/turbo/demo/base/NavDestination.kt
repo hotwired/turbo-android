@@ -1,7 +1,6 @@
 package dev.hotwire.turbo.demo.base
 
 import android.net.Uri
-import android.view.Menu
 import android.view.MenuItem
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -13,8 +12,7 @@ import dev.hotwire.turbo.config.context
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.util.BASE_URL
 import dev.hotwire.turbo.nav.TurboNavDestination
-import dev.hotwire.turbo.nav.TurboNavPresentationContext
-import dev.hotwire.turbo.nav.TurboNavPresentationContext.*
+import dev.hotwire.turbo.nav.TurboNavPresentationContext.MODAL
 
 interface NavDestination : TurboNavDestination {
     val menuProgress: MenuItem?

@@ -9,7 +9,6 @@ import dev.hotwire.turbo.config.*
 import dev.hotwire.turbo.session.TurboSessionModalResult
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import java.net.URI
 
 @Suppress("MemberVisibilityCanBePrivate")
 internal class TurboNavRule(
