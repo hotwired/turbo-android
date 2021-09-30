@@ -231,6 +231,14 @@ internal class TurboWebFragmentDelegate(
         return navDestination
     }
 
+    override fun formSubmissionStarted(location: String) {
+        callback.onFormSubmissionStarted(location)
+    }
+
+    override fun formSubmissionFinished(location: String) {
+        callback.onFormSubmissionFinished(location)
+    }
+
     // -----------------------------------------------------------------------
     // Private
     // -----------------------------------------------------------------------
