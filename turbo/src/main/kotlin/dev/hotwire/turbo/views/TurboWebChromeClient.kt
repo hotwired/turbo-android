@@ -34,4 +34,8 @@ open class TurboWebChromeClient(val session: TurboSession) : WebChromeClient() {
 
         return false
     }
+
+    override fun onGeolocationPermissionsShowPrompt(origin: String?, callback: GeolocationPermissions.Callback) {
+        callback.invoke(origin, true, false)
+    }
 }
