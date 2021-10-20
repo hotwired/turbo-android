@@ -43,10 +43,12 @@ abstract class TurboSessionNavHostFragment : NavHostFragment() {
     }
 
     fun reset(onReset: () -> Unit = {}) {
-        currentNavDestination.clearBackStack {
-            session.reset()
-            initControllerGraph()
-            onReset()
+        currentNavDestination.delegate().navigator.onNavigationVisit {
+            currentNavDestination.clearBackStack {
+                session.reset()
+                initControllerGraph()
+                onReset()
+            }
         }
     }
 
