@@ -144,6 +144,14 @@
       })
     }
 
+    formSubmissionStarted(formSubmission) {
+      TurboSession.formSubmissionStarted(formSubmission.location.toString())
+    }
+
+    formSubmissionFinished(formSubmission) {
+      TurboSession.formSubmissionFinished(formSubmission.location.toString())
+    }
+
     pageInvalidated() {
       TurboSession.pageInvalidated()
     }

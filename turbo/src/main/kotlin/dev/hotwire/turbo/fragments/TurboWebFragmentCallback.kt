@@ -67,6 +67,16 @@ interface TurboWebFragmentCallback {
     fun onVisitErrorReceived(location: String, errorCode: Int) {}
 
     /**
+     * Called when a Turbo form submission has started.
+     */
+    fun onFormSubmissionStarted(location: String) {}
+
+    /**
+     * Called when a Turbo form submission has finished.
+     */
+    fun onFormSubmissionFinished(location: String) {}
+
+    /**
      * Called when the Turbo visit resulted in an error, but a cached
      * snapshot is being displayed, which may be stale.
      */

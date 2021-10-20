@@ -19,4 +19,6 @@ internal interface TurboSessionCallback {
     fun visitLocationStarted(location: String)
     fun visitProposedToLocation(location: String, options: TurboVisitOptions)
     fun visitNavDestination(): TurboNavDestination
+    fun formSubmissionStarted(location: String)
+    fun formSubmissionFinished(location: String)
 }

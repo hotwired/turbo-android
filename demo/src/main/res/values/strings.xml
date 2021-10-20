@@ -2,4 +2,5 @@
     <string name="app_name">Turbo Native</string>
     <string name="error_web_home">Error loading page</string>
     <string name="error_web_home_description">The demo server may be starting up. Pull-to-refresh to try again in a minute.</string>
+    <string name="menu_progress">Loading…</string>
 </resources>

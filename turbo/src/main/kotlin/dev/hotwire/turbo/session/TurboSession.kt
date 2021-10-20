@@ -355,6 +355,46 @@ class TurboSession internal constructor(
     }
 
     /**
+     * Called by Turbo bridge when a form submission has started.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param location The location of the form submission.
+     */
+    @JavascriptInterface
+    fun formSubmissionStarted(location: String) {
+        logEvent(
+            "formSubmissionStarted",
+            "location" to location
+        )
+
+        currentVisit?.let {
+            callback { it.formSubmissionStarted(location) }
+        }
+    }
+
+    /**
+     * Called by Turbo bridge when a form submission has finished.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param location The location of the form submission.
+     */
+    @JavascriptInterface
+    fun formSubmissionFinished(location: String) {
+        logEvent(
+            "formSubmissionFinished",
+            "location" to location
+        )
+
+        currentVisit?.let {
+            callback { it.formSubmissionFinished(location) }
+        }
+    }
+
+    /**
      * Called when Turbo bridge detects that the page being visited has been invalidated,
      * typically by new resources in the the page HEAD.
      *
