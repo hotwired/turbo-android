@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Handler
+import android.webkit.WebResourceRequest
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -35,6 +36,11 @@ internal fun File.deleteAllFilesInDirectory() {
     listFiles()?.forEach {
         it.delete()
     }
+}
+
+internal fun WebResourceRequest.isHttpGetRequest(): Boolean {
+    return method.equals("GET", ignoreCase = true) &&
+        url.scheme?.startsWith("HTTP", ignoreCase = true) == true
 }
 
 internal fun Any.toJson(): String {

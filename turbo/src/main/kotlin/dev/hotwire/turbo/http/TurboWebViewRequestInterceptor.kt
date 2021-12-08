@@ -3,6 +3,7 @@ package dev.hotwire.turbo.http
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import dev.hotwire.turbo.session.TurboSession
+import dev.hotwire.turbo.util.isHttpGetRequest
 import dev.hotwire.turbo.util.logEvent
 
 internal class TurboWebViewRequestInterceptor(val session: TurboSession) {
@@ -38,8 +39,7 @@ internal class TurboWebViewRequestInterceptor(val session: TurboSession) {
     }
 
     private fun shouldInterceptRequest(request: WebResourceRequest): Boolean {
-        return request.method.equals("GET", ignoreCase = true) &&
-            request.url.scheme?.startsWith("HTTP", ignoreCase = true) == true
+        return request.isHttpGetRequest()
     }
 
     private fun logCurrentVisitResult(url: String, result: TurboHttpRepository.Result) {
