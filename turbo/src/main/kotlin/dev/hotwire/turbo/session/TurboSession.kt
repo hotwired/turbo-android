@@ -657,7 +657,8 @@ class TurboSession internal constructor(
          */
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
             val location = request.url.toString()
-            val isColdBootRedirect = isColdBooting && currentVisit?.location != location
+            val isHttpRequest = request.isHttpGetRequest()
+            val isColdBootRedirect = isHttpRequest && isColdBooting && currentVisit?.location != location
             val shouldOverride = isReady || isColdBootRedirect
 
             // Don't allow onPageFinished to process its
