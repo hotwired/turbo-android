@@ -34,16 +34,25 @@
       TurboSession.turboFailedToLoad()
     }
 
-    visitLocationWithOptionsAndRestorationIdentifier(location, options, restorationIdentifier) {
+    visitLocationWithOptionsAndRestorationIdentifier(location, optionsJSON, restorationIdentifier) {
+      let options = JSON.parse(optionsJSON)
+      let action = options.action
+
       if (window.Turbo) {
-        Turbo.navigator.startVisit(location, restorationIdentifier, JSON.parse(options))
+        if (Turbo.navigator.locationWithActionIsSamePage(new URL(location), action)) {
+          // Skip the same-page anchor scrolling behavior for visits initiated from the native
+          // side. The page content may be stale and we want a fresh request from the network.
+          Turbo.navigator.startVisit(location, restorationIdentifier, { "action": "replace" })
+        } else {
+          Turbo.navigator.startVisit(location, restorationIdentifier, options)
+        }
       } else if (window.Turbolinks) {
         if (Turbolinks.controller.startVisitToLocationWithAction) {
           // Turbolinks 5
-          Turbolinks.controller.startVisitToLocationWithAction(location, JSON.parse(options).action, restorationIdentifier)
+          Turbolinks.controller.startVisitToLocationWithAction(location, action, restorationIdentifier)
         } else {
           // Turbolinks 5.3
-          Turbolinks.controller.startVisitToLocation(location, restorationIdentifier, JSON.parse(options))
+          Turbolinks.controller.startVisitToLocation(location, restorationIdentifier, options)
         }
       }
     }
