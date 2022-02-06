@@ -4,7 +4,7 @@ A JSON configuration file specifies the set of rules Turbo will follow to naviga
 1. Application-level `"settings"`
 1. Url path-specific `"rules"`
 
-At minimum, you will need a bundled [`src/main/assets/json/configuration.json`](../demo/src/main/assets/json/configuration.json) file in your app that Turbo can read. We also recommend hosting a remote configuration file on your server, so you can update the app's configuration at any time without needing an app update. Remote configuration files are fetched (and cached) on every app startup, so the app always has the latest configuration available. The location of these configuration files needs to be set in your [`TurboSessionNavHostFragment.pathConfigurationLocation`](QUICK-START.md/#create-a-navhostfragment). 
+At minimum, you will need a bundled [`src/main/assets/json/configuration.json`](../demo/src/main/assets/json/configuration.json) file in your app that Turbo can read. We also recommend hosting a [remote configuration file on your server](#remote-path-configuration), so you can update the app's configuration at any time without needing an app update.
 
 In its simplest form, your JSON configuration will look like:
 
@@ -30,6 +30,27 @@ In its simplest form, your JSON configuration will look like:
 ```
 
 Refer to demo [`configuration.json`](../demo/src/main/assets/json/configuration.json) as an example.
+
+## Remote Path Configuration
+
+Remote configuration files are fetched (and cached) on every app startup, so the app always has the latest configuration available. The location of these configuration files needs to be set in your [`TurboSessionNavHostFragment.pathConfigurationLocation`](QUICK-START.md/#create-a-navhostfragment). 
+
+```kotlin
+class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
+    // ...
+    override val pathConfigurationLocation: TurboPathConfiguration.Location
+        get() = TurboPathConfiguration.Location(
+            assetFilePath = "json/configuration.json",
+            remoteFileUrl = "https://turbo.hotwired.dev/demo/configurations/android-v1.json"
+        )
+}
+```
+
+Here's some tips for managing path configurations:
+
+- Use different path configuration files, with different URLs, for Android and [iOS](https://github.com/hotwired/turbo-ios).
+- Include a version in your path configuration URL (`v1` in the above example). This way if you need to make fundamental changes to your architecture you can be confident you won't break the app for people who haven't updated.
+- Try to keep your local and remote path configuration files in sync. When your app starts, Turbo will load your local configuration file, then make a request for your remote file which will override your local file. If the files are different and your server doesn't respond quickly, it's possible to get difficult to debug behaviour. If you're making other changes to your app that will require a new native deployment, that's a good time to update your local file to match the current state of your server.
 
 ## Settings
 The `settings` object is a place to configure app-level settings. This is useful when you have a remote configuration file, since you can add your own custom settings and use them as remote feature-flags. Available settings are:
