@@ -16,8 +16,10 @@ class WebFragment : TurboWebFragment() {
 
     override fun shouldNavigateTo(newLocation: String): Boolean {
         return if (super.shouldNavigateTo(newLocation) && newLocation.startsWith(MY_DOMAIN)) {
+            // Allow Turbo to follow the navigation to `newLocation`
             true
         } else {
+            // Open `newLocation` in the device's external browser
             launchBrowser(newLocation)
             false
         }
