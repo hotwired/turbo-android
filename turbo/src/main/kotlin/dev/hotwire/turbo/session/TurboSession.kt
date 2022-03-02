@@ -679,7 +679,13 @@ class TurboSession internal constructor(
                 visitProposedToLocation(location, options.toJson())
             }
 
-            logEvent("shouldOverrideUrlLoading", "location" to location, "shouldOverride" to shouldOverride, "willProposeThrottledVisit" to willProposeThrottledVisit)
+            logEvent(
+                "shouldOverrideUrlLoading",
+                "location" to location,
+                "shouldOverride" to shouldOverride,
+                "willProposeThrottledVisit" to willProposeThrottledVisit
+            )
+
             return shouldOverride
         }
 
