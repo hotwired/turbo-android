@@ -191,6 +191,7 @@ internal class TurboWebFragmentDelegate(
     }
 
     override fun visitRendered() {
+        callback.onVisitRendered(location)
         navDestination.fragmentViewModel.setTitle(title())
         removeTransitionalViews()
     }

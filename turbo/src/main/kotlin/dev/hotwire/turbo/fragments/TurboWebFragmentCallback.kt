@@ -57,6 +57,13 @@ interface TurboWebFragmentCallback {
     fun onVisitStarted(location: String) {}
 
     /**
+     * Called when a Turbo visit has rendered (from a cached snapshot or
+     * from a fresh network request). This may be called multiple times
+     * during a normal visit lifecycle.
+     */
+    fun onVisitRendered(location: String) {}
+
+    /**
      * Called when a Turbo visit has completed.
      */
     fun onVisitCompleted(location: String, completedOffline: Boolean) {}
