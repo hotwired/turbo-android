@@ -668,8 +668,8 @@ class TurboSession internal constructor(
                 reset()
             }
 
-            val willProposeThrottledVisit = shouldProposeThrottledVisit()
-            if (shouldOverride && willProposeThrottledVisit) {
+            val willProposeVisit = isColdBootRedirect || shouldProposeThrottledVisit()
+            if (shouldOverride && willProposeVisit) {
                 // Replace the cold boot destination on a redirect
                 // since the original url isn't visitable.
                 val options = when (isColdBootRedirect) {
@@ -683,7 +683,8 @@ class TurboSession internal constructor(
                 "shouldOverrideUrlLoading",
                 "location" to location,
                 "shouldOverride" to shouldOverride,
-                "willProposeThrottledVisit" to willProposeThrottledVisit
+                "isColdBootRedirect" to isColdBootRedirect,
+                "willProposeVisit" to willProposeVisit
             )
 
             return shouldOverride
