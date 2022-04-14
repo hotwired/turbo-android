@@ -91,6 +91,7 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
             controller.popBackStack(controller.graph.startDestination, false)
             onCleared()
         }
+        navDestination.delegate().sessionViewModel.modalStackSize = 0
     }
 
     private fun navigateWithinContext(rule: TurboNavRule) {
@@ -138,6 +139,7 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
                 navigateToLocation(rule)
             }
         }
+        navDestination.delegate().sessionViewModel.modalStackSize++
     }
 
     private fun dismissModalContextWithResult(rule: TurboNavRule) {
@@ -189,6 +191,7 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
             "uri" to rule.newDestinationUri
         )
         rule.controller.navigate(rule.newDestination.id, rule.newBundle, rule.newNavOptions)
+        navDestination.delegate().sessionViewModel.modalStackSize = 0
     }
 
     private fun navigateToLocation(rule: TurboNavRule) {
@@ -204,6 +207,13 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
                 "uri" to rule.newDestinationUri
             )
             rule.controller.navigate(it.id, rule.newBundle, rule.newNavOptions, rule.newExtras)
+            if (rule.currentPresentationContext == TurboNavPresentationContext.MODAL) {
+                if (rule.newPresentation == TurboNavPresentation.PUSH) {
+                    navDestination.delegate().sessionViewModel.modalStackSize++
+                } else if (rule.newPresentation == TurboNavPresentation.POP) {
+                    navDestination.delegate().sessionViewModel.modalStackSize--
+                }
+            }
             return
         }
 

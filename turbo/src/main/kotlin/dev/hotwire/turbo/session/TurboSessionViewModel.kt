@@ -40,6 +40,14 @@ internal class TurboSessionViewModel : ViewModel() {
     }
 
     /**
+     * A counter to keep track of the number of modals that will need to be dismissed
+     */
+    var modalStackSize: Int = 0
+    set(value) {
+        field = value.coerceAtLeast(0)
+    }
+
+    /**
      * Wraps the visit options in a [TurboSessionEvent] to ensure it can only be consumed once.
      */
     fun saveVisitOptions(options: TurboVisitOptions) {
