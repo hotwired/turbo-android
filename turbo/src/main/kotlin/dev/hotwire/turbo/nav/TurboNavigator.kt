@@ -157,11 +157,15 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
                 // underlying fragment is still active and will receive the
                 // result immediately. This allows the modal result flow to
                 // behave exactly like full screen fragments.
-                rule.controller.popBackStack(rule.currentDestination.id, true)
+                do {
+                    rule.controller.popBackStack()
+                } while (--navDestination.delegate().sessionViewModel.modalStackSize > 0)
                 sendModalResult(rule)
             } else {
                 sendModalResult(rule)
-                rule.controller.popBackStack(rule.currentDestination.id, true)
+                do {
+                    rule.controller.popBackStack()
+                } while (--navDestination.delegate().sessionViewModel.modalStackSize > 0)
             }
         }
     }
