@@ -2,6 +2,7 @@ package dev.hotwire.turbo.nav
 
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
@@ -155,11 +156,21 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
                 // underlying fragment is still active and will receive the
                 // result immediately. This allows the modal result flow to
                 // behave exactly like full screen fragments.
-                rule.controller.popBackStack(rule.currentDestination.id, true)
+                do {
+                    rule.controller.popBackStack()
+                } while (
+                    rule.controller.currentBackStackEntry.isModalContext
+                )
+
                 sendModalResult(rule)
             } else {
                 sendModalResult(rule)
-                rule.controller.popBackStack(rule.currentDestination.id, true)
+
+                do {
+                    rule.controller.popBackStack()
+                } while (
+                    rule.controller.currentBackStackEntry.isModalContext
+                )
             }
         }
     }
@@ -262,6 +273,15 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
             newPathProperties = properties
         )
     }
+
+    private val NavBackStackEntry?.isModalContext: Boolean
+        get() = try {
+            val value = this?.arguments?.getString("presentation-context").orEmpty()
+            val context = TurboNavPresentationContext.valueOf(value)
+            context == TurboNavPresentationContext.MODAL
+        } catch (e: IllegalArgumentException) {
+            false
+        }
 
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply {
