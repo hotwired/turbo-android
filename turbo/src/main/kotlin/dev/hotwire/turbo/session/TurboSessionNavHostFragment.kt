@@ -47,7 +47,12 @@ abstract class TurboSessionNavHostFragment : NavHostFragment() {
             currentNavDestination.clearBackStack {
                 session.reset()
                 initControllerGraph()
-                onReset()
+
+                if (view == null) {
+                    onReset()
+                } else {
+                    requireView().post { onReset() }
+                }
             }
         }
     }
