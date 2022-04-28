@@ -127,7 +127,7 @@ internal class TurboNavRule(
         val bundle = this ?: bundleOf()
         return bundle.apply {
             putString("location", newLocation)
-            putString("presentation-context", newPresentationContext.name)
+            putSerializable("presentation-context", newPresentationContext)
         }
     }
 

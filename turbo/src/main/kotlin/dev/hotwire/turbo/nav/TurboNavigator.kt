@@ -276,9 +276,8 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
 
     private val NavBackStackEntry?.isModalContext: Boolean
         get() = try {
-            val value = this?.arguments?.getString("presentation-context").orEmpty()
-            val context = TurboNavPresentationContext.valueOf(value)
-            context == TurboNavPresentationContext.MODAL
+            val context = this?.arguments?.getSerializable("presentation-context")
+            context as? TurboNavPresentationContext == TurboNavPresentationContext.MODAL
         } catch (e: IllegalArgumentException) {
             false
         }
