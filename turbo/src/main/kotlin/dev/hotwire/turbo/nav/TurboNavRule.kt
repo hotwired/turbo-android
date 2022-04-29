@@ -25,16 +25,15 @@ internal class TurboNavRule(
     val currentLocation = checkNotNull(controller.currentBackStackEntry.location)
     val currentProperties = pathConfiguration.properties(currentLocation)
     val currentPresentationContext = currentProperties.context
-    val currentDestination = checkNotNull(controller.currentDestination)
     val isAtStartDestination = controller.previousBackStackEntry == null
 
     // New destination
     val newLocation = location
+    val newProperties = pathConfiguration.properties(newLocation)
+    val newPresentationContext = newProperties.context
     val newVisitOptions = visitOptions
     val newBundle = bundle.withNavArguments()
     val newExtras = extras
-    val newProperties = pathConfiguration.properties(newLocation)
-    val newPresentationContext = newProperties.context
     val newQueryStringPresentation = newProperties.queryStringPresentation
     val newPresentation = newPresentation()
     val newNavigationMode = newNavigationMode()
@@ -126,7 +125,10 @@ internal class TurboNavRule(
 
     private fun Bundle?.withNavArguments(): Bundle {
         val bundle = this ?: bundleOf()
-        return bundle.apply { putString("location", newLocation) }
+        return bundle.apply {
+            putString("location", newLocation)
+            putSerializable("presentation-context", newPresentationContext)
+        }
     }
 
     private val NavBackStackEntry?.location: String?
