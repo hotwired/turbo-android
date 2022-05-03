@@ -122,8 +122,8 @@ abstract class TurboFragment : Fragment(), TurboNavDestination {
     }
 
     private fun observeModalResult() {
-        delegate.sessionViewModel.modalResult.observe(viewLifecycleOwner) { event ->
-            if (shouldHandleModalResults()) {
+        if (shouldHandleModalResults()) {
+            delegate.sessionViewModel.modalResult.observe(viewLifecycleOwner) { event ->
                 event.getContentIfNotHandled()?.let {
                     onStartAfterModalResult(it)
                 }
