@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Handler
 import android.webkit.WebResourceRequest
+import androidx.navigation.NavBackStackEntry
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -37,6 +38,9 @@ internal fun File.deleteAllFilesInDirectory() {
         it.delete()
     }
 }
+
+internal val NavBackStackEntry?.location: String?
+    get() = this?.arguments?.getString("location")
 
 internal fun WebResourceRequest.isHttpGetRequest(): Boolean {
     return method.equals("GET", ignoreCase = true) &&

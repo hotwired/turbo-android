@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
+import dev.hotwire.turbo.util.location
 import dev.hotwire.turbo.util.logEvent
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
@@ -103,10 +104,10 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
 
         when (rule.newPresentation) {
             TurboNavPresentation.POP -> onNavigationVisit {
-                rule.controller.popBackStack()
+                popBackStack(rule)
             }
             TurboNavPresentation.REPLACE -> onNavigationVisit {
-                rule.controller.popBackStack()
+                popBackStack(rule)
                 navigateToLocation(rule)
             }
             TurboNavPresentation.PUSH -> onNavigationVisit {
@@ -132,7 +133,7 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
 
         when (rule.newPresentation) {
             TurboNavPresentation.REPLACE -> onNavigationVisit {
-                rule.controller.popBackStack()
+                popBackStack(rule)
                 navigateToLocation(rule)
             }
             else -> onNavigationVisit {
@@ -156,23 +157,29 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
                 // underlying fragment is still active and will receive the
                 // result immediately. This allows the modal result flow to
                 // behave exactly like full screen fragments.
-                do {
-                    rule.controller.popBackStack()
-                } while (
-                    rule.controller.currentBackStackEntry.isModalContext
-                )
-
+                popModalsFromBackStack(rule)
                 sendModalResult(rule)
             } else {
                 sendModalResult(rule)
-
-                do {
-                    rule.controller.popBackStack()
-                } while (
-                    rule.controller.currentBackStackEntry.isModalContext
-                )
+                popModalsFromBackStack(rule)
             }
         }
+    }
+
+    private fun popModalsFromBackStack(rule: TurboNavRule) {
+        do {
+            popBackStack(rule)
+        } while (
+            rule.controller.currentBackStackEntry.isModalContext
+        )
+    }
+
+    private fun popBackStack(rule: TurboNavRule) {
+        logEvent(
+            "popFromBackStack",
+            "location" to rule.controller.currentBackStackEntry.location.orEmpty()
+        )
+        rule.controller.popBackStack()
     }
 
     private fun sendModalResult(rule: TurboNavRule) {
@@ -283,7 +290,7 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
     private fun logEvent(event: String, vararg params: Pair<String, Any>) {
         val attributes = params.toMutableList().apply {
             add(0, "session" to session.sessionName)
-            add("fragment" to fragment.javaClass.simpleName)
+            add("currentFragment" to fragment.javaClass.simpleName)
         }
         logEvent(event, attributes)
     }

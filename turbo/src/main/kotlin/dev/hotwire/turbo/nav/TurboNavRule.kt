@@ -3,10 +3,14 @@ package dev.hotwire.turbo.nav
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.os.bundleOf
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.navOptions
 import dev.hotwire.turbo.config.*
 import dev.hotwire.turbo.session.TurboSessionModalResult
+import dev.hotwire.turbo.util.location
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
@@ -130,9 +134,6 @@ internal class TurboNavRule(
             putSerializable("presentation-context", newPresentationContext)
         }
     }
-
-    private val NavBackStackEntry?.location: String?
-        get() = this?.arguments?.getString("location")
 
     private fun locationsAreSame(first: String?, second: String?): Boolean {
         if (first == null || second == null) {
