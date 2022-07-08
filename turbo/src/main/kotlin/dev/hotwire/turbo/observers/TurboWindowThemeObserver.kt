@@ -14,8 +14,8 @@ import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.animateColorTo
 
 internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : LifecycleObserver {
-    private val window: Window
-        get() = destination.fragment.requireActivity().window
+    private val window: Window?
+        get() = destination.fragment.activity?.window
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun updateSystemBarColors() {
@@ -39,8 +39,8 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
         val statusBarColor = colorAttribute(theme, android.R.attr.statusBarColor)
         val useLightStatusBar = booleanAttribute(theme, android.R.attr.windowLightStatusBar)
 
-        window.statusBarColor.animateColorTo(statusBarColor) {
-            window.statusBarColor = it
+        window?.statusBarColor?.animateColorTo(statusBarColor) {
+            window?.statusBarColor = it
         }
 
         @Suppress("DEPRECATION")
@@ -51,8 +51,8 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
     private fun updateNavigationBar(theme: Theme) {
         val navigationBarColor = colorAttribute(theme, android.R.attr.navigationBarColor)
 
-        window.navigationBarColor.animateColorTo(navigationBarColor) {
-            window.navigationBarColor = it
+        window?.navigationBarColor?.animateColorTo(navigationBarColor) {
+            window?.navigationBarColor = it
         }
 
         // Light navigation bars are only available in API 27+
@@ -76,6 +76,7 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
 
     @RequiresApi(Build.VERSION_CODES.R)
     private fun updateSystemBarsAppearance(useLightSystemBars: Boolean) {
+        val window = window ?: return
         val appearance = when (useLightSystemBars) {
             true -> APPEARANCE_LIGHT_STATUS_BARS
             else -> 0
@@ -94,6 +95,7 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
 
     @Suppress("DEPRECATION")
     private fun updateSystemUiVisibility(useLightSystemBar: Boolean, flag: Int) {
+        val window = window ?: return
         val flags = when (useLightSystemBar) {
             true -> window.decorView.systemUiVisibility or flag
             else -> window.decorView.systemUiVisibility and flag.inv()
