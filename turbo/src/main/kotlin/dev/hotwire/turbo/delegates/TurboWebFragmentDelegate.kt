@@ -5,7 +5,9 @@ import android.graphics.Bitmap
 import android.webkit.HttpAuthHandler
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStateAtLeast
 import dev.hotwire.turbo.config.pullToRefreshEnabled
 import dev.hotwire.turbo.fragments.TurboWebFragmentCallback
 import dev.hotwire.turbo.nav.TurboNavDestination
@@ -46,6 +48,8 @@ internal class TurboWebFragmentDelegate(
         get() = navDestination.delegate().navigator
     private val turboView: TurboView?
         get() = callback.turboView
+    private val viewLifecycleOwner
+        get() = navDestination.fragment.viewLifecycleOwner
 
     /**
      * Get the session's WebView instance
@@ -154,8 +158,7 @@ internal class TurboWebFragmentDelegate(
      * Displays the error view that's implemented via [TurboWebFragmentCallback.createErrorView].
      */
     fun showErrorView(code: Int) {
-        val errorView = callback.createErrorView(code)
-        turboView?.addErrorView(errorView)
+        turboView?.addErrorView(callback.createErrorView(code))
     }
 
     // -----------------------------------------------------------------------
@@ -346,22 +349,24 @@ internal class TurboWebFragmentDelegate(
             else -> visitOptions
         }
 
-        navDestination.fragment.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val snapshot = when (options.action) {
                 TurboVisitAction.ADVANCE -> fetchCachedSnapshot()
                 else -> null
             }
 
-            session().visit(
-                TurboVisit(
-                    location = location,
-                    destinationIdentifier = identifier,
-                    restoreWithCachedSnapshot = restoreWithCachedSnapshot,
-                    reload = reload,
-                    callback = this@TurboWebFragmentDelegate,
-                    options = options.copy(snapshotHTML = snapshot)
+            viewLifecycleOwner.lifecycle.whenStateAtLeast(STARTED) {
+                session().visit(
+                    TurboVisit(
+                        location = location,
+                        destinationIdentifier = identifier,
+                        restoreWithCachedSnapshot = restoreWithCachedSnapshot,
+                        reload = reload,
+                        callback = this@TurboWebFragmentDelegate,
+                        options = options.copy(snapshotHTML = snapshot)
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -389,8 +394,7 @@ internal class TurboWebFragmentDelegate(
     }
 
     private fun showProgressView(location: String) {
-        val progressView = callback.createProgressView(location)
-        turboView?.addProgressView(progressView)
+        turboView?.addProgressView(callback.createProgressView(location))
     }
 
     private fun initializePullToRefresh(turboView: TurboView) {
