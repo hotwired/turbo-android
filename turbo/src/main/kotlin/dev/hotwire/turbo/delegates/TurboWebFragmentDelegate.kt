@@ -6,6 +6,7 @@ import android.webkit.HttpAuthHandler
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.lifecycle.Lifecycle.State.STARTED
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStateAtLeast
 import dev.hotwire.turbo.config.pullToRefreshEnabled
@@ -48,8 +49,8 @@ internal class TurboWebFragmentDelegate(
         get() = navDestination.delegate().navigator
     private val turboView: TurboView?
         get() = callback.turboView
-    private val viewLifecycleOwner
-        get() = navDestination.fragment.viewLifecycleOwner
+    private val viewTreeLifecycleOwner
+        get() = turboView?.findViewTreeLifecycleOwner()
 
     /**
      * Get the session's WebView instance
@@ -349,13 +350,13 @@ internal class TurboWebFragmentDelegate(
             else -> visitOptions
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewTreeLifecycleOwner?.lifecycleScope?.launch {
             val snapshot = when (options.action) {
                 TurboVisitAction.ADVANCE -> fetchCachedSnapshot()
                 else -> null
             }
 
-            viewLifecycleOwner.lifecycle.whenStateAtLeast(STARTED) {
+            viewTreeLifecycleOwner?.lifecycle?.whenStateAtLeast(STARTED) {
                 session().visit(
                     TurboVisit(
                         location = location,

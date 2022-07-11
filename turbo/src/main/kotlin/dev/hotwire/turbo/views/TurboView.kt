@@ -42,8 +42,14 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
 
         webViewContainer.post {
-            webViewContainer.addView(webView)
-            onAttachedToNewDestination(true)
+            // To avoid edge-case lifecycle issues, ensure that the
+            // view is still attached to the window and the webview
+            // doesn't have a new parent, since we have no control
+            // over the message queue.
+            if (isAttachedToWindow && webView.parent == null) {
+                webViewContainer.addView(webView)
+                onAttachedToNewDestination(true)
+            }
         }
     }
 
