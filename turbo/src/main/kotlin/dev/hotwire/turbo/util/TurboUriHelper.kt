@@ -58,7 +58,11 @@ internal class TurboUriHelper(val context: Context) {
     private fun getContentUriAttributes(context: Context, uri: Uri): TurboUriAttributes? {
         val projection = arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE)
         val mimeType: String? = context.contentResolver.getType(uri)
-        val cursor = context.contentResolver.query(uri, projection, null, null, null)
+        val cursor = try {
+            context.contentResolver.query(uri, projection, null, null, null)
+        } catch (ignored: Throwable) {
+            null
+        }
 
         val cursorAttributes = cursor?.use {
             when (it.moveToFirst()) {
@@ -71,10 +75,10 @@ internal class TurboUriHelper(val context: Context) {
     }
 
     private fun uriAttributesFromContentQuery(uri: Uri, mimeType: String?, cursor: Cursor): TurboUriAttributes? {
-        val columnName = cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
-        val columnSize = cursor.getColumnIndexOrThrow(OpenableColumns.SIZE)
-        val fileName: String? = cursor.getString(columnName)
-        val fileSize: Long = cursor.getLong(columnSize)
+        val columnName = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME).takeIf { it >= 0 }
+        val columnSize = cursor.getColumnIndex(OpenableColumns.SIZE).takeIf { it >= 0 }
+        val fileName: String? = columnName?.let { cursor.getString(it) }
+        val fileSize: Long? = columnSize?.let { cursor.getLong(it) }
 
         if (fileName == null && mimeType == null) {
             return null
@@ -83,7 +87,7 @@ internal class TurboUriHelper(val context: Context) {
         return TurboUriAttributes(
             fileName = fileName ?: "attachment",
             mimeType = mimeType ?: uri.mimeType(),
-            fileSize = fileSize
+            fileSize = fileSize ?: 0L
         )
     }
 
