@@ -49,7 +49,7 @@ internal class TurboWebFragmentDelegate(
         get() = navDestination.delegate().navigator
     private val turboView: TurboView?
         get() = callback.turboView
-    private val viewLifecycleOwner
+    private val viewTreeLifecycleOwner
         get() = turboView?.findViewTreeLifecycleOwner()
 
     /**
@@ -350,13 +350,13 @@ internal class TurboWebFragmentDelegate(
             else -> visitOptions
         }
 
-        viewLifecycleOwner?.lifecycleScope?.launch {
+        viewTreeLifecycleOwner?.lifecycleScope?.launch {
             val snapshot = when (options.action) {
                 TurboVisitAction.ADVANCE -> fetchCachedSnapshot()
                 else -> null
             }
 
-            viewLifecycleOwner?.lifecycle?.whenStateAtLeast(STARTED) {
+            viewTreeLifecycleOwner?.lifecycle?.whenStateAtLeast(STARTED) {
                 session().visit(
                     TurboVisit(
                         location = location,
