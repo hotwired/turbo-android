@@ -40,6 +40,7 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
         debug.java.srcDirs += 'src/debug/kotlin'
     }
+    namespace 'dev.hotwire.turbo.demo'
 }
 
 dependencies {
