@@ -16,10 +16,10 @@
 
         <activity
             android:name="dev.hotwire.turbo.demo.main.MainActivity"
-            android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:theme="@style/MyTheme.DayNight"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -81,8 +81,8 @@ class TurboPathConfiguration(context: Context) {
         val properties = TurboPathConfigurationProperties()
         val path = path(location)
 
-        for (rule in rules) when (rule.matches(path)) {
-            true -> properties.putAll(rule.properties)
+        for (rule in rules) {
+            if (rule.matches(path)) properties.putAll(rule.properties)
         }
 
         cachedProperties[location] = properties
