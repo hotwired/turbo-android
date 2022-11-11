@@ -45,13 +45,6 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
      * Use [onViewCreated] for code touching
      * the Fragment's view and [onCreate] for other initialization.
      */
-    @Deprecated(
-        message = "Deprecated in Java",
-        replaceWith = ReplaceWith(
-            "super.onActivityCreated(savedInstanceState)",
-            "com.google.android.material.bottomsheet.BottomSheetDialogFragment"
-        )
-    )
     @Suppress("DEPRECATION")
     final override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -67,13 +60,6 @@ abstract class TurboBottomSheetDialogFragment : BottomSheetDialogFragment(),
      * Turbo provides the [TurboNavDestination.activityResultLauncher] interface
      * to obtain registered result launchers from any destination.
      */
-    @Deprecated(
-        message = "Deprecated in Java",
-        replaceWith = ReplaceWith(
-            "super.onActivityResult(requestCode, resultCode, intent)",
-            "com.google.android.material.bottomsheet.BottomSheetDialogFragment"
-        )
-    )
     @Suppress("DEPRECATION")
     final override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
