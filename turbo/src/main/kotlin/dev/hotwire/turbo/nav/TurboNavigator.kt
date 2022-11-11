@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
@@ -90,7 +91,7 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
 
         onNavigationVisit {
             val controller = currentController()
-            controller.popBackStack(controller.graph.startDestination, false)
+            controller.popBackStack(controller.graph.startDestinationId, false)
             onCleared()
         }
     }
