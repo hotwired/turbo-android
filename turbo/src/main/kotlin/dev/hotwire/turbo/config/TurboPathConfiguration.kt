@@ -106,7 +106,7 @@ typealias TurboPathConfigurationSettings = HashMap<String, String>
 val TurboPathConfigurationProperties.presentation: TurboNavPresentation
     @SuppressLint("DefaultLocale") get() = try {
         val value = get("presentation") ?: "default"
-        TurboNavPresentation.valueOf(value.toUpperCase())
+        TurboNavPresentation.valueOf(value.uppercase())
     } catch (e: IllegalArgumentException) {
         TurboNavPresentation.DEFAULT
     }
@@ -114,7 +114,7 @@ val TurboPathConfigurationProperties.presentation: TurboNavPresentation
 val TurboPathConfigurationProperties.queryStringPresentation: TurboNavQueryStringPresentation
     @SuppressLint("DefaultLocale") get() = try {
         val value = get("query_string_presentation") ?: "default"
-        TurboNavQueryStringPresentation.valueOf(value.toUpperCase())
+        TurboNavQueryStringPresentation.valueOf(value.uppercase())
     } catch (e: IllegalArgumentException) {
         TurboNavQueryStringPresentation.DEFAULT
     }
@@ -122,7 +122,7 @@ val TurboPathConfigurationProperties.queryStringPresentation: TurboNavQueryStrin
 val TurboPathConfigurationProperties.context: TurboNavPresentationContext
     @SuppressLint("DefaultLocale") get() = try {
         val value = get("context") ?: "default"
-        TurboNavPresentationContext.valueOf(value.toUpperCase())
+        TurboNavPresentationContext.valueOf(value.uppercase())
     } catch (e: IllegalArgumentException) {
         TurboNavPresentationContext.DEFAULT
     }
