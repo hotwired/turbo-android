@@ -1,7 +1,6 @@
 package dev.hotwire.turbo.nav
 
 import android.net.Uri
-import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
@@ -13,6 +12,7 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorDestinationBuilder
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.uri
+import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
@@ -23,13 +23,13 @@ internal class TurboNavGraphBuilder(
     private val pathConfiguration: TurboPathConfiguration
 ) {
     private data class ActivityDestination(
-        val id: Int,
+        val route: String,
         val uri: Uri,
         val kClass: KClass<out AppCompatActivity>
     )
 
     private data class FragmentDestination(
-        val id: Int,
+        val route: String,
         val uri: Uri,
         val kClass: KClass<out Fragment>
     )
@@ -38,11 +38,14 @@ internal class TurboNavGraphBuilder(
         registeredActivities: List<KClass<out AppCompatActivity>>,
         registeredFragments: List<KClass<out Fragment>>
     ): NavGraph {
-        var currentId = 1
+        // Use a random number to start the nav graph, so the graph is unique every time
+        // and it can be reset/recreated on-demand. Updating an existing nav graph with
+        // an identical one would bypass recreating the nav stack from scratch.
+        var currentRoute = Random.nextInt()
 
         val activityDestinations = registeredActivities.map {
             ActivityDestination(
-                id = currentId.also { currentId++ },
+                route = currentRoute.also { currentRoute++ }.toString(),
                 uri = it.turboAnnotation().uri.toUri(),
                 kClass = it
             )
@@ -50,7 +53,7 @@ internal class TurboNavGraphBuilder(
 
         val fragmentDestinations = registeredFragments.map {
             FragmentDestination(
-                id = currentId.also { currentId++ },
+                route = currentRoute.also { currentRoute++ }.toString(),
                 uri = it.turboAnnotation().uri.toUri(),
                 kClass = it
             )
@@ -59,7 +62,7 @@ internal class TurboNavGraphBuilder(
         return createGraph(
             activityDestinations,
             fragmentDestinations,
-            fragmentDestinations.startDestination().id
+            fragmentDestinations.startDestination().route
         )
     }
 
@@ -67,24 +70,24 @@ internal class TurboNavGraphBuilder(
     private fun createGraph(
         activityDestinations: List<ActivityDestination>,
         fragmentDestinations: List<FragmentDestination>,
-        startDestinationId: Int
+        startDestinationRoute: String
     ): NavGraph {
-        return navController.createGraph(startDestination = startDestinationId) {
+        return navController.createGraph(startDestination = startDestinationRoute) {
             activityDestinations.forEach {
-                activity(it.id) {
+                activity(it.route) {
                     activityClass = it.kClass
                     deepLink(it.uri.toString())
                 }
             }
 
             fragmentDestinations.withoutDialogs().forEach {
-                fragment(it.id, it.kClass) {
+                fragment(it.route, it.kClass) {
                     deepLink(it.uri.toString())
                 }
             }
 
             fragmentDestinations.dialogs().forEach {
-                dialog(it.id, it.kClass as KClass<out DialogFragment>) {
+                dialog(it.route, it.kClass as KClass<out DialogFragment>) {
                     deepLink(it.uri.toString())
                 }
             }
@@ -100,7 +103,7 @@ internal class TurboNavGraphBuilder(
     }
 
     private fun List<FragmentDestination>.withoutDialogs(): List<FragmentDestination> {
-        return minus(dialogs())
+        return minus(dialogs().toSet())
     }
 
     private fun List<FragmentDestination>.startDestination(): FragmentDestination {
@@ -118,26 +121,26 @@ internal class TurboNavGraphBuilder(
 
     // Modified from AndroidX FragmentNavigatorDestinationBuilder extensions
     private inline fun NavGraphBuilder.fragment(
-        @IdRes id: Int,
+        route: String,
         fragmentClass: KClass<out Fragment>,
         builder: FragmentNavigatorDestinationBuilder.() -> Unit
     ) = destination(
         FragmentNavigatorDestinationBuilder(
             provider[FragmentNavigator::class],
-            id,
+            route,
             fragmentClass
         ).apply(builder)
     )
 
     // Modified from AndroidX DialogFragmentNavigatorDestinationBuilder extensions
     private inline fun NavGraphBuilder.dialog(
-        @IdRes id: Int,
+        route: String,
         fragmentClass: KClass<out DialogFragment>,
         builder: DialogFragmentNavigatorDestinationBuilder.() -> Unit
     ) = destination(
         DialogFragmentNavigatorDestinationBuilder(
             provider[DialogFragmentNavigator::class],
-            id,
+            route,
             fragmentClass
         ).apply(builder)
     )
