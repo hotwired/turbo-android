@@ -38,10 +38,7 @@ internal class TurboNavGraphBuilder(
         registeredActivities: List<KClass<out AppCompatActivity>>,
         registeredFragments: List<KClass<out Fragment>>
     ): NavGraph {
-        // Use a random number to start the nav graph, so the graph is unique every time
-        // and it can be reset/recreated on-demand. Updating an existing nav graph with
-        // an identical one would bypass recreating the nav stack from scratch.
-        var currentRoute = Random.nextInt()
+        var currentRoute = 1
 
         val activityDestinations = registeredActivities.map {
             ActivityDestination(
@@ -94,6 +91,15 @@ internal class TurboNavGraphBuilder(
 
             argument("location") {
                 defaultValue = startLocation
+            }
+
+            // Use a random number to represent a unique instance of the graph, so the
+            // graph is unique every time. This lets it be reset/recreated on-demand from
+            // `TurboSessionNavHostFragment.reset()`. Replacing an existing nav graph with
+            // an identical one would bypass recreating the nav stack from scratch in
+            // `NavController.setGraph()`.
+            argument("unique_instance") {
+                defaultValue = Random.nextInt()
             }
         }
     }
