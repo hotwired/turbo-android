@@ -7,18 +7,20 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.Window
 import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.animateColorTo
 
-internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : LifecycleObserver {
+internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : DefaultLifecycleObserver {
     private val window: Window?
         get() = destination.fragment.activity?.window
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun updateSystemBarColors() {
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        updateSystemBarColors()
+    }
+
+    private fun updateSystemBarColors() {
         val view = destination.fragment.view ?: return
         val theme = view.context.theme
 
@@ -26,8 +28,12 @@ internal class TurboWindowThemeObserver(val destination: TurboNavDestination) : 
         updateNavigationBar(theme)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun restoreSystemBarColors() {
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+        restoreSystemBarColors()
+    }
+
+    private fun restoreSystemBarColors() {
         val activity = destination.fragment.activity ?: return
         val theme = activity.theme
 

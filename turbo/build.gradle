@@ -30,13 +30,12 @@ repositories {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdkVersion 33
     testOptions.unitTests.includeAndroidResources = true
 
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 30
+        targetSdkVersion 33
 
         // Define ProGuard rules for this android library project. These rules will be applied when
         // a consumer of this library sets 'minifyEnabled true'.
@@ -64,47 +63,48 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
         debug.java.srcDirs += 'src/debug/kotlin'
     }
+    namespace 'dev.hotwire.turbo'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.4.21'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.7.20'
+    implementation 'com.google.android.material:material:1.7.0'
 
     // AndroidX
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // JSON
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.10'
 
     // Networking/API
-    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
 
     // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
 
     // Exported AndroidX dependencies
-    api 'androidx.appcompat:appcompat:1.2.0'
-    api 'androidx.core:core-ktx:1.3.2'
-    api 'androidx.webkit:webkit:1.4.0'
-    api 'androidx.fragment:fragment-ktx:1.3.2'
-    api 'androidx.navigation:navigation-fragment-ktx:2.3.5'
-    api 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    api 'androidx.appcompat:appcompat:1.5.1'
+    api 'androidx.core:core-ktx:1.9.0'
+    api 'androidx.webkit:webkit:1.5.0'
+    api 'androidx.fragment:fragment-ktx:1.5.4'
+    api 'androidx.navigation:navigation-fragment-ktx:2.5.3'
+    api 'androidx.navigation:navigation-ui-ktx:2.5.3'
 
     // Tests
-    testImplementation 'androidx.test:core:1.3.0' // Robolectric
-    testImplementation 'androidx.navigation:navigation-testing:2.3.5'
-    testImplementation 'android.arch.core:core-testing:1.1.1'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2'
-    testImplementation 'org.assertj:assertj-core:3.19.0'
-    testImplementation 'org.robolectric:robolectric:4.5.1'
-    testImplementation 'org.mockito:mockito-core:3.8.0'
+    testImplementation 'androidx.test:core:1.4.0' // Robolectric
+    testImplementation 'androidx.navigation:navigation-testing:2.5.3'
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation 'org.assertj:assertj-core:3.23.1'
+    testImplementation 'org.robolectric:robolectric:4.8.1'
+    testImplementation 'org.mockito:mockito-core:4.8.1'
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0'
-    testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
     testImplementation 'junit:junit:4.13.2'
 }
 

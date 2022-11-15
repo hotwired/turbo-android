@@ -9,13 +9,13 @@ import com.google.gson.stream.JsonWriter
 internal class TurboVisitActionAdapter : TypeAdapter<TurboVisitAction>() {
     override fun read(reader: JsonReader): TurboVisitAction {
         return try {
-            TurboVisitAction.valueOf(reader.nextString().toUpperCase())
+            TurboVisitAction.valueOf(reader.nextString().uppercase())
         } catch (e: IllegalArgumentException) {
             TurboVisitAction.ADVANCE
         }
     }
 
     override fun write(writer: JsonWriter, action: TurboVisitAction) {
-        writer.value(action.name.toLowerCase())
+        writer.value(action.name.lowercase())
     }
 }
