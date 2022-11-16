@@ -12,7 +12,7 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorDestinationBuilder
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.uri
-import kotlin.random.Random
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
@@ -93,13 +93,13 @@ internal class TurboNavGraphBuilder(
                 defaultValue = startLocation
             }
 
-            // Use a random number to represent a unique instance of the graph, so the
+            // Use a random value to represent a unique instance of the graph, so the
             // graph is unique every time. This lets it be reset/recreated on-demand from
             // `TurboSessionNavHostFragment.reset()`. Replacing an existing nav graph with
             // an identical one would bypass recreating the nav stack from scratch in
             // `NavController.setGraph()`.
             argument("unique_instance") {
-                defaultValue = Random.nextInt()
+                defaultValue = UUID.randomUUID().toString()
             }
         }
     }
