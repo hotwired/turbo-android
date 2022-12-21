@@ -27,10 +27,10 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private val errorContainer: ViewGroup get() = findViewById(R.id.turbo_error_container)
     private val screenshotView: ImageView get() = findViewById(R.id.turbo_screenshot)
 
-    internal val webViewRefresh: SwipeRefreshLayout? get() = webViewContainer as? SwipeRefreshLayout
-    internal val errorRefresh: SwipeRefreshLayout? get() = findViewById(R.id.turbo_error_refresh)
+    val webViewRefresh: SwipeRefreshLayout? get() = webViewContainer as? SwipeRefreshLayout
+    val errorRefresh: SwipeRefreshLayout? get() = findViewById(R.id.turbo_error_refresh)
 
-    internal fun attachWebView(webView: WebView, onAttachedToNewDestination: (Boolean) -> Unit) {
+    fun attachWebView(webView: WebView, onAttachedToNewDestination: (Boolean) -> Unit) {
         if (webView.parent != null) {
             onAttachedToNewDestination(false)
             return
@@ -53,7 +53,7 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
     }
 
-    internal fun detachWebView(webView: WebView, onDetached: () -> Unit) {
+    fun detachWebView(webView: WebView, onDetached: () -> Unit) {
         // If the view is already detached from the window (like
         // when dismissing a bottom sheet), detach immediately,
         // since posting to the message queue will be ignored.
@@ -72,7 +72,7 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         return webViewContainer.contains(webView)
     }
 
-    internal fun addProgressView(progressView: View) {
+    fun addProgressView(progressView: View) {
         // Don't show the progress view if a screenshot is available
         if (screenshotView.isVisible) return
 
@@ -83,19 +83,19 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         progressContainer.isVisible = true
     }
 
-    internal fun removeProgressView() {
+    fun removeProgressView() {
         progressContainer.removeAllViews()
         progressContainer.isVisible = false
     }
 
-    internal fun addScreenshot(screenshot: Bitmap?) {
+    fun addScreenshot(screenshot: Bitmap?) {
         if (screenshot == null) return
 
         screenshotView.setImageBitmap(screenshot)
         screenshotView.isVisible = true
     }
 
-    internal fun removeScreenshot() {
+    fun removeScreenshot() {
         screenshotView.setImageBitmap(null)
         screenshotView.isVisible = false
     }
@@ -114,7 +114,7 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
     }
 
-    internal fun removeErrorView() {
+    fun removeErrorView() {
         errorContainer.removeAllViews()
         errorContainer.isVisible = false
 
@@ -125,7 +125,7 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
     }
 
-    internal fun createScreenshot(): Bitmap? {
+    fun createScreenshot(): Bitmap? {
         if (!isLaidOut) return null
         if (!hasEnoughMemoryForScreenshot()) return null
         if (width <= 0 || height <= 0) return null
@@ -138,7 +138,7 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
     }
 
-    internal fun screenshotOrientation(): Int {
+    fun screenshotOrientation(): Int {
         return context.resources.configuration.orientation
     }
 

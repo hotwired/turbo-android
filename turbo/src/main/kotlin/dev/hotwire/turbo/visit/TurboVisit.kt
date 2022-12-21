@@ -2,7 +2,7 @@ package dev.hotwire.turbo.visit
 
 import dev.hotwire.turbo.session.TurboSessionCallback
 
-internal data class TurboVisit(
+data class TurboVisit(
     val location: String,
     val destinationIdentifier: Int,
     val restoreWithCachedSnapshot: Boolean,

@@ -37,12 +37,13 @@ import java.util.*
  * @property webView An instance of a [TurboWebView] to be shared/managed.
  */
 @Suppress("unused")
-class TurboSession internal constructor(
+class TurboSession constructor(
     internal val sessionName: String,
     private val activity: AppCompatActivity,
     val webView: TurboWebView
 ) {
-    internal var currentVisit: TurboVisit? = null
+    var currentVisit: TurboVisit? = null
+        internal set
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
     internal var isColdBooting = false
@@ -53,6 +54,7 @@ class TurboSession internal constructor(
     internal val httpRepository = TurboHttpRepository(activity.lifecycleScope)
     internal val requestInterceptor = TurboWebViewRequestInterceptor(this)
     internal val fileChooserDelegate = TurboFileChooserDelegate(this)
+    var isRunningInAndroidNavigation = true
 
     // User accessible
 
@@ -138,7 +140,7 @@ class TurboSession internal constructor(
 
     // Internal
 
-    internal fun visit(visit: TurboVisit) {
+    fun visit(visit: TurboVisit) {
         this.currentVisit = visit
         callback { it.visitLocationStarted(visit.location) }
 
@@ -158,7 +160,7 @@ class TurboSession internal constructor(
      * visit request. This is used when restoring a Fragment destination from the backstack,
      * but the WebView's current location hasn't changed from the destination's location.
      */
-    internal fun restoreCurrentVisit(callback: TurboSessionCallback): Boolean {
+    fun restoreCurrentVisit(callback: TurboSessionCallback): Boolean {
         val visit = currentVisit ?: return false
         val restorationIdentifier = restorationIdentifiers[visit.destinationIdentifier]
 
@@ -571,7 +573,7 @@ class TurboSession internal constructor(
     private fun callback(action: (TurboSessionCallback) -> Unit) {
         context.runOnUiThread {
             currentVisit?.callback?.let { callback ->
-                if (callback.visitNavDestination().isActive) {
+                if (!isRunningInAndroidNavigation || callback.visitNavDestination().isActive) {
                     action(callback)
                 }
             }
