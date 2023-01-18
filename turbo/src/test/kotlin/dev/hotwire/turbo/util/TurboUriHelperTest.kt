@@ -58,7 +58,7 @@ class TurboUriHelperTest : BaseUnitTest() {
     }
 
     @Test
-    fun pathTraversingUriIsFailsToWriteToFileV1() = runTest {
+    fun pathTraversingUriWithRelativePathFailsToWriteToFile() = runTest {
         val inputFileUri = Uri.parse("../../tmp/file.txt")
         Shadows.shadowOf(context.contentResolver).registerInputStream(inputFileUri, "fileContent".byteInputStream())
 
@@ -68,7 +68,7 @@ class TurboUriHelperTest : BaseUnitTest() {
     }
 
     @Test
-    fun pathTraversingUriIsFailsToWriteToFileV2() = runTest {
+    fun pathTraversingUriWithNameArgFailsToWriteToFile() = runTest {
         val inputFileUri = Uri.parse("content://malicious.app?path=/data/data/malicious.app/files/file.txt&name=../../file.txt")
         Shadows.shadowOf(context.contentResolver).registerInputStream(inputFileUri, "fileContent".byteInputStream())
 
