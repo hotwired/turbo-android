@@ -15,9 +15,8 @@ internal class TurboUriHelper(val context: Context) {
         val uriAttributes = getAttributes(uri) ?: return null
 
         return withContext(dispatcherProvider.io) {
-            val file = File(destDirectory, uriAttributes.fileName)
-
             try {
+                val file = File(destDirectory, uriAttributes.fileName)
                 file.checkForPathTraversalVulnerability(destDirectory)
 
                 if (file.exists()) {
