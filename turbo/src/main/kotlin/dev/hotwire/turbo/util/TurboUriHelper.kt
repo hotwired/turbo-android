@@ -13,12 +13,14 @@ internal class TurboUriHelper(val context: Context) {
     @Suppress("BlockingMethodInNonBlockingContext") // https://youtrack.jetbrains.com/issue/KT-39684
     suspend fun writeFileTo(uri: Uri, destDirectory: File): File? {
         val uriAttributes = getAttributes(uri) ?: return null
+        val file = File(destDirectory, uriAttributes.fileName)
+
+        if (file.hasPathTraversalVulnerability(destDirectory)) {
+            return null
+        }
 
         return withContext(dispatcherProvider.io) {
             try {
-                val file = File(destDirectory, uriAttributes.fileName)
-                file.checkForPathTraversalVulnerability(destDirectory)
-
                 if (file.exists()) {
                     file.delete()
                 }
@@ -114,12 +116,15 @@ internal class TurboUriHelper(val context: Context) {
      *
      * More information: https://developer.android.com/topic/security/risks/path-traversal
      */
-    private fun File.checkForPathTraversalVulnerability(destDirectory: File) {
-        val destinationDirectoryPath = destDirectory.canonicalPath
-        val outputFilePath = this.canonicalPath
+    private fun File.hasPathTraversalVulnerability(destDirectory: File): Boolean {
+        return try {
+            val destinationDirectoryPath = destDirectory.canonicalPath
+            val outputFilePath = this.canonicalPath
 
-        if (!outputFilePath.startsWith(destinationDirectoryPath)) {
-            throw IOException("Found Path Traversal Vulnerability with $outputFilePath")
+            !outputFilePath.startsWith(destinationDirectoryPath)
+        } catch (e: Exception) {
+            TurboLog.e("${e.message}")
+            false
         }
     }
  
