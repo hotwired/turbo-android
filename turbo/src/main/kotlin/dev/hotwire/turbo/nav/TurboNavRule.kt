@@ -53,9 +53,15 @@ internal class TurboNavRule(
     }
 
     private fun newPresentation(): TurboNavPresentation {
-        // Use the custom presentation provided in the path configuration
+        // Check if we should use the custom presentation provided in the path configuration
         if (newProperties.presentation != TurboNavPresentation.DEFAULT) {
-            return newProperties.presentation
+            return if (isAtStartDestination && newProperties.presentation == TurboNavPresentation.POP) {
+                // You cannot pop from the start destination, prevent visit
+                TurboNavPresentation.NONE
+            } else {
+                // Use the custom presentation
+                newProperties.presentation
+            }
         }
 
         val locationIsCurrent = locationsAreSame(newLocation, currentLocation)
