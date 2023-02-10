@@ -34,6 +34,7 @@ class TurboNavRuleTest {
     private val featureUrl = "https://hotwired.dev/feature"
     private val newUrl = "https://hotwired.dev/feature/new"
     private val editUrl = "https://hotwired.dev/feature/edit"
+    private val recedeUrl = "https://hotwired.dev/custom/recede"
     private val refreshUrl = "https://hotwired.dev/custom/refresh"
     private val resumeUrl = "https://hotwired.dev/custom/resume"
     private val modalRootUrl = "https://hotwired.dev/custom/modal"
@@ -324,6 +325,28 @@ class TurboNavRuleTest {
         assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.REPLACE)
         assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.REPLACE)
         assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
+        assertThat(rule.newModalResult).isNull()
+        assertThat(rule.newDestinationUri).isEqualTo(webUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `prevent pop presentation from start destination`() {
+        val rule = getNavigatorRule(recedeUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isNull()
+        assertThat(rule.currentLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isTrue()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(recedeUrl)
+        assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.NONE)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
+        assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.NONE)
         assertThat(rule.newModalResult).isNull()
         assertThat(rule.newDestinationUri).isEqualTo(webUri)
         assertThat(rule.newDestination).isNotNull()

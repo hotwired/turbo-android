@@ -54,6 +54,14 @@
     },
     {
       "patterns": [
+        "/custom/recede"
+      ],
+      "properties": {
+        "presentation": "pop"
+      }
+    },
+    {
+      "patterns": [
         "/custom/refresh"
       ],
       "properties": {
