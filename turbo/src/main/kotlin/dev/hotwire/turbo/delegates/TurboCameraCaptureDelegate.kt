@@ -56,7 +56,7 @@ internal class TurboCameraCaptureDelegate(val context: Context) {
     private fun FileChooserParams.allowsCameraCapture(): Boolean {
         val accept = defaultAcceptType()
         val acceptsAny = accept == "*/*"
-        val acceptsImages = accept == "image/*" || accept == "image/jpg" || accept == "image/jpeg"
+        val acceptsImages = accept.contains("image/*") || accept.contains("image/jpg") || accept.contains("image/jpeg")
 
         return isCaptureEnabled && (acceptsAny || acceptsImages)
     }
