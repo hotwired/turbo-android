@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import androidx.webkit.WebViewCompat
 import dev.hotwire.turbo.util.contentFromAsset
 import dev.hotwire.turbo.util.runOnUiThread
@@ -28,7 +29,7 @@ open class TurboWebView @JvmOverloads constructor(context: Context, attrs: Attri
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.setSupportMultipleWindows(true)
-        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
     }
 
     /**

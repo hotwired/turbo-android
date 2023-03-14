@@ -6,15 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/turbo_webView_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         android:minHeight="400dp">
 
         <!-- WebView get attached/detached here -->
 
-    </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <FrameLayout
         android:id="@+id/turbo_progress_container"
