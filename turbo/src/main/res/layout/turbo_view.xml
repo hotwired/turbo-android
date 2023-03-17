@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<dev.hotwire.turbo.views.TurboView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<dev.hotwire.turbo.views.TurboView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/turbo_view"
     android:layout_width="match_parent"
@@ -9,7 +8,8 @@
     <dev.hotwire.turbo.views.TurboSwipeRefreshLayout
         android:id="@+id/turbo_webView_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <!-- WebView get attached/detached here -->
 
@@ -19,9 +19,9 @@
         android:id="@+id/turbo_progress_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:visibility="gone">
 
         <!-- Custom progress view added/removed here -->
 
@@ -31,19 +31,20 @@
         android:id="@+id/turbo_screenshot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:clickable="true"
         android:focusable="true"
         android:scaleType="fitStart"
+        android:visibility="gone"
         tools:ignore="ContentDescription" />
 
     <dev.hotwire.turbo.views.TurboSwipeRefreshLayout
         android:id="@+id/turbo_error_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:clickable="true"
-        android:focusable="true">
+        android:fillViewport="true"
+        android:focusable="true"
+        android:visibility="gone">
 
         <ScrollView
             android:id="@+id/turbo_error_container"
