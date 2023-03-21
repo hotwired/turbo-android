@@ -29,7 +29,7 @@ open class TurboWebView @JvmOverloads constructor(context: Context, attrs: Attri
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.setSupportMultipleWindows(true)
-        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
     }
 
     /**
