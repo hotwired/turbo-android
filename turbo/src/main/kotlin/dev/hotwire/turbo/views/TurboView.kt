@@ -9,9 +9,7 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.core.view.contains
-import androidx.core.view.drawToBitmap
-import androidx.core.view.isVisible
+import androidx.core.view.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dev.hotwire.turbo.R
 
@@ -47,6 +45,13 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             // doesn't have a new parent, since we have no control
             // over the message queue.
             if (isAttachedToWindow && webView.parent == null) {
+                webView.updateLayoutParams {
+                    height = when (webViewContainer) {
+                        is ScrollingView -> LayoutParams.WRAP_CONTENT
+                        else -> LayoutParams.MATCH_PARENT
+                    }
+                }
+
                 webViewContainer.addView(webView)
                 onAttachedToNewDestination(true)
             }
