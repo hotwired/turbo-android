@@ -34,13 +34,6 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             return
         }
 
-        webView.updateLayoutParams {
-            height = when (webViewContainer) {
-                is ScrollingView -> LayoutParams.WRAP_CONTENT
-                else -> LayoutParams.MATCH_PARENT
-            }
-        }
-
         // Match the WebView background with its new parent
         if (background is ColorDrawable) {
             webView.setBackgroundColor((background as ColorDrawable).color)
@@ -52,6 +45,13 @@ class TurboView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             // doesn't have a new parent, since we have no control
             // over the message queue.
             if (isAttachedToWindow && webView.parent == null) {
+                webView.updateLayoutParams {
+                    height = when (webViewContainer) {
+                        is ScrollingView -> LayoutParams.WRAP_CONTENT
+                        else -> LayoutParams.MATCH_PARENT
+                    }
+                }
+
                 webViewContainer.addView(webView)
                 onAttachedToNewDestination(true)
             }
