@@ -37,7 +37,7 @@
         android:visibility="gone"
         android:clickable="true"
         android:focusable="true"
-        android:scaleType="fitStart"
+        android:scaleType="matrix"
         tools:ignore="ContentDescription" />
 
     <FrameLayout

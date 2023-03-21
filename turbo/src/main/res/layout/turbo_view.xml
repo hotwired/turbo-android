@@ -33,7 +33,7 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true"
-        android:scaleType="fitStart"
+        android:scaleType="matrix"
         android:visibility="gone"
         tools:ignore="ContentDescription" />
 
