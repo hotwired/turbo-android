@@ -5,7 +5,9 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.webkit.WebView
+import android.widget.FrameLayout.LayoutParams
 import androidx.test.core.app.ApplicationProvider
+import com.nhaarman.mockito_kotlin.whenever
 import dev.hotwire.turbo.R
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -30,6 +32,10 @@ class TurboViewTest {
         context = ApplicationProvider.getApplicationContext()
         view = LayoutInflater.from(context).inflate(R.layout.turbo_view, null) as ViewGroup
         turboView = view.findViewById(R.id.turbo_view)
+
+        whenever(webView.layoutParams).thenReturn(
+            LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        )
     }
 
     @Test fun refreshLayoutIsFirstChild() {
