@@ -2,7 +2,7 @@
 
 ## From Android Studio:
 
-- Open the [project's Gradle file](../build.gradle).
+- Open the [project's Gradle file](../build.gradle.kts).
 - In the menu, choose Build --> Rebuild project.
 
 ## From command line:
