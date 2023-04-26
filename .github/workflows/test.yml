@@ -6,11 +6,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Run lint
         run: ./gradlew turbo:lint
