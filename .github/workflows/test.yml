@@ -8,6 +8,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Run lint
         run: ./gradlew turbo:lint
