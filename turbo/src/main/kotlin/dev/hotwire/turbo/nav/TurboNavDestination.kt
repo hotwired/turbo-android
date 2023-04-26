@@ -12,7 +12,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
-import dev.hotwire.turbo.R
+import androidx.navigation.ui.R
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.TurboPathConfigurationProperties
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
