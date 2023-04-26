@@ -11,7 +11,7 @@ import androidx.navigation.createGraph
 import androidx.navigation.navOptions
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
-import dev.hotwire.turbo.R
+import androidx.navigation.ui.R
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import org.assertj.core.api.Assertions.assertThat
