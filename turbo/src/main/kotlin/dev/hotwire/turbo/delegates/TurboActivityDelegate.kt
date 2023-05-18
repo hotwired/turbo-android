@@ -1,7 +1,7 @@
 package dev.hotwire.turbo.delegates
 
 import android.os.Bundle
-import androidx.activity.addCallback
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -22,10 +22,27 @@ import dev.hotwire.turbo.visit.TurboVisitOptions
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class TurboActivityDelegate(
     val activity: AppCompatActivity,
-    var currentNavHostFragmentId: Int
+    currentNavHostFragmentId: Int
 ) {
-
     private val navHostFragments = mutableMapOf<Int, TurboSessionNavHostFragment>()
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(enabled = true) {
+        override fun handleOnBackPressed() {
+            navigateBack()
+        }
+    }
+
+    /**
+     * Gets or sets the currently active resource ID of the [TurboSessionNavHostFragment]
+     *  instance hosted in your Activity's layout resource. If you use multiple nav host
+     *  fragments in your app (such as for bottom tabs), you must update this whenever
+     *  the currently active nav host fragment changes.
+     */
+    var currentNavHostFragmentId = currentNavHostFragmentId
+        set(value) {
+            field = value
+            updateOnBackPressedCallback(currentSessionNavHostFragment.navController)
+        }
 
     /**
      * Gets the Activity's currently active [TurboSessionNavHostFragment].
@@ -48,9 +65,7 @@ class TurboActivityDelegate(
     init {
         registerNavHostFragment(currentNavHostFragmentId)
         activity.lifecycle.addObserver(TurboActivityObserver())
-        activity.onBackPressedDispatcher.addCallback(activity) {
-            navigateBack()
-        }
+        activity.onBackPressedDispatcher.addCallback(activity, onBackPressedCallback)
     }
 
     /**
@@ -61,7 +76,10 @@ class TurboActivityDelegate(
      */
     fun registerNavHostFragment(@IdRes navHostFragmentId: Int): TurboSessionNavHostFragment {
         return findNavHostFragment(navHostFragmentId).also {
-            navHostFragments[navHostFragmentId] = it
+            if (navHostFragments[navHostFragmentId] == null) {
+                navHostFragments[navHostFragmentId] = it
+                listenToDestinationChanges(it.navController)
+            }
         }
     }
 
@@ -136,6 +154,18 @@ class TurboActivityDelegate(
      */
     fun refresh(displayProgress: Boolean = true) {
         currentNavDestination?.refresh(displayProgress)
+    }
+
+    private fun listenToDestinationChanges(navController: NavController) {
+        navController.addOnDestinationChangedListener { controller, _, _ ->
+            updateOnBackPressedCallback(controller)
+        }
+    }
+
+    private fun updateOnBackPressedCallback(navController: NavController) {
+        if (navController == currentSessionNavHostFragment.navController)  {
+            onBackPressedCallback.isEnabled = navController.previousBackStackEntry != null
+        }
     }
 
     private val currentFragment: Fragment?

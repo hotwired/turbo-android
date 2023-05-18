@@ -95,7 +95,8 @@ dependencies {
     api 'androidx.appcompat:appcompat:1.6.1'
     api 'androidx.core:core-ktx:1.9.0'
     api 'androidx.webkit:webkit:1.6.0'
-    api 'androidx.fragment:fragment-ktx:1.5.5'
+    api 'androidx.activity:activity-ktx:1.7.1'
+    api 'androidx.fragment:fragment-ktx:1.5.7'
     api 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     api 'androidx.navigation:navigation-ui-ktx:2.5.3'
 
