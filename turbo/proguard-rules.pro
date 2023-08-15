@@ -24,3 +24,5 @@
 -keep class sun.misc.Unsafe { *; }
 
 -keep class dev.hotwire.turbo.** { *; }
+
+-dontwarn java.lang.invoke.StringConcatFactory
