@@ -24,3 +24,6 @@
 -keep class sun.misc.Unsafe { *; }
 
 -keep class dev.hotwire.turbo.** { *; }
+
+# Resolve R8 issue: "ERROR: R8: Missing class java.lang.invoke.StringConcatFactory"
+-dontwarn java.lang.invoke.StringConcatFactory
