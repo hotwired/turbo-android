@@ -112,6 +112,10 @@ internal fun FileChooserParams.allowsMultiple(): Boolean {
     return mode == FileChooserParams.MODE_OPEN_MULTIPLE
 }
 
+internal fun FileChooserParams.acceptsAny(): Boolean {
+    return defaultAcceptType() == "*/*"
+}
+
 internal fun FileChooserParams.defaultAcceptType(): String {
     return when {
         acceptTypes.isEmpty() -> "*/*"
