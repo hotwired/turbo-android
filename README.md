@@ -1,9 +1,5 @@
 # Turbo Native for Android
 
-**Note:** The Hotwire frameworks are presented in beta form. We're using them all in production with HEY, but expect that significant changes might be made in response to early feedback. ✌️❤️
-
----------
-
 **Build high-fidelity hybrid apps with native navigation and a single shared web view**. Turbo Native for Android provides the tooling to wrap your [Turbo 7](https://turbo.hotwired.dev/)-enabled web app in a native Android shell. It manages a single WebView instance across multiple Fragment destinations, giving you native navigation UI with all the client-side performance benefits of Turbo.
 
 ## Features
