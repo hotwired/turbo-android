@@ -29,31 +29,43 @@ class TurboCameraCaptureDelegateTest : BaseUnitTest() {
     }
 
     @Test
-    fun buildIntent() {
-        val intent = delegate.buildIntent(params())
-        val uri = intent?.getParcelableExtra<Uri>(MediaStore.EXTRA_OUTPUT).toString()
+    fun buildIntentAcceptTypesValid() {
+        val acceptTypes = arrayOf(
+            "*/*",
+            "image/*",
+            "image/jpg",
+            "image/jpeg"
+        )
 
-        assertThat(intent?.action).isEqualTo(MediaStore.ACTION_IMAGE_CAPTURE)
-        assertThat(uri).startsWith("content://dev.hotwire.turbo.test.turbo.fileprovider/shared")
-        assertThat(uri).contains("/Capture_")
-        assertThat(uri).endsWith(".jpg")
+        acceptTypes.forEach {
+            val intent = delegate.buildIntent(params(acceptTypes = arrayOf(it)))
+            val uri = intent?.getParcelableExtra<Uri>(MediaStore.EXTRA_OUTPUT).toString()
+
+            assertThat(intent).isNotNull()
+            assertThat(intent?.action).isEqualTo(MediaStore.ACTION_IMAGE_CAPTURE)
+            assertThat(uri).startsWith("content://dev.hotwire.turbo.test.turbo.fileprovider/shared")
+            assertThat(uri).contains("/Capture_")
+            assertThat(uri).endsWith(".jpg")
+        }
+    }
+
+    @Test
+    fun buildIntentAcceptTypesInvalid() {
+        val acceptTypes = arrayOf(
+            "image/png",
+            "image/webp",
+            "video/*"
+        )
+
+        acceptTypes.forEach {
+            val intent = delegate.buildIntent(params(acceptTypes = arrayOf(it)))
+            assertThat(intent).isNull()
+        }
     }
 
     @Test
     fun buildIntentCaptureDisabled() {
         val intent = delegate.buildIntent(params(captureEnabled = false))
-        assertThat(intent).isNull()
-    }
-
-    @Test
-    fun buildIntentAcceptTypeInvalidImage() {
-        val intent = delegate.buildIntent(params(acceptTypes = arrayOf("image/png")))
-        assertThat(intent).isNull()
-    }
-
-    @Test
-    fun buildIntentAcceptTypeInvalid() {
-        val intent = delegate.buildIntent(params(acceptTypes = arrayOf("video/*")))
         assertThat(intent).isNull()
     }
 
