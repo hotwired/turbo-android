@@ -31,6 +31,20 @@ internal fun String.extract(patternRegex: String): String? {
     return regex.find(this)?.groups?.get(1)?.value
 }
 
+internal fun String.truncateMiddle(maxChars: Int): String {
+    if (maxChars <= 1 || length <= maxChars) { return this }
+
+    return "${take(maxChars / 2)} [...] ${takeLast(maxChars / 2)}"
+}
+
+internal fun String.withoutNewLineChars(): String {
+    return this.replace("\n", "")
+}
+
+internal fun String.withoutRepeatingWhitespace(): String {
+    return this.replace(Regex("\\s+"), " ")
+}
+
 internal fun File.deleteAllFilesInDirectory() {
     if (!isDirectory) return
 
