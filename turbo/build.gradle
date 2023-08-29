@@ -52,13 +52,6 @@ android {
     }
 
     buildTypes {
-        create("profiling") {
-            debuggable false
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig getByName("debug").signingConfig
-        }
-
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
