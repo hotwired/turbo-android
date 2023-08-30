@@ -67,8 +67,7 @@ members of the project's leadership.
 
 ## Project Maintainers
 
-* Jay Ohms <<jay@basecamp.com>>
-* Dan Kim <<dan@basecamp.com>>
+* Jay Ohms <<jay@37signals.com>>
 
 ## Attribution
 
