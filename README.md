@@ -33,7 +33,7 @@ See the [instructions to build the project yourself](docs/BUILD-PROJECT.md).
 
 ## Contributing
 
-Turbo Android is open-source software, freely distributable under the terms of an [MIT-style license](LICENSE). The [source code is hosted on GitHub](https://github.com/hotwired/turbo-android). Development is sponsored by [Basecamp](https://basecamp.com/).
+Turbo Android is open-source software, freely distributable under the terms of an [MIT-style license](LICENSE). The [source code is hosted on GitHub](https://github.com/hotwired/turbo-android). Development is sponsored by [37signals](https://37signals.com/).
 
 We welcome contributions in the form of bug reports, pull requests, or thoughtful discussions in the [GitHub issue tracker](https://github.com/hotwired/turbo-android/issues).
 
@@ -41,4 +41,4 @@ Please note that this project is released with a [Contributor Code of Conduct](d
 
 ---------
 
-© 2020 Basecamp, LLC
+© 2023 37signals LLC
