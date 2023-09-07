@@ -3,6 +3,7 @@ package dev.hotwire.turbo.config
 import dev.hotwire.turbo.BuildConfig
 import dev.hotwire.turbo.util.TurboLog
 import com.google.gson.annotations.SerializedName
+import dev.hotwire.turbo.util.logError
 import java.util.regex.PatternSyntaxException
 
 internal data class TurboPathConfigurationRule(
@@ -17,7 +18,7 @@ internal data class TurboPathConfigurationRule(
     private fun numberOfMatches(path: String, patternRegex: String): Int = try {
         Regex(patternRegex, RegexOption.IGNORE_CASE).find(path)?.groups?.size ?: 0
     } catch (e: PatternSyntaxException) {
-        TurboLog.e("PathConfiguration pattern error: ${e.description}")
+        logError("pathConfigurationPatternError", e)
         if (BuildConfig.DEBUG) throw e else 0
     }
 }

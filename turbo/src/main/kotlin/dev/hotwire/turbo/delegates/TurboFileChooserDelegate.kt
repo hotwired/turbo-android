@@ -13,6 +13,7 @@ import dev.hotwire.turbo.util.TURBO_REQUEST_CODE_FILES
 import dev.hotwire.turbo.util.TurboFileProvider
 import dev.hotwire.turbo.util.TurboLog
 import dev.hotwire.turbo.util.dispatcherProvider
+import dev.hotwire.turbo.util.logError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -72,7 +73,7 @@ internal class TurboFileChooserDelegate(val session: TurboSession) : CoroutineSc
             destination.activityResultLauncher(TURBO_REQUEST_CODE_FILES)?.launch(intent)
             true
         } catch (e: Exception) {
-            TurboLog.e("${e.message}")
+            logError("startIntentError", e)
             false
         }
     }

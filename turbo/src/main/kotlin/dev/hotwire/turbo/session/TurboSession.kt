@@ -125,17 +125,6 @@ class TurboSession internal constructor(
         isColdBooting = false
     }
 
-    /**
-     * Enables/disables debug logging. This should be disabled in production environments.
-     * Disabled by default.
-     *
-     * @param enabled Whether to enable debug logging.
-     */
-    fun setDebugLoggingEnabled(enabled: Boolean) {
-        TurboLog.enableDebugLogging = enabled
-        TurboHttpClient.reset()
-    }
-
     // Internal
 
     internal fun visit(visit: TurboVisit) {

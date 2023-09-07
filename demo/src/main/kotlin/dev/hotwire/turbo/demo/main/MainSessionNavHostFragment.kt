@@ -1,9 +1,7 @@
 package dev.hotwire.turbo.demo.main
 
-import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import dev.hotwire.turbo.BuildConfig
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.demo.features.imageviewer.ImageViewerFragment
 import dev.hotwire.turbo.demo.features.numbers.NumberBottomSheetFragment
@@ -13,6 +11,7 @@ import dev.hotwire.turbo.demo.features.web.WebFragment
 import dev.hotwire.turbo.demo.features.web.WebHomeFragment
 import dev.hotwire.turbo.demo.features.web.WebModalFragment
 import dev.hotwire.turbo.demo.util.HOME_URL
+import dev.hotwire.turbo.demo.util.customUserAgent
 import dev.hotwire.turbo.demo.util.initDayNightTheme
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import kotlin.reflect.KClass
@@ -44,16 +43,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
     override fun onSessionCreated() {
         super.onSessionCreated()
-        session.webView.settings.userAgentString = customUserAgent(session.webView)
+        session.webView.settings.userAgentString = session.webView.customUserAgent
         session.webView.initDayNightTheme()
-
-        if (BuildConfig.DEBUG) {
-            session.setDebugLoggingEnabled(true)
-            WebView.setWebContentsDebuggingEnabled(true)
-        }
-    }
-
-    private fun customUserAgent(webView: WebView): String {
-        return "Turbo Native Android ${webView.settings.userAgentString}"
     }
 }

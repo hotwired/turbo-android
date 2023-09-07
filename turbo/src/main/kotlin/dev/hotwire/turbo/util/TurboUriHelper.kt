@@ -32,7 +32,7 @@ internal class TurboUriHelper(val context: Context) {
                 }
                 file
             } catch (e: Exception) {
-                TurboLog.e("${e.message}")
+                logError("writeFileError", e)
                 null
             }
         }
@@ -123,7 +123,7 @@ internal class TurboUriHelper(val context: Context) {
 
             !outputFilePath.startsWith(destinationDirectoryPath)
         } catch (e: Exception) {
-            TurboLog.e("${e.message}")
+            logError("canonicalPathError", e)
             false
         }
     }
@@ -136,7 +136,7 @@ internal class TurboUriHelper(val context: Context) {
         return try {
             canonicalPath.contains(context.packageName)
         } catch (e: IOException) {
-            TurboLog.e("${e.message}")
+            logError("canonicalPathError", e)
             false
         }
     }
