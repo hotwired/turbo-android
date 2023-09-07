@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import android.webkit.WebChromeClient.FileChooserParams
 import dev.hotwire.turbo.util.TurboFileProvider
 import dev.hotwire.turbo.util.TurboLog
+import dev.hotwire.turbo.util.logError
 import java.io.File
 import java.io.IOException
 
@@ -48,7 +49,7 @@ internal class TurboCameraCaptureDelegate(val context: Context) {
             val directory: File = TurboFileProvider.directory(context)
             return File.createTempFile("Capture_", ".jpg", directory)
         } catch (e: IOException) {
-            TurboLog.e("${e.message}")
+            logError("createTempFileError", e)
             null
         }
     }

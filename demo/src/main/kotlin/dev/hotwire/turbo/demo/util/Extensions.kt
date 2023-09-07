@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
+import dev.hotwire.turbo.config.Turbo
 import dev.hotwire.turbo.config.TurboPathConfigurationProperties
 import dev.hotwire.turbo.demo.R
 
@@ -33,6 +34,12 @@ fun WebView.initDayNightTheme() {
         }
     }
 }
+
+val WebView.customUserAgent: String
+    get() {
+        val turboSubstring = Turbo.userAgentSubstring()
+        return "$turboSubstring; ${settings.userAgentString}"
+    }
 
 private fun isNightModeEnabled(context: Context): Boolean {
     val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
