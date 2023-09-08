@@ -3,6 +3,7 @@ package dev.hotwire.turbo.demo.main
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
+import dev.hotwire.strada.KotlinXJsonConverter
 import dev.hotwire.strada.Strada
 import dev.hotwire.turbo.BuildConfig
 import dev.hotwire.turbo.activities.TurboActivity
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity(), TurboActivity {
     }
 
     private fun configApp() {
+        Strada.config.jsonConverter = KotlinXJsonConverter()
+
         if (BuildConfig.DEBUG) {
             Turbo.config.debugLoggingEnabled = true
             Strada.config.debugLoggingEnabled = true
