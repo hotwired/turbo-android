@@ -7,6 +7,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsIntent.SHARE_STATE_ON
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
+import dev.hotwire.strada.BridgeDestination
 import dev.hotwire.turbo.config.TurboPathConfigurationProperties
 import dev.hotwire.turbo.config.context
 import dev.hotwire.turbo.demo.R
@@ -14,7 +15,7 @@ import dev.hotwire.turbo.demo.util.BASE_URL
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.nav.TurboNavPresentationContext.MODAL
 
-interface NavDestination : TurboNavDestination {
+interface NavDestination : TurboNavDestination, BridgeDestination {
     val menuProgress: MenuItem?
         get() = toolbarForNavigation()?.menu?.findItem(R.id.menu_progress)
 
@@ -36,6 +37,10 @@ interface NavDestination : TurboNavDestination {
             MODAL -> slideAnimation()
             else -> super.getNavigationOptions(newLocation, newPathProperties)
         }
+    }
+
+    override fun bridgeWebViewIsReady(): Boolean {
+        return session.isReady
     }
 
     private fun isNavigable(location: String): Boolean {

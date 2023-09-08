@@ -2,6 +2,7 @@ package dev.hotwire.turbo.demo.main
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import dev.hotwire.strada.Bridge
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.demo.features.imageviewer.ImageViewerFragment
 import dev.hotwire.turbo.demo.features.numbers.NumberBottomSheetFragment
@@ -43,7 +44,12 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
     override fun onSessionCreated() {
         super.onSessionCreated()
+
+        // Configure WebView
         session.webView.settings.userAgentString = session.webView.customUserAgent
         session.webView.initDayNightTheme()
+
+        // Initialize Strada bridge
+        Bridge.initialize(session.webView)
     }
 }

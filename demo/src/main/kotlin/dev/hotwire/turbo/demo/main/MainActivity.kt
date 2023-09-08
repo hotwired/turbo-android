@@ -3,6 +3,7 @@ package dev.hotwire.turbo.demo.main
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
+import dev.hotwire.strada.Strada
 import dev.hotwire.turbo.BuildConfig
 import dev.hotwire.turbo.activities.TurboActivity
 import dev.hotwire.turbo.config.Turbo
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity(), TurboActivity {
     private fun configApp() {
         if (BuildConfig.DEBUG) {
             Turbo.config.debugLoggingEnabled = true
+            Strada.config.debugLoggingEnabled = true
             WebView.setWebContentsDebuggingEnabled(true)
         }
     }
