@@ -2,14 +2,12 @@ package dev.hotwire.turbo.demo.strada
 
 import android.util.Log
 import android.view.LayoutInflater
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dev.hotwire.strada.BridgeComponent
 import dev.hotwire.strada.BridgeDelegate
 import dev.hotwire.strada.Message
-import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.demo.base.NavDestination
 import dev.hotwire.turbo.demo.databinding.MenuComponentBottomSheetBinding
 import kotlinx.serialization.SerialName

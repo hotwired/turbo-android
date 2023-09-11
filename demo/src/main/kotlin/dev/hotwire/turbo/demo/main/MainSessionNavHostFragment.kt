@@ -49,7 +49,7 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
         session.webView.settings.userAgentString = session.webView.customUserAgent
         session.webView.initDayNightTheme()
 
-        // Initialize Strada bridge
+        // Initialize Strada bridge with new WebView instance
         Bridge.initialize(session.webView)
     }
 }
