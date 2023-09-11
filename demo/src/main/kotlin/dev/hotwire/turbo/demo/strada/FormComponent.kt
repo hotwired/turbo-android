@@ -15,6 +15,10 @@ import dev.hotwire.turbo.demo.databinding.FormComponentSubmitBinding
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Bridge component to display a submit button in the native toolbar,
+ * which will submit the form on the page when tapped.
+ */
 class FormComponent(
     name: String,
     private val delegate: BridgeDelegate<NavDestination>
