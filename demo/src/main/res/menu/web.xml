@@ -11,4 +11,13 @@
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
 
+    <item
+        android:id="@+id/overflow"
+        android:icon="@drawable/ic_overflow"
+        android:orderInCategory="999"
+        android:visible="false"
+        app:iconTint="?colorControlNormal"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
 </menu>
