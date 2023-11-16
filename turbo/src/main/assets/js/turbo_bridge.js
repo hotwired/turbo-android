@@ -103,7 +103,7 @@
           TurboSession.visitProposalScrollingToAnchor(location.toString(), JSON.stringify(options))
           Turbo.navigator.view.scrollToAnchorFromLocation(location)
         } else {
-          // Propose the visit to the app
+          // Propose the visit
           TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
         }
     }
