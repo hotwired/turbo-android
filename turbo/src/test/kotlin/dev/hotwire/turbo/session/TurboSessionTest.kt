@@ -65,11 +65,23 @@ class TurboSessionTest {
     @Test
     fun visitProposedToLocationFiresCallback() {
         val options = TurboVisitOptions()
+        val newLocation = "${visit.location}/page"
+
+        session.currentVisit = visit
+        session.visitProposedToLocation(newLocation, options.toJson())
+
+        verify(callback).visitProposedToLocation(newLocation, options)
+    }
+
+    @Test
+    fun visitProposedToSameLocationStartsVisit() {
+        val options = TurboVisitOptions()
 
         session.currentVisit = visit
         session.visitProposedToLocation(visit.location, options.toJson())
 
-        verify(callback).visitProposedToLocation(visit.location, options)
+        verify(callback, never()).visitProposedToLocation(visit.location, options)
+        verify(webView).visitLocation(visit.location, options, "")
     }
 
     @Test
