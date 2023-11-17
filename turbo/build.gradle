@@ -34,7 +34,7 @@ android {
     testOptions.unitTests.includeAndroidResources = true
 
     defaultConfig {
-        minSdkVersion 24
+        minSdkVersion 26
         targetSdkVersion 34
 
         // Define ProGuard rules for this android library project. These rules will be applied when
