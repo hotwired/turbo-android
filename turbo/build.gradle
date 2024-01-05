@@ -73,7 +73,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.10'
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'com.google.android.material:material:1.11.0'
 
     // AndroidX
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -95,14 +95,14 @@ dependencies {
     api 'androidx.appcompat:appcompat:1.6.1'
     api 'androidx.core:core-ktx:1.12.0'
     api 'androidx.webkit:webkit:1.8.0'
-    api 'androidx.activity:activity-ktx:1.8.1'
+    api 'androidx.activity:activity-ktx:1.8.2'
     api 'androidx.fragment:fragment-ktx:1.6.2'
-    api 'androidx.navigation:navigation-fragment-ktx:2.7.5'
-    api 'androidx.navigation:navigation-ui-ktx:2.7.5'
+    api 'androidx.navigation:navigation-fragment-ktx:2.7.6'
+    api 'androidx.navigation:navigation-ui-ktx:2.7.6'
 
     // Tests
     testImplementation 'androidx.test:core:1.5.0' // Robolectric
-    testImplementation 'androidx.navigation:navigation-testing:2.7.5'
+    testImplementation 'androidx.navigation:navigation-testing:2.7.6'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
     testImplementation 'org.assertj:assertj-core:3.24.2'

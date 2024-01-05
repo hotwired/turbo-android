@@ -11,7 +11,6 @@ import androidx.navigation.createGraph
 import androidx.navigation.navOptions
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
-import androidx.navigation.ui.R
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import org.assertj.core.api.Assertions.assertThat
@@ -37,6 +36,7 @@ class TurboNavRuleTest {
     private val recedeUrl = "https://hotwired.dev/custom/recede"
     private val refreshUrl = "https://hotwired.dev/custom/refresh"
     private val resumeUrl = "https://hotwired.dev/custom/resume"
+    private val replaceRootUrl = "https://hotwired.dev/custom/replace-root"
     private val modalRootUrl = "https://hotwired.dev/custom/modal"
     private val filterUrl = "https://hotwired.dev/feature?filter=true"
     private val customUrl = "https://hotwired.dev/custom"
@@ -51,14 +51,7 @@ class TurboNavRuleTest {
     private val webHomeUri = Uri.parse("turbo://fragment/web/home")
 
     private val extras = null
-    private val navOptions = navOptions {
-        anim {
-            enter = R.anim.nav_default_enter_anim
-            exit = R.anim.nav_default_exit_anim
-            popEnter = R.anim.nav_default_pop_enter_anim
-            popExit = R.anim.nav_default_pop_exit_anim
-        }
-    }
+    private val navOptions = navOptions {}
 
     @Before
     fun setup() {
@@ -111,6 +104,30 @@ class TurboNavRuleTest {
         assertThat(rule.newDestinationUri).isEqualTo(webModalUri)
         assertThat(rule.newDestination).isNotNull()
         assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `navigate replacing the root`() {
+        val rule = getNavigatorRule(replaceRootUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isNull()
+        assertThat(rule.currentLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isTrue()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(replaceRootUrl)
+        assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.REPLACE_ROOT)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
+        assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
+        assertThat(rule.newModalResult).isNull()
+        assertThat(rule.newDestinationUri).isEqualTo(webUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions).isEqualTo(navOptions {
+            popUpTo(webDestinationId) { inclusive = true }
+        })
     }
 
     @Test
@@ -359,7 +376,7 @@ class TurboNavRuleTest {
         bundle: Bundle? = null
     ): TurboNavRule {
         return TurboNavRule(
-            location, visitOptions, bundle, navOptions, extras, pathConfiguration, controller
+            location, visitOptions, bundle, extras, pathConfiguration, controller
         )
     }
 

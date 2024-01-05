@@ -78,6 +78,14 @@
     },
     {
       "patterns": [
+        "/custom/replace-root"
+      ],
+      "properties": {
+        "presentation": "replace_root"
+      }
+    },
+    {
+      "patterns": [
         "/custom/modal"
       ],
       "properties": {

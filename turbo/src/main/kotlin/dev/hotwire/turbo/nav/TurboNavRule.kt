@@ -19,7 +19,6 @@ internal class TurboNavRule(
     location: String,
     visitOptions: TurboVisitOptions,
     bundle: Bundle?,
-    navOptions: NavOptions,
     extras: FragmentNavigator.Extras?,
     pathConfiguration: TurboPathConfiguration,
     val controller: NavController
@@ -46,7 +45,7 @@ internal class TurboNavRule(
     val newFallbackUri = newProperties.fallbackUri
     val newDestination = controller.destinationFor(newDestinationUri)
     val newFallbackDestination = controller.destinationFor(newFallbackUri)
-    val newNavOptions = newNavOptions(navOptions)
+    val newNavOptions = newNavOptions()
 
     init {
         verifyNavRules()
@@ -76,15 +75,13 @@ internal class TurboNavRule(
         }
     }
 
-    private fun newNavOptions(navOptions: NavOptions): NavOptions {
-        // Use separate NavOptions if we need to pop up to the new root destination
-        if (newPresentation == TurboNavPresentation.REPLACE_ROOT && newDestination != null) {
-            return navOptions {
+    private fun newNavOptions(): NavOptions {
+        return navOptions {
+            if (newPresentation == TurboNavPresentation.REPLACE_ROOT && newDestination != null) {
+                // Pop up to the new root destination
                 popUpTo(newDestination.id) { inclusive = true }
             }
         }
-
-        return navOptions
     }
 
     private fun newNavigationMode(): TurboNavMode {

@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import dev.hotwire.turbo.util.location
@@ -47,7 +46,6 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
             location = location,
             visitOptions = options,
             bundle = bundle,
-            navOptions = navOptions(location),
             extras = extras,
             pathConfiguration = session.pathConfiguration,
             controller = currentControllerForLocation(location)
@@ -268,15 +266,6 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
             "shouldNavigate" to shouldNavigate
         )
         return shouldNavigate
-    }
-
-    private fun navOptions(location: String): NavOptions {
-        val properties = session.pathConfiguration.properties(location)
-
-        return navDestination.getNavigationOptions(
-            newLocation = location,
-            newPathProperties = properties
-        )
     }
 
     private val NavBackStackEntry?.isModalContext: Boolean

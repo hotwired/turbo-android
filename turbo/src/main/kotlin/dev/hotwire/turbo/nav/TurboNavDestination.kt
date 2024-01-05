@@ -8,11 +8,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
-import androidx.navigation.ui.R
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.TurboPathConfigurationProperties
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
@@ -155,25 +152,6 @@ interface TurboNavDestination {
         extras: FragmentNavigator.Extras? = null
     ) {
         navigator.navigate(location, options, bundle, extras)
-    }
-
-    /**
-     * Gets the default set of navigation options (basic enter/exit animations) for the Android
-     * Navigation component to use to execute a navigation event. This can be overridden if
-     * you'd like to provide your own.
-     */
-    fun getNavigationOptions(
-        newLocation: String,
-        newPathProperties: TurboPathConfigurationProperties
-    ): NavOptions {
-        return navOptions {
-            anim {
-                enter = R.anim.nav_default_enter_anim
-                exit = R.anim.nav_default_exit_anim
-                popEnter = R.anim.nav_default_pop_enter_anim
-                popExit = R.anim.nav_default_pop_exit_anim
-            }
-        }
     }
 
     /**
