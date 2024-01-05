@@ -38,7 +38,7 @@ class TurboPathConfigurationTest : BaseRepositoryTest() {
 
     @Test
     fun assetConfigurationIsLoaded() {
-        assertThat(pathConfiguration.rules.size).isEqualTo(9)
+        assertThat(pathConfiguration.rules.size).isEqualTo(10)
     }
 
     @Test
