@@ -19,11 +19,14 @@ _Note: As of May 1, 2021, artifacts will no longer be released to JCenter, since
 
 ## Required `minSdkVersion`
 
-Android SDK 26 (or greater) is required as the `minSdkVersion` in your app module's `build.gradle.kts` file:
+Android SDK 34 (or greater) is required as the `minSdkVersion` in your app module's `build.gradle.kts` file:
 
 ```groovy
+compileSdk = 34
+
 defaultConfig {
-    minSdkVersion 26
+    minSdkVersion = 34
+    targetSdk = 34
     // ...
 }
 ```
