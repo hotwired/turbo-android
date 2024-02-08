@@ -5,9 +5,6 @@
 Add the dependency from Maven Central to your app module's (not top-level) `build.gradle.kts` file:
 
 ```groovy
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation("dev.hotwire:turbo:<latest-version>")
