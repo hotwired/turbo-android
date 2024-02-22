@@ -102,6 +102,9 @@
           // Scroll to the anchor on the page
           TurboSession.visitProposalScrollingToAnchor(location.toString(), JSON.stringify(options))
           Turbo.navigator.view.scrollToAnchorFromLocation(location)
+        } else if (Turbo.navigator.location.href === location.href) {
+          TurboSession.visitProposalIsPageRefresh(location.toString(), JSON.stringify(options))
+          this.visitLocationWithOptionsAndRestorationIdentifier(location, JSON.stringify(options), Turbo.navigator.restorationIdentifier)
         } else {
           // Propose the visit
           TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))

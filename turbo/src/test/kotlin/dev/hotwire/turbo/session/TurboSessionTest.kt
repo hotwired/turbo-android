@@ -74,17 +74,6 @@ class TurboSessionTest {
     }
 
     @Test
-    fun visitProposedToSameLocationStartsVisit() {
-        val options = TurboVisitOptions()
-
-        session.currentVisit = visit
-        session.visitProposedToLocation(visit.location, options.toJson())
-
-        verify(callback, never()).visitProposedToLocation(visit.location, options)
-        verify(webView).visitLocation(visit.location, options, "")
-    }
-
-    @Test
     fun visitStartedSavesCurrentVisitIdentifier() {
         val visitIdentifier = "12345"
 
