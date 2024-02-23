@@ -104,7 +104,7 @@
           Turbo.navigator.view.scrollToAnchorFromLocation(location)
         } else if (window.Turbo && Turbo.navigator.location?.href === location.href) {
           // Refresh the page without native proposal
-          TurboSession.visitProposalIsPageRefresh(location.toString(), JSON.stringify(options))
+          TurboSession.visitProposalRefreshingPage(location.toString(), JSON.stringify(options))
           this.visitLocationWithOptionsAndRestorationIdentifier(location, JSON.stringify(options), Turbo.navigator.restorationIdentifier)
         } else {
           // Propose the visit

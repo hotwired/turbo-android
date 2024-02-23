@@ -206,9 +206,9 @@ class TurboSession internal constructor(
      * @param optionsJson A JSON block to be serialized into [TurboVisitOptions].
      */
     @JavascriptInterface
-    fun visitProposalIsPageRefresh(location: String, optionsJson: String) {
+    fun visitProposalRefreshingPage(location: String, optionsJson: String) {
         val options = TurboVisitOptions.fromJSON(optionsJson) ?: return
-        logEvent("visitProposalIsPageRefresh", "location" to location, "options" to options)
+        logEvent("visitProposalRefreshingPage", "location" to location, "options" to options)
     }
 
     /**
