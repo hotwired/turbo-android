@@ -59,6 +59,10 @@ open class TurboWebView @JvmOverloads constructor(context: Context, attrs: Attri
         runJavascript("turboNative.visitRenderedForColdBoot('$coldBootVisitIdentifier')")
     }
 
+    internal fun cacheSnapshot() {
+        runJavascript("turboNative.cacheSnapshot()")
+    }
+
     internal fun installBridge(onBridgeInstalled: () -> Unit) {
         val script = "window.turboNative == null"
         val bridge = context.contentFromAsset("js/turbo_bridge.js")

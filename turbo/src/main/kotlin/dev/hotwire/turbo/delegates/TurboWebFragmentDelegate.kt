@@ -110,6 +110,14 @@ internal class TurboWebFragmentDelegate(
     }
 
     /**
+     * Should be called by the implementing Fragment during
+     * [dev.hotwire.turbo.nav.TurboNavDestination.onBeforeNavigation]
+     */
+    fun onBeforeNavigation() {
+        session().cacheSnapshot(location)
+    }
+
+    /**
      * Provides a hook to Turbo when the dialog has been canceled. Detaches the WebView
      * before navigation.
      */

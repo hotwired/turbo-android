@@ -14,6 +14,7 @@ import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature.*
+import dev.hotwire.turbo.config.Turbo
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.screenshotsEnabled
 import dev.hotwire.turbo.delegates.TurboFileChooserDelegate
@@ -139,6 +140,13 @@ class TurboSession internal constructor(
             isColdBooting -> visitPending = true
             isReady -> visitLocation(visit)
             else -> visitLocationAsColdBoot(visit)
+        }
+    }
+
+    internal fun cacheSnapshot(location: String) {
+        if (this.currentVisit?.location == location) {
+            logEvent("cachingSnapshot", "location" to location)
+            webView.cacheSnapshot()
         }
     }
 

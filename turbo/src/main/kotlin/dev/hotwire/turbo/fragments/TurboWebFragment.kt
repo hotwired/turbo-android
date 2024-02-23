@@ -66,6 +66,11 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
         }
     }
 
+    override fun onBeforeNavigation() {
+        super.onBeforeNavigation()
+        webDelegate.onBeforeNavigation()
+    }
+
     override fun refresh(displayProgress: Boolean) {
         webDelegate.refresh(displayProgress)
     }
