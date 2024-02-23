@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import dev.hotwire.turbo.http.TurboHttpClient
 import dev.hotwire.turbo.util.dispatcherProvider
+import dev.hotwire.turbo.util.logError
 import dev.hotwire.turbo.util.toJson
 import kotlinx.coroutines.withContext
 import okhttp3.Request
@@ -43,10 +44,15 @@ internal class TurboPathConfigurationRepository {
                 if (response.isSuccessful) {
                     response.body?.string()
                 } else {
+                    logError(
+                        "remotePathConfigurationFailure",
+                        Exception("location: ${request.url}, status code: ${response.code}")
+                    )
                     null
                 }
             }
-        } catch (e: IOException) {
+        } catch (e: Exception) {
+            logError("remotePathConfigurationException", e)
             null
         }
     }
