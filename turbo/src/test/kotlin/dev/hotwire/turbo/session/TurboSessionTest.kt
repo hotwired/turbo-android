@@ -78,7 +78,12 @@ class TurboSessionTest {
         val visitIdentifier = "12345"
 
         session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.visitStarted(visitIdentifier, true, "https://turbo.hotwired.dev")
+        session.visitStarted(
+            visitIdentifier = visitIdentifier,
+            visitHasCachedSnapshot = true,
+            visitIsPageRefresh = false,
+            location = "https://turbo.hotwired.dev"
+        )
 
         assertThat(session.currentVisit?.identifier).isEqualTo(visitIdentifier)
     }
