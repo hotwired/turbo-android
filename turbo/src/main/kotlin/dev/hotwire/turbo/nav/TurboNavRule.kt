@@ -80,7 +80,7 @@ internal class TurboNavRule(
         // Use separate NavOptions if we need to pop up to the new root destination
         if (newPresentation == TurboNavPresentation.REPLACE_ROOT && newDestination != null) {
             return navOptions {
-                popUpTo(newDestination.id) { inclusive = true }
+                popUpTo(controller.graph.id) { inclusive = true }
             }
         }
 
