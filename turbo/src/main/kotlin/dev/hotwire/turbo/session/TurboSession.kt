@@ -179,7 +179,7 @@ class TurboSession internal constructor(
     // Callbacks from Turbo JS Core
 
     /**
-     * Called by Turbo bridge when a new visit is initiated.
+     * Called by Turbo bridge when a new visit is proposed.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
      * You should never call this directly as it could lead to unintended behavior.
@@ -196,6 +196,38 @@ class TurboSession internal constructor(
     }
 
     /**
+     * Called by Turbo bridge when a new visit proposal will refresh the
+     * current page.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param location The location to visit.
+     * @param optionsJson A JSON block to be serialized into [TurboVisitOptions].
+     */
+    @JavascriptInterface
+    fun visitProposalRefreshingPage(location: String, optionsJson: String) {
+        val options = TurboVisitOptions.fromJSON(optionsJson) ?: return
+        logEvent("visitProposalRefreshingPage", "location" to location, "options" to options)
+    }
+
+    /**
+     * Called by Turbo bridge when a new visit proposal will scroll to an anchor
+     * on the same page.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param location The location to visit.
+     * @param optionsJson A JSON block to be serialized into [TurboVisitOptions].
+     */
+    @JavascriptInterface
+    fun visitProposalScrollingToAnchor(location: String, optionsJson: String) {
+        val options = TurboVisitOptions.fromJSON(optionsJson) ?: return
+        logEvent("visitProposalScrollingToAnchor", "location" to location, "options" to options)
+    }
+
+    /**
      * Called by Turbo bridge when a new visit has just started.
      *
      * Warning: This method is public so it can be used as a Javascript Interface.
@@ -206,11 +238,14 @@ class TurboSession internal constructor(
      * @param location The location being visited.
      */
     @JavascriptInterface
-    fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String) {
+    fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean,
+                     visitIsPageRefresh: Boolean, location: String
+    ) {
         logEvent(
             "visitStarted", "location" to location,
             "visitIdentifier" to visitIdentifier,
-            "visitHasCachedSnapshot" to visitHasCachedSnapshot
+            "visitHasCachedSnapshot" to visitHasCachedSnapshot,
+            "visitIsPageRefresh" to visitIsPageRefresh
         )
 
         currentVisit?.identifier = visitIdentifier
