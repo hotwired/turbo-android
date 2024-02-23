@@ -81,6 +81,12 @@ internal class TurboNavRule(
         if (newPresentation == TurboNavPresentation.REPLACE_ROOT && newDestination != null) {
             return navOptions {
                 popUpTo(controller.graph.id) { inclusive = true }
+                anim {
+                    enter = navOptions.enterAnim
+                    exit = navOptions.exitAnim
+                    popEnter = navOptions.popEnterAnim
+                    popExit = navOptions.popExitAnim
+                }
             }
         }
 

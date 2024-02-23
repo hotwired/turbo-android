@@ -25,6 +25,15 @@
     },
     {
       "patterns": [
+        "/new-home"
+      ],
+      "properties": {
+        "uri": "turbo://fragment/web/home",
+        "presentation": "replace_root"
+      }
+    },
+    {
+      "patterns": [
         "/feature"
       ],
       "properties": {

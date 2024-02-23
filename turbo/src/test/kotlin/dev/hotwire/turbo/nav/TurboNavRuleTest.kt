@@ -31,6 +31,7 @@ class TurboNavRuleTest {
     private lateinit var pathConfiguration: TurboPathConfiguration
 
     private val homeUrl = "https://hotwired.dev/home"
+    private val newHomeUrl = "https://hotwired.dev/new-home"
     private val featureUrl = "https://hotwired.dev/feature"
     private val newUrl = "https://hotwired.dev/feature/new"
     private val editUrl = "https://hotwired.dev/feature/edit"
@@ -141,6 +142,32 @@ class TurboNavRuleTest {
         assertThat(rule.newDestinationUri).isEqualTo(webHomeUri)
         assertThat(rule.newDestination).isNotNull()
         assertThat(rule.newNavOptions).isEqualTo(navOptions)
+    }
+
+    @Test
+    fun `replace root when navigating in default context`() {
+        controller.navigate(webDestinationId, locationArgs(featureUrl))
+        val rule = getNavigatorRule(newHomeUrl)
+
+        // Current destination
+        assertThat(rule.previousLocation).isEqualTo(homeUrl)
+        assertThat(rule.currentLocation).isEqualTo(featureUrl)
+        assertThat(rule.currentPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.isAtStartDestination).isFalse()
+
+        // New destination
+        assertThat(rule.newLocation).isEqualTo(newHomeUrl)
+        assertThat(rule.newPresentationContext).isEqualTo(TurboNavPresentationContext.DEFAULT)
+        assertThat(rule.newPresentation).isEqualTo(TurboNavPresentation.REPLACE_ROOT)
+        assertThat(rule.newQueryStringPresentation).isEqualTo(TurboNavQueryStringPresentation.DEFAULT)
+        assertThat(rule.newNavigationMode).isEqualTo(TurboNavMode.IN_CONTEXT)
+        assertThat(rule.newModalResult).isNull()
+        assertThat(rule.newDestinationUri).isEqualTo(webHomeUri)
+        assertThat(rule.newDestination).isNotNull()
+        assertThat(rule.newNavOptions.enterAnim).isEqualTo(navOptions.enterAnim)
+        assertThat(rule.newNavOptions.exitAnim).isEqualTo(navOptions.exitAnim)
+        assertThat(rule.newNavOptions.popEnterAnim).isEqualTo(navOptions.popEnterAnim)
+        assertThat(rule.newNavOptions.popExitAnim).isEqualTo(navOptions.popExitAnim)
     }
 
     @Test
