@@ -238,11 +238,14 @@ class TurboSession internal constructor(
      * @param location The location being visited.
      */
     @JavascriptInterface
-    fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean, location: String) {
+    fun visitStarted(visitIdentifier: String, visitHasCachedSnapshot: Boolean,
+                     visitIsPageRefresh: Boolean, location: String
+    ) {
         logEvent(
             "visitStarted", "location" to location,
             "visitIdentifier" to visitIdentifier,
-            "visitHasCachedSnapshot" to visitHasCachedSnapshot
+            "visitHasCachedSnapshot" to visitHasCachedSnapshot,
+            "visitIsPageRefresh" to visitIsPageRefresh
         )
 
         currentVisit?.identifier = visitIdentifier

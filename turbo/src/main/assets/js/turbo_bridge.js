@@ -118,7 +118,7 @@
     }
 
     visitStarted(visit) {
-      TurboSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.location.toString())
+      TurboSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.isPageRefresh || false, visit.location.toString())
       this.currentVisit = visit
       this.issueRequestForVisitWithIdentifier(visit.identifier)
       this.changeHistoryForVisitWithIdentifier(visit.identifier)
