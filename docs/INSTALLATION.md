@@ -19,10 +19,10 @@ See the [latest version](https://search.maven.org/artifact/dev.hotwire/turbo) av
 *Note: As of May 1, 2021, artifacts will no longer be released to JCenter, since [it's shutting down](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/).*
 
 ## Required `minSdkVersion`
-Android SDK 24 (or greater) is required as the `minSdkVersion` in your app module's `build.gradle` file:
+Android SDK 26 (or greater) is required as the `minSdkVersion` in your app module's `build.gradle` file:
 ```groovy
 defaultConfig {
-    minSdkVersion 24
+    minSdkVersion 26
     // ...
 }
 ```

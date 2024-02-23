@@ -5,6 +5,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import dev.hotwire.turbo.util.TurboLog
 import dev.hotwire.turbo.util.dispatcherProvider
+import dev.hotwire.turbo.util.logError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
@@ -105,7 +106,7 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
         } catch (e: IOException) {
             throw e
         } catch (e: Exception) {
-            TurboLog.e("Request error: ${e.message}")
+            logError("httpRequestError", e)
             null
         }
     }
@@ -211,7 +212,7 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
         return try {
             response?.body?.byteStream()
         } catch (e: Exception) {
-            TurboLog.e("Byte stream error: ${e.message}")
+            logError("byteStreamError", e)
             null
         }
     }

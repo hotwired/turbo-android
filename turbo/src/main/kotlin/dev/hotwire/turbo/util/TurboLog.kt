@@ -1,19 +1,21 @@
 package dev.hotwire.turbo.util
 
 import android.util.Log
+import dev.hotwire.turbo.config.Turbo
 
 internal object TurboLog {
     private const val DEFAULT_TAG = "TurboLog"
-    internal var enableDebugLogging = false
 
-    fun d(msg: String) = log(Log.DEBUG, DEFAULT_TAG, msg)
+    private val debugEnabled get() = Turbo.config.debugLoggingEnabled
 
-    fun e(msg: String) = log(Log.ERROR, DEFAULT_TAG, msg)
+    internal fun d(msg: String) = log(Log.DEBUG, msg)
 
-    private fun log(logLevel: Int, tag: String, msg: String) {
+    internal fun e(msg: String) = log(Log.ERROR, msg)
+
+    private fun log(logLevel: Int, msg: String) {
         when (logLevel) {
-            Log.DEBUG -> if (enableDebugLogging) Log.d(tag, msg)
-            Log.ERROR -> Log.e(tag, msg)
+            Log.DEBUG -> if (debugEnabled) Log.d(DEFAULT_TAG, msg)
+            Log.ERROR -> Log.e(DEFAULT_TAG, msg)
         }
     }
 }
@@ -23,4 +25,8 @@ internal fun logEvent(event: String, attributes: List<Pair<String, Any>>) {
         "${it.first}: ${it.second}"
     }
     TurboLog.d("$event ".padEnd(35, '.') + " $description")
+}
+
+internal fun logError(event: String, error: Exception) {
+    TurboLog.e("$event: ${error.stackTraceToString()}")
 }

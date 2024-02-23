@@ -1,7 +1,9 @@
 package dev.hotwire.turbo.http
 
 import android.content.Context
+import dev.hotwire.turbo.config.Turbo
 import dev.hotwire.turbo.util.TurboLog
+import dev.hotwire.turbo.util.logError
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -28,7 +30,7 @@ object TurboHttpClient {
         try {
             cache?.evictAll()
         } catch (e: IOException) {
-            TurboLog.e(e.toString())
+            logError("invalidateCacheError", e)
         }
     }
 
@@ -56,7 +58,7 @@ object TurboHttpClient {
             builder.cache(it)
         }
 
-        if (TurboLog.enableDebugLogging) {
+        if (Turbo.config.debugLoggingEnabled) {
             builder.addInterceptor(loggingInterceptor)
         }
 

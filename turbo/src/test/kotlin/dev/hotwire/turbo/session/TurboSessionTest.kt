@@ -65,11 +65,12 @@ class TurboSessionTest {
     @Test
     fun visitProposedToLocationFiresCallback() {
         val options = TurboVisitOptions()
+        val newLocation = "${visit.location}/page"
 
         session.currentVisit = visit
-        session.visitProposedToLocation(visit.location, options.toJson())
+        session.visitProposedToLocation(newLocation, options.toJson())
 
-        verify(callback).visitProposedToLocation(visit.location, options)
+        verify(callback).visitProposedToLocation(newLocation, options)
     }
 
     @Test
@@ -77,7 +78,12 @@ class TurboSessionTest {
         val visitIdentifier = "12345"
 
         session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.visitStarted(visitIdentifier, true, "https://turbo.hotwired.dev")
+        session.visitStarted(
+            visitIdentifier = visitIdentifier,
+            visitHasCachedSnapshot = true,
+            visitIsPageRefresh = false,
+            location = "https://turbo.hotwired.dev"
+        )
 
         assertThat(session.currentVisit?.identifier).isEqualTo(visitIdentifier)
     }

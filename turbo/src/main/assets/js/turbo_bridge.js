@@ -98,14 +98,18 @@
     // Adapter interface
 
     visitProposedToLocation(location, options) {
-      if (window.Turbo && typeof Turbo.navigator.locationWithActionIsSamePage === "function") {
-        if (Turbo.navigator.locationWithActionIsSamePage(location, options.action)) {
+        if (window.Turbo && Turbo.navigator.locationWithActionIsSamePage(location, options.action)) {
+          // Scroll to the anchor on the page
+          TurboSession.visitProposalScrollingToAnchor(location.toString(), JSON.stringify(options))
           Turbo.navigator.view.scrollToAnchorFromLocation(location)
-          return
+        } else if (window.Turbo && Turbo.navigator.location?.href === location.href) {
+          // Refresh the page without native proposal
+          TurboSession.visitProposalRefreshingPage(location.toString(), JSON.stringify(options))
+          this.visitLocationWithOptionsAndRestorationIdentifier(location, JSON.stringify(options), Turbo.navigator.restorationIdentifier)
+        } else {
+          // Propose the visit
+          TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
         }
-      }
-
-      TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
     }
 
     // Turbolinks 5
@@ -114,7 +118,7 @@
     }
 
     visitStarted(visit) {
-      TurboSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.location.toString())
+      TurboSession.visitStarted(visit.identifier, visit.hasCachedSnapshot(), visit.isPageRefresh || false, visit.location.toString())
       this.currentVisit = visit
       this.issueRequestForVisitWithIdentifier(visit.identifier)
       this.changeHistoryForVisitWithIdentifier(visit.identifier)
