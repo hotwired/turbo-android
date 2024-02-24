@@ -97,10 +97,7 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
         navDestination.toolbarForNavigation()?.let {
             NavigationUI.setupWithNavController(it, fragment.findNavController())
             it.setNavigationOnClickListener {
-                when (fragment) {
-                    is DialogFragment -> fragment.requireDialog().cancel()
-                    else -> navDestination.navigateUp()
-                }
+                navDestination.navigateUp()
             }
         }
     }
