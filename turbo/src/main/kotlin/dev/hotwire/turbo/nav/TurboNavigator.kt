@@ -20,6 +20,10 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
         onReady()
     }
 
+    fun isAtStartDestination(): Boolean {
+        return currentController().previousBackStackEntry == null
+    }
+
     fun navigateUp() {
         onNavigationVisit {
             if (fragment is DialogFragment) {
@@ -265,10 +269,6 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
 
     private fun currentControllerForLocation(location: String): NavController {
         return navDestination.navHostForNavigation(location).navController
-    }
-
-    private fun isAtStartDestination(): Boolean {
-        return currentController().previousBackStackEntry == null
     }
 
     private fun shouldNavigate(location: String): Boolean {

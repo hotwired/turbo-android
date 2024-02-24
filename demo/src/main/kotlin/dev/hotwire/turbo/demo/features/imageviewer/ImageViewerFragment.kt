@@ -10,7 +10,7 @@ import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.fragments.TurboFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import com.bumptech.glide.Glide
-import dev.hotwire.turbo.demo.util.displayBackButtonAsCloseIcon
+import dev.hotwire.turbo.util.displayBackButtonAsCloseIcon
 
 @TurboNavGraphDestination(uri = "turbo://fragment/image_viewer")
 class ImageViewerFragment : TurboFragment(), NavDestination {
