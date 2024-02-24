@@ -179,6 +179,37 @@
     }
   }
 
+  // Touch detection, allowing vertically scrollable elements
+  // to scroll properly without triggering pull-to-refresh.
+
+  const elementTouchStart = (event) => {
+    if (!event.target) return
+
+    var element = event.target
+
+    while(element) {
+      const isScrollable = element.scrollHeight > element.clientHeight
+      const overflowY = window.getComputedStyle(element).overflowY
+
+      if (isScrollable && (overflowY === "scroll" || overflowY === "auto")) {
+        TurboSession.elementTouchStarted(true)
+        break
+      }
+
+      element = element.parentElement
+    }
+
+    if (!element) {
+      TurboSession.elementTouchStarted(false)
+    }
+  }
+
+  const elementTouchEnd = () => {
+    TurboSession.elementTouchEnded()
+  }
+
+  // Setup and register adapter
+
   window.turboNative = new TurboNative()
 
   const setup = function() {
@@ -187,6 +218,9 @@
 
     document.removeEventListener("turbo:load", setup)
     document.removeEventListener("turbolinks:load", setup)
+
+    document.addEventListener("touchstart", elementTouchStart)
+    document.addEventListener("touchend", elementTouchEnd)
   }
 
   const setupOnLoad = () => {

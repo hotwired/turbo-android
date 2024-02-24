@@ -2,7 +2,6 @@ package dev.hotwire.turbo.views
 
 import android.content.Context
 import android.util.AttributeSet
-import android.webkit.WebView
 import androidx.core.view.children
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
@@ -14,8 +13,13 @@ internal class TurboSwipeRefreshLayout @JvmOverloads constructor(context: Contex
     }
 
     override fun canChildScrollUp(): Boolean {
-        val webView = children.firstOrNull() as? WebView
-        return webView?.scrollY ?: 0 > 0
+        val webView = children.firstOrNull() as? TurboWebView
+
+        return if (webView != null) {
+            webView.scrollY > 0 || webView.elementTouchIsScrollable
+        } else {
+            false
+        }
     }
 
     /**
