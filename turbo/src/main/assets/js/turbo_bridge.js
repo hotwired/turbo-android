@@ -187,11 +187,11 @@
 
     var element = event.target
 
-    while(element) {
-      const isScrollable = element.scrollHeight > element.clientHeight
+    while (element) {
+      const canScroll = element.scrollHeight > element.clientHeight
       const overflowY = window.getComputedStyle(element).overflowY
 
-      if (isScrollable && (overflowY === "scroll" || overflowY === "auto")) {
+      if (canScroll && (overflowY === "scroll" || overflowY === "auto")) {
         TurboSession.elementTouchStarted(true)
         break
       }
