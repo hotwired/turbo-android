@@ -482,6 +482,28 @@ class TurboSession internal constructor(
         callback { it.onReceivedError(-1) }
     }
 
+    /**
+     * Called when a touched element event has started.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     */
+    @JavascriptInterface
+    fun elementTouchStarted(scrollable: Boolean) {
+        webView.elementTouchIsScrollable = scrollable
+    }
+
+    /**
+     * Called when a touched element event has ended.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     */
+    @JavascriptInterface
+    fun elementTouchEnded() {
+        webView.elementTouchIsScrollable = false
+    }
+
     // Private
 
     private fun visitLocation(visit: TurboVisit) {

@@ -6,13 +6,12 @@ import android.util.AttributeSet
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import androidx.webkit.WebViewCompat
+import com.google.gson.GsonBuilder
 import dev.hotwire.turbo.util.contentFromAsset
 import dev.hotwire.turbo.util.runOnUiThread
 import dev.hotwire.turbo.util.toJson
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import com.google.gson.GsonBuilder
 
 /**
  * A Turbo-specific WebView that configures required settings and exposes some helpful info.
@@ -71,6 +70,8 @@ open class TurboWebView @JvmOverloads constructor(context: Context, attrs: Attri
             }
         }
     }
+
+    internal var elementTouchIsScrollable = false
 
     private fun WebView.runJavascript(javascript: String, onComplete: (String?) -> Unit = {}) {
         context.runOnUiThread {
