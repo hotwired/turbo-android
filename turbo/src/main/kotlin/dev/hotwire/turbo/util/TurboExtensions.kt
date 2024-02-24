@@ -5,13 +5,25 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Handler
 import android.webkit.WebResourceRequest
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavBackStackEntry
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import dev.hotwire.turbo.R
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitActionAdapter
 import java.io.File
+
+fun Toolbar.displayBackButton() {
+    navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_back)
+}
+
+fun Toolbar.displayBackButtonAsCloseIcon() {
+    navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_close)
+}
+
 
 internal fun Context.runOnUiThread(func: () -> Unit) {
     when (mainLooper.isCurrentThread) {

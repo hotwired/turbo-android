@@ -8,6 +8,8 @@ import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.nav.TurboNavigator
 import dev.hotwire.turbo.session.TurboSessionModalResult
 import dev.hotwire.turbo.session.TurboSessionViewModel
+import dev.hotwire.turbo.util.displayBackButton
+import dev.hotwire.turbo.util.displayBackButtonAsCloseIcon
 import dev.hotwire.turbo.util.logEvent
 
 /**
@@ -95,7 +97,14 @@ class TurboFragmentDelegate(private val navDestination: TurboNavDestination) {
 
     private fun initToolbar() {
         navDestination.toolbarForNavigation()?.let {
-            NavigationUI.setupWithNavController(it, fragment.findNavController())
+            if (!navigator.isAtStartDestination()) {
+                if (navDestination.isModal) {
+                    it.displayBackButtonAsCloseIcon()
+                } else {
+                    it.displayBackButton()
+                }
+            }
+
             it.setNavigationOnClickListener {
                 navDestination.navigateUp()
             }

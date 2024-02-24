@@ -15,6 +15,7 @@ import androidx.navigation.navOptions
 import androidx.navigation.ui.R
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.TurboPathConfigurationProperties
+import dev.hotwire.turbo.config.context
 import dev.hotwire.turbo.delegates.TurboFragmentDelegate
 import dev.hotwire.turbo.delegates.TurboNestedFragmentDelegate
 import dev.hotwire.turbo.fragments.TurboFragment
@@ -80,6 +81,12 @@ interface TurboNavDestination {
      */
     val isActive: Boolean
         get() = fragment.isAdded && !fragment.isDetached
+
+    /**
+     * Specifies whether the destination was presented in a modal context.
+     */
+    val isModal: Boolean
+        get() = pathProperties.context == TurboNavPresentationContext.MODAL
 
     /**
      * Gets the delegate instance that handles the Fragment's lifecycle events.

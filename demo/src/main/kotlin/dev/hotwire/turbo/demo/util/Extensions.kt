@@ -17,10 +17,6 @@ import dev.hotwire.turbo.demo.strada.bridgeComponentFactories
 val TurboPathConfigurationProperties.description: String?
     get() = get("description")
 
-fun Toolbar.displayBackButtonAsCloseIcon() {
-    navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_close)
-}
-
 @Suppress("DEPRECATION")
 fun WebView.initDayNightTheme() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
