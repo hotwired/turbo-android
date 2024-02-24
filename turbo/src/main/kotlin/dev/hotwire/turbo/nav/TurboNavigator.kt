@@ -22,13 +22,21 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
 
     fun navigateUp() {
         onNavigationVisit {
-            currentController().navigateUp()
+            if (fragment is DialogFragment) {
+                fragment.requireDialog().cancel()
+            } else {
+                currentController().navigateUp()
+            }
         }
     }
 
     fun navigateBack() {
         onNavigationVisit {
-            currentController().popBackStack()
+            if (fragment is DialogFragment) {
+                fragment.requireDialog().cancel()
+            } else {
+                currentController().popBackStack()
+            }
         }
     }
 
