@@ -95,6 +95,10 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
         }
 
         onNavigationVisit {
+            if (fragment is DialogFragment) {
+                fragment.requireDialog().cancel()
+            }
+
             val controller = currentController()
             controller.popBackStack(controller.graph.startDestinationId, false)
             onCleared()
