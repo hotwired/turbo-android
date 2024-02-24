@@ -8,6 +8,8 @@
 }
 -keepattributes JavascriptInterface
 
+-keep class dev.hotwire.turbo.** { *; }
+
 # Gson
 -keep class com.google.** { *; }
 -keep class org.apache.** { *; }
