@@ -37,7 +37,7 @@
         android:visibility="gone"
         tools:ignore="ContentDescription" />
 
-    <dev.hotwire.turbo.views.TurboSwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/turbo_error_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -56,6 +56,6 @@
 
         </ScrollView>
 
-    </dev.hotwire.turbo.views.TurboSwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </dev.hotwire.turbo.views.TurboView>
