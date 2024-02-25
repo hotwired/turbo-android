@@ -10,7 +10,7 @@
 
 ## Requirements
 
-1. Android SDK 26+ is required as the `minSdkVersion` in your build.gradle.
+1. Android SDK 26+ is required as the `minSdkVersion` in your `build.gradle.kts` file.
 1. This library is written entirely in [Kotlin](https://kotlinlang.org/), and your app should use Kotlin as well. Compatibility with Java is not provided or supported.
 1. This library supports web apps using either Turbo 7 or Turbolinks 5.
 1. `Turbo` (or `Turbolinks`) is exposed on the `window` object on the WebView page being loaded.
