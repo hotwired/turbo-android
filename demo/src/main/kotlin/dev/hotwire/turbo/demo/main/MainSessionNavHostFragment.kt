@@ -23,9 +23,6 @@ class MainSessionNavHostFragment : TurboSessionNavHostFragment() {
 
     override val startLocation = HOME_URL
 
-    override val registeredActivities: List<KClass<out AppCompatActivity>>
-        get() = listOf()
-
     override val registeredFragments: List<KClass<out Fragment>>
         get() = listOf(
             WebFragment::class,
