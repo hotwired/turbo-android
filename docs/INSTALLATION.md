@@ -14,15 +14,15 @@ dependencies {
 
 See the [latest version](https://search.maven.org/artifact/dev.hotwire/turbo) available on Maven Central.
 
-## Required `minSdkVersion`
+## Required `minSdk`
 
-Android SDK 26 (or greater) is required as the `minSdkVersion` in your app module's `build.gradle.kts` file:
+Android SDK 26 (or greater) is required as the `minSdk` in your app module's `build.gradle.kts` file:
 
 ```kotlin
 compileSdk = 34
 
 defaultConfig {
-    minSdkVersion = 26
+    minSdk = 26
     targetSdk = 34
     // ...
 }
