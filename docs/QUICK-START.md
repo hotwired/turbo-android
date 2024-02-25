@@ -22,7 +22,6 @@ The Turbo extension of this class, `TurboSessionNavHostFragment`, along with bei
 In its simplest form, the implementation of your `TurboSessionNavHostFragment` will look like:
 
 **`MainSessionNavHostFragment`:**
-
 ```kotlin
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 
@@ -66,7 +65,6 @@ You need to create a layout resource file that your `TurboActivity` will use to 
 Android Jetpack provides a [`FragmentContainerView`](https://developer.android.com/reference/androidx/fragment/app/FragmentContainerView) to contain `NavHostFragment` navigation. In its simplest form, your Activity layout file will look like:
 
 **`res/layout/activity_main.xml`:**
-
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -125,7 +123,6 @@ You'll need to annotate each Fragment in your app with a `@TurboNavGraphDestinat
 In its simplest form, your web Fragment will look like:
 
 **`WebFragment.kt`:**
-
 ```kotlin
 @TurboNavGraphDestination(uri = "turbo://fragment/web")
 class WebFragment : TurboWebFragment()

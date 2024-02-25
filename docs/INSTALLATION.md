@@ -4,8 +4,7 @@
 
 Add the dependency from Maven Central to your app module's (not top-level) `build.gradle.kts` file:
 
-```groovy
-
+```kotlin
 dependencies {
     implementation("dev.hotwire:turbo:<latest-version>")
 }
@@ -15,17 +14,15 @@ dependencies {
 
 See the [latest version](https://search.maven.org/artifact/dev.hotwire/turbo) available on Maven Central.
 
-_Note: As of May 1, 2021, artifacts will no longer be released to JCenter, since [it's shutting down](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/)._
-
 ## Required `minSdkVersion`
 
-Android SDK 34 (or greater) is required as the `minSdkVersion` in your app module's `build.gradle.kts` file:
+Android SDK 26 (or greater) is required as the `minSdkVersion` in your app module's `build.gradle.kts` file:
 
-```groovy
+```kotlin
 compileSdk = 34
 
 defaultConfig {
-    minSdkVersion = 34
+    minSdkVersion = 26
     targetSdk = 34
     // ...
 }
@@ -58,7 +55,7 @@ export GITHUB_ACCESS_TOKEN='<your personal access token>'
 
 Add the GitHub Packages maven repository and the dependency to your app module's `build.gradle.kts` file:
 
-```groovy
+```kotlin
 repositories {
     maven {
         name = "GitHubPackages"
