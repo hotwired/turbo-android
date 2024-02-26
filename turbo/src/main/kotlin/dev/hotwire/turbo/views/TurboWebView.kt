@@ -3,6 +3,7 @@ package dev.hotwire.turbo.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
@@ -25,6 +26,7 @@ open class TurboWebView @JvmOverloads constructor(context: Context, attrs: Attri
     private val gson = GsonBuilder().disableHtmlEscaping().create()
 
     init {
+        id = View.generateViewId()
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.setSupportMultipleWindows(true)
