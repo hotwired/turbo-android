@@ -11,6 +11,7 @@ import dev.hotwire.turbo.fragments.TurboWebFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisitAction.REPLACE
+import dev.hotwire.turbo.visit.TurboVisitError
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
 @TurboNavGraphDestination(uri = "turbo://fragment/web")
@@ -58,10 +59,10 @@ open class WebFragment : TurboWebFragment(), NavDestination {
         menuProgress?.isVisible = false
     }
 
-    override fun onVisitErrorReceived(location: String, errorCode: Int) {
-        when (errorCode) {
+    override fun onVisitErrorReceived(location: String, error: TurboVisitError) {
+        when (error.code) {
             401 -> navigate(SIGN_IN_URL, TurboVisitOptions(action = REPLACE))
-            else -> super.onVisitErrorReceived(location, errorCode)
+            else -> super.onVisitErrorReceived(location, error)
         }
     }
 

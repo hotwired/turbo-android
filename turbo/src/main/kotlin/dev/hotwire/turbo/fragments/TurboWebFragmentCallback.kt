@@ -5,6 +5,7 @@ import android.webkit.HttpAuthHandler
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebChromeClient
 import dev.hotwire.turbo.views.TurboWebView
+import dev.hotwire.turbo.visit.TurboVisitError
 
 /**
  * Callback interface to be implemented by a [TurboWebFragment],
@@ -19,7 +20,7 @@ interface TurboWebFragmentCallback {
     /**
      * Inflate and return a new view to serve as an error view.
      */
-    fun createErrorView(statusCode: Int): View
+    fun createErrorView(error: TurboVisitError): View
 
     /**
      * Inflate and return a new view to serve as a progress view.
@@ -71,7 +72,7 @@ interface TurboWebFragmentCallback {
     /**
      * Called when a Turbo visit resulted in an error.
      */
-    fun onVisitErrorReceived(location: String, errorCode: Int) {}
+    fun onVisitErrorReceived(location: String, error: TurboVisitError) {}
 
     /**
      * Called when a Turbo form submission has started.
@@ -87,7 +88,7 @@ interface TurboWebFragmentCallback {
      * Called when the Turbo visit resulted in an error, but a cached
      * snapshot is being displayed, which may be stale.
      */
-    fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, errorCode: Int) {}
+    fun onVisitErrorReceivedWithCachedSnapshotAvailable(location: String, error: TurboVisitError) {}
 
     /**
      * Called when the WebView has received an HTTP authentication request.

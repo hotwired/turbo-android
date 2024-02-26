@@ -13,6 +13,7 @@ import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
 import dev.hotwire.turbo.util.TURBO_REQUEST_CODE_FILES
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebChromeClient
+import dev.hotwire.turbo.visit.TurboVisitError
 
 /**
  * The base class from which all bottom sheet web fragments in a
@@ -82,7 +83,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
     }
 
     @SuppressLint("InflateParams")
-    override fun createErrorView(statusCode: Int): View {
+    override fun createErrorView(error: TurboVisitError): View {
         return layoutInflater.inflate(R.layout.turbo_error, null)
     }
 
@@ -90,7 +91,7 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
         return TurboWebChromeClient(session)
     }
 
-    override fun onVisitErrorReceived(location: String, errorCode: Int) {
-        webDelegate.showErrorView(errorCode)
+    override fun onVisitErrorReceived(location: String, error: TurboVisitError) {
+        webDelegate.showErrorView(error)
     }
 }

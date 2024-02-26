@@ -23,6 +23,8 @@ import dev.hotwire.turbo.util.*
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
+import dev.hotwire.turbo.visit.TurboVisitError
+import dev.hotwire.turbo.visit.TurboVisitErrorType
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import kotlinx.coroutines.*
 import java.util.*
@@ -283,6 +285,12 @@ class TurboSession internal constructor(
      */
     @JavascriptInterface
     fun visitRequestFailedWithStatusCode(visitIdentifier: String, visitHasCachedSnapshot: Boolean, statusCode: Int) {
+        val visitError = TurboVisitError(
+            type = TurboVisitErrorType.HTTP_ERROR,
+            code = statusCode,
+            description = "Request failed"
+        )
+
         logEvent(
             "visitRequestFailedWithStatusCode",
             "visitIdentifier" to visitIdentifier,
@@ -292,7 +300,7 @@ class TurboSession internal constructor(
 
         currentVisit?.let { visit ->
             if (visitIdentifier == visit.identifier) {
-                callback { it.requestFailedWithStatusCode(visitHasCachedSnapshot, statusCode) }
+                callback { it.requestFailedWithError(visitHasCachedSnapshot, visitError) }
             }
         }
     }
@@ -477,9 +485,15 @@ class TurboSession internal constructor(
      */
     @JavascriptInterface
     fun turboFailedToLoad() {
-        logEvent("turboFailedToLoad")
+        val visitError = TurboVisitError(
+            type = TurboVisitErrorType.LOAD_ERROR,
+            code = -1,
+            description = "Turbo failed to load"
+        )
+
+        logEvent("turboFailedToLoad", "error" to visitError)
         reset()
-        callback { it.onReceivedError(-1) }
+        callback { it.onReceivedError(visitError) }
     }
 
     /**
@@ -748,9 +762,19 @@ class TurboSession internal constructor(
             super.onReceivedError(view, request, error)
 
             if (request.isForMainFrame && isFeatureSupported(WEB_RESOURCE_ERROR_GET_CODE)) {
-                logEvent("onReceivedError", "errorCode" to error.errorCode)
+                val visitError = TurboVisitError(
+                    type = TurboVisitErrorType.WEB_RESOURCE_ERROR,
+                    code = error.errorCode,
+                    description = if (isFeatureSupported(WEB_RESOURCE_ERROR_GET_DESCRIPTION)) {
+                        error.description.toString()
+                    } else {
+                        null
+                    }
+                )
+
+                logEvent("onReceivedError", "error" to visitError)
                 reset()
-                callback { it.onReceivedError(error.errorCode) }
+                callback { it.onReceivedError(visitError) }
             }
         }
 
@@ -758,9 +782,15 @@ class TurboSession internal constructor(
             super.onReceivedHttpError(view, request, errorResponse)
 
             if (request.isForMainFrame) {
-                logEvent("onReceivedHttpError", "statusCode" to errorResponse.statusCode)
+                val visitError = TurboVisitError(
+                    type = TurboVisitErrorType.HTTP_ERROR,
+                    code = errorResponse.statusCode,
+                    description = errorResponse.reasonPhrase
+                )
+
+                logEvent("onReceivedHttpError", "error" to visitError)
                 reset()
-                callback { it.onReceivedError(errorResponse.statusCode) }
+                callback { it.onReceivedError(visitError) }
             }
         }
 
@@ -768,12 +798,16 @@ class TurboSession internal constructor(
             super.onReceivedSslError(view, handler, error)
             handler.cancel()
 
-            logEvent("onReceivedSslError", "url" to error.url)
+            val visitError = TurboVisitError(
+                type = TurboVisitErrorType.WEB_SSL_ERROR,
+                code = error.primaryError
+            )
+
+            logEvent("onReceivedSslError", "error" to visitError)
             reset()
-            callback { it.onReceivedError(-1) }
+            callback { it.onReceivedError(visitError) }
         }
 
-        @TargetApi(Build.VERSION_CODES.O)
         override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
             logEvent("onRenderProcessGone", "didCrash" to detail.didCrash())
 

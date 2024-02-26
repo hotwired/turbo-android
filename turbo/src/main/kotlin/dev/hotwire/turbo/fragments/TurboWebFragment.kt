@@ -13,6 +13,7 @@ import dev.hotwire.turbo.session.TurboSessionModalResult
 import dev.hotwire.turbo.util.TURBO_REQUEST_CODE_FILES
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebChromeClient
+import dev.hotwire.turbo.visit.TurboVisitError
 
 /**
  * The base class from which all web "standard" fragments (non-dialogs) in a
@@ -94,7 +95,7 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     }
 
     @SuppressLint("InflateParams")
-    override fun createErrorView(statusCode: Int): View {
+    override fun createErrorView(error: TurboVisitError): View {
         return layoutInflater.inflate(R.layout.turbo_error, null)
     }
 
@@ -102,7 +103,7 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
         return TurboWebChromeClient(session)
     }
 
-    override fun onVisitErrorReceived(location: String, errorCode: Int) {
-        webDelegate.showErrorView(errorCode)
+    override fun onVisitErrorReceived(location: String, error: TurboVisitError) {
+        webDelegate.showErrorView(error)
     }
 }

@@ -9,6 +9,8 @@ import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.toJson
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
+import dev.hotwire.turbo.visit.TurboVisitError
+import dev.hotwire.turbo.visit.TurboVisitErrorType
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -89,13 +91,31 @@ class TurboSessionTest {
     }
 
     @Test
+    fun visitFailedToLoadCallsAdapter() {
+        val visitIdentifier = "12345"
+
+        session.currentVisit = visit.copy(identifier = visitIdentifier)
+        session.turboFailedToLoad()
+
+        verify(callback).onReceivedError(TurboVisitError(
+            type = TurboVisitErrorType.LOAD_ERROR,
+            code = -1,
+            description = "Turbo failed to load"
+        ))
+    }
+
+    @Test
     fun visitRequestFailedWithStatusCodeCallsAdapter() {
         val visitIdentifier = "12345"
 
         session.currentVisit = visit.copy(identifier = visitIdentifier)
         session.visitRequestFailedWithStatusCode(visitIdentifier, true, 500)
 
-        verify(callback).requestFailedWithStatusCode(true, 500)
+        verify(callback).requestFailedWithError(true, TurboVisitError(
+            type = TurboVisitErrorType.HTTP_ERROR,
+            code = 500,
+            description = "Request failed"
+        ))
     }
 
     @Test
