@@ -2,10 +2,16 @@ package dev.hotwire.turbo.errors
 
 import android.webkit.WebResourceResponse
 
+/**
+ * Errors representing HTTP status codes received from the server.
+ */
 sealed interface HttpError : TurboVisitError {
     val statusCode: Int
     val reasonPhrase: String?
 
+    /**
+     * Errors representing HTTP client errors in the 400..499 range.
+     */
     sealed interface ClientError : HttpError {
         data object BadRequest : ClientError {
             override val statusCode = 400
@@ -78,6 +84,9 @@ sealed interface HttpError : TurboVisitError {
         ) : ClientError
     }
 
+    /**
+     * Errors representing HTTP server errors in the 500..599 range.
+     */
     sealed interface ServerError : HttpError {
         data object InternalServerError : ServerError {
             override val statusCode = 500

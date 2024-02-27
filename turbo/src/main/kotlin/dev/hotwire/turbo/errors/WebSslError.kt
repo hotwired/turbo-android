@@ -2,6 +2,11 @@ package dev.hotwire.turbo.errors
 
 import android.net.http.SslError
 
+/**
+ * Errors representing SslError.SSL_* errors received
+ * from the WebView when attempting to load a page.
+ * https://developer.android.com/reference/android/net/http/SslError
+ */
 sealed interface WebSslError : TurboVisitError {
     val errorCode: Int
     val description: String?

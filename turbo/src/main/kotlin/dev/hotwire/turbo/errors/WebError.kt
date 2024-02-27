@@ -5,6 +5,11 @@ import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewFeature
 import androidx.webkit.WebViewFeature.isFeatureSupported
 
+/**
+ * Errors representing WebViewClient.ERROR_* errors received
+ * from the WebView when attempting to load a page.
+ * https://developer.android.com/reference/android/webkit/WebViewClient
+ */
 sealed interface WebError : TurboVisitError {
     val errorCode: Int
     val description: String?

@@ -1,5 +1,9 @@
 package dev.hotwire.turbo.errors
 
+/**
+ * Errors representing when turbo.js or the native adapter fails
+ * to load on a page.
+ */
 sealed interface LoadError : TurboVisitError {
     val description: String
 
