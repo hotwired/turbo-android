@@ -5,7 +5,7 @@ import android.webkit.HttpAuthHandler
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebChromeClient
 import dev.hotwire.turbo.views.TurboWebView
-import dev.hotwire.turbo.visit.TurboVisitError
+import dev.hotwire.turbo.errors.TurboVisitError
 
 /**
  * Callback interface to be implemented by a [TurboWebFragment],

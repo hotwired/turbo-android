@@ -1,11 +1,9 @@
 package dev.hotwire.turbo.session
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
-import android.os.Build
 import android.util.SparseArray
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
@@ -17,14 +15,16 @@ import androidx.webkit.WebViewFeature.*
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.screenshotsEnabled
 import dev.hotwire.turbo.delegates.TurboFileChooserDelegate
+import dev.hotwire.turbo.errors.HttpError
+import dev.hotwire.turbo.errors.LoadError
+import dev.hotwire.turbo.errors.WebError
+import dev.hotwire.turbo.errors.WebSslError
 import dev.hotwire.turbo.http.*
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.*
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
-import dev.hotwire.turbo.visit.TurboVisitError
-import dev.hotwire.turbo.visit.TurboVisitErrorType
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import kotlinx.coroutines.*
 import java.util.*
@@ -285,11 +285,7 @@ class TurboSession internal constructor(
      */
     @JavascriptInterface
     fun visitRequestFailedWithStatusCode(visitIdentifier: String, visitHasCachedSnapshot: Boolean, statusCode: Int) {
-        val visitError = TurboVisitError(
-            type = TurboVisitErrorType.HTTP_ERROR,
-            code = statusCode,
-            description = "Request failed"
-        )
+        val visitError = HttpError.from(statusCode)
 
         logEvent(
             "visitRequestFailedWithStatusCode",
@@ -464,7 +460,11 @@ class TurboSession internal constructor(
 
             if (!isReady) {
                 reset()
-                visitRequestFailedWithStatusCode(visit.identifier, false, 0)
+
+                val visitError = LoadError.NotReady
+                logEvent("turboIsNotReady", "error" to visitError)
+
+                callback { it.requestFailedWithError(false, visitError) }
                 return
             }
 
@@ -485,11 +485,7 @@ class TurboSession internal constructor(
      */
     @JavascriptInterface
     fun turboFailedToLoad() {
-        val visitError = TurboVisitError(
-            type = TurboVisitErrorType.LOAD_ERROR,
-            code = -1,
-            description = "Turbo failed to load"
-        )
+        val visitError = LoadError.NotPresent
 
         logEvent("turboFailedToLoad", "error" to visitError)
         reset()
@@ -761,16 +757,8 @@ class TurboSession internal constructor(
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceErrorCompat) {
             super.onReceivedError(view, request, error)
 
-            if (request.isForMainFrame && isFeatureSupported(WEB_RESOURCE_ERROR_GET_CODE)) {
-                val visitError = TurboVisitError(
-                    type = TurboVisitErrorType.WEB_RESOURCE_ERROR,
-                    code = error.errorCode,
-                    description = if (isFeatureSupported(WEB_RESOURCE_ERROR_GET_DESCRIPTION)) {
-                        error.description.toString()
-                    } else {
-                        null
-                    }
-                )
+            if (request.isForMainFrame) {
+                val visitError = WebError.from(error)
 
                 logEvent("onReceivedError", "error" to visitError)
                 reset()
@@ -782,11 +770,7 @@ class TurboSession internal constructor(
             super.onReceivedHttpError(view, request, errorResponse)
 
             if (request.isForMainFrame) {
-                val visitError = TurboVisitError(
-                    type = TurboVisitErrorType.HTTP_ERROR,
-                    code = errorResponse.statusCode,
-                    description = errorResponse.reasonPhrase
-                )
+                val visitError = HttpError.from(errorResponse)
 
                 logEvent("onReceivedHttpError", "error" to visitError)
                 reset()
@@ -798,10 +782,7 @@ class TurboSession internal constructor(
             super.onReceivedSslError(view, handler, error)
             handler.cancel()
 
-            val visitError = TurboVisitError(
-                type = TurboVisitErrorType.WEB_SSL_ERROR,
-                code = error.primaryError
-            )
+            val visitError = WebSslError.from(error)
 
             logEvent("onReceivedSslError", "error" to visitError)
             reset()

@@ -5,12 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.whenever
+import dev.hotwire.turbo.errors.HttpError.ServerError
+import dev.hotwire.turbo.errors.LoadError
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.toJson
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
-import dev.hotwire.turbo.visit.TurboVisitError
-import dev.hotwire.turbo.visit.TurboVisitErrorType
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -97,11 +97,7 @@ class TurboSessionTest {
         session.currentVisit = visit.copy(identifier = visitIdentifier)
         session.turboFailedToLoad()
 
-        verify(callback).onReceivedError(TurboVisitError(
-            type = TurboVisitErrorType.LOAD_ERROR,
-            code = -1,
-            description = "Turbo failed to load"
-        ))
+        verify(callback).onReceivedError(LoadError.NotPresent)
     }
 
     @Test
@@ -111,11 +107,10 @@ class TurboSessionTest {
         session.currentVisit = visit.copy(identifier = visitIdentifier)
         session.visitRequestFailedWithStatusCode(visitIdentifier, true, 500)
 
-        verify(callback).requestFailedWithError(true, TurboVisitError(
-            type = TurboVisitErrorType.HTTP_ERROR,
-            code = 500,
-            description = "Request failed"
-        ))
+        verify(callback).requestFailedWithError(
+            visitHasCachedSnapshot =  true,
+            error = ServerError.InternalServerError
+        )
     }
 
     @Test
@@ -234,6 +229,7 @@ class TurboSessionTest {
 
         assertThat(session.restoreCurrentVisit(callback)).isFalse()
         verify(callback, never()).visitCompleted(false)
+        verify(callback).requestFailedWithError(false, LoadError.NotReady)
     }
 
     @Test

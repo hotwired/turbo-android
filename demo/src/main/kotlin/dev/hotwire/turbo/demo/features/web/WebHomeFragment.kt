@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import dev.hotwire.turbo.demo.R
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
-import dev.hotwire.turbo.visit.TurboVisitError
+import dev.hotwire.turbo.errors.TurboVisitError
 
 @TurboNavGraphDestination(uri = "turbo://fragment/web/home")
 class WebHomeFragment : WebFragment() {

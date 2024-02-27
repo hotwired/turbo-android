@@ -2,8 +2,7 @@ package dev.hotwire.turbo.session
 
 import android.webkit.HttpAuthHandler
 import dev.hotwire.turbo.nav.TurboNavDestination
-import dev.hotwire.turbo.visit.TurboVisitError
-import dev.hotwire.turbo.visit.TurboVisitErrorType
+import dev.hotwire.turbo.errors.TurboVisitError
 import dev.hotwire.turbo.visit.TurboVisitOptions
 
 internal interface TurboSessionCallback {

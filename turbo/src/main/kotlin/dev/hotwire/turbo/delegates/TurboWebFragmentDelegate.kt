@@ -21,7 +21,7 @@ import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
-import dev.hotwire.turbo.visit.TurboVisitError
+import dev.hotwire.turbo.errors.TurboVisitError
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

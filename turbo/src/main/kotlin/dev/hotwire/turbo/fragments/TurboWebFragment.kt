@@ -13,7 +13,7 @@ import dev.hotwire.turbo.session.TurboSessionModalResult
 import dev.hotwire.turbo.util.TURBO_REQUEST_CODE_FILES
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebChromeClient
-import dev.hotwire.turbo.visit.TurboVisitError
+import dev.hotwire.turbo.errors.TurboVisitError
 
 /**
  * The base class from which all web "standard" fragments (non-dialogs) in a
