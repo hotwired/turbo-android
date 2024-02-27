@@ -291,7 +291,7 @@ class TurboSession internal constructor(
             "visitRequestFailedWithStatusCode",
             "visitIdentifier" to visitIdentifier,
             "visitHasCachedSnapshot" to visitHasCachedSnapshot,
-            "statusCode" to statusCode
+            "error" to visitError
         )
 
         currentVisit?.let { visit ->
