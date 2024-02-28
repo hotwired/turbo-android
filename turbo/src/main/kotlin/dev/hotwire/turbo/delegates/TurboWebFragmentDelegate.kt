@@ -21,6 +21,7 @@ import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
+import dev.hotwire.turbo.errors.TurboVisitError
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -158,8 +159,8 @@ internal class TurboWebFragmentDelegate(
     /**
      * Displays the error view that's implemented via [TurboWebFragmentCallback.createErrorView].
      */
-    fun showErrorView(code: Int) {
-        turboView?.addErrorView(callback.createErrorView(code))
+    fun showErrorView(error: TurboVisitError) {
+        turboView?.addErrorView(callback.createErrorView(error))
     }
 
     // -----------------------------------------------------------------------
@@ -205,19 +206,19 @@ internal class TurboWebFragmentDelegate(
         navDestination.fragmentViewModel.setTitle(title())
     }
 
-    override fun onReceivedError(errorCode: Int) {
-        callback.onVisitErrorReceived(location, errorCode)
+    override fun onReceivedError(error: TurboVisitError) {
+        callback.onVisitErrorReceived(location, error)
     }
 
     override fun onRenderProcessGone() {
         navigator.navigate(location, TurboVisitOptions(action = TurboVisitAction.REPLACE))
     }
 
-    override fun requestFailedWithStatusCode(visitHasCachedSnapshot: Boolean, statusCode: Int) {
+    override fun requestFailedWithError(visitHasCachedSnapshot: Boolean, error: TurboVisitError) {
         if (visitHasCachedSnapshot) {
-            callback.onVisitErrorReceivedWithCachedSnapshotAvailable(location, statusCode)
+            callback.onVisitErrorReceivedWithCachedSnapshotAvailable(location, error)
         } else {
-            callback.onVisitErrorReceived(location, statusCode)
+            callback.onVisitErrorReceived(location, error)
         }
     }
 
