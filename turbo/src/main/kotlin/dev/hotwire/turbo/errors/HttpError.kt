@@ -124,6 +124,11 @@ sealed interface HttpError : TurboVisitError {
         ) : ServerError
     }
 
+    data class UnknownError(
+        override val statusCode: Int,
+        override val reasonPhrase: String?
+    ) : HttpError
+
     companion object {
         fun from(errorResponse: WebResourceResponse): HttpError {
             return getError(errorResponse.statusCode, errorResponse.reasonPhrase)
@@ -148,7 +153,7 @@ sealed interface HttpError : TurboVisitError {
                     ?: ServerError.Other(statusCode, reasonPhrase)
             }
 
-            throw IllegalArgumentException("Invalid HTTP error status code: $statusCode")
+            return UnknownError(statusCode, reasonPhrase)
         }
     }
 }

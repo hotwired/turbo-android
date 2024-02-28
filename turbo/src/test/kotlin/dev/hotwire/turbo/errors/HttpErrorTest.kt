@@ -59,4 +59,18 @@ class HttpErrorTest : BaseUnitTest() {
             assertThat(error.statusCode).isEqualTo(it.first)
         }
     }
+
+    @Test
+    fun unknownErrors() {
+        val errors = listOf(
+            399 to HttpError.UnknownError(399, null),
+            600 to HttpError.UnknownError(600, null)
+        )
+
+        errors.forEach {
+            val error = HttpError.from(it.first)
+            assertThat(error).isEqualTo(it.second)
+            assertThat(error.statusCode).isEqualTo(it.first)
+        }
+    }
 }
