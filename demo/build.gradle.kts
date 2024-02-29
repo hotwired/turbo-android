@@ -73,7 +73,7 @@ dependencies {
     implementation("androidx.browser:browser:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
-    implementation("dev.hotwire:strada:1.0.0-beta2")
+    implementation("dev.hotwire:strada:1.0.0-beta3")
 
     implementation(project(":turbo"))
 }
