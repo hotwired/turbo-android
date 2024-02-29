@@ -41,4 +41,4 @@ Please note that this project is released with a [Contributor Code of Conduct](d
 
 ---------
 
-© 2023 37signals LLC
+© 2024 37signals LLC
