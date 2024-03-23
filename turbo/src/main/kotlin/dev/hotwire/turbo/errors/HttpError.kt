@@ -23,6 +23,11 @@ sealed interface HttpError : TurboVisitError {
             override val reasonPhrase = "Unauthorized"
         }
 
+        data object PaymentRequired : ClientError {
+            override val statusCode = 402
+            override val reasonPhrase = "Payment Required"
+        }
+
         data object Forbidden : ClientError {
             override val statusCode = 403
             override val reasonPhrase = "Forbidden"

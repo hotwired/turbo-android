@@ -18,6 +18,7 @@ class HttpErrorTest : BaseUnitTest() {
         val errors = listOf(
             400 to ClientError.BadRequest,
             401 to ClientError.Unauthorized,
+            402 to ClientError.PaymentRequired,
             403 to ClientError.Forbidden,
             404 to ClientError.NotFound,
             405 to ClientError.MethodNotAllowed,
