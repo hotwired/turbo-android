@@ -783,10 +783,12 @@ class TurboSession internal constructor(
             handler.cancel()
 
             val visitError = WebSslError.from(error)
+            logEvent("onReceivedSslError", "error" to visitError, "url" to error.url)
 
-            logEvent("onReceivedSslError", "error" to visitError)
-            reset()
-            callback { it.onReceivedError(visitError) }
+            if (currentVisit?.location == error.url) {
+                reset()
+                callback { it.onReceivedError(visitError) }
+            }
         }
 
         override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
