@@ -10,6 +10,7 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStateAtLeast
 import dev.hotwire.turbo.config.pullToRefreshEnabled
+import dev.hotwire.turbo.errors.TurboVisitError
 import dev.hotwire.turbo.fragments.TurboWebFragmentCallback
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.nav.TurboNavigator
@@ -21,7 +22,6 @@ import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
-import dev.hotwire.turbo.errors.TurboVisitError
 import dev.hotwire.turbo.visit.TurboVisitOptions
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -231,6 +231,13 @@ internal class TurboWebFragmentDelegate(
         options: TurboVisitOptions
     ) {
         navigator.navigate(location, options)
+    }
+
+    override fun visitProposedToCrossOriginRedirect(location: String) {
+        // Pop the current destination from the backstack since it
+        // resulted in a visit failure due to a cross-origin redirect.
+        navigator.navigateBack()
+        navigator.navigate(location, TurboVisitOptions())
     }
 
     override fun visitNavDestination(): TurboNavDestination {

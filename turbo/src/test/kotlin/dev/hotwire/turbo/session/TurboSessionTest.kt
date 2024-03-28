@@ -76,6 +76,17 @@ class TurboSessionTest {
     }
 
     @Test
+    fun visitProposedToCrossOriginRedirectFiresCallback() {
+        val location = "${visit.location}/page"
+        val redirectLocation = "https://example.com/page"
+
+        session.currentVisit = visit
+        session.visitProposedToCrossOriginRedirect(location, redirectLocation, visit.identifier)
+
+        verify(callback).visitProposedToCrossOriginRedirect(redirectLocation)
+    }
+
+    @Test
     fun visitStartedSavesCurrentVisitIdentifier() {
         val visitIdentifier = "12345"
 
@@ -105,7 +116,7 @@ class TurboSessionTest {
         val visitIdentifier = "12345"
 
         session.currentVisit = visit.copy(identifier = visitIdentifier)
-        session.visitRequestFailedWithStatusCode(visitIdentifier, true, 500)
+        session.visitRequestFailedWithStatusCode(visit.location, visitIdentifier, true, 500)
 
         verify(callback).requestFailedWithError(
             visitHasCachedSnapshot =  true,
