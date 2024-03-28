@@ -11,7 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
-import androidx.webkit.WebViewFeature.*
+import androidx.webkit.WebViewFeature.VISUAL_STATE_CALLBACK
+import androidx.webkit.WebViewFeature.isFeatureSupported
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.screenshotsEnabled
 import dev.hotwire.turbo.delegates.TurboFileChooserDelegate
@@ -26,7 +27,6 @@ import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import kotlinx.coroutines.*
 import java.util.*
 
 /**
@@ -45,6 +45,7 @@ class TurboSession internal constructor(
     val webView: TurboWebView
 ) {
     internal var currentVisit: TurboVisit? = null
+    internal var crossOriginRedirectCandidate: String? = null
     internal var coldBootVisitIdentifier = ""
     internal var previousOverrideUrlTime = 0L
     internal var isColdBooting = false
@@ -121,6 +122,7 @@ class TurboSession internal constructor(
         logEvent("reset")
         currentVisit?.identifier = ""
         coldBootVisitIdentifier = ""
+        crossOriginRedirectCandidate = null
         restorationIdentifiers.clear()
         visitPending = false
         isReady = false
@@ -284,20 +286,40 @@ class TurboSession internal constructor(
      * @param statusCode The HTTP status code that caused the failure.
      */
     @JavascriptInterface
-    fun visitRequestFailedWithStatusCode(visitIdentifier: String, visitHasCachedSnapshot: Boolean, statusCode: Int) {
-        val visitError = HttpError.from(statusCode)
+    fun visitRequestFailedWithStatusCode(
+        location: String,
+        visitIdentifier: String,
+        visitHasCachedSnapshot: Boolean,
+        statusCode: Int
+    ) {
+        if (currentVisit?.identifier != visitIdentifier) {
+            return
+        }
 
-        logEvent(
-            "visitRequestFailedWithStatusCode",
-            "visitIdentifier" to visitIdentifier,
-            "visitHasCachedSnapshot" to visitHasCachedSnapshot,
-            "error" to visitError
-        )
+        val redirectLocation = crossOriginRedirectCandidate
 
-        currentVisit?.let { visit ->
-            if (visitIdentifier == visit.identifier) {
-                callback { it.requestFailedWithError(visitHasCachedSnapshot, visitError) }
-            }
+        // Non-HTTP status codes are sent by turbo.js for network
+        // failures, including cross-origin fetch redirect attempts.
+        if (statusCode <= 0 && redirectLocation != null) {
+            logEvent(
+                "visitRequestedCrossOriginRedirect",
+                "location" to location,
+                "redirectLocation" to redirectLocation
+            )
+
+            callback { it.visitProposedToCrossOriginRedirect(redirectLocation) }
+        } else {
+            val visitError = HttpError.from(statusCode)
+
+            logEvent(
+                "visitRequestFailedWithStatusCode",
+                "location" to location,
+                "visitIdentifier" to visitIdentifier,
+                "visitHasCachedSnapshot" to visitHasCachedSnapshot,
+                "error" to visitError
+            )
+
+            callback { it.requestFailedWithError(visitHasCachedSnapshot, visitError) }
         }
     }
 
@@ -311,6 +333,7 @@ class TurboSession internal constructor(
      */
     @JavascriptInterface
     fun visitRequestFinished(visitIdentifier: String) {
+        crossOriginRedirectCandidate = null
         logEvent("visitRequestFinished", "visitIdentifier" to visitIdentifier)
     }
 
@@ -751,6 +774,13 @@ class TurboSession internal constructor(
         }
 
         override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+            // Turbo does not permit cross-origin fetch redirect attempts and
+            // they'll lead to a visit request failure. Save cross-origin
+            // redirect candidates in case the current visit request fails.
+            if (request.isHttpOptionsRequest() && request.isCorsFetchRequest()) {
+                crossOriginRedirectCandidate = request.url.toString()
+            }
+
             return requestInterceptor.interceptRequest(request)
         }
 

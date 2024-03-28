@@ -73,6 +73,15 @@ internal fun WebResourceRequest.isHttpGetRequest(): Boolean {
         url.scheme?.startsWith("HTTP", ignoreCase = true) == true
 }
 
+internal fun WebResourceRequest.isHttpOptionsRequest(): Boolean {
+    return method.equals("OPTIONS", ignoreCase = true) &&
+        url.scheme?.startsWith("HTTP", ignoreCase = true) == true
+}
+
+internal fun WebResourceRequest.isCorsFetchRequest(): Boolean {
+    return requestHeaders["Sec-Fetch-Mode"] == "cors"
+}
+
 internal fun Any.toJson(): String {
     return gson.toJson(this)
 }

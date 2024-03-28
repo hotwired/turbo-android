@@ -233,6 +233,11 @@ internal class TurboWebFragmentDelegate(
         navigator.navigate(location, options)
     }
 
+    override fun visitProposedToCrossOriginRedirect(redirectLocation: String) {
+        navigator.navigateBack()
+        navigator.navigate(redirectLocation, TurboVisitOptions())
+    }
+
     override fun visitNavDestination(): TurboNavDestination {
         return navDestination
     }

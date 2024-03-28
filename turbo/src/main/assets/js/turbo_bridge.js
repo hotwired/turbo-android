@@ -98,18 +98,18 @@
     // Adapter interface
 
     visitProposedToLocation(location, options) {
-        if (window.Turbo && Turbo.navigator.locationWithActionIsSamePage(location, options.action)) {
-          // Scroll to the anchor on the page
-          TurboSession.visitProposalScrollingToAnchor(location.toString(), JSON.stringify(options))
-          Turbo.navigator.view.scrollToAnchorFromLocation(location)
-        } else if (window.Turbo && Turbo.navigator.location?.href === location.href) {
-          // Refresh the page without native proposal
-          TurboSession.visitProposalRefreshingPage(location.toString(), JSON.stringify(options))
-          this.visitLocationWithOptionsAndRestorationIdentifier(location, JSON.stringify(options), Turbo.navigator.restorationIdentifier)
-        } else {
-          // Propose the visit
-          TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
-        }
+      if (window.Turbo && Turbo.navigator.locationWithActionIsSamePage(location, options.action)) {
+        // Scroll to the anchor on the page
+        TurboSession.visitProposalScrollingToAnchor(location.toString(), JSON.stringify(options))
+        Turbo.navigator.view.scrollToAnchorFromLocation(location)
+      } else if (window.Turbo && Turbo.navigator.location?.href === location.href) {
+        // Refresh the page without native proposal
+        TurboSession.visitProposalRefreshingPage(location.toString(), JSON.stringify(options))
+        this.visitLocationWithOptionsAndRestorationIdentifier(location, JSON.stringify(options), Turbo.navigator.restorationIdentifier)
+      } else {
+        // Propose the visit
+        TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
+      }
     }
 
     // Turbolinks 5
@@ -135,7 +135,7 @@
     }
 
     visitRequestFailedWithStatusCode(visit, statusCode) {
-      TurboSession.visitRequestFailedWithStatusCode(visit.identifier, visit.hasCachedSnapshot(), statusCode)
+      TurboSession.visitRequestFailedWithStatusCode(visit.location.toString(), visit.identifier, visit.hasCachedSnapshot(), statusCode)
     }
 
     visitRequestFinished(visit) {
