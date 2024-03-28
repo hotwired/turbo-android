@@ -179,6 +179,8 @@
     // Private
 
     async fetchFailedRequestCrossOriginRedirect(visit, statusCode) {
+      // Non-HTTP status codes are sent by Turbo for network
+      // failures, including cross-origin fetch redirect attempts.
       if (statusCode <= 0) {
         try {
           const response = await fetch(visit.location, { redirect: "follow" })
