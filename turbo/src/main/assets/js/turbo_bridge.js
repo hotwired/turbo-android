@@ -98,18 +98,18 @@
     // Adapter interface
 
     visitProposedToLocation(location, options) {
-        if (window.Turbo && Turbo.navigator.locationWithActionIsSamePage(location, options.action)) {
-          // Scroll to the anchor on the page
-          TurboSession.visitProposalScrollingToAnchor(location.toString(), JSON.stringify(options))
-          Turbo.navigator.view.scrollToAnchorFromLocation(location)
-        } else if (window.Turbo && Turbo.navigator.location?.href === location.href) {
-          // Refresh the page without native proposal
-          TurboSession.visitProposalRefreshingPage(location.toString(), JSON.stringify(options))
-          this.visitLocationWithOptionsAndRestorationIdentifier(location, JSON.stringify(options), Turbo.navigator.restorationIdentifier)
-        } else {
-          // Propose the visit
-          TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
-        }
+      if (window.Turbo && Turbo.navigator.locationWithActionIsSamePage(location, options.action)) {
+        // Scroll to the anchor on the page
+        TurboSession.visitProposalScrollingToAnchor(location.toString(), JSON.stringify(options))
+        Turbo.navigator.view.scrollToAnchorFromLocation(location)
+      } else if (window.Turbo && Turbo.navigator.location?.href === location.href) {
+        // Refresh the page without native proposal
+        TurboSession.visitProposalRefreshingPage(location.toString(), JSON.stringify(options))
+        this.visitLocationWithOptionsAndRestorationIdentifier(location, JSON.stringify(options), Turbo.navigator.restorationIdentifier)
+      } else {
+        // Propose the visit
+        TurboSession.visitProposedToLocation(location.toString(), JSON.stringify(options))
+      }
     }
 
     // Turbolinks 5
@@ -134,8 +134,18 @@
       this.loadResponseForVisitWithIdentifier(visit.identifier)
     }
 
-    visitRequestFailedWithStatusCode(visit, statusCode) {
-      TurboSession.visitRequestFailedWithStatusCode(visit.identifier, visit.hasCachedSnapshot(), statusCode)
+    async visitRequestFailedWithStatusCode(visit, statusCode) {
+      // Turbo does not permit cross-origin fetch redirect attempts and
+      // they'll lead to a visit request failure. Attempt to see if the
+      // visit request failure was due to a cross-origin redirect.
+      const redirect = await this.fetchFailedRequestCrossOriginRedirect(visit, statusCode)
+      const location = visit.location.toString()
+
+      if (redirect != null) {
+        TurboSession.visitProposedToCrossOriginRedirect(location, redirect.toString(), visit.identifier)
+      } else {
+        TurboSession.visitRequestFailedWithStatusCode(location, visit.identifier, visit.hasCachedSnapshot(), statusCode)
+      }
     }
 
     visitRequestFinished(visit) {
@@ -167,6 +177,21 @@
     }
 
     // Private
+
+    async fetchFailedRequestCrossOriginRedirect(visit, statusCode) {
+      // Non-HTTP status codes are sent by Turbo for network
+      // failures, including cross-origin fetch redirect attempts.
+      if (statusCode <= 0) {
+        try {
+          const response = await fetch(visit.location, { redirect: "follow" })
+          if (response.url != null && response.url.origin != visit.location.origin) {
+            return response.url
+          }
+        } catch {}
+      }
+
+      return null
+    }
 
     afterNextRepaint(callback) {
       if (document.hidden) {

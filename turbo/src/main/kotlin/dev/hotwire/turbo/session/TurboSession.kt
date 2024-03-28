@@ -11,7 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
-import androidx.webkit.WebViewFeature.*
+import androidx.webkit.WebViewFeature.VISUAL_STATE_CALLBACK
+import androidx.webkit.WebViewFeature.isFeatureSupported
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.config.screenshotsEnabled
 import dev.hotwire.turbo.delegates.TurboFileChooserDelegate
@@ -21,12 +22,14 @@ import dev.hotwire.turbo.errors.WebError
 import dev.hotwire.turbo.errors.WebSslError
 import dev.hotwire.turbo.http.*
 import dev.hotwire.turbo.nav.TurboNavDestination
-import dev.hotwire.turbo.util.*
+import dev.hotwire.turbo.util.isHttpGetRequest
+import dev.hotwire.turbo.util.logEvent
+import dev.hotwire.turbo.util.runOnUiThread
+import dev.hotwire.turbo.util.toJson
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import kotlinx.coroutines.*
 import java.util.*
 
 /**
@@ -198,6 +201,33 @@ class TurboSession internal constructor(
     }
 
     /**
+     * Called by Turbo bridge when a cross-origin redirect visit is proposed.
+     *
+     * Warning: This method is public so it can be used as a Javascript Interface.
+     * You should never call this directly as it could lead to unintended behavior.
+     *
+     * @param location The original visit location requested.
+     * @param redirectLocation The cross-origin redirect location.
+     * @param visitIdentifier A unique identifier for the visit.
+     */
+    @JavascriptInterface
+    fun visitProposedToCrossOriginRedirect(
+        location: String,
+        redirectLocation: String,
+        visitIdentifier: String
+    ) {
+        logEvent("visitProposedToCrossOriginRedirect",
+            "location" to location,
+            "redirectLocation" to redirectLocation,
+            "visitIdentifier" to visitIdentifier
+        )
+
+        if (visitIdentifier == currentVisit?.identifier) {
+            callback { it.visitProposedToCrossOriginRedirect(redirectLocation) }
+        }
+    }
+
+    /**
      * Called by Turbo bridge when a new visit proposal will refresh the
      * current page.
      *
@@ -284,20 +314,19 @@ class TurboSession internal constructor(
      * @param statusCode The HTTP status code that caused the failure.
      */
     @JavascriptInterface
-    fun visitRequestFailedWithStatusCode(visitIdentifier: String, visitHasCachedSnapshot: Boolean, statusCode: Int) {
+    fun visitRequestFailedWithStatusCode(location: String, visitIdentifier: String, visitHasCachedSnapshot: Boolean, statusCode: Int) {
         val visitError = HttpError.from(statusCode)
 
         logEvent(
             "visitRequestFailedWithStatusCode",
+            "location" to location,
             "visitIdentifier" to visitIdentifier,
             "visitHasCachedSnapshot" to visitHasCachedSnapshot,
             "error" to visitError
         )
 
-        currentVisit?.let { visit ->
-            if (visitIdentifier == visit.identifier) {
-                callback { it.requestFailedWithError(visitHasCachedSnapshot, visitError) }
-            }
+        if (visitIdentifier == currentVisit?.identifier) {
+            callback { it.requestFailedWithError(visitHasCachedSnapshot, visitError) }
         }
     }
 
