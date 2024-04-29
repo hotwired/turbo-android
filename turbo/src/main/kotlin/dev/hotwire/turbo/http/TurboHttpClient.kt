@@ -17,6 +17,9 @@ import java.util.concurrent.TimeUnit
 object TurboHttpClient {
     private var cache: Cache? = null
     private var httpCacheSize = 100L * 1024L * 1024L // 100 MBs
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BASIC
+    }
 
     internal var instance = buildNewHttpClient()
 
@@ -63,9 +66,5 @@ object TurboHttpClient {
         }
 
         return builder.build()
-    }
-
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BASIC
     }
 }
