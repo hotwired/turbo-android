@@ -3,13 +3,14 @@ package dev.hotwire.turbo.config
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.google.gson.reflect.TypeToken
 import dev.hotwire.turbo.http.TurboHttpClient
 import dev.hotwire.turbo.util.dispatcherProvider
 import dev.hotwire.turbo.util.logError
 import dev.hotwire.turbo.util.toJson
+import dev.hotwire.turbo.util.toObject
 import kotlinx.coroutines.withContext
 import okhttp3.Request
-import java.io.IOException
 
 internal class TurboPathConfigurationRepository {
     private val cacheFile = "turbo"
@@ -64,6 +65,15 @@ internal class TurboPathConfigurationRepository {
     private fun contentFromAsset(context: Context, filePath: String): String {
         return context.assets.open(filePath).use {
             String(it.readBytes())
+        }
+    }
+
+    fun parseFromJson(json: String): TurboPathConfiguration? {
+        return try {
+            json.toObject(object : TypeToken<TurboPathConfiguration>() {})
+        } catch (e: Exception) {
+            logError("PathConfigurationLoadingException", e)
+            null
         }
     }
 }
