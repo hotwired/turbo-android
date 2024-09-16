@@ -2,32 +2,36 @@ package dev.hotwire.turbo.config
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
+import com.google.gson.reflect.TypeToken
 import dev.hotwire.turbo.http.TurboHttpClient
 import dev.hotwire.turbo.util.dispatcherProvider
 import dev.hotwire.turbo.util.logError
 import dev.hotwire.turbo.util.toJson
+import dev.hotwire.turbo.util.toObject
 import kotlinx.coroutines.withContext
 import okhttp3.Request
-import java.io.IOException
 
 internal class TurboPathConfigurationRepository {
     private val cacheFile = "turbo"
 
-    suspend fun getRemoteConfiguration(url: String): String? {
+    suspend fun getRemoteConfiguration(url: String): TurboPathConfiguration? {
         val request = Request.Builder().url(url).build()
 
         return withContext(dispatcherProvider.io) {
-            issueRequest(request)
+            issueRequest(request)?.let { parseFromJson(it) }
         }
     }
 
-    fun getBundledConfiguration(context: Context, filePath: String): String {
-        return contentFromAsset(context, filePath)
+    fun getBundledConfiguration(context: Context, filePath: String): TurboPathConfiguration? {
+        val bundledConfigJson = contentFromAsset(context, filePath)
+        return parseFromJson(bundledConfigJson)
     }
 
-    fun getCachedConfigurationForUrl(context: Context, url: String): String? {
-        return prefs(context).getString(url, null)
+    fun getCachedConfigurationForUrl(context: Context, url: String): TurboPathConfiguration? {
+        val cachedConfigJson = prefs(context).getString(url, null)
+        return cachedConfigJson?.let { parseFromJson(it) }
     }
 
     fun cacheConfigurationForUrl(context: Context, url: String, pathConfiguration: TurboPathConfiguration) {
@@ -64,6 +68,16 @@ internal class TurboPathConfigurationRepository {
     private fun contentFromAsset(context: Context, filePath: String): String {
         return context.assets.open(filePath).use {
             String(it.readBytes())
+        }
+    }
+
+    @VisibleForTesting
+    fun parseFromJson(json: String): TurboPathConfiguration? {
+        return try {
+            json.toObject(object : TypeToken<TurboPathConfiguration>() {})
+        } catch (e: Exception) {
+            logError("PathConfigurationLoadingException", e)
+            null
         }
     }
 }

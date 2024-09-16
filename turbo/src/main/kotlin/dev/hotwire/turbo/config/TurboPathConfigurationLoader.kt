@@ -1,8 +1,7 @@
 package dev.hotwire.turbo.config
 
 import android.content.Context
-import dev.hotwire.turbo.util.toObject
-import com.google.gson.reflect.TypeToken
+import dev.hotwire.turbo.config.Turbo.config
 import dev.hotwire.turbo.util.dispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -30,29 +29,26 @@ internal class TurboPathConfigurationLoader(val context: Context) : CoroutineSco
         loadCachedConfigurationForUrl(url, onCompletion)
 
         launch {
-            repository.getRemoteConfiguration(url)?.let {
-                onCompletion(load(it))
-                cacheConfigurationForUrl(url, load(it))
+            repository.getRemoteConfiguration(url)?.let { config ->
+                onCompletion(config)
+                cacheConfigurationForUrl(url, config)
             }
         }
     }
 
     private fun loadBundledAssetConfiguration(filePath: String, onCompletion: (TurboPathConfiguration) -> Unit) {
-        val configuration = repository.getBundledConfiguration(context, filePath)
-        onCompletion(load(configuration))
+        repository.getBundledConfiguration(context, filePath)?.let { config ->
+            onCompletion(config)
+        }
     }
 
     private fun loadCachedConfigurationForUrl(url: String, onCompletion: (TurboPathConfiguration) -> Unit) {
-        repository.getCachedConfigurationForUrl(context, url)?.let {
-            onCompletion(load(it))
+        repository.getCachedConfigurationForUrl(context, url)?.let { config ->
+            onCompletion(config)
         }
     }
 
     private fun cacheConfigurationForUrl(url: String, pathConfiguration: TurboPathConfiguration) {
         repository.cacheConfigurationForUrl(context, url, pathConfiguration)
-    }
-
-    private fun load(json: String): TurboPathConfiguration {
-        return json.toObject(object : TypeToken<TurboPathConfiguration>() {})
     }
 }
