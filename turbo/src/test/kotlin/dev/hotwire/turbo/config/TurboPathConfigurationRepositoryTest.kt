@@ -5,8 +5,6 @@ import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import dev.hotwire.turbo.BaseRepositoryTest
 import dev.hotwire.turbo.http.TurboHttpClient
-import dev.hotwire.turbo.util.toObject
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -39,8 +37,23 @@ class TurboPathConfigurationRepositoryTest : BaseRepositoryTest() {
                 val json = repository.getRemoteConfiguration(baseUrl())
                 assertThat(json).isNotNull()
 
-                val config = load(json)
+                val config = repository.parseFromJson(json!!)
                 assertThat(config?.rules?.size).isEqualTo(2)
+            }
+        }
+    }
+
+    @Test
+    fun getMalformedRemoteConfiguration() {
+        enqueueResponse("test-configuration-malformed.json")
+
+        runBlocking {
+            launch(Dispatchers.Main) {
+                val json = repository.getRemoteConfiguration(baseUrl())
+                assertThat(json).isNotNull()
+
+                val config = repository.parseFromJson(json!!)
+                assertThat(config).isNull()
             }
         }
     }
@@ -50,25 +63,21 @@ class TurboPathConfigurationRepositoryTest : BaseRepositoryTest() {
         val json = repository.getBundledConfiguration(context, "json/test-configuration.json")
         assertThat(json).isNotNull()
 
-        val config = load(json)
+        val config = repository.parseFromJson(json)
         assertThat(config?.rules?.size).isEqualTo(10)
     }
 
     @Test
     fun getCachedConfiguration() {
         val url = "https://turbo.hotwired.dev/demo/configurations/android-v1.json"
-        val config = requireNotNull(load(json()))
+        val config = requireNotNull(repository.parseFromJson(json()))
         repository.cacheConfigurationForUrl(context, url, config)
 
         val json = repository.getCachedConfigurationForUrl(context, url)
         assertThat(json).isNotNull()
 
-        val cachedConfig = load(json)
+        val cachedConfig = repository.parseFromJson(json!!)
         assertThat(cachedConfig?.rules?.size).isEqualTo(1)
-    }
-
-    private fun load(json: String?): TurboPathConfiguration? {
-        return json?.toObject(object : TypeToken<TurboPathConfiguration>() {})
     }
 
     private fun json(): String {
