@@ -1,6 +1,7 @@
 package dev.hotwire.turbo.config
 
 import android.content.Context
+import dev.hotwire.turbo.config.Turbo.config
 import dev.hotwire.turbo.util.dispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -38,17 +39,14 @@ internal class TurboPathConfigurationLoader(val context: Context) : CoroutineSco
     }
 
     private fun loadBundledAssetConfiguration(filePath: String, onCompletion: (TurboPathConfiguration) -> Unit) {
-        val bundledConfigJson = repository.getBundledConfiguration(context, filePath)
-        repository.parseFromJson(bundledConfigJson)?.let { config ->
+        repository.getBundledConfiguration(context, filePath)?.let { config ->
             onCompletion(config)
         }
     }
 
     private fun loadCachedConfigurationForUrl(url: String, onCompletion: (TurboPathConfiguration) -> Unit) {
-        repository.getCachedConfigurationForUrl(context, url)?.let { cachedConfigJson ->
-            repository.parseFromJson(cachedConfigJson)?.let { config ->
-                onCompletion(config)
-            }
+        repository.getCachedConfigurationForUrl(context, url)?.let { config ->
+            onCompletion(config)
         }
     }
 

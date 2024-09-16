@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import dev.hotwire.turbo.BaseRepositoryTest
+import dev.hotwire.turbo.config.Turbo.config
 import dev.hotwire.turbo.http.TurboHttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -60,10 +61,9 @@ class TurboPathConfigurationRepositoryTest : BaseRepositoryTest() {
 
     @Test
     fun getBundledAssetConfiguration() {
-        val json = repository.getBundledConfiguration(context, "json/test-configuration.json")
-        assertThat(json).isNotNull()
+        val config = repository.getBundledConfiguration(context, "json/test-configuration.json")
+        assertThat(config).isNotNull()
 
-        val config = repository.parseFromJson(json)
         assertThat(config?.rules?.size).isEqualTo(10)
     }
 
@@ -73,10 +73,9 @@ class TurboPathConfigurationRepositoryTest : BaseRepositoryTest() {
         val config = requireNotNull(repository.parseFromJson(json()))
         repository.cacheConfigurationForUrl(context, url, config)
 
-        val json = repository.getCachedConfigurationForUrl(context, url)
-        assertThat(json).isNotNull()
+        val cachedConfig = repository.getCachedConfigurationForUrl(context, url)
+        assertThat(cachedConfig).isNotNull()
 
-        val cachedConfig = repository.parseFromJson(json!!)
         assertThat(cachedConfig?.rules?.size).isEqualTo(1)
     }
 

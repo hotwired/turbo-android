@@ -2,6 +2,7 @@ package dev.hotwire.turbo.config
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
 import com.google.gson.reflect.TypeToken
 import dev.hotwire.turbo.http.TurboHttpClient
@@ -23,12 +24,14 @@ internal class TurboPathConfigurationRepository {
         }
     }
 
-    fun getBundledConfiguration(context: Context, filePath: String): String {
-        return contentFromAsset(context, filePath)
+    fun getBundledConfiguration(context: Context, filePath: String): TurboPathConfiguration? {
+        val bundledConfigJson = contentFromAsset(context, filePath)
+        return parseFromJson(bundledConfigJson)
     }
 
-    fun getCachedConfigurationForUrl(context: Context, url: String): String? {
-        return prefs(context).getString(url, null)
+    fun getCachedConfigurationForUrl(context: Context, url: String): TurboPathConfiguration? {
+        val cachedConfigJson = prefs(context).getString(url, null)
+        return cachedConfigJson?.let { parseFromJson(it) }
     }
 
     fun cacheConfigurationForUrl(context: Context, url: String, pathConfiguration: TurboPathConfiguration) {
@@ -68,6 +71,7 @@ internal class TurboPathConfigurationRepository {
         }
     }
 
+    @VisibleForTesting
     fun parseFromJson(json: String): TurboPathConfiguration? {
         return try {
             json.toObject(object : TypeToken<TurboPathConfiguration>() {})
