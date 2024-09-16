@@ -16,11 +16,11 @@ import okhttp3.Request
 internal class TurboPathConfigurationRepository {
     private val cacheFile = "turbo"
 
-    suspend fun getRemoteConfiguration(url: String): String? {
+    suspend fun getRemoteConfiguration(url: String): TurboPathConfiguration? {
         val request = Request.Builder().url(url).build()
 
         return withContext(dispatcherProvider.io) {
-            issueRequest(request)
+            issueRequest(request)?.let { parseFromJson(it) }
         }
     }
 

@@ -29,11 +29,9 @@ internal class TurboPathConfigurationLoader(val context: Context) : CoroutineSco
         loadCachedConfigurationForUrl(url, onCompletion)
 
         launch {
-            repository.getRemoteConfiguration(url)?.let { remoteConfigJson ->
-                repository.parseFromJson(remoteConfigJson)?.let { config ->
-                    onCompletion(config)
-                    cacheConfigurationForUrl(url, config)
-                }
+            repository.getRemoteConfiguration(url)?.let { config ->
+                onCompletion(config)
+                cacheConfigurationForUrl(url, config)
             }
         }
     }

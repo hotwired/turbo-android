@@ -35,10 +35,8 @@ class TurboPathConfigurationRepositoryTest : BaseRepositoryTest() {
 
         runBlocking {
             launch(Dispatchers.Main) {
-                val json = repository.getRemoteConfiguration(baseUrl())
-                assertThat(json).isNotNull()
-
-                val config = repository.parseFromJson(json!!)
+                val config = repository.getRemoteConfiguration(baseUrl())
+                assertThat(config).isNotNull()
                 assertThat(config?.rules?.size).isEqualTo(2)
             }
         }
@@ -50,10 +48,7 @@ class TurboPathConfigurationRepositoryTest : BaseRepositoryTest() {
 
         runBlocking {
             launch(Dispatchers.Main) {
-                val json = repository.getRemoteConfiguration(baseUrl())
-                assertThat(json).isNotNull()
-
-                val config = repository.parseFromJson(json!!)
+                val config = repository.getRemoteConfiguration(baseUrl())
                 assertThat(config).isNull()
             }
         }
