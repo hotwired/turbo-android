@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> [Hotwire Native](https://native.hotwired.dev) is the new consolidation of the Turbo Native and Strada libraries into a single framework for iOS and Android. For new development, start with the new [Hotwire Native Android](https://github.com/hotwired/hotwire-native-android) library, which is built on the Turbo Native foundation and offers many new features. For existing Turbo Native apps, please transition to Hotwire Native as soon as possible.
+>
+> No new features will be added to this library and it will be deprecated in the coming months.
+
 # Turbo Native for Android
 
 **Build high-fidelity hybrid apps with native navigation and a single shared web view**. Turbo Native for Android provides the tooling to wrap your [Turbo 7](https://turbo.hotwired.dev/)-enabled web app in a native Android shell. It manages a single WebView instance across multiple Fragment destinations, giving you native navigation UI with all the client-side performance benefits of Turbo.
