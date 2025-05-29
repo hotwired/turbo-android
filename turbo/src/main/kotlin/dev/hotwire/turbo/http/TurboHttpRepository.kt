@@ -3,7 +3,6 @@ package dev.hotwire.turbo.http
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
-import dev.hotwire.turbo.util.TurboLog
 import dev.hotwire.turbo.util.dispatcherProvider
 import dev.hotwire.turbo.util.logError
 import kotlinx.coroutines.CoroutineScope
@@ -75,15 +74,22 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
 
         return try {
             val response = issueRequest(resourceRequest)
-
-            // Cache based on the response's request url, which may have been a redirect
             val responseUrl = response?.request?.url.toString()
             val isRedirect = url != responseUrl
+            val resourceResponse = resourceResponse(response)
+
+            // If the response is a document, cache based on the final response's request url, so
+            // that Turbo HTTP location redirects are not masked. Otherwise, cached based on the
+            // original request url, so redirected images, resources, etc are available offline.
+            val cacheUrl = if (resourceResponse?.mimeType == "text/html") {
+                responseUrl
+            } else {
+                url
+            }
 
             // Let the app cache the response
-            val resourceResponse = resourceResponse(response)
             val cachedResponse = resourceResponse?.let {
-                requestHandler.cacheResponse(responseUrl, it)
+                requestHandler.cacheResponse(cacheUrl, it)
             }
 
             Result(
