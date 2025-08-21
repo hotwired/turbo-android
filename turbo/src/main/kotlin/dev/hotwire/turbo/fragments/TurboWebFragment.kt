@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import dev.hotwire.turbo.R
 import dev.hotwire.turbo.delegates.TurboWebFragmentDelegate
+import dev.hotwire.turbo.errors.TurboVisitError
 import dev.hotwire.turbo.session.TurboSessionModalResult
 import dev.hotwire.turbo.util.TURBO_REQUEST_CODE_FILES
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebChromeClient
-import dev.hotwire.turbo.errors.TurboVisitError
 
 /**
  * The base class from which all web "standard" fragments (non-dialogs) in a
@@ -36,6 +36,11 @@ abstract class TurboWebFragment : TurboFragment(), TurboWebFragmentCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         webDelegate.onViewCreated()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        webDelegate.onDestroyView()
     }
 
     override fun onStart() {

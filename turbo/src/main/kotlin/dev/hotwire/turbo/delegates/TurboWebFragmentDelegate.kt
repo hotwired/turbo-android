@@ -18,6 +18,7 @@ import dev.hotwire.turbo.session.TurboSession
 import dev.hotwire.turbo.session.TurboSessionCallback
 import dev.hotwire.turbo.session.TurboSessionModalResult
 import dev.hotwire.turbo.util.dispatcherProvider
+import dev.hotwire.turbo.util.location
 import dev.hotwire.turbo.views.TurboView
 import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
@@ -129,6 +130,24 @@ internal class TurboWebFragmentDelegate(
         if (webViewIsAttached()) {
             session().removeCallback(this)
             detachWebView()
+        }
+    }
+
+    /**
+     * Should be called by the implementing Fragment during
+     * [androidx.fragment.app.Fragment.onDestroyView].
+     */
+    fun onDestroyView() {
+        // Manually cache a snapshot of the WebView when navigating from a
+        // web screen to a native screen. This allows a "restore" visit when
+        // revisiting this location again.
+
+        val navHost = navDestination.sessionNavHostFragment
+        val currentBackStackEntry = navHost.navController.currentBackStackEntry
+        val currentLocation = currentBackStackEntry?.location
+
+        if (session().currentVisit?.location != currentLocation) {
+            session().cacheSnapshot()
         }
     }
 
@@ -322,15 +341,9 @@ internal class TurboWebFragmentDelegate(
 
             // Visit every time the WebView is reattached to the current Fragment.
             if (isWebViewAttachedToNewDestination) {
-                val currentSessionVisitRestored = !isInitialVisit &&
-                    session().currentVisit?.destinationIdentifier == identifier &&
-                    session().restoreCurrentVisit(this)
-
-                if (!currentSessionVisitRestored) {
-                    showProgressView(location)
-                    visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
-                    isInitialVisit = false
-                }
+                showProgressView(location)
+                visit(location, restoreWithCachedSnapshot = !isInitialVisit, reload = false)
+                isInitialVisit = false
             }
         }
     }

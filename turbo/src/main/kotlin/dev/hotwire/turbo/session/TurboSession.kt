@@ -5,7 +5,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.util.SparseArray
-import android.webkit.*
+import android.webkit.HttpAuthHandler
+import android.webkit.JavascriptInterface
+import android.webkit.RenderProcessGoneDetail
+import android.webkit.SslErrorHandler
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.webkit.WebResourceErrorCompat
@@ -20,7 +27,11 @@ import dev.hotwire.turbo.errors.HttpError
 import dev.hotwire.turbo.errors.LoadError
 import dev.hotwire.turbo.errors.WebError
 import dev.hotwire.turbo.errors.WebSslError
-import dev.hotwire.turbo.http.*
+import dev.hotwire.turbo.http.TurboHttpClient
+import dev.hotwire.turbo.http.TurboHttpRepository
+import dev.hotwire.turbo.http.TurboOfflineRequestHandler
+import dev.hotwire.turbo.http.TurboPreCacheRequest
+import dev.hotwire.turbo.http.TurboWebViewRequestInterceptor
 import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.util.isHttpGetRequest
 import dev.hotwire.turbo.util.logEvent
@@ -30,7 +41,7 @@ import dev.hotwire.turbo.views.TurboWebView
 import dev.hotwire.turbo.visit.TurboVisit
 import dev.hotwire.turbo.visit.TurboVisitAction
 import dev.hotwire.turbo.visit.TurboVisitOptions
-import java.util.*
+import java.util.Date
 
 /**
  * This class is primarily responsible for managing an instance of an Android WebView that will
@@ -148,29 +159,19 @@ class TurboSession internal constructor(
     }
 
     /**
-     * Synthetically restore the WebView's current visit without using a cached snapshot or a
-     * visit request. This is used when restoring a Fragment destination from the backstack,
-     * but the WebView's current location hasn't changed from the destination's location.
+     * Cache a snapshot of the current visit.
      */
-    internal fun restoreCurrentVisit(callback: TurboSessionCallback): Boolean {
-        val visit = currentVisit ?: return false
-        val restorationIdentifier = restorationIdentifiers[visit.destinationIdentifier]
+    fun cacheSnapshot() {
+        if (!isReady) return
 
-        if (!isReady || restorationIdentifier == null) {
-            return false
+        currentVisit?.let {
+            logEvent("cacheSnapshot",
+                "location" to it.location,
+                "visitIdentifier" to it.identifier
+            )
+
+            webView.cacheSnapshot()
         }
-
-        logEvent("restoreCurrentVisit",
-            "location" to visit.location,
-            "visitIdentifier" to visit.identifier,
-            "restorationIdentifier" to restorationIdentifier
-        )
-
-        visit.callback = callback
-        visitRendered(visit.identifier)
-        visitCompleted(visit.identifier, restorationIdentifier)
-
-        return true
     }
 
     internal fun removeCallback(callback: TurboSessionCallback) {

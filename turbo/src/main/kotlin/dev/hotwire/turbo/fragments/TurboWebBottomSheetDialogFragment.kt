@@ -40,6 +40,11 @@ abstract class TurboWebBottomSheetDialogFragment : TurboBottomSheetDialogFragmen
         webDelegate.onViewCreated()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        webDelegate.onDestroyView()
+    }
+
     override fun activityResultLauncher(requestCode: Int): ActivityResultLauncher<Intent>? {
         return when (requestCode) {
             TURBO_REQUEST_CODE_FILES -> webDelegate.fileChooserResultLauncher

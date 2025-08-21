@@ -39,7 +39,16 @@
       let action = options.action
 
       if (window.Turbo) {
-        if (Turbo.navigator.locationWithActionIsSamePage(new URL(location), action)) {
+        if (Turbo.navigator.location?.href === location && action === "restore") {
+          // A "restore" visit to the currently rendered location can occur when visiting
+          // a web -> native -> back to web screen. In this situation, the connect()
+          // callback (from Stimulus) in bridge component controllers will not be called,
+          // since they are already connected. We need to notify the web bridge library
+          // that a "restore" visit has occurred to manually trigger connect() and notify
+          // the native app so the native bridge component view state can be restored.
+          Turbo.navigator.startVisit(location, restorationIdentifier, options)
+          document.dispatchEvent(new Event("native:restore"))
+        } else if (Turbo.navigator.locationWithActionIsSamePage(new URL(location), action)) {
           // Skip the same-page anchor scrolling behavior for visits initiated from the native
           // side. The page content may be stale and we want a fresh request from the network.
           Turbo.navigator.startVisit(location, restorationIdentifier, { "action": "replace" })
@@ -54,6 +63,12 @@
           // Turbolinks 5.3
           Turbolinks.controller.startVisitToLocation(location, restorationIdentifier, options)
         }
+      }
+    }
+
+    cacheSnapshot() {
+      if (window.Turbo) {
+        Turbo.session.view.cacheSnapshot()
       }
     }
 
