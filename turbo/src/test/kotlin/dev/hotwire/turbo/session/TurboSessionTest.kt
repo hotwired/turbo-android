@@ -216,6 +216,7 @@ class TurboSessionTest {
 
         assertThat(session.restoreCurrentVisit(callback)).isTrue()
         verify(callback, times(2)).visitCompleted(false)
+        verify(webView, times(1)).restoreCurrentVisit()
     }
 
     @Test

@@ -57,6 +57,22 @@
       }
     }
 
+    restoreCurrentVisit() {
+      // A synthetic "restore" visit to the currently rendered location can occur when
+      // visiting a web -> native -> back to web screen. In this situation, the connect()
+      // callback (from Stimulus) in bridge component controllers will not be called,
+      // since they are already connected. We need to notify the web bridge library
+      // that the webview has been reattached to manually trigger connect() and notify
+      // the native app so the native bridge component view state can be restored.
+      document.dispatchEvent(new Event("native:restore"))
+    }
+
+    cacheSnapshot() {
+      if (window.Turbo) {
+        Turbo.session.view.cacheSnapshot()
+      }
+    }
+
     // Current visit
 
     issueRequestForVisitWithIdentifier(identifier) {
