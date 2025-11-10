@@ -2,8 +2,12 @@ package dev.hotwire.turbo.session
 
 import android.content.Context
 import android.os.Bundle
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.Companion.PROTECTED
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import dev.hotwire.turbo.config.TurboPathConfiguration
@@ -11,6 +15,9 @@ import dev.hotwire.turbo.nav.TurboNavDestination
 import dev.hotwire.turbo.nav.TurboNavGraphBuilder
 import dev.hotwire.turbo.views.TurboWebView
 import kotlin.reflect.KClass
+
+internal const val DEEPLINK_EXTRAS_KEY = "android-support-nav:controller:deepLinkExtras"
+internal const val LOCATION_KEY = "location"
 
 abstract class TurboSessionNavHostFragment : NavHostFragment() {
     /**
@@ -51,6 +58,7 @@ abstract class TurboSessionNavHostFragment : NavHostFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createNewSession()
+        ensureDeeplinkStartLocationValid(requireActivity())
         initControllerGraph()
     }
 
@@ -104,6 +112,26 @@ abstract class TurboSessionNavHostFragment : NavHostFragment() {
     val currentNavDestination: TurboNavDestination
         get() = childFragmentManager.primaryNavigationFragment as TurboNavDestination?
             ?: throw IllegalStateException("No current destination found in NavHostFragment")
+
+    /**
+     * Google's Navigation library automatically navigates to deep links provided in the
+     * Activity's Intent. This exposes a vulnerability for malicious Intents to open an arbitrary
+     * webpage outside of the app's domain, allowing javascript injection on the page. Ensure
+     * that deep link intents always match the app's domain.
+     */
+    @VisibleForTesting
+    internal fun ensureDeeplinkStartLocationValid(activity: FragmentActivity) {
+        val extrasBundle = activity.intent.extras?.getBundle(DEEPLINK_EXTRAS_KEY) ?: return
+        val startLocationFromIntent = extrasBundle.getString(LOCATION_KEY) ?: return
+
+        val deepLinkStartUri = startLocationFromIntent.toUri()
+        val configStartUri = startLocation.toUri()
+
+        if (deepLinkStartUri.host != configStartUri.host) {
+            extrasBundle.putString(LOCATION_KEY, startLocation)
+            activity.intent.putExtra(DEEPLINK_EXTRAS_KEY, extrasBundle)
+        }
+    }
 
     private fun initControllerGraph() {
         navController.apply {
