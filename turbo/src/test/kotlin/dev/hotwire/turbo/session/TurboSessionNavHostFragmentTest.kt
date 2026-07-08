@@ -2,6 +2,7 @@ package dev.hotwire.turbo.session
 
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -52,6 +53,28 @@ class TurboSessionNavHostFragmentTest : BaseUnitTest() {
 
         val resultBundle = activity.intent.getBundleExtra(DEEPLINK_EXTRAS_KEY)
         assertThat(resultBundle?.getString(LOCATION_KEY)).isEqualTo("https://example.com/path")
+    }
+
+    // NavController merges deepLinkArgs over deepLinkExtras (last write wins); the intent's args
+    // must not survive to override the validated start location.
+    @Test
+    fun `empties deepLinkArgs so they cannot override the start location`() {
+        val intent = Intent().apply {
+            putExtra(DEEPLINK_EXTRAS_KEY, bundleOf(LOCATION_KEY to "https://example.com/ok"))
+            putParcelableArrayListExtra(DEEPLINK_ARGS_KEY, arrayListOf(bundleOf(LOCATION_KEY to ATTACKER_URL)))
+        }
+        activity = Robolectric.buildActivity(TestActivity::class.java, intent).create().get()
+
+        host = TestNavHostFragment()
+        host.ensureDeeplinkStartLocationValid(activity)
+
+        val survivingArgs = activity.intent.getParcelableArrayListExtra<Bundle>(DEEPLINK_ARGS_KEY)
+            ?.mapNotNull { it.getString(LOCATION_KEY) }.orEmpty()
+        assertThat(survivingArgs).doesNotContain(ATTACKER_URL)
+    }
+
+    companion object {
+        private const val ATTACKER_URL = "https://attacker.example/steal"
     }
 
 }
