@@ -1,6 +1,5 @@
 package dev.hotwire.turbo.http
 
-import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import dev.hotwire.turbo.util.dispatcherProvider
@@ -21,7 +20,6 @@ import java.io.InputStream
  * Experimental: API may change, not ready for production use.
  */
 internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
-    private val cookieManager = CookieManager.getInstance()
 
     // Limit pre-cache requests to 2 concurrently
     private val preCacheRequestQueue = Semaphore(2)
@@ -122,36 +120,18 @@ internal class TurboHttpRepository(private val coroutineScope: CoroutineScope) {
         val headers = resourceRequest.requestHeaders
         val builder = Request.Builder().url(location)
 
-        headers.forEach { builder.header(it.key, it.value) }
-
-        getCookie(location)?.let {
-            builder.header("Cookie", it)
-        }
+        headers
+            .filterKeys { !it.equals("Cookie", ignoreCase = true) }
+            .forEach { builder.header(it.key, it.value) }
 
         return builder.build()
     }
 
     private fun getResponse(request: Request): Response? {
-        val location = request.url.toString()
         val call = TurboHttpClient.instance.newCall(request)
 
         return call.execute().let { response ->
-            if (response.isSuccessful) {
-                setCookies(location, response)
-                response
-            } else {
-                null
-            }
-        }
-    }
-
-    private fun getCookie(location: String): String? {
-        return cookieManager.getCookie(location)
-    }
-
-    private fun setCookies(location: String, response: Response) {
-        response.headers("Set-Cookie").forEach {
-            cookieManager.setCookie(location, it)
+            if (response.isSuccessful) response else null
         }
     }
 
