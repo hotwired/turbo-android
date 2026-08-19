@@ -147,7 +147,6 @@ internal class TurboNavigator(private val navDestination: TurboNavDestination) {
 
         when (rule.newPresentation) {
             TurboNavPresentation.REPLACE -> onNavigationVisit {
-                popBackStack(rule)
                 navigateToLocation(rule)
             }
             else -> onNavigationVisit {
