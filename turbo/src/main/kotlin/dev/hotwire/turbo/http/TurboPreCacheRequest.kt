@@ -1,14 +1,12 @@
 package dev.hotwire.turbo.http
 
 import android.net.Uri
-import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 
 /**
  * Experimental: API may change, not ready for production use.
  */
 internal class TurboPreCacheRequest(val url: String, val userAgent: String) : WebResourceRequest {
-    private val cookieManager = CookieManager.getInstance()
 
     override fun getUrl(): Uri {
         return Uri.parse(url)
@@ -24,7 +22,6 @@ internal class TurboPreCacheRequest(val url: String, val userAgent: String) : We
 
     override fun getRequestHeaders(): Map<String, String> {
         return mapOf(
-            "Cookie" to cookieManager.getCookie(url),
             "User-Agent" to userAgent
         )
     }
