@@ -2,7 +2,6 @@ package dev.hotwire.turbo.session
 
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -30,51 +29,79 @@ class TurboSessionNavHostFragmentTest : BaseUnitTest() {
     }
 
     @Test
-    fun `reverts to config start location when deep link host differs`() {
-        val extras = bundleOf(LOCATION_KEY to "https://other.com/path")
-        val intent = Intent().apply { putExtra(DEEPLINK_EXTRAS_KEY, extras) }
+    fun `removes the deep link ids that select the destination`() {
+        val intent = Intent().apply { putExtra(DEEPLINK_IDS_KEY, intArrayOf(1, 2, 3)) }
         activity = Robolectric.buildActivity(TestActivity::class.java, intent).create().get()
 
         host = TestNavHostFragment()
-        host.ensureDeeplinkStartLocationValid(activity)
+        host.removeExternalDeeplinkNavigation(activity)
 
-        val resultBundle = activity.intent.getBundleExtra(DEEPLINK_EXTRAS_KEY)
-        assertThat(resultBundle?.getString(LOCATION_KEY)).isEqualTo("https://example.com/start")
+        assertThat(activity.intent.hasExtra(DEEPLINK_IDS_KEY)).isFalse()
     }
 
     @Test
-    fun `does not change start location when deep link host matches config`() {
-        val extras = bundleOf(LOCATION_KEY to "https://example.com/path")
-        val intent = Intent().apply { putExtra(DEEPLINK_EXTRAS_KEY, extras) }
+    fun `removes the deep link extras that inject the destination arguments`() {
+        val intent = Intent().apply { putExtra(DEEPLINK_EXTRAS_KEY, bundleOf(LOCATION_KEY to ATTACKER_URL)) }
         activity = Robolectric.buildActivity(TestActivity::class.java, intent).create().get()
 
         host = TestNavHostFragment()
-        host.ensureDeeplinkStartLocationValid(activity)
+        host.removeExternalDeeplinkNavigation(activity)
 
-        val resultBundle = activity.intent.getBundleExtra(DEEPLINK_EXTRAS_KEY)
-        assertThat(resultBundle?.getString(LOCATION_KEY)).isEqualTo("https://example.com/path")
+        assertThat(activity.intent.hasExtra(DEEPLINK_EXTRAS_KEY)).isFalse()
     }
 
-    // NavController merges deepLinkArgs over deepLinkExtras (last write wins); the intent's args
-    // must not survive to override the validated start location.
     @Test
-    fun `empties deepLinkArgs so they cannot override the start location`() {
+    fun `removes the deep link args that inject per-destination arguments`() {
         val intent = Intent().apply {
-            putExtra(DEEPLINK_EXTRAS_KEY, bundleOf(LOCATION_KEY to "https://example.com/ok"))
             putParcelableArrayListExtra(DEEPLINK_ARGS_KEY, arrayListOf(bundleOf(LOCATION_KEY to ATTACKER_URL)))
         }
         activity = Robolectric.buildActivity(TestActivity::class.java, intent).create().get()
 
         host = TestNavHostFragment()
-        host.ensureDeeplinkStartLocationValid(activity)
+        host.removeExternalDeeplinkNavigation(activity)
 
-        val survivingArgs = activity.intent.getParcelableArrayListExtra<Bundle>(DEEPLINK_ARGS_KEY)
-            ?.mapNotNull { it.getString(LOCATION_KEY) }.orEmpty()
-        assertThat(survivingArgs).doesNotContain(ATTACKER_URL)
+        assertThat(activity.intent.hasExtra(DEEPLINK_ARGS_KEY)).isFalse()
+    }
+
+    // Regression for the full chain: an attacker-crafted launch Intent that selects a native
+    // destination via deepLinkIds and injects an on-host `location` into it via deepLinkExtras.
+    // The earlier host check reverted only off-host locations, so an on-host location survived and
+    // reached the destination as its `location` argument. Neutralizing the whole deep-link
+    // navigation leaves nothing for NavController.handleDeepLink to act on.
+    @Test
+    fun `neutralizes an on-host native destination deep link`() {
+        val intent = Intent().apply {
+            putExtra(DEEPLINK_IDS_KEY, intArrayOf(1))
+            putExtra(DEEPLINK_EXTRAS_KEY, bundleOf(LOCATION_KEY to ON_HOST_ATTACKER_URL))
+            putParcelableArrayListExtra(DEEPLINK_ARGS_KEY, arrayListOf(bundleOf(LOCATION_KEY to ON_HOST_ATTACKER_URL)))
+        }
+        activity = Robolectric.buildActivity(TestActivity::class.java, intent).create().get()
+
+        host = TestNavHostFragment()
+        host.removeExternalDeeplinkNavigation(activity)
+
+        assertThat(activity.intent.hasExtra(DEEPLINK_IDS_KEY)).isFalse()
+        assertThat(activity.intent.hasExtra(DEEPLINK_EXTRAS_KEY)).isFalse()
+        assertThat(activity.intent.hasExtra(DEEPLINK_ARGS_KEY)).isFalse()
+    }
+
+    @Test
+    fun `leaves a normal launch intent without deep link navigation untouched`() {
+        activity = Robolectric.buildActivity(TestActivity::class.java, Intent()).create().get()
+
+        host = TestNavHostFragment()
+        host.removeExternalDeeplinkNavigation(activity)
+
+        assertThat(activity.intent.hasExtra(DEEPLINK_IDS_KEY)).isFalse()
+        assertThat(activity.intent.hasExtra(DEEPLINK_EXTRAS_KEY)).isFalse()
+        assertThat(activity.intent.hasExtra(DEEPLINK_ARGS_KEY)).isFalse()
     }
 
     companion object {
         private const val ATTACKER_URL = "https://attacker.example/steal"
+
+        // Same host as the configured start location below, so it would pass a host check.
+        private const val ON_HOST_ATTACKER_URL = "https://example.com/other-users-attachment"
     }
 
 }
@@ -89,4 +116,3 @@ class TestNavHostFragment : TurboSessionNavHostFragment() {
     )
     override val registeredFragments: List<KClass<out Fragment>> = emptyList()
 }
-
