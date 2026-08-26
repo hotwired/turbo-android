@@ -57,9 +57,12 @@ abstract class TurboSessionNavHostFragment : NavHostFragment() {
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Strip the launching Intent's deep-link navigation before NavHostFragment.onCreate(),
+        // which can itself create/restore a NavController and auto-navigate from the Intent when a
+        // graph is supplied via app:navGraph or restored controller state.
+        removeExternalDeeplinkNavigation(requireActivity())
         super.onCreate(savedInstanceState)
         createNewSession()
-        removeExternalDeeplinkNavigation(requireActivity())
         initControllerGraph()
     }
 
@@ -138,6 +141,10 @@ abstract class TurboSessionNavHostFragment : NavHostFragment() {
     }
 
     private fun initControllerGraph() {
+        // Re-strip on every graph (re)creation: reset() rebuilds the graph, and the Activity's
+        // Intent may have been replaced since onCreate() (e.g. via onNewIntent).
+        removeExternalDeeplinkNavigation(requireActivity())
+
         navController.apply {
             graph = TurboNavGraphBuilder(
                 startLocation = startLocation,
