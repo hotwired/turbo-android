@@ -25,6 +25,8 @@ android {
         versionCode = 1
         versionName = "1.0"
         vectorDrawables.useSupportLibrary = true
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -55,6 +57,7 @@ android {
     sourceSets {
         named("main")  { java { srcDirs("src/main/kotlin") } }
         named("test")  { java { srcDirs("src/test/kotlin") } }
+        named("androidTest")  { java { srcDirs("src/androidTest/kotlin") } }
         named("debug") { java { srcDirs("src/debug/kotlin") } }
     }
 
@@ -76,6 +79,15 @@ dependencies {
     implementation("dev.hotwire:strada:1.0.0-beta3")
 
     implementation(project(":turbo"))
+
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
+    androidTestImplementation("androidx.test:core-ktx:1.5.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("com.adevinta.android:barista:4.2.0") {
+        exclude(group = "org.jetbrains.kotlin") // Only if you already use Kotlin in your project
+    }
+    androidTestImplementation("androidx.test.espresso:espresso-web:3.5.1")
 }
 
 repositories {
