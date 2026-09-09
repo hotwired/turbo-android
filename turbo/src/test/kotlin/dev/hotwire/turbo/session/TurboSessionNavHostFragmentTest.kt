@@ -87,11 +87,13 @@ class TurboSessionNavHostFragmentTest : BaseUnitTest() {
 
     @Test
     fun `leaves a normal launch intent without deep link navigation untouched`() {
-        activity = Robolectric.buildActivity(TestActivity::class.java, Intent()).create().get()
+        val intent = Intent().apply { putExtra(HOST_APP_EXTRA_KEY, "kept") }
+        activity = Robolectric.buildActivity(TestActivity::class.java, intent).create().get()
 
         host = TestNavHostFragment()
         host.removeExternalDeeplinkNavigation(activity)
 
+        assertThat(activity.intent.getStringExtra(HOST_APP_EXTRA_KEY)).isEqualTo("kept")
         assertThat(activity.intent.hasExtra(DEEPLINK_IDS_KEY)).isFalse()
         assertThat(activity.intent.hasExtra(DEEPLINK_EXTRAS_KEY)).isFalse()
         assertThat(activity.intent.hasExtra(DEEPLINK_ARGS_KEY)).isFalse()
@@ -99,6 +101,7 @@ class TurboSessionNavHostFragmentTest : BaseUnitTest() {
 
     companion object {
         private const val ATTACKER_URL = "https://attacker.example/steal"
+        private const val HOST_APP_EXTRA_KEY = "host_app_extra"
 
         // Same host as the configured start location below, so it would pass a host check.
         private const val ON_HOST_ATTACKER_URL = "https://example.com/other-users-attachment"
